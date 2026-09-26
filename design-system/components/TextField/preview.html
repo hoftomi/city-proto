@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=180 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>TextField</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack',style:{maxWidth:360}},h(T.TextField,{label:'Ajánlat (arany)',defaultValue:'8',inputMode:'numeric',hint:'A legtöbbet ajánló teljesítheti a kérést.'}),h(T.TextField,{label:'Ház neve',defaultValue:'Ezüst',error:'Legalább 3 betű, és még nem foglalt név kell.'})));
+</script>
+</body>
+</html>

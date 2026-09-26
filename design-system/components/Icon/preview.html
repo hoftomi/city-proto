@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=80 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Icon</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-row',style:{gap:16}},['nemesseg','kereskedok','katonasag','arany','bp','ke','legit','pp','kem','katonai','diplomacia','esemeny','frakcio','route','lock','warning','clock','check','close','hidden','info'].map(function(n){return h('span',{key:n,title:n},h(T.Icon,{name:n,size:24}));})));
+</script>
+</body>
+</html>

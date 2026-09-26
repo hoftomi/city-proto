@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=240 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>DataTable</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{maxWidth:480}},h(T.DataTable,{columns:[{key:'rank',label:'#',align:'right'},{key:'name',label:'Ház',render:function(r){return h('span',{className:'tn-row',style:{gap:8,flexWrap:'nowrap'}},h(T.HouseCrest,{tincture:r.t,size:18,npc:r.npc,name:r.name}),r.name,r.npc?h('span',{className:'tn-muted',style:{fontSize:12}},'NPC'):null);}},{key:'cities',label:'Városok',align:'right'},{key:'l',label:'Legitimitás',align:'right'}],rows:[{rank:1,name:'Ezüstpart-ház',t:'arany',npc:true,cities:3,l:58},{rank:2,name:'Kékholló',t:'kek',self:true,cities:2,l:41},{rank:3,name:'Ősi Tölgy',t:'zold',npc:true,cities:2,l:37},{rank:4,name:'Varjúvár',t:'fekete',cities:1,l:22}]})));
+</script>
+</body>
+</html>

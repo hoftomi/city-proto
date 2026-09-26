@@ -1,0 +1,12 @@
+<!-- @dsCard group="Parancsok" height=380 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>OrderSheet</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack',style:{maxWidth:440}},h(T.OrderSheet,{round:7,available:10,orders:[{label:'Nagy adomány',city:'Feketerév',faction:'kereskedok',cost:{pp:2,arany:8}},{label:'Tanácstag megnyerése',city:'Fehérkolostor',faction:'nemesseg',cost:{pp:3,bp:5},hidden:true,note:'+50% költség'},{label:'Útvonal kiépítése',city:'Szélmező → Délkapu',cost:{pp:1,arany:3}},{label:'Lejáratás',city:'Feketerév',note:'célpont: Ezüstpart-ház',cost:{pp:2,bp:2}}]})));
+</script>
+</body>
+</html>

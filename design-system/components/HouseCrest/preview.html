@@ -1,0 +1,12 @@
+<!-- @dsCard group="Házak" height=80 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>HouseCrest</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-row'},[['voros','V'],['kek','K'],['zold','Ö'],['arany','E'],['bibor','B'],['fekete','F'],['narancs','N'],['szeder','S']].map(function(t,i){return h(T.HouseCrest,{key:t[0],tincture:t[0],initial:t[1],name:t[0],npc:i>5,size:36});})));
+</script>
+</body>
+</html>

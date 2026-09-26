@@ -1,0 +1,12 @@
+<!-- @dsCard group="Befolyás" height=96 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>ControlBadge</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack'},h(T.ControlBadge,{}),h(T.ControlBadge,{level:'jelenlet'}),h(T.ControlBadge,{level:'partner'}),h(T.ControlBadge,{level:'dominans'}),h(T.ControlBadge,{level:'varoskontroll'}),h(T.ControlBadge,{level:'protektoratus'})));
+</script>
+</body>
+</html>

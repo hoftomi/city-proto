@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=340 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Sheet</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(T.Sheet,{inline:true,title:'Pártfogás – Feketerév',onClose:function(){},footer:[h(T.Button,{key:1,variant:'quiet'},'Mégse'),h(T.Button,{key:2,variant:'primary'},'Parancslapra')]},h('div',{className:'tn-stack'},h(T.Select,{label:'Frakció',defaultValue:'kereskedok',options:[{value:'nemesseg',label:'Nemesség'},{value:'kereskedok',label:'Kereskedők'},{value:'katonasag',label:'Katonaság'}]}),h('div',{className:'tn-row'},h(T.ResourceChip,{kind:'pp',value:1}),h(T.ResourceChip,{kind:'arany',value:3}),h('span',{className:'tn-muted'},'Várható nyereség: '),h('b',{className:'tn-num'},'+3,5')))));
+</script>
+</body>
+</html>

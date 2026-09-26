@@ -1,0 +1,38 @@
+# Helyi futtatás: `docker compose up -d db` csak az adatbázist indítja,
+# `docker compose up --build` a backendet is.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: tron
+      POSTGRES_USER: tron
+      POSTGRES_PASSWORD: tron
+    ports:
+      - "5432:5432"
+    volumes:
+      - tron-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tron -d tron"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/tron
+      DB_USER: tron
+      DB_PASSWORD: tron
+      JWT_SECRET: ${JWT_SECRET:-csak-fejleszteshez-hasznald-ezt-a-titkot-0001}
+      DEV_LOGIN: ${DEV_LOGIN:-true}
+      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
+      APPLE_AUDIENCES: ${APPLE_AUDIENCES:-}
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
+    ports:
+      - "8080:8080"
+
+volumes:
+  tron-db:

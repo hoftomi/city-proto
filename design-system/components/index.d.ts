@@ -1,0 +1,36 @@
+// window.TronNelkul — React 18 components. Class names are prefixed `tn-`.
+type Tincture = 'voros' | 'kek' | 'zold' | 'arany' | 'bibor' | 'fekete' | 'narancs' | 'szeder';
+type Faction = 'nemesseg' | 'kereskedok' | 'katonasag';
+type IconName = 'nemesseg' | 'kereskedok' | 'katonasag' | 'arany' | 'bp' | 'ke' | 'legit' | 'pp' | 'kem' | 'katonai' | 'diplomacia' | 'esemeny' | 'frakcio' | 'route' | 'lock' | 'warning' | 'clock' | 'check' | 'close' | 'hidden' | 'info';
+type Cost = { pp?: number; arany?: number; bp?: number; ke?: number };
+type Pt = [number, number];
+
+export declare function InfluenceBar(p: { faction?: Faction; segments: { name: string; tincture: Tincture; value: number; self?: boolean }[]; unknown?: number; precision?: 'exact' | 'band5' | 'band10'; aside?: React.ReactNode; thresholds?: boolean; legend?: boolean }): JSX.Element;
+export declare function ControlBadge(p: { level?: 'jelenlet' | 'partner' | 'dominans' | 'varoskontroll' | 'protektoratus' }): JSX.Element;
+export declare function SuspicionMeter(p: { value: 0 | 1 | 2 | 3; showEffect?: boolean }): JSX.Element;
+export declare function CommandPoints(p: { available: number; pending?: number; daily?: number; max?: number }): JSX.Element;
+export declare function ReportCard(p: { kind: 'kem' | 'katonai' | 'frakcio' | 'diplomacia' | 'esemeny'; confidence?: 'gyenge' | 'kozepes' | 'eros'; tick?: string; title?: string; children?: React.ReactNode; footer?: React.ReactNode }): JSX.Element;
+export declare function OrderSheet(p: { orders: { label: string; city?: string; faction?: Faction; note?: string; cost: Cost; hidden?: boolean }[]; available: number; round?: number; sealed?: boolean; onSeal?: () => void }): JSX.Element;
+export declare function HouseCrest(p: { tincture: Tincture; initial?: string; name?: string; npc?: boolean; size?: number }): JSX.Element;
+export declare function FactionTag(p: { faction: Faction }): JSX.Element;
+export declare function StabilityChip(p: { level: 'stabil' | 'ingatag' | 'lazongo' }): JSX.Element;
+export declare function TickTimer(p: { at?: string; remaining?: string; soon?: boolean }): JSX.Element;
+export declare function ResourceChip(p: { kind: 'arany' | 'bp' | 'ke' | 'legit' | 'pp'; value: number | string; delta?: number }): JSX.Element;
+export declare function MapCanvas(p: { width?: number; height?: number; grid?: number; title?: string; children?: React.ReactNode }): JSX.Element;
+export declare function MapCity(p: { x: number; y: number; name: string; keyCity?: boolean; state?: 'reachable' | 'unreachable' | 'cut'; stability?: 'stabil' | 'ingatag' | 'lazongo'; labelSide?: 'right' | 'left' }): JSX.Element;
+export declare function MapRoute(p: { from: Pt; to: Pt; state?: 'base' | 'own' | 'pending' | 'rival' | 'blocked' | 'closed'; tincture?: Tincture }): JSX.Element;
+export declare function MapEstate(p: { x: number; y: number; tincture: Tincture; name?: string; npc?: boolean }): JSX.Element;
+export declare function Button(p: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'default' | 'primary' | 'seal' | 'quiet' | 'danger'; size?: 'md' | 'sm'; icon?: IconName }): JSX.Element;
+export declare function TextField(p: React.InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; error?: string }): JSX.Element;
+export declare function Select(p: { label: string; options: (string | { value: string; label: string })[]; value?: string; defaultValue?: string; onChange?: (e: any) => void; hint?: string; id?: string }): JSX.Element;
+export declare function Tabs(p: { tabs: { id: string; label: string; badge?: number }[]; active?: string; onChange?: (id: string) => void }): JSX.Element;
+export declare function Toast(p: { tone?: 'info' | 'ok' | 'warn' | 'danger'; title: string; children?: React.ReactNode; icon?: IconName }): JSX.Element;
+export declare function Sheet(p: { title: string; children?: React.ReactNode; footer?: React.ReactNode; onClose?: () => void; open?: boolean; inline?: boolean }): JSX.Element | null;
+export declare function DataTable(p: { columns: { key: string; label: string; align?: 'left' | 'right'; render?: (row: any) => React.ReactNode }[]; rows: any[]; caption?: string }): JSX.Element;
+export declare function Icon(p: { name: IconName; size?: number; label?: string; className?: string }): JSX.Element;
+export declare function MapTerrain(p: { sea?: string; rivers?: string[]; mountains?: [number, number, number?][]; forests?: [number, number, number?][]; fields?: [number, number, number, number, number?][]; marsh?: [number, number, number?][] }): JSX.Element;
+export declare function MapCompass(p: { x: number; y: number; size?: number }): JSX.Element;
+export declare function MapCartouche(p: { x: number; y: number; width?: number; title: string; scale?: string }): JSX.Element;
+export declare function CityView(p: { name: string; coast?: boolean; stability?: 'stabil' | 'ingatag' | 'lazongo'; districts?: Partial<Record<Faction, { dominant?: Tincture; contested?: Tincture | null }>>; selected?: Faction; onSelect?: (f: Faction) => void }): JSX.Element;
+export declare function AppBar(p: { house: { tincture: Tincture; initial?: string; name: string }; timer?: { at?: string; remaining?: string; soon?: boolean }; resources?: { kind: 'arany' | 'bp' | 'ke' | 'legit' | 'pp'; value: number | string; delta?: number }[] }): JSX.Element;
+export declare function NavBar(p: { items: { id: string; label: string; icon: IconName | 'terkep' | 'varos'; badge?: number }[]; active?: string; onChange?: (id: string) => void }): JSX.Element;

@@ -1,0 +1,84 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<title>Trón nélkül</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--paper); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; height:288px; width:960px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; }
+  .art svg { display:block; width:480px; height:288px; }
+  .sea { fill:var(--ink); }
+  .ripple { fill:none; stroke:var(--paper); stroke-width:1.2; }
+  .coast { fill:none; stroke:var(--ink); stroke-width:2; }
+  .contour { fill:none; stroke:var(--map-relief); stroke-width:1; }
+  .route { fill:none; stroke:var(--verdigris); stroke-width:4; stroke-linecap:round; stroke-dasharray:1 10; }
+  .route-solid { fill:none; stroke:var(--verdigris); stroke-width:4; stroke-linecap:round; }
+  .city { fill:var(--paper-raised); stroke:var(--verdigris); stroke-width:3; }
+  .port { fill:var(--paper-raised); stroke:var(--ink); stroke-width:3; }
+  .gules { fill:var(--house-voros); }
+  .azure { fill:var(--house-kek); }
+  .or { fill:var(--house-arany); }
+  .pole { stroke:var(--ink); stroke-width:2; }
+  .seal { fill:var(--seal); }
+  .seal-ring { fill:none; stroke:var(--on-seal); stroke-width:1.5; opacity:.6; }
+  .seal-mark { fill:var(--on-seal); opacity:.85; }
+  .rose { fill:var(--paper); }
+  .rose-ring { fill:none; stroke:var(--paper); stroke-width:1; opacity:.6; }
+  .words { position:absolute; left:var(--space-6); bottom:var(--space-6); max-width:440px; }
+  .name { margin:0; font-family:var(--font-display); font-size:104px; line-height:.95; font-weight:500; letter-spacing:.01em; color:var(--ink); }
+  .tag { margin:var(--space-2) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      ink sea bleeding off the top, right and bottom edges, cut by a hand-drawn coastline (the largest field) · three house pennants in house-voros / house-kek / house-arany hung from the top edge at unequal lengths (the houses competing) · seal disc r56 bleeding off the bottom (the wax on the orders)
+  arrangement a map sheet: land on the left, the sea on the right; pennants stand on the land, the seal sits on the coast where land and sea meet
+  pattern     coastline ripples, from the map terrain's own engraving: three paper lines following the coast inside the sea, plus two map-relief contour lines on land; one verdigris route running to the port city
+  scales      pennant widths space-8 plus 4, gutters space-4; route stroke 4 with a space-2-ish dot pitch; seal and cities radius-full; everything else square, like a cut map
+-->
+<defs>
+  <clipPath id="seaClip"><path d="M292 0C270 36 300 70 282 104C264 140 304 162 296 198C290 230 262 252 272 288H480V0Z"/></clipPath>
+</defs>
+<path class="sea" d="M292 0C270 36 300 70 282 104C264 140 304 162 296 198C290 230 262 252 272 288H480V0Z"/>
+<g clip-path="url(#seaClip)">
+  <path class="ripple" transform="translate(12 0)" d="M292 0C270 36 300 70 282 104C264 140 304 162 296 198C290 230 262 252 272 288" opacity=".9"/>
+  <path class="ripple" transform="translate(26 0)" d="M292 0C270 36 300 70 282 104C264 140 304 162 296 198C290 230 262 252 272 288" opacity=".6"/>
+  <path class="ripple" transform="translate(44 0)" d="M292 0C270 36 300 70 282 104C264 140 304 162 296 198C290 230 262 252 272 288" opacity=".35"/>
+</g>
+<path class="contour" d="M60 150C90 120 150 118 190 140C226 160 236 196 206 214C170 236 96 228 70 204C52 188 48 166 60 150Z"/>
+<path class="contour" d="M96 160C118 146 158 146 180 160C200 174 194 196 170 202C142 210 110 204 98 190C90 180 88 168 96 160Z"/>
+<path class="route" d="M24 250C80 246 110 214 150 176"/>
+<path class="route-solid" d="M150 176C196 134 232 126 270 120"/>
+<circle class="city" cx="150" cy="176" r="8"/>
+<circle class="port" cx="276" cy="119" r="11"/>
+<line class="pole" x1="24" y1="0" x2="24" y2="136"/>
+<path class="gules" d="M24 0H64V120L44 106L24 120Z"/>
+<line class="pole" x1="80" y1="0" x2="80" y2="92"/>
+<path class="azure" d="M80 0H120V78L100 64L80 78Z"/>
+<line class="pole" x1="136" y1="0" x2="136" y2="60"/>
+<path class="or" d="M136 0H176V46L156 32L136 46Z"/>
+<g transform="translate(410 70)">
+  <circle class="rose-ring" r="30"/>
+  <polygon class="rose" points="0,-38 5,-5 38,0 5,5 0,38 -5,5 -38,0 -5,-5"/>
+  <polygon class="rose" points="0,-20 3,-3 20,0 3,3 0,20 -3,3 -20,0 -3,-3" transform="rotate(45)" opacity=".7"/>
+</g>
+<g transform="translate(356 262)">
+  <circle class="seal" r="56"/>
+  <circle class="seal-ring" r="42"/>
+  <path class="seal-mark" d="M-22 10H22L26 -16L12 -4L0 -24L-12 -4L-26 -16Z"/>
+</g>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Trón<br>nélkül</h1>
+<p class="tag">Nem városokat foglalsz. Befolyást építesz bennük.</p>
+</div>
+</div>
+</body>
+</html>

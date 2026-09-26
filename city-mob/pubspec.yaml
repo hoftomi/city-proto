@@ -1,0 +1,27 @@
+name: tron_nelkul
+description: Trón nélkül – aszinkron, befolyás alapú stratégiai játék (mobil kliens).
+publish_to: none
+version: 0.0.1+1
+
+environment:
+  sdk: 3.13.4   # Flutter 3.47 (Dart 3.13)
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.4.0
+  flutter_secure_storage: ^9.2.4
+  google_sign_in: ^7.1.1
+  sign_in_with_apple: ^7.0.1
+  flutter_web_auth_2: ^4.1.0
+  crypto: ^3.0.6
+  google_fonts: ^6.3.0
+  path_drawing: ^1.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

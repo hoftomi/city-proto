@@ -1,0 +1,18 @@
+html, body, #root { min-height: 100%; }
+body { background: var(--paper-sunk); }
+.app { min-height: 100vh; position: relative; }
+.app-top { position: sticky; top: 0; z-index: 5; }
+.app-nav { position: sticky; bottom: 0; z-index: 5; }
+.app-toast { position: fixed; left: 50%; transform: translateX(-50%); top: calc(96px + env(safe-area-inset-top, 0px)); width: min(398px, calc(100% - 32px)); z-index: 10; }
+.app-toast .tn-toast { max-width: none; }
+.tn-action-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tn-action { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px dashed var(--line); }
+.tn-action:first-child { border-top: 0; padding-top: 0; }
+.tn-action-name { font-weight: 600; }
+.proto-note { border-style: dashed; }
+@media (prefers-reduced-motion: no-preference) { .app-toast { animation: toast-in .18s ease-out; } @keyframes toast-in { from { opacity: 0; transform: translate(-50%, -6px); } } }
+.map-hit { outline: none; }
+.map-hit:focus-visible { stroke: var(--verdigris); stroke-width: 2; }
+.app-exit { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); padding: 2px var(--space-4); background: var(--ink); color: var(--on-ink); font-size: 12px; line-height: 16px; }
+.app-exit button { font: inherit; font-weight: 700; color: inherit; background: none; border: 0; padding: 6px 0; cursor: pointer; }
+.app-exit span { opacity: .75; }

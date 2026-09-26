@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: tron-nelkul
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tron}
+    username: ${DB_USER:tron}
+    password: ${DB_PASSWORD:tron}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none   # a sémát a Flyway kezeli (db/migration)
+  flyway:
+    enabled: true
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  zone: Europe/Budapest
+  jwt:
+    # Legalább 32 bájt. Élesben kötelező felülírni a JWT_SECRET környezeti változóval.
+    secret: ${JWT_SECRET:csak-fejleszteshez-hasznald-ezt-a-titkot-0001}
+    ttl-hours: 720
+  auth:
+    # Vesszővel elválasztva: az Android, iOS és web OAuth kliensazonosítók, amelyek ID tokenjét elfogadjuk
+    google-client-ids: ${GOOGLE_CLIENT_IDS:}
+    # Az iOS bundle ID (és ha van, a Services ID)
+    apple-audiences: ${APPLE_AUDIENCES:}
+    discord-client-id: ${DISCORD_CLIENT_ID:}
+    discord-client-secret: ${DISCORD_CLIENT_SECRET:}
+    # Fejlesztői belépés szolgáltató nélkül, ADMIN szereppel. Élesben kapcsold ki!
+    dev-login: ${DEV_LOGIN:true}
+  scheduler:
+    enabled: ${SCHEDULER_ENABLED:true}

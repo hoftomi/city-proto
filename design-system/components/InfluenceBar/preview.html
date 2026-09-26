@@ -1,0 +1,14 @@
+<!-- @dsCard group="Befolyás" height=170 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>InfluenceBar</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronNelkul, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack',style:{maxWidth:420}},
+ h(T.InfluenceBar,{faction:'kereskedok',aside:h(T.ControlBadge,{level:'partner'}),segments:[{name:'Te',tincture:'kek',value:19.3,self:true},{name:'Ezüstpart-ház',tincture:'arany',value:55},{name:'Varjúvár',tincture:'fekete',value:12}],unknown:0,precision:'band5'}),
+ h(T.InfluenceBar,{faction:'nemesseg',aside:h(T.ControlBadge,{level:'dominans'}),segments:[{name:'Te',tincture:'kek',value:42,self:true},{name:'Ősi Tölgy',tincture:'zold',value:25}],unknown:8,precision:'exact'})));
+</script>
+</body>
+</html>
