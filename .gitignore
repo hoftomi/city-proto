@@ -1,0 +1,73 @@
+# --- Operációs rendszer ---
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# --- IDE-k és szerkesztők ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Titkok és helyi beállítások ---
+.env
+.env.*
+!.env.example
+local.properties
+key.properties
+*.keystore
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+
+# --- Naplók ---
+*.log
+logs/
+
+# --- Node / Vite (prototype) ---
+node_modules/
+dist/
+.vite/
+# A dist-single/index.html szándékosan verziókezelt (build nélkül is megnyitható).
+
+# --- Flutter / Dart (city-mob, the_city, tron-nelkul/mobile) ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+*.g.dart.tmp
+
+# iOS / macOS
+**/ios/Pods/
+**/macos/Pods/
+**/ios/.symlinks/
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/DerivedData/
+xcuserdata/
+*.xcuserstate
+
+# Android
+**/android/.gradle/
+**/android/captures/
+**/android/app/.cxx/
+GeneratedPluginRegistrant.java
+
+# --- Java / Gradle (tron-nelkul/backend) ---
+.gradle/
+out/
+bin/
+*.class
+!gradle/wrapper/gradle-wrapper.jar
