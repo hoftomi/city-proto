@@ -20,7 +20,11 @@ public class ApiExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler(ApiException.class)
-    ProblemDetail api(ApiException e) { return ProblemDetail.forStatusAndDetail(e.status, e.getMessage()); }
+    ProblemDetail api(ApiException e) {
+        ProblemDetail p = ProblemDetail.forStatusAndDetail(e.status, e.getMessage());
+        if (e.code != null) p.setProperty("code", e.code);
+        return p;
+    }
 
     /** Szabálysértés a motorban, ha nem a GameRunner fordította le. */
     @ExceptionHandler(EngineException.class)

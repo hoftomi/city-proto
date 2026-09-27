@@ -6,6 +6,7 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/data/repository/repositories.dart';
 import 'package:tron_nelkul/domain/service/game_service.dart';
 import 'package:tron_nelkul/ui/game/bloc/game_bloc.dart';
@@ -73,12 +74,12 @@ void main() {
             isA<GameViewState>()
                 .having((s) => s.busy, 'busy', false)
                 .having((s) => s.game!.draft.last.id, 'új parancs', 'uj')
-                .having((s) => s.notice?.body, 'értesítés', 'Fesztivál · Szélmező'),
+                .having((s) => s.notice?.body, 'értesítés', const Tr.raw('Fesztivál · Szélmező')),
           ]);
 
   blocTest<GameBloc, GameViewState>('elutasított parancs: veszély-értesítés a szerver üzenetével',
       build: () {
-        when(() => games.addOrder('g', any())).thenAnswer((_) async => const Left(Failure('Nincs elég arany.', status: 400)));
+        when(() => games.addOrder('g', any())).thenAnswer((_) async => const Left(Failure(Tr.raw('Nincs elég arany.'), status: 400)));
         return GameBloc(service);
       },
       act: (b) async {
@@ -87,7 +88,7 @@ void main() {
         b.add(GameOrderAdded(OrderRequest(type: 'hireSpy', city: 'szelmezo')));
       },
       skip: 3,
-      expect: () => [isA<GameViewState>().having((s) => s.notice?.title, 'üzenet', 'Nincs elég arany.').having((s) => s.notice?.tone, 'tone', 'danger')]);
+      expect: () => [isA<GameViewState>().having((s) => s.notice?.title, 'üzenet', const Tr.raw('Nincs elég arany.')).having((s) => s.notice?.tone, 'tone', 'danger')]);
 
   test('a lejárt saját lap után frissíteni kell', () {
     final lapAt = state.lap!.executeAt;

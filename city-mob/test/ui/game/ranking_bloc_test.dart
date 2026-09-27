@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_api/tron_api.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/game_view_extensions.dart';
 import 'package:tron_nelkul/domain/service/game_service.dart';
 import 'package:tron_nelkul/ui/game/ranking/bloc/ranking_bloc.dart';
@@ -31,7 +32,7 @@ void main() {
       act: (b) => b.add(RankingGameUpdated(game)),
       expect: () => [
             isA<RankingState>()
-                .having((s) => s.caption, 'fejléc', '6. elszámolás után · választás 6 elszámolás múlva')
+                .having((s) => s.caption, 'fejléc', const Tr('ranking.caption', {'n': '6', 'm': '6'}))
                 .having((s) => s.popularity.length, 'városok', 5)
                 .having((s) => s.popularity.first, 'első', const PopularityRow(name: 'Szélmező', pop: 10, seats: 5)),
             isA<RankingState>().having((s) => s.status, 'status', RankingStatus.loading),

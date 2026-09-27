@@ -3,6 +3,7 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/service/join_service.dart';
 import 'package:tron_nelkul/domain/service/lobby_service.dart';
 import 'package:tron_nelkul/ui/common/notice.dart';
@@ -37,10 +38,10 @@ void main() {
 
   blocTest<GameDetailBloc, GameDetailState>(
     'a térkép hibája hiba',
-    setUp: () => when(() => lobby.map('m1')).thenAnswer((_) async => const Left(Failure('nincs térkép'))),
+    setUp: () => when(() => lobby.map('m1')).thenAnswer((_) async => const Left(Failure(Tr.raw('nincs térkép')))),
     build: build,
     act: (b) => b.add(const GameDetailStarted('g1')),
-    expect: () => [const GameDetailState(gameId: 'g1'), const GameDetailState(gameId: 'g1', failure: Failure('nincs térkép'))],
+    expect: () => [const GameDetailState(gameId: 'g1'), const GameDetailState(gameId: 'g1', failure: Failure(Tr.raw('nincs térkép')))],
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
@@ -51,21 +52,21 @@ void main() {
     act: (b) => b.add(const GameDetailWithdrawRequested()),
     expect: () => [
       GameDetailState(gameId: 'g1', detail: d, map: mapDef, busy: true),
-      GameDetailState(gameId: 'g1', detail: d, map: mapDef, busy: true, notice: const Notice(1, 'Jelentkezés visszavonva.', tone: 'ok')),
-      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, 'Jelentkezés visszavonva.', tone: 'ok')),
+      GameDetailState(gameId: 'g1', detail: d, map: mapDef, busy: true, notice: const Notice(1, Tr('detail.withdrawn'), tone: 'ok')),
+      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, Tr('detail.withdrawn'), tone: 'ok')),
     ],
     verify: (_) => verify(() => lobby.game('g1')).called(1),
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
     'sikertelen visszavonás: hibaüzenet',
-    setUp: () => when(() => lobby.withdraw('g1')).thenAnswer((_) async => const Left(Failure('már indult'))),
+    setUp: () => when(() => lobby.withdraw('g1')).thenAnswer((_) async => const Left(Failure(Tr.raw('már indult')))),
     build: build,
     seed: () => GameDetailState(gameId: 'g1', detail: d, map: mapDef),
     act: (b) => b.add(const GameDetailWithdrawRequested()),
     expect: () => [
       GameDetailState(gameId: 'g1', detail: d, map: mapDef, busy: true),
-      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, 'Nem sikerült', body: 'már indult', tone: 'danger')),
+      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, Tr('detail.failed'), body: Tr.raw('már indult'), tone: 'danger')),
     ],
   );
 
@@ -75,7 +76,7 @@ void main() {
     seed: () => GameDetailState(gameId: 'g1', detail: d, map: mapDef),
     act: (b) => b.add(const GameDetailJoined()),
     expect: () => [
-      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, 'Jelentkeztél', body: 'Értesítünk, amikor a játék indul.', tone: 'ok')),
+      GameDetailState(gameId: 'g1', detail: d, map: mapDef, notice: const Notice(1, Tr('detail.joined'), body: Tr('detail.joined_body'), tone: 'ok')),
     ],
     verify: (_) => verify(() => lobby.game('g1')).called(1),
   );

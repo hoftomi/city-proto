@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tron_api/tron_api.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/city_extensions.dart';
 import 'package:tron_nelkul/domain/model/extensions.dart';
 import 'package:tron_nelkul/domain/service/city_service.dart';
@@ -37,7 +38,13 @@ void main() {
       final st = s.cityStats(cv);
       expect(st.length, 3);
       expect(st[0].tone, 'warn');
-      expect(st[2], (label: 'Választás', value: '6', suffix: 'elszámolás múlva', tone: null, art: 'foundParty'));
+      expect(st[2], (label: const Tr('city.stat.election'), value: const Tr.raw('6'), suffix: const Tr('city.stat.election_in_suffix'), tone: null, art: 'foundParty'));
+      expect(st[0].label, const Tr('city.stat.popularity'));
+    });
+
+    test('választás szövege: a következő elszámoláskor, vagy N elszámolás múlva', () {
+      expect(electionText(1), const Tr('city.election_next'));
+      expect(electionText(4), const Tr('city.election_in', {'n': '4'}));
     });
 
     test('fenyegetések ebben a városban', () {

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
+import '../../../core/tr.dart';
 import '../../../domain/model/extensions.dart';
 import '../../../domain/service/auth_service.dart';
 
@@ -56,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _expired(_AuthSessionExpired event, Emitter<AuthState> emit) async {
     if (state.status != AuthStatus.signedIn) return;
     await _service.signOut();
-    emit(const AuthState(status: AuthStatus.signedOut, error: 'A munkamenet lejárt. Jelentkezz be újra.'));
+    emit(const AuthState(status: AuthStatus.signedOut, error: Tr('error.session_expired')));
   }
 
   @override

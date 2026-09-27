@@ -6,8 +6,7 @@ class GoodForm extends Equatable {
   final int buyPts, boPts;
   final String? target;
 
-  GoodForm copyWith({int? buyPts, int? boPts, String? target}) =>
-      GoodForm(buyPts: buyPts ?? this.buyPts, boPts: boPts ?? this.boPts, target: target ?? this.target);
+  GoodForm copyWith({int? buyPts, int? boPts, String? target}) => GoodForm(buyPts: buyPts ?? this.buyPts, boPts: boPts ?? this.boPts, target: target ?? this.target);
 
   @override
   List<Object?> get props => [buyPts, boPts, target];
@@ -18,8 +17,7 @@ class NewsForm extends Equatable {
   const NewsForm({this.template, this.target, this.good});
   final String? template, target, good;
 
-  NewsForm copyWith({String? template, String? target, String? good}) =>
-      NewsForm(template: template ?? this.template, target: target ?? this.target, good: good ?? this.good);
+  NewsForm copyWith({String? template, String? target, String? good}) => NewsForm(template: template ?? this.template, target: target ?? this.target, good: good ?? this.good);
 
   @override
   List<Object?> get props => [template, target, good];

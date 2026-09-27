@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tron_api/tron_api.dart';
 
+import '../../core/tr.dart';
 import '../../util/format.dart';
 import 'extensions.dart';
 
@@ -19,12 +21,12 @@ class PopularityRow extends Equatable {
 
 /// A jelentéskártyák szűrője.
 enum ReportFilter {
-  mind('Mind'),
-  sajat('Saját'),
-  nyilvanos('Nyilvános');
+  mind,
+  sajat,
+  nyilvanos;
 
-  const ReportFilter(this.label);
-  final String label;
+  /// A szűrő gombjának felirata.
+  String get label => 'reports.filter.$name'.tr();
 
   bool accepts(ReportView r) => switch (this) {
         ReportFilter.mind => true,
@@ -73,7 +75,9 @@ extension GameViewX on GameState {
   List<Buildable> buildableTo(String cityId) => buildable.where((b) => b.to == cityId).toList();
 
   /// A Rangsor fejléce: „3. elszámolás után · választás 2 elszámolás múlva”.
-  String get rankingCaption => '${clock.settlements}. elszámolás után · választás ${electionText(clock.nextElectionIn)}';
+  Tr get rankingCaption => clock.nextElectionIn <= 1
+      ? Tr('ranking.caption_next', {'n': '${clock.settlements}'})
+      : Tr('ranking.caption', {'n': '${clock.settlements}', 'm': '${clock.nextElectionIn}'});
 
   /// A „Népszerűséged” tábla sorai városonként.
   List<PopularityRow> get popularityRows => [for (final c in cities) PopularityRow(name: c.name, pop: c.myPop.round(), seats: c.mySeats)];
@@ -85,7 +89,7 @@ extension GameViewX on GameState {
 
 extension CityCardX on CityView {
   /// A térkép városkártyájának felirata: profil, kulcsváros, távolság.
-  String get cardEyebrow => '$profile${key ? ' · kulcsváros' : ''}${reachable && distance != null ? ' · $distance lépés' : ''}';
+  String get cardEyebrow => [profile, if (key) 'map.key_city'.tr(), if (reachable && distance != null) 'map.distance'.tr(namedArgs: {'n': '$distance'})].join(' · ');
 }
 
 extension BuildableX on Buildable {
@@ -103,8 +107,8 @@ extension OrderViewX on OrderView {
 
 extension CostX on Cost {
   /// „2 PP · 30 A”.
-  String get text => [if (pp > 0) '$pp PP', if (gold > 0) '$gold A'].join(' · ');
+  String get text => [if (pp > 0) 'orders.cost_pp'.tr(namedArgs: {'pp': '$pp'}), if (gold > 0) 'orders.cost_gold'.tr(namedArgs: {'gold': '$gold'})].join(' · ');
 }
 
 /// „N elszámolás múlva” vagy „a következő elszámoláskor”.
-String electionText(int n) => n <= 1 ? 'a következő elszámoláskor' : '$n elszámolás múlva';
+String electionText(int n) => n <= 1 ? 'ranking.election_next'.tr() : 'ranking.election_in'.tr(namedArgs: {'n': '$n'});

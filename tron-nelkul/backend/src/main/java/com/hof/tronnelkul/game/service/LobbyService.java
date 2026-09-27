@@ -17,6 +17,8 @@ import java.util.*;
 public class LobbyService {
     /** Késői csatlakozás: futó játékba az első ennyi elszámolásig még be lehet lépni. */
     static final int LATE_JOIN_SETTLEMENTS = 3;
+    /** A ProblemDetail `code` mezője, ha a ház neve hibás vagy foglalt (a kliens a névmezőhöz lép vissza). */
+    static final String HOUSE_NAME = "house_name";
 
     private final GameRepository games;
     private final PlayerRepository players;
@@ -55,10 +57,10 @@ public class LobbyService {
         if (players.countByGameIdAndNpcFalse(g.id) >= g.maxPlayers) throw ApiException.conflict("A játék betelt.");
 
         String name = r.getHouseName() == null ? "" : r.getHouseName().strip().replaceAll("\\s+", " ");
-        if (name.length() < 3) throw ApiException.badRequest("A ház neve legalább 3 betű legyen.");
-        if (name.length() > 24) throw ApiException.badRequest("A ház neve legfeljebb 24 betű lehet.");
+        if (name.length() < 3) throw ApiException.badRequest("A ház neve legalább 3 betű legyen.").withCode(HOUSE_NAME);
+        if (name.length() > 24) throw ApiException.badRequest("A ház neve legfeljebb 24 betű lehet.").withCode(HOUSE_NAME);
         if (Npcs.isNpcName(name) || players.existsByGameIdAndHouseNameIgnoreCase(g.id, name))
-            throw ApiException.conflict("Ez a név ebben a játékban már foglalt.");
+            throw ApiException.conflict("Ez a név ebben a játékban már foglalt.").withCode(HOUSE_NAME);
         if (r.getTincture() == null || !Backgrounds.TINCTURES.contains(r.getTincture())) throw ApiException.badRequest("Válassz tinktúrát.");
         if (Backgrounds.of(r.getBackground()).isEmpty()) throw ApiException.badRequest("Válassz hátteret.");
         MapDefinition map = MapRegistry.get(g.mapId);

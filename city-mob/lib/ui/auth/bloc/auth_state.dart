@@ -10,7 +10,7 @@ class AuthState extends Equatable {
 
   /// Épp ezzel a szolgáltatóval lép be (a gombján pörög a jelző).
   final String? busyProvider;
-  final String? error;
+  final Tr? error;
 
   bool get busy => busyProvider != null;
   bool get admin => user?.admin ?? false;
@@ -20,7 +20,7 @@ class AuthState extends Equatable {
     UserDto? user,
     String? busyProvider,
     bool clearBusy = false,
-    String? error,
+    Tr? error,
     bool clearError = false,
   }) {
     return AuthState(

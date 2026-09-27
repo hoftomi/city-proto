@@ -22,6 +22,15 @@ widget  →  bloc  →  service  →  repository  →  datasource  →  (Dio / F
 - **Navigáció:** go_router, `lib/app/router/`. Az átirányítás az `AuthBloc` állapota szerint működik. A játék öt füle egy `StatefulShellRoute` ága (`/games/:id/play/{map,city,reports,orders,ranking}`), a városnézet városa és negyede pedig lekérdezési paraméter, így mélylinkelhető. A `GameBloc` a teljes játékot fogja át.
 - **API:** Dio, a Firebase ID tokent az `AuthInterceptor` teszi rá. 401-nél a `SessionEvents` jelez, és az `AuthBloc` kiléptet.
 
+## Feliratok
+
+Minden felirat a backendről jön. A forrásuk a `tron-nelkul/backend/src/main/resources/i18n/<nyelv>/<névtér>.json` fájlokban van, a szerver a `GET /api/i18n/{lang}` végponton adja ki őket.
+
+- **Betöltés:** a mobil az easy_localizationt használja, a `TranslationRepository` a betöltője. Elsőként a szerver friss változatát veszi (és elmenti), ha az nem érhető el, a legutóbb mentettet, végül az app tartalékát (`assets/translations`).
+- **Szinkronizálás:** a tartalékot a `python3 tools/sync_translations.py` állítja elő a backend fájljaiból. Kézzel ne szerkeszd.
+- **Szövegek a kódban:** a blocok és a service-ek nem adnak ki kész szöveget, hanem `Tr`-t (fordítási kulcs és paraméterek, vagy a szervertől kész szöveg). A widget a `.text`-et vagy a `'kulcs'.tr()`-t jeleníti meg.
+- **Kulcsteszt:** a `test/l10n` ellenőrzi, hogy a kódban használt minden kulcs létezik-e, és hogy a tartalék naprakész-e.
+
 ## Kódgenerálás
 
 ```bash

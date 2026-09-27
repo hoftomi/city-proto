@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +34,7 @@ class MapPage extends StatelessWidget {
             MapView(map: m, state: s, selected: v.selectedCity, onSelect: (id) => context.read<GameBloc>().add(GameMapCitySelected(id))),
             const SizedBox(height: 16),
             if (sel == null)
-              Text('Koppints egy városra a térképen.', style: TnText.body(c.inkMuted))
+              Text('map.tap_city'.tr(), style: TnText.body(c.inkMuted))
             else
               _CityCard(game: s, city: sel, busy: v.busy),
           ]);
@@ -58,13 +59,13 @@ class _CityCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, runSpacing: 6, children: [
           Eyebrow(sel.cardEyebrow),
-          StatChip(label: 'Népszerűséged', value: '${sel.myPop.round()}', art: 'nep'),
+          StatChip(label: 'map.your_popularity'.tr(), value: '${sel.myPop.round()}', art: 'nep'),
         ]),
         const SizedBox(height: 4),
         Text(sel.name, style: TnText.display(c.ink).copyWith(fontSize: 26, height: 30 / 26)),
         const SizedBox(height: 12),
         if (!sel.reachable) ...[
-          const Notice(tone: 'warn', title: 'Nem vezet ide útvonalad', body: 'Akciót csak a hálózatodban lévő városban indíthatsz. Építs útvonalat egy szomszédos városból.'),
+          Notice(tone: 'warn', title: 'map.unreachable_title'.tr(), body: 'map.unreachable_body'.tr()),
           const SizedBox(height: 12),
         ],
         if (sel.goods.isNotEmpty) ...[
@@ -81,8 +82,8 @@ class _CityCard extends StatelessWidget {
         const SizedBox(height: 12),
         Wrap(alignment: WrapAlignment.end, spacing: 8, runSpacing: 8, children: [
           for (final b in game.buildableTo(sel.id))
-            TnButton(label: 'Útvonal innen: ${b.fromName}', art: 'route', busy: busy, onPressed: () => context.read<GameBloc>().add(GameOrderAdded(b.order))),
-          TnButton(label: 'Város megnyitása', icon: 'varos', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.city(game.gameId, cityId: sel.id))),
+            TnButton(label: 'map.route_from'.tr(namedArgs: {'from': b.fromName}), art: 'route', busy: busy, onPressed: () => context.read<GameBloc>().add(GameOrderAdded(b.order))),
+          TnButton(label: 'map.open_city'.tr(), icon: 'varos', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.city(game.gameId, cityId: sel.id))),
         ]),
       ]),
     );
@@ -118,11 +119,11 @@ class _MiniGood extends StatelessWidget {
         const SizedBox(height: 2),
         g.myShares > 0
             ? Text.rich(TextSpan(style: TnText.body(c.ink).copyWith(fontSize: 13, height: 18 / 13), children: [
-                const TextSpan(text: 'Részesedésed '),
+                TextSpan(text: '${'map.your_shares'.tr()} '),
                 TextSpan(text: '${g.myShares}', style: TnText.data(c.ink, weight: FontWeight.w900)),
                 TextSpan(text: ' · $marginLabel'),
               ]))
-            : Text('Nincs részesedésed · Város: ${g.cityShares}', style: TnText.body(c.inkMuted).copyWith(fontSize: 13, height: 18 / 13)),
+            : Text('map.no_shares'.tr(namedArgs: {'city': '${g.cityShares}'}), style: TnText.body(c.inkMuted).copyWith(fontSize: 13, height: 18 / 13)),
       ]),
     );
   }

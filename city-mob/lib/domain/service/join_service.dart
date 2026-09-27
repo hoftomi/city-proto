@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../core/failure.dart';
+import '../../core/tr.dart';
 import '../model/join_extensions.dart';
 import 'lobby_service.dart';
 
@@ -16,7 +17,7 @@ class JoinService {
   final LobbyService _lobby;
 
   /// A jelentkezés lépései.
-  static const steps = ['Ház', 'Háttér', 'Kezdőhely', 'Összegzés'];
+  static const steps = [Tr('join.step.house'), Tr('join.step.background'), Tr('join.step.start'), Tr('join.step.summary')];
   static const minName = 3, maxName = 24;
 
   /// A játék részletei és a térképe egyben.
@@ -29,10 +30,10 @@ class JoinService {
   }
 
   /// A ház nevének hibája, vagy null, ha jó.
-  String? nameError(String name) {
+  Tr? nameError(String name) {
     final v = name.trim();
-    if (v.length < minName) return 'Legalább $minName betű kell.';
-    if (v.length > maxName) return 'Legfeljebb $maxName betű lehet.';
+    if (v.length < minName) return Tr('join.name_too_short', {'min': '$minName'});
+    if (v.length > maxName) return Tr('join.name_too_long', {'max': '$maxName'});
     return null;
   }
 
@@ -46,6 +47,7 @@ class JoinService {
 
   Future<Either<Failure, GameSummary>> join(GameDetail d, JoinForm f) => _lobby.join(d.game.id, request(d, f));
 
-  /// A szerver foglalt vagy hibás névre panaszkodik: vissza az első lépésre.
-  bool nameRejected(Failure f) => f.message.contains('név');
+  /// A szerver foglalt vagy hibás névre panaszkodik: vissza az első lépésre. A szerver szövegét (ProblemDetail
+  /// `detail`) vizsgálja, ez nem megjelenített felirat.
+  bool nameRejected(Failure f) => f.code == 'house_name';
 }

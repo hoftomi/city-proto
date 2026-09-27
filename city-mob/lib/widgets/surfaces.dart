@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -116,7 +117,7 @@ class TickTimer extends StatelessWidget {
     final c = context.tn;
     final base = TnText.data(const Color(0xFFF6E9C8), size: 13, weight: FontWeight.w700).copyWith(height: 18 / 13);
     return Semantics(
-      label: 'Elszámolás $at${remaining == null ? '' : ', $remaining múlva'}',
+      label: remaining == null ? 'ui.tick_timer.semantics'.tr(namedArgs: {'at': at}) : 'ui.tick_timer.semantics_remaining'.tr(namedArgs: {'at': at, 'remaining': remaining!}),
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.fromLTRB(5, 2, 10, 2),
@@ -129,7 +130,7 @@ class TickTimer extends StatelessWidget {
             const GameIcon('homokora', size: 18),
             const SizedBox(width: 6),
             Text.rich(TextSpan(style: base, children: [
-              const TextSpan(text: 'Elszámolás '),
+              TextSpan(text: '${'ui.tick_timer.label'.tr()} '),
               TextSpan(text: at, style: base.copyWith(fontWeight: FontWeight.w900, color: const Color(0xFFFFF5DC))),
               if (remaining != null) TextSpan(text: '  $remaining', style: base.copyWith(color: soon ? c.frameHi : const Color(0xFFD9C49A))),
             ])),

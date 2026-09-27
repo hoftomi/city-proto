@@ -1,0 +1,73 @@
+{
+  "failed": "Nem sikerült",
+  "house": "Ház",
+  "npc": "{name} (NPC)",
+  "self": "{name} (te)",
+  "resource": {
+    "arany": "Arany",
+    "legit": "Legitimitás",
+    "pp": "Parancspont",
+    "nep": "Népszerűség",
+    "ado": "Adó"
+  },
+  "command_points": {
+    "title": "Parancspont",
+    "semantics": "Parancspont: {free} szabad, {pending} lefoglalva, legfeljebb {max}",
+    "daily": "+{daily} a következő elszámoláskor",
+    "pending_daily": "{pending} PP lefoglalva a parancslapon · +{daily} a következő elszámoláskor"
+  },
+  "shares": {
+    "city": "Város",
+    "semantics": "{good} részesedések: {parts}"
+  },
+  "council": {
+    "none": "A tanácsot még nem választották meg.",
+    "legend": "Tanács: {list}"
+  },
+  "report": {
+    "kind": {
+      "kem": "Kémjelentés",
+      "katonai": "Katonai",
+      "frakcio": "Város",
+      "diplomacia": "Diplomácia",
+      "esemeny": "Városi esemény"
+    },
+    "confidence": {
+      "gyenge": "Gyenge forrás",
+      "kozepes": "Közepes forrás",
+      "eros": "Megbízható forrás"
+    },
+    "round": "{round}. elszámolás",
+    "public": "nyilvános"
+  },
+  "order_sheet": {
+    "title": "Parancslap",
+    "seal": "Parancsok lepecsételése",
+    "total": "{total} / {available} PP",
+    "total_over": "{total} / {available} PP · túllépés",
+    "sealed": "Lepecsételve",
+    "hidden": "Rejtett",
+    "remove": "{label} törlése"
+  },
+  "tick_timer": {
+    "label": "Elszámolás",
+    "semantics": "Elszámolás {at}",
+    "semantics_remaining": "Elszámolás {at}, {remaining} múlva"
+  },
+  "viewport": {
+    "zoom_in": "Nagyítás",
+    "zoom_out": "Kicsinyítés",
+    "reset": "Teljes nézet"
+  },
+  "map": {
+    "semantics": "{name} térképe",
+    "estate": "Birtokod",
+    "start": "Kezdőhely: {name}",
+    "city_reachable": "{name}, elérhető",
+    "city_unreachable": "{name}, nem vezet ide útvonalad"
+  },
+  "city_view": {
+    "semantics": "{name} látképe. Kijelölve: {district}.",
+    "none": "nincs"
+  }
+}

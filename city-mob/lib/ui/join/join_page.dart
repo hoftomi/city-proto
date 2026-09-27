@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +36,7 @@ class _JoinView extends StatelessWidget {
       listeners: [
         BlocListener<JoinBloc, JoinState>(
           listenWhen: (a, b) => b.notice != null && a.notice != b.notice,
-          listener: (context, s) => showToast(context, s.notice!.title, body: s.notice!.body, tone: s.notice!.tone),
+          listener: (context, s) => showToast(context, s.notice!.title.text, body: s.notice!.body?.text, tone: s.notice!.tone),
         ),
         BlocListener<JoinBloc, JoinState>(
           listenWhen: (a, b) => a.outcome == null && b.outcome != null,
@@ -57,19 +58,19 @@ class _JoinView extends StatelessWidget {
               child: Column(children: [
                 TnHeader(
                   leading: TnButton(
-                    label: s.backLabel,
+                    label: s.backLabel.text,
                     kind: TnButtonKind.quiet,
                     small: true,
                     onPressed: () => s.canPop ? _leave(context) : bloc.add(const JoinBackPressed()),
                   ),
                   title: Text(s.game?.name ?? '', textAlign: TextAlign.right, style: TnText.caption(const Color(0xFFD9C49A))),
-                  bottom: Padding(padding: const EdgeInsets.only(top: 8), child: JoinStepper(step: s.step, steps: s.steps)),
+                  bottom: Padding(padding: const EdgeInsets.only(top: 8), child: JoinStepper(step: s.step, steps: [for (final t in s.steps) t.text])),
                 ),
                 if (s.failure != null && !s.ready)
                   Expanded(
                     child: Center(
                       child: Padding(
-                          padding: const EdgeInsets.all(16), child: Notice(tone: 'danger', title: 'Nem sikerült betölteni', body: s.failure!.message)),
+                          padding: const EdgeInsets.all(16), child: Notice(tone: 'danger', title: 'lobby.load_failed'.tr(), body: s.failure!.message.text)),
                     ),
                   )
                 else if (!s.ready)
@@ -80,7 +81,7 @@ class _JoinView extends StatelessWidget {
                     top: false,
                     minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                     child: TnButton(
-                      label: s.nextLabel,
+                      label: s.nextLabel.text,
                       kind: TnButtonKind.primary,
                       expand: true,
                       busy: s.busy,
@@ -132,12 +133,12 @@ class _HouseStepState extends State<_HouseStep> {
     final s = widget.s;
     final bloc = context.read<JoinBloc>();
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      _title(c, 'Alapítsd meg a házad'),
+      _title(c, 'join.house.title'.tr()),
       Row(children: [
         HouseCrest(tincture: s.tincture, initial: _initial(s.trimmedName), size: 64, name: s.name),
         const SizedBox(width: 16),
         Expanded(
-            child: Text(s.trimmedName.isEmpty ? 'Házad neve' : s.trimmedName, style: TnText.title(c.ink).copyWith(fontSize: 24, height: 28 / 24))),
+            child: Text(s.trimmedName.isEmpty ? 'join.house.name_placeholder'.tr() : s.trimmedName, style: TnText.title(c.ink).copyWith(fontSize: 24, height: 28 / 24))),
       ]),
       const SizedBox(height: 16),
       TextField(
@@ -147,16 +148,16 @@ class _HouseStepState extends State<_HouseStep> {
         onChanged: (v) => bloc.add(JoinNameChanged(v)),
         onSubmitted: (_) => bloc.add(const JoinNameSubmitted()),
         decoration: InputDecoration(
-          labelText: 'A ház neve',
-          hintText: 'például Kékholló',
+          labelText: 'join.house.name_label'.tr(),
+          hintText: 'join.house.name_hint'.tr(),
           border: const OutlineInputBorder(),
-          errorText: s.shownNameError,
-          helperText: 'Így látnak a többiek a térképen és a ranglistán.',
+          errorText: s.shownNameError?.text,
+          helperText: 'join.house.name_helper'.tr(),
           counterText: '',
         ),
       ),
       const SizedBox(height: 16),
-      const FieldLabel('Tinktúra (a házad színe)'),
+      FieldLabel('join.house.tincture_label'.tr()),
       const SizedBox(height: 8),
       GridView.count(
         crossAxisCount: 4,
@@ -171,7 +172,7 @@ class _HouseStepState extends State<_HouseStep> {
         ],
       ),
       const SizedBox(height: 8),
-      Text('Egy tinktúrát több ház is választhat; a nevek egyediek.', style: TnText.caption(c.inkMuted)),
+      Text('join.house.tincture_note'.tr(), style: TnText.caption(c.inkMuted)),
     ]);
   }
 }
@@ -186,9 +187,8 @@ class _BackgroundStep extends StatelessWidget {
     final c = context.tn;
     final bloc = context.read<JoinBloc>();
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      _title(c, 'Honnan jön a házad?'),
-      Text('A háttér csak induló bónuszt ad, egyik ágba sem zár be. Mindhárom ágban játszhatsz: Vásártér, Városháza, Alvilág.',
-          style: TnText.body(c.inkMuted)),
+      _title(c, 'join.background.title'.tr()),
+      Text('join.background.intro'.tr(), style: TnText.body(c.inkMuted)),
       const SizedBox(height: 12),
       for (final b in s.detail!.backgrounds) ...[
         JoinChoice(icon: b.icon, title: b.name, lines: b.perks, selected: b.id == s.background, onTap: () => bloc.add(JoinBackgroundSelected(b.id))),
@@ -209,9 +209,8 @@ class _StartStep extends StatelessWidget {
     final bloc = context.read<JoinBloc>();
     final slot = s.slot;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      _title(c, 'Hol áll a birtokod?'),
-      Text('A birtokodból két szomszédos városba indulsz ingyenes útvonallal. Akciót csak a hálózatodban lévő városban indíthatsz.',
-          style: TnText.body(c.inkMuted)),
+      _title(c, 'join.start.title'.tr()),
+      Text('join.start.intro'.tr(), style: TnText.body(c.inkMuted)),
       const SizedBox(height: 12),
       MapView(map: s.map!, showStarts: true, selectedStart: s.start, onSelectStart: (id) => bloc.add(JoinStartSelected(id))),
       const SizedBox(height: 12),
@@ -219,7 +218,11 @@ class _StartStep extends StatelessWidget {
         JoinChoice(
           icon: 'route',
           title: st.name,
-          lines: ['Szomszédos: ${st.neighborNames.join(', ')}', if (st.homeCityName.isNotEmpty) 'Kezdőváros: ${st.homeCityName}', if (st.note.isNotEmpty) st.note],
+          lines: [
+            'join.start.neighbors'.tr(namedArgs: {'names': st.neighborNames.join(', ')}),
+            if (st.homeCityName.isNotEmpty) 'join.start.home_city'.tr(namedArgs: {'name': st.homeCityName}),
+            if (st.note.isNotEmpty) st.note,
+          ],
           selected: st.id == s.start,
           onTap: () => bloc.add(JoinStartSelected(st.id)),
         ),
@@ -227,16 +230,16 @@ class _StartStep extends StatelessWidget {
       ],
       if (s.needsGood && slot != null) ...[
         const SizedBox(height: 8),
-        const FieldLabel('Induló árucikk'),
+        FieldLabel('join.start.good_label'.tr()),
         const SizedBox(height: 4),
-        Text('A Kereskedőház 20 részesedést kap ${slot.homeCityName.isEmpty ? 'a kezdőváros' : slot.homeCityName} egyik árucikkéből. Melyikből?', style: TnText.body(c.inkMuted)),
+        Text(slot.homeCityName.isEmpty ? 'join.start.good_intro_default'.tr() : 'join.start.good_intro'.tr(namedArgs: {'city': slot.homeCityName}), style: TnText.body(c.inkMuted)),
         const SizedBox(height: 8),
         for (final g in slot.homeGoods) ...[
           JoinChoice(
             icon: 'kereskedok',
             art: g.id,
             title: g.name,
-            lines: const ['20 részesedés · azonnal van eladható árud'],
+            lines: ['join.start.good_line'.tr()],
             selected: g.id == s.good?.id,
             onTap: () => bloc.add(JoinStartGoodSelected(g.id)),
           ),
@@ -259,7 +262,7 @@ class _SummaryStep extends StatelessWidget {
     final st = s.slot;
     final good = s.good;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      _title(c, 'Minden készen áll'),
+      _title(c, 'join.summary.title'.tr()),
       TnCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
@@ -273,19 +276,18 @@ class _SummaryStep extends StatelessWidget {
             ),
           ]),
           const SizedBox(height: 16),
-          JoinKv('Játék', '${g.name} · ${g.season}'),
-          JoinKv('Kezdés', s.startText),
+          JoinKv('join.summary.game'.tr(), '${g.name} · ${g.season}'),
+          JoinKv('join.summary.start'.tr(), s.startText.text),
           if (st != null) ...[
-            JoinKv('Kezdőhely', '${st.name} (${st.neighborNames.join(', ')})'),
-            if (st.homeCityName.isNotEmpty) JoinKv('Kezdőváros', st.homeCityName),
+            JoinKv('join.summary.slot'.tr(), 'join.summary.slot_value'.tr(namedArgs: {'name': st.name, 'neighbors': st.neighborNames.join(', ')})),
+            if (st.homeCityName.isNotEmpty) JoinKv('join.summary.home_city'.tr(), st.homeCityName),
           ],
-          if (good != null) JoinKv('Induló árucikk', '20 részesedés · ${good.name}'),
-          const JoinKv('Induló készlet', '10 PP · 30 arany · 20 népszerűség a kezdővárosban · 2 útvonal'),
+          if (good != null) JoinKv('join.summary.good'.tr(), 'join.summary.good_value'.tr(namedArgs: {'good': good.name})),
+          JoinKv('join.summary.kit'.tr(), 'join.summary.kit_value'.tr()),
         ]),
       ),
       const SizedBox(height: 12),
-      Text('A kezdésig bármikor visszavonhatod a jelentkezést. A ház neve és tinktúrája a kezdés után már nem változtatható.',
-          style: TnText.caption(c.inkMuted)),
+      Text('join.summary.note'.tr(), style: TnText.caption(c.inkMuted)),
     ]);
   }
 }

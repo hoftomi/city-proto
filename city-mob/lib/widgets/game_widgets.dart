@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
 
@@ -144,7 +145,7 @@ class HouseCrest extends StatelessWidget {
     final k = size / 26;
     final st = TnText.title(const Color(0xFFFFF8E6)).copyWith(fontSize: 10 * k, height: 1, letterSpacing: 0, fontWeight: FontWeight.w800);
     return Semantics(
-      label: '${name ?? 'Ház'}${npc ? ' (NPC)' : ''}',
+      label: npc ? 'ui.npc'.tr(namedArgs: {'name': name ?? 'ui.house'.tr()}) : name ?? 'ui.house'.tr(),
       child: ExcludeSemantics(
         child: SizedBox(
           width: size,
@@ -310,12 +311,12 @@ class ResourceChip extends StatelessWidget {
   final String kind;
   final int value;
   final int? delta, max;
-  static const _names = {'arany': 'Arany', 'legit': 'Legitimitás', 'pp': 'Parancspont', 'nep': 'Népszerűség', 'ado': 'Adó'};
+  static const _names = {'arany', 'legit', 'pp', 'nep', 'ado'};
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final name = _names[kind] ?? kind;
+    final name = _names.contains(kind) ? 'ui.resource.$kind'.tr() : kind;
     return Tooltip(
       message: name,
       child: Semantics(
@@ -365,7 +366,7 @@ class CommandPoints extends StatelessWidget {
     final c = context.tn;
     final pend = pending.clamp(0, available);
     return Semantics(
-      label: 'Parancspont: ${available - pend} szabad, $pend lefoglalva, legfeljebb $max',
+      label: 'ui.command_points.semantics'.tr(namedArgs: {'free': '${available - pend}', 'pending': '$pend', 'max': '$max'}),
       child: ExcludeSemantics(
         child: Framed(
           width: double.infinity,
@@ -376,7 +377,7 @@ class CommandPoints extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
-              Text('Parancspont', style: TnText.tab(c.ink).copyWith(letterSpacing: 0.7)),
+              Text('ui.command_points.title'.tr(), style: TnText.tab(c.ink).copyWith(letterSpacing: 0.7)),
               const Spacer(),
               Text('${available - pend} / $max', style: TnText.title(c.ink).copyWith(fontSize: 22, height: 26 / 22)),
             ]),
@@ -387,7 +388,7 @@ class CommandPoints extends StatelessWidget {
               return SizedBox(width: w, height: d, child: CustomPaint(painter: _PipsPainter(c, max, available - pend, available, d)));
             }),
             const SizedBox(height: 8),
-            Text('${pend > 0 ? '$pend PP lefoglalva a parancslapon · ' : ''}+$daily a következő elszámoláskor', style: TnText.caption(c.inkMuted)),
+            Text(pend > 0 ? 'ui.command_points.pending_daily'.tr(namedArgs: {'pending': '$pend', 'daily': '$daily'}) : 'ui.command_points.daily'.tr(namedArgs: {'daily': '$daily'}), style: TnText.caption(c.inkMuted)),
           ]),
         ),
       ),
@@ -485,10 +486,11 @@ class ShareBar extends StatelessWidget {
       for (final s in owners) (s.shares, seg(c.house(s.house!.tincture), self: s.house!.self)),
       if (cityPart > 0) (cityPart, CustomPaint(painter: _HatchPainter(c.shareNeutral, const Color(0xFFC9B083)))),
     ];
-    final a11y = [for (final s in owners) '${s.house!.name} ${s.shares}', 'Város $cityPart'].join(', ');
+    final cityName = 'ui.shares.city'.tr();
+    final a11y = [for (final s in owners) '${s.house!.name} ${s.shares}', '$cityName $cityPart'].join(', ');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Semantics(
-        label: '${good.name} részesedések: $a11y',
+        label: 'ui.shares.semantics'.tr(namedArgs: {'good': good.name, 'parts': a11y}),
         child: Container(
           height: 20,
           decoration: BoxDecoration(
@@ -512,7 +514,7 @@ class ShareBar extends StatelessWidget {
         const SizedBox(height: 6),
         Wrap(spacing: 12, runSpacing: 4, children: [
           for (final s in owners) _key(c, c.house(s.house!.tincture), s.house!.name, '${s.shares}', bold: s.house!.self),
-          if (cityPart > 0) _key(c, c.shareNeutral, 'Város', '$cityPart'),
+          if (cityPart > 0) _key(c, c.shareNeutral, cityName, '$cityPart'),
         ]),
       ],
     ]);
@@ -541,7 +543,7 @@ class SeatsBar extends StatelessWidget {
     while (seats.length < total) {
       seats.add(null);
     }
-    final text = legend.isEmpty ? 'A tanácsot még nem választották meg.' : 'Tanács: ${legend.map((p) => '${p.house.name} ${p.seats}').join(' · ')}';
+    final text = legend.isEmpty ? 'ui.council.none'.tr() : 'ui.council.legend'.tr(namedArgs: {'list': legend.map((p) => '${p.house.name} ${p.seats}').join(' · ')});
     return Semantics(
       label: text,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -823,7 +825,7 @@ class HouseName extends StatelessWidget {
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
         HouseCrest(tincture: house.tincture, size: size, npc: house.npc, name: house.name),
         const SizedBox(width: 6),
-        Flexible(child: Text(house.self ? '${house.name} (te)' : house.name, overflow: TextOverflow.ellipsis, style: TnText.body(context.tn.ink).copyWith(fontSize: 14))),
+        Flexible(child: Text(house.self ? 'ui.self'.tr(namedArgs: {'name': house.name}) : house.name, overflow: TextOverflow.ellipsis, style: TnText.body(context.tn.ink).copyWith(fontSize: 14))),
       ]);
 }
 
@@ -835,23 +837,22 @@ class HouseName extends StatelessWidget {
 class ReportCard extends StatelessWidget {
   const ReportCard({super.key, required this.report});
   final ReportView report;
-  static const _kinds = {
-    'kem': ('kem', 'Kémjelentés'),
-    'katonai': ('katonai', 'Katonai'),
-    'frakcio': ('frakcio', 'Város'),
-    'diplomacia': ('diplomacia', 'Diplomácia'),
-    'esemeny': ('esemeny', 'Városi esemény'),
-  };
-  static const _conf = {'gyenge': (1, 'Gyenge forrás'), 'kozepes': (2, 'Közepes forrás'), 'eros': (3, 'Megbízható forrás')};
+  /// A jelentés fajtái (ikon és felirat kulcsa: `ui.report.kind.<fajta>`); ismeretlennél városi esemény.
+  static const _kinds = {'kem', 'katonai', 'frakcio', 'diplomacia', 'esemeny'};
+
+  /// A forrás megbízhatósága: a teli sávok száma (felirat: `ui.report.confidence.<szint>`).
+  static const _conf = {'gyenge': 1, 'kozepes': 2, 'eros': 3};
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final k = _kinds[report.kind] ?? _kinds['esemeny']!;
-    final conf = _conf[report.confidence];
+    final kind = _kinds.contains(report.kind) ? report.kind : 'esemeny';
+    final k = (kind, 'ui.report.kind.$kind'.tr());
+    final level = _conf[report.confidence];
+    final conf = level == null ? null : (level, 'ui.report.confidence.${report.confidence}'.tr());
     final toneColor = switch (report.tone) { 'danger' => c.danger, 'warn' => c.warn, 'ok' => c.ok, _ => null };
     final kindStyle = TnText.data(toneColor ?? c.inkMuted, size: 11.5, weight: FontWeight.w900).copyWith(letterSpacing: 0.7, height: 16 / 11.5);
-    final tick = ' · ${report.round}. elszámolás · ${shortDateTime(report.createdAt)}${report.isPublic ? ' · nyilvános' : ''}';
+    final tick = ' · ${'ui.report.round'.tr(namedArgs: {'round': '${report.round}'})} · ${shortDateTime(report.createdAt)}${report.isPublic ? ' · ${'ui.report.public'.tr()}' : ''}';
     return Framed(
       width: double.infinity,
       border: c.wood,
@@ -960,7 +961,7 @@ void showToast(BuildContext context, String title, {String? body, String tone = 
 }
 
 /// Egységes hibaüzenet.
-void showError(BuildContext context, Object e) => showToast(context, 'Nem sikerült', body: e.toString(), tone: 'danger');
+void showError(BuildContext context, Object e) => showToast(context, 'ui.failed'.tr(), body: e.toString(), tone: 'danger');
 
 /// Szemöldökcím (tn-eyebrow), opcionális játékikonnal.
 class Eyebrow extends StatelessWidget {
@@ -1016,7 +1017,7 @@ class OrderSheet extends StatelessWidget {
     this.onSeal,
     this.onRemove,
     this.busy = false,
-    this.sealLabel = 'Parancsok lepecsételése',
+    this.sealLabel,
   });
   final List<OrderSheetRow> orders;
   final int total, available;
@@ -1024,7 +1025,9 @@ class OrderSheet extends StatelessWidget {
   final bool sealed, busy;
   final VoidCallback? onSeal;
   final void Function(int index)? onRemove;
-  final String sealLabel;
+
+  /// A lepecsételés gomb felirata; alapból „Parancsok lepecsételése”.
+  final String? sealLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -1048,7 +1051,7 @@ class OrderSheet extends StatelessWidget {
             ),
             child: Row(children: [
               Expanded(
-                  child: Text('Parancslap',
+                  child: Text('ui.order_sheet.title'.tr(),
                       style: TnText.sheetTitle(c.frameHi).copyWith(fontSize: 17, height: 22 / 17, shadows: const [Shadow(color: Color(0x80000000), offset: Offset(0, 1))]))),
               if (aside != null) Text(aside!, style: TnText.caption(c.onWood)),
             ]),
@@ -1057,7 +1060,7 @@ class OrderSheet extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(14.5, 12, 14.5, 12),
             child: Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 12, runSpacing: 12, children: [
-              Text('$total / $available PP${over ? ' · túllépés' : ''}', style: TnText.data(over ? c.danger : c.ink, size: 14)),
+              Text((over ? 'ui.order_sheet.total_over' : 'ui.order_sheet.total').tr(namedArgs: {'total': '$total', 'available': '$available'}), style: TnText.data(over ? c.danger : c.ink, size: 14)),
               if (sealed)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -1065,11 +1068,11 @@ class OrderSheet extends StatelessWidget {
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     TnIcon('pp', size: 16, color: c.seal),
                     const SizedBox(width: 8),
-                    Text('Lepecsételve', style: TnText.data(c.seal, size: 14)),
+                    Text('ui.order_sheet.sealed'.tr(), style: TnText.data(c.seal, size: 14)),
                   ]),
                 )
               else
-                TnButton(label: sealLabel, icon: 'pp', kind: TnButtonKind.seal, busy: busy, onPressed: over || orders.isEmpty ? null : onSeal),
+                TnButton(label: sealLabel ?? 'ui.order_sheet.seal'.tr(), icon: 'pp', kind: TnButtonKind.seal, busy: busy, onPressed: over || orders.isEmpty ? null : onSeal),
             ]),
           ),
         ]),
@@ -1093,7 +1096,7 @@ class OrderSheet extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 6),
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   decoration: BoxDecoration(color: c.shareUnknown, borderRadius: BorderRadius.circular(3)),
-                  child: Text('Rejtett', style: TnText.data(Colors.white, size: 11)),
+                  child: Text('ui.order_sheet.hidden'.tr(), style: TnText.data(Colors.white, size: 11)),
                 ),
             ]),
             if (o.meta != null && o.meta!.isNotEmpty) Text(o.meta!, style: TnText.caption(c.inkMuted)),
@@ -1112,7 +1115,7 @@ class OrderSheet extends StatelessWidget {
         Text(o.cost, style: TnText.data(c.ink, size: 13.5)),
         if (onRemove != null && !sealed)
           IconButton(
-            tooltip: '${o.label} törlése',
+            tooltip: 'ui.order_sheet.remove'.tr(namedArgs: {'label': o.label}),
             onPressed: busy ? null : () => onRemove!(i),
             visualDensity: VisualDensity.compact,
             icon: TnIcon('close', size: 14, color: c.inkMuted),

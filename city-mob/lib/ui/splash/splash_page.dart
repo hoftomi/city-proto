@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/tokens.dart';
@@ -14,7 +15,7 @@ class SplashPage extends StatelessWidget {
       body: TnScreen(
         child: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text('Trón nélkül', style: TnText.hero(c.ink)),
+            Text('app.title'.tr(), style: TnText.hero(c.ink)),
             const SizedBox(height: 16),
             SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: c.frame)),
           ]),

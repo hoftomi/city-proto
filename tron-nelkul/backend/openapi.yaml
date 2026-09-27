@@ -16,9 +16,35 @@ tags:
   description: A játék
 - name: admin
   description: Fejlesztői végpontok (ADMIN)
+- name: i18n
+  description: A mobil kliens feliratai
 security:
 - bearerAuth: []
 paths:
+  /api/i18n/{lang}:
+    get:
+      operationId: getTranslations
+      tags:
+      - i18n
+      summary: A kliens összes felirata egy nyelven (easy_localization formátum)
+      description: Névterenként beágyazott kulcs–szöveg párok (például {"lobby":{"title":"Játékok"}}). A paraméterek {név} alakúak. Ismeretlen nyelvnél a magyar változat jön. Bejelentkezés nélkül is elérhető, mert a belépőképernyő is ebből dolgozik.
+      security: []
+      parameters:
+      - name: lang
+        in: path
+        required: true
+        description: Nyelvkód, például hu
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Translations'
+        default:
+          $ref: '#/components/responses/Problem'
   /api/auth/discord:
     post:
       operationId: discordLogin
@@ -1448,6 +1474,9 @@ components:
           type: string
         instance:
           type: string
+        code:
+          type: string
+          description: 'Opcionális gépi kód, amely alapján a kliens dönthet (például house_name: a ház neve hibás vagy foglalt).'
     RankRow:
       type: object
       required:
@@ -1729,6 +1758,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GoodOption'
+    Translations:
+      type: object
+      description: Névterenként beágyazott fordítások; a levelek szövegek.
+      additionalProperties: true
     TerrainDef:
       type: object
       description: 'Dekoratív domborzat. mountains: [x, y, méret], forests: [x, y, darab], fields: [x, y, sz, m, forgatás], marsh: [x, y, darab].'

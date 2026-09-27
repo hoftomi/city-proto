@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tron_api/tron_api.dart';
 
@@ -14,13 +15,13 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.tn;
     return switch (g.badge) {
-      GameBadge.joined => TnChip(label: 'Jelentkeztél', icon: 'check', fg: c.onBtn, bg: c.btnGreen, border: c.outline),
-      GameBadge.almostFull => TnChip(label: 'Majdnem tele', fg: c.ink, bg: c.btnGold),
-      GameBadge.runningJoinable => TnChip(label: 'Fut · még csatlakozhatsz', fg: c.onBtn, bg: c.btnGreen, border: c.outline),
-      GameBadge.running => TnChip(label: 'Fut', fg: c.onBtn, bg: c.btnGreen, border: c.outline),
-      GameBadge.open => TnChip(label: 'Jelentkezés nyitva', fg: c.onBtn, bg: c.btnBlue, border: c.outline),
-      GameBadge.soon => TnChip(label: 'Hamarosan', fg: c.inkMuted),
-      GameBadge.finished => TnChip(label: 'Lezárult', fg: c.inkMuted, bg: c.hollow),
+      GameBadge.joined => TnChip(label: 'lobby.badge.joined'.tr(), icon: 'check', fg: c.onBtn, bg: c.btnGreen, border: c.outline),
+      GameBadge.almostFull => TnChip(label: 'lobby.badge.almost_full'.tr(), fg: c.ink, bg: c.btnGold),
+      GameBadge.runningJoinable => TnChip(label: 'lobby.badge.running_joinable'.tr(), fg: c.onBtn, bg: c.btnGreen, border: c.outline),
+      GameBadge.running => TnChip(label: 'lobby.badge.running'.tr(), fg: c.onBtn, bg: c.btnGreen, border: c.outline),
+      GameBadge.open => TnChip(label: 'lobby.badge.open'.tr(), fg: c.onBtn, bg: c.btnBlue, border: c.outline),
+      GameBadge.soon => TnChip(label: 'lobby.badge.soon'.tr(), fg: c.inkMuted),
+      GameBadge.finished => TnChip(label: 'lobby.badge.finished'.tr(), fg: c.inkMuted, bg: c.hollow),
     };
   }
 }

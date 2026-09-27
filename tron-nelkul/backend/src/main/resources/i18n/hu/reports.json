@@ -1,0 +1,9 @@
+{
+  "load_failed": "Nem sikerült betölteni",
+  "empty": "Még nincs jelentés. Az első az elszámolás vagy a parancslapod lefutása után érkezik.",
+  "filter": {
+    "mind": "Mind",
+    "sajat": "Saját",
+    "nyilvanos": "Nyilvános"
+  }
+}

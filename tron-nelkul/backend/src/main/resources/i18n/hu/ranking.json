@@ -1,0 +1,22 @@
+{
+  "load_failed": "Nem sikerült betölteni",
+  "caption": "{n}. elszámolás után · választás {m} elszámolás múlva",
+  "caption_next": "{n}. elszámolás után · választás a következő elszámoláskor",
+  "election_in": "{n} elszámolás múlva",
+  "election_next": "a következő elszámoláskor",
+  "title": "Legitimitás",
+  "self": "{name} (te)",
+  "col": {
+    "house": "Ház",
+    "shares": "Rész.",
+    "seats": "Hely",
+    "legit": "L"
+  },
+  "popularity": {
+    "title": "Népszerűséged",
+    "city": "Város",
+    "pop": "Népszerűség",
+    "seats": "Tanácshely"
+  },
+  "hint": "Legitimitás elszámolásonként: tanácshelyenként +1, többség +3, legtöbb eladás +2, legnépszerűbb +2 városonként."
+}

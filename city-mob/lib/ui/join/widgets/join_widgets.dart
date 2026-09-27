@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../theme/tokens.dart';
@@ -18,7 +19,7 @@ class JoinStepper extends StatelessWidget {
         if (i > 0) const SizedBox(width: 6),
         Expanded(
           child: Semantics(
-            label: '${i + 1}. lépés: ${steps[i]}${i == step ? ', aktuális' : ''}',
+            label: (i == step ? 'join.step_semantics_current' : 'join.step_semantics').tr(namedArgs: {'n': '${i + 1}', 'name': steps[i]}),
             child: ExcludeSemantics(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(

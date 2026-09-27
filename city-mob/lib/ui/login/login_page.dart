@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/config.dart';
 import '../../theme/tokens.dart';
@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
     final c = context.tn;
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (a, b) => b.error != null && a.error != b.error,
-      listener: (context, s) => showToast(context, s.error!, tone: 'danger'),
+      listener: (context, s) => showToast(context, s.error!.text, tone: 'danger'),
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, s) {
         void signIn(String p) => context.read<AuthBloc>().add(AuthSignInRequested(p));
         Widget social(String id, String mark, String label) =>
@@ -40,20 +40,17 @@ class LoginPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                    Text('Trón nélkül', textAlign: TextAlign.center, style: TnText.hero(c.ink)),
+                    Text('app.title'.tr(), textAlign: TextAlign.center, style: TnText.hero(c.ink)),
                     const SizedBox(height: 4),
-                    Text('Nem városokat foglalsz. Befolyást építesz bennük.',
+                    Text('app.tagline'.tr(),
                         textAlign: TextAlign.center, style: TnText.bodyStrong(c.inkMuted).copyWith(fontSize: 16, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic)),
                     const SizedBox(height: 24),
-                    social('google', 'G', 'Folytatás Google-fiókkal'),
-                    if (Config.appleAvailable) ...[const SizedBox(height: 12), social('apple', 'A', 'Folytatás Apple-fiókkal')],
+                    social('google', 'G', 'login.google'.tr()),
+                    if (Config.appleAvailable) ...[const SizedBox(height: 12), social('apple', 'A', 'login.apple'.tr())],
                     const SizedBox(height: 12),
-                    social('discord', 'D', 'Folytatás Discord-fiókkal'),
+                    social('discord', 'D', 'login.discord'.tr()),
                     const SizedBox(height: 24),
-                    Text(
-                        'Nincs külön jelszó: a fiókodat a választott szolgáltatón keresztül azonosítjuk. '
-                        'A folytatással elfogadod a Felhasználási feltételeket és az Adatvédelmi tájékoztatót.',
-                        style: TnText.caption(c.inkMuted)),
+                    Text('login.terms'.tr(), style: TnText.caption(c.inkMuted)),
                   ]),
                 ),
               ]),
@@ -88,7 +85,7 @@ class _Social extends StatelessWidget {
       child: Text(mark, style: TnText.title(const Color(0xFFFFF5DC)).copyWith(fontSize: 14, height: 1, fontWeight: FontWeight.w800)),
     );
     return TnButton(
-      label: busy ? 'Belépés…' : label,
+      label: busy ? 'login.signing_in'.tr() : label,
       kind: TnButtonKind.quiet,
       alignStart: true,
       minHeight: 52,

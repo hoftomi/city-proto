@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_api/tron_api.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/city_extensions.dart';
 import 'package:tron_nelkul/domain/model/extensions.dart';
 import 'package:tron_nelkul/domain/service/city_service.dart';
@@ -165,7 +166,7 @@ void main() {
           ..add(const CityIntelSaleOpened('i1')),
         verify: (b) {
           expect(b.state.sale, isNull);
-          expect((b.state.notice?.title, b.state.notice?.body, b.state.notice?.tone), ('Nem sikerült', 'Nincs kinek eladni.', 'danger'));
+          expect((b.state.notice?.title, b.state.notice?.body, b.state.notice?.tone), (const Tr('city.sale.failed'), const Tr('city.sale.no_buyer'), 'danger'));
         });
 
     blocTest<CityBloc, CityState>('eladás: vevő és ár a párbeszédből, felkínálás a GameBlocon át',
@@ -190,7 +191,7 @@ void main() {
           expect(b.state.sale, isNull);
           verify(() => game.add(any(that: isA<GameIntelOffered>()
               .having((e) => [e.intelId, e.buyerId, e.price], 'ajánlat', ['i1', 'npc2', 25])
-              .having((e) => e.success, 'üzenet', startsWith('Felkínálva: '))))).called(1);
+              .having((e) => e.success, 'üzenet', Tr('city.sale.offered', {'house': s.houseName('npc2'), 'price': '25'}))))).called(1);
         });
 
     blocTest<CityBloc, CityState>('felkínált információ elfogadása és elutasítása',
@@ -205,7 +206,7 @@ void main() {
           ..add(const CityOfferDeclined('of1'))
           ..add(const CityOfferAccepted('nincs')),
         verify: (_) {
-          verify(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'ajánlat', 'of1').having((e) => e.success, 'üzenet', endsWith(' tervei.'))))).called(1);
+          verify(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'ajánlat', 'of1').having((e) => e.success, 'üzenet', Tr('city.sale.accepted', {'house': s.houses[1].name}))))).called(1);
           verify(() => game.add(const GameOfferDeclined('of1'))).called(1);
           verifyNever(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'ajánlat', 'nincs'))));
         });

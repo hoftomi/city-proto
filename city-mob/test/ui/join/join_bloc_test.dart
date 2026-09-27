@@ -4,10 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_api/tron_api.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/service/join_service.dart';
 import 'package:tron_nelkul/domain/service/lobby_service.dart';
 import 'package:tron_nelkul/ui/join/bloc/join_bloc.dart';
 
+import '../../helpers/l10n.dart';
 import '../lobby/lobby_fixtures.dart';
 
 class _MockLobby extends Mock implements LobbyService {}
@@ -17,6 +19,7 @@ void main() {
   late JoinService service;
   final d = detail();
 
+  setUpAll(loadTestTranslations);
   setUpAll(() => registerFallbackValue(JoinRequest(houseName: '', tincture: '', background: '', startSlot: '')));
 
   setUp(() {
@@ -41,9 +44,12 @@ void main() {
 
   group('JoinService', () {
     test('névellenőrzés', () {
-      expect(service.nameError(' ab '), 'Legalább 3 betű kell.');
-      expect(service.nameError('a' * 25), 'Legfeljebb 24 betű lehet.');
+      expect(service.nameError(' ab '), const Tr('join.name_too_short', {'min': '3'}));
+      expect(service.nameError('a' * 25), const Tr('join.name_too_long', {'max': '24'}));
       expect(service.nameError(' Kékholló '), isNull);
+      expect(service.nameError('ab')!.text, 'Legalább 3 betű kell.');
+      expect(service.nameError('a' * 25)!.text, 'Legfeljebb 24 betű lehet.');
+      expect([for (final s in JoinService.steps) s.text], ['Ház', 'Háttér', 'Kezdőhely', 'Összegzés']);
     });
 
     test('kérés: induló árucikk csak a Kereskedőháznak', () {
@@ -63,7 +69,7 @@ void main() {
     verify: (b) {
       expect(b.state.needsGood, isTrue);
       expect(b.state.good?.id, 'bor');
-      expect(b.state.nextLabel, 'Tovább');
+      expect(b.state.nextLabel, const Tr('join.next'));
       expect(b.state.canPop, isTrue);
     },
   );
@@ -77,7 +83,7 @@ void main() {
       ..add(const JoinNextPressed()),
     verify: (b) {
       expect(b.state.step, 0);
-      expect(b.state.shownNameError, 'Legalább 3 betű kell.');
+      expect(b.state.shownNameError, const Tr('join.name_too_short', {'min': '3'}));
       expect(b.state.canContinue, isFalse);
     },
   );
@@ -109,7 +115,7 @@ void main() {
       expect(b.state.start, 's2');
       expect(b.state.needsGood, isFalse);
       expect(b.state.canPop, isFalse);
-      expect(b.state.backLabel, '← Vissza');
+      expect(b.state.backLabel, const Tr('join.back'));
     },
   );
 
@@ -138,7 +144,7 @@ void main() {
 
   blocTest<JoinBloc, JoinState>(
     'foglalt név: hibaüzenet és vissza az első lépésre',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure('Ez a név már foglalt.'))),
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure(Tr.raw('Ez a név ebben a játékban már foglalt.'), status: 409, code: 'house_name'))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),
     act: (b) => b.add(const JoinNextPressed()),
@@ -146,15 +152,15 @@ void main() {
       expect(b.state.step, 0);
       expect(b.state.busy, isFalse);
       expect(b.state.outcome, isNull);
-      expect(b.state.notice?.title, 'Nem sikerült');
-      expect(b.state.notice?.body, 'Ez a név már foglalt.');
+      expect(b.state.notice?.title, const Tr('join.failed'));
+      expect(b.state.notice?.body, const Tr.raw('Ez a név ebben a játékban már foglalt.'));
       expect(b.state.notice?.tone, 'danger');
     },
   );
 
   blocTest<JoinBloc, JoinState>(
     'egyéb hiba: marad az összegzésen',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure('A játék betelt.'))),
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure(Tr.raw('A játék betelt.')))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),
     act: (b) => b.add(const JoinNextPressed()),

@@ -8,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../../core/failure.dart';
+import '../../../core/tr.dart';
 import '../../../domain/service/game_service.dart';
 import '../../../util/format.dart';
 import '../../common/notice.dart';
@@ -28,17 +29,17 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
     on<GameOrderAdded>(_addOrder, transformer: sequential());
     on<GameOrderRemoved>((e, emit) => _act(emit, () => _service.removeOrder(_id, e.orderId)), transformer: sequential());
     on<GameSealRequested>(
-        (e, emit) => _act(emit, () => _service.seal(_id), success: (s) => 'Parancslap lepecsételve. ${durText(Duration(minutes: s.clock.maturationMinutes))} múlva lép érvénybe.'),
+        (e, emit) => _act(emit, () => _service.seal(_id), success: (s) => Tr('notice.sealed', {'time': durText(Duration(minutes: s.clock.maturationMinutes))})),
         transformer: droppable());
-    on<GameIntelOffered>((e, emit) => _act(emit, () => _service.offerIntel(_id, e.intelId, e.buyerId, e.price), success: (_) => e.success ?? 'Ajánlat elküldve'),
+    on<GameIntelOffered>((e, emit) => _act(emit, () => _service.offerIntel(_id, e.intelId, e.buyerId, e.price), success: (_) => e.success ?? const Tr('notice.offer_sent')),
         transformer: sequential());
-    on<GameOfferAccepted>((e, emit) => _act(emit, () => _service.acceptOffer(_id, e.offerId), success: (_) => e.success ?? 'Megvetted az információt'),
+    on<GameOfferAccepted>((e, emit) => _act(emit, () => _service.acceptOffer(_id, e.offerId), success: (_) => e.success ?? const Tr('notice.offer_bought')),
         transformer: sequential());
     on<GameOfferDeclined>((e, emit) => _act(emit, () => _service.declineOffer(_id, e.offerId)), transformer: sequential());
-    on<GameAdminSettleRequested>((e, emit) => _act(emit, () => _service.adminSettle(_id), success: (_) => 'Elszámolás lefutott.'),
+    on<GameAdminSettleRequested>((e, emit) => _act(emit, () => _service.adminSettle(_id), success: (_) => const Tr('notice.settled')),
         transformer: droppable());
     on<GameAdminAdvanceRequested>(
-        (e, emit) => _act(emit, () => _service.adminAdvance(_id, e.minutes), success: (_) => e.minutes == null ? 'Előre a következő eseményig.' : 'Előre ${e.minutes} percet.'),
+        (e, emit) => _act(emit, () => _service.adminAdvance(_id, e.minutes), success: (_) => e.minutes == null ? const Tr('notice.advanced_next') : Tr('notice.advanced_minutes', {'minutes': '${e.minutes}'})),
         transformer: droppable());
   }
 
@@ -103,14 +104,14 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
           notice: added == null
               ? null
               : added.warning != null
-                  ? _notice('Parancslapra került: ${added.label}', body: added.warning, tone: 'warn')
-                  : _notice('Parancslapra került', body: added.label),
+                  ? _notice(Tr('notice.order_added_named', {'label': added.label}), body: Tr.raw(added.warning!), tone: 'warn')
+                  : _notice(const Tr('notice.order_added'), body: Tr.raw(added.label)),
         ));
       },
     );
   }
 
-  Future<void> _act(Emitter<GameViewState> emit, Future<Either<Failure, GameState>> Function() call, {String Function(GameState)? success}) async {
+  Future<void> _act(Emitter<GameViewState> emit, Future<Either<Failure, GameState>> Function() call, {Tr Function(GameState)? success}) async {
     emit(state.copyWith(busy: true));
     final r = await call();
     r.fold(
@@ -124,7 +125,7 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
     return state.copyWith(game: s, fetchedAt: now, now: _service.gameNow(s, now, now), status: GameStatus.ready, clearFailure: true);
   }
 
-  Notice _notice(String title, {String? body, String tone = 'info'}) => Notice((state.notice?.seq ?? 0) + 1, title, body: body, tone: tone);
+  Notice _notice(Tr title, {Tr? body, String tone = 'info'}) => Notice((state.notice?.seq ?? 0) + 1, title, body: body, tone: tone);
 
   @override
   Future<void> close() {

@@ -81,6 +81,7 @@ Class | Method | HTTP request | Description
 [*GameApi*](doc/GameApi.md) | [**offerIntel**](doc/GameApi.md#offerintel) | **POST** /api/games/{id}/intel/{intelId}/offer | Kifürkészett parancslap felkínálása egy megnevezett háznak (7.5)
 [*GameApi*](doc/GameApi.md) | [**removeOrder**](doc/GameApi.md#removeorder) | **DELETE** /api/games/{id}/orders/{orderId} | Parancs törlése a vázlatról
 [*GameApi*](doc/GameApi.md) | [**seal**](doc/GameApi.md#seal) | **POST** /api/games/{id}/seal | Lepecsételés: a vázlatból érlelő parancslap lesz (visszavonni nem lehet)
+[*I18nApi*](doc/I18nApi.md) | [**getTranslations**](doc/I18nApi.md#gettranslations) | **GET** /api/i18n/{lang} | A kliens összes felirata egy nyelven (easy_localization formátum)
 [*LobbyApi*](doc/LobbyApi.md) | [**getGame**](doc/LobbyApi.md#getgame) | **GET** /api/games/{id} | Játék részletei: kezdőhelyek, hátterek, tinktúrák
 [*LobbyApi*](doc/LobbyApi.md) | [**getMap**](doc/LobbyApi.md#getmap) | **GET** /api/games/maps/{mapId} | Térkép: városok, utak, kezdőhelyek, domborzat (gyorsítótárazható)
 [*LobbyApi*](doc/LobbyApi.md) | [**joinGame**](doc/LobbyApi.md#joingame) | **POST** /api/games/{id}/join | Jelentkezés (futó játékba az első 3 elszámolásig)

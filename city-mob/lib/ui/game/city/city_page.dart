@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +47,7 @@ class _CityView extends StatelessWidget {
       listeners: [
         BlocListener<CityBloc, CityState>(
           listenWhen: (a, b) => b.notice != null && a.notice != b.notice,
-          listener: (context, s) => showToast(context, s.notice!.title, body: s.notice!.body, tone: s.notice!.tone),
+          listener: (context, s) => showToast(context, s.notice!.title.text, body: s.notice!.body?.text, tone: s.notice!.tone),
         ),
         BlocListener<CityBloc, CityState>(
           listenWhen: (a, b) => !a.moveSpyOpen && b.moveSpyOpen,
@@ -57,10 +58,14 @@ class _CityView extends StatelessWidget {
           listener: (context, s) => showCityDialog(context, const IntelSaleDialog()),
         ),
       ],
-      child: BlocBuilder<CityBloc, CityState>(builder: (context, s) {
-        if (!s.ready) return const Center(child: CircularProgressIndicator());
-        return GameTabScroll(child: _CityBody(s: s, district: district));
-      }),
+      child: BlocBuilder<CityBloc, CityState>(
+        builder: (context, s) {
+          if (!s.ready) return const Center(child: CircularProgressIndicator());
+          return GameTabScroll(
+            child: _CityBody(s: s, district: district),
+          );
+        },
+      ),
     );
   }
 }
@@ -76,45 +81,54 @@ class _CityBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.tn, cv = s.city!;
     void openDistrict(String d) => context.go(Routes.city(s.gameId!, cityId: s.cityId, district: d));
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Align(
-        alignment: Alignment.centerLeft,
-        child: TnButton(label: '← Térkép', kind: TnButtonKind.quiet, small: true, onPressed: () => context.go(Routes.map(s.gameId!))),
-      ),
-      const SizedBox(height: 6),
-      Eyebrow('${cv.profile}${cv.key ? ' · kulcsváros' : ''}${s.can ? (cv.distance != null ? ' · ${cv.distance} lépés' : '') : ' · nem elérhető'}'),
-      const SizedBox(height: 4),
-      Text(cv.name, style: TnText.display(c.ink)),
-      const SizedBox(height: 8),
-      Wrap(spacing: 8, runSpacing: 8, children: [
-        for (final x in s.stats) StatChip(label: x.label, value: x.value, suffix: x.suffix, tone: x.tone, art: x.art),
-      ]),
-      const SizedBox(height: 16),
-      CityViewWidget(
-        name: cv.name,
-        coast: cv.coast,
-        districts: {for (final e in s.dominants.entries) e.key: DistrictFlags(dominant: e.value)},
-        selected: district,
-        onSelect: openDistrict,
-      ),
-      const SizedBox(height: 16),
-      TnTabs(
-        expand: true,
-        active: district,
-        onChange: openDistrict,
-        tabs: [for (final f in cityDistricts) TnTabItem(f, districtName(f), art: _art[f], tone: _art[f])],
-      ),
-      const SizedBox(height: 16),
-      if (!s.can) ...[
-        _Unreachable(s: s),
-        gap(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TnButton(label: 'city.back_to_map'.tr(), kind: TnButtonKind.quiet, small: true, onPressed: () => context.go(Routes.map(s.gameId!))),
+        ),
+        const SizedBox(height: 6),
+        Eyebrow(
+          [
+            cv.profile,
+            if (cv.key) 'city.key_city'.tr(),
+            if (s.can && cv.distance != null) 'city.distance'.tr(namedArgs: {'n': '${cv.distance}'}),
+            if (!s.can) 'city.unreachable_tag'.tr(),
+          ].join(' · '),
+        ),
+        const SizedBox(height: 4),
+        Text(cv.name, style: TnText.display(c.ink)),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [for (final x in s.stats) StatChip(label: x.label.text, value: x.value.text, suffix: x.suffix?.text, tone: x.tone, art: x.art)],
+        ),
+        const SizedBox(height: 16),
+        CityViewWidget(
+          name: cv.name,
+          coast: cv.coast,
+          districts: {for (final e in s.dominants.entries) e.key: DistrictFlags(dominant: e.value)},
+          selected: district,
+          onSelect: openDistrict,
+        ),
+        const SizedBox(height: 16),
+        TnTabs(
+          expand: true,
+          active: district,
+          onChange: openDistrict,
+          tabs: [for (final f in cityDistricts) TnTabItem(f, districtName(f), art: _art[f], tone: _art[f])],
+        ),
+        const SizedBox(height: 16),
+        if (!s.can) ...[_Unreachable(s: s), gap()],
+        switch (district) {
+          'polit' => TownHallSection(s: s),
+          'kem' => UnderworldSection(s: s),
+          _ => MarketSection(s: s),
+        },
       ],
-      switch (district) {
-        'polit' => TownHallSection(s: s),
-        'kem' => UnderworldSection(s: s),
-        _ => MarketSection(s: s),
-      },
-    ]);
+    );
   }
 }
 
@@ -127,18 +141,21 @@ class _Unreachable extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<CityBloc>();
     return TnCard(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Notice(tone: 'warn', title: 'Nem vezet ide útvonalad', body: 'Akciót csak a hálózatodban lévő városban indíthatsz (4.3). Nézni lehet, cselekedni nem.'),
-        for (final b in s.routes) ...[
-          gap(8),
-          TnButton(
-            label: 'Útvonal innen: ${b.fromName} · ${s.catalog.pp('route')} PP · ${s.rules.routeCost} A',
-            art: 'route',
-            busy: s.busy,
-            onPressed: () => bloc.add(CityRouteRequested(b.from)),
-          ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Notice(tone: 'warn', title: 'city.unreachable.title'.tr(), body: 'city.unreachable.body'.tr()),
+          for (final b in s.routes) ...[
+            gap(8),
+            TnButton(
+              label: 'city.unreachable.route'.tr(namedArgs: {'from': b.fromName, 'pp': '${s.catalog.pp('route')}', 'gold': '${s.rules.routeCost}'}),
+              art: 'route',
+              busy: s.busy,
+              onPressed: () => bloc.add(CityRouteRequested(b.from)),
+            ),
+          ],
         ],
-      ]),
+      ),
     );
   }
 }

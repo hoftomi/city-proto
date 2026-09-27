@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../../../core/failure.dart';
+import '../../../../core/tr.dart';
 import '../../../../domain/model/game_view_extensions.dart';
 import '../../../../domain/service/game_service.dart';
 

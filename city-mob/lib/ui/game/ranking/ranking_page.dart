@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,15 +36,21 @@ class _RankingView extends StatelessWidget {
     return GameTabScroll(
       onRefresh: () => context.read<RankingBloc>().add(const RankingRefreshRequested()),
       child: BlocBuilder<RankingBloc, RankingState>(builder: (context, s) {
-        if (s.status == RankingStatus.failure) return Notice(tone: 'danger', title: 'Nem sikerült betölteni', body: s.failure?.message);
+        if (s.status == RankingStatus.failure) return Notice(tone: 'danger', title: 'ranking.load_failed'.tr(), body: s.failure?.message.text);
         if (s.loading) return const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()));
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Eyebrow(s.caption),
+          Eyebrow(s.caption.text),
           const SizedBox(height: 4),
-          Text('Legitimitás', style: TnText.display(c.ink).copyWith(fontSize: 26, height: 30 / 26)),
+          Text('ranking.title'.tr(), style: TnText.display(c.ink).copyWith(fontSize: 26, height: 30 / 26)),
           const SizedBox(height: 12),
           MiniTable(
-            cols: const [Col('#', flex: 1, right: true), Col('Ház', flex: 7), Col('Rész.', flex: 2, right: true), Col('Hely', flex: 2, right: true), Col('L', flex: 2, right: true)],
+            cols: [
+              const Col('#', flex: 1, right: true),
+              Col('ranking.col.house'.tr(), flex: 7),
+              Col('ranking.col.shares'.tr(), flex: 2, right: true),
+              Col('ranking.col.seats'.tr(), flex: 2, right: true),
+              Col('ranking.col.legit'.tr(), flex: 2, right: true),
+            ],
             selfRows: s.selfRows,
             rows: [
               for (final r in s.rows)
@@ -54,7 +61,7 @@ class _RankingView extends StatelessWidget {
                     child: Row(children: [
                       HouseCrest(tincture: r.tincture, size: 18, npc: r.npc, name: r.name),
                       const SizedBox(width: 8),
-                      Flexible(child: Text(r.self ? '${r.name} (te)' : r.name, overflow: TextOverflow.ellipsis, style: TnText.body(c.ink))),
+                      Flexible(child: Text(r.self ? 'ranking.self'.tr(namedArgs: {'name': r.name}) : r.name, overflow: TextOverflow.ellipsis, style: TnText.body(c.ink))),
                     ]),
                   ),
                   Text('${r.shares}', style: TnText.data(c.ink)),
@@ -66,10 +73,14 @@ class _RankingView extends StatelessWidget {
           const SizedBox(height: 16),
           TnCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              const Eyebrow('Népszerűséged'),
+              Eyebrow('ranking.popularity.title'.tr()),
               const SizedBox(height: 8),
               MiniTable(
-                cols: const [Col('Város', flex: 5), Col('Népszerűség', flex: 4, right: true), Col('Tanácshely', flex: 4, right: true)],
+                cols: [
+                  Col('ranking.popularity.city'.tr(), flex: 5),
+                  Col('ranking.popularity.pop'.tr(), flex: 4, right: true),
+                  Col('ranking.popularity.seats'.tr(), flex: 4, right: true),
+                ],
                 rows: [
                   for (final p in s.popularity)
                     [
@@ -80,7 +91,7 @@ class _RankingView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              Text('Legitimitás elszámolásonként: tanácshelyenként +1, többség +3, legtöbb eladás +2, legnépszerűbb +2 városonként.', style: TnText.caption(c.inkMuted)),
+              Text('ranking.hint'.tr(), style: TnText.caption(c.inkMuted)),
             ]),
           ),
         ]);

@@ -32,7 +32,7 @@ class JoinState extends Equatable {
   final String name;
 
   /// A név hibája (mindig számolva; csak `touched` után látszik).
-  final String? nameError;
+  final Tr? nameError;
   final bool touched;
   final String tincture, background, start;
 
@@ -48,7 +48,7 @@ class JoinState extends Equatable {
 
   bool get ready => detail != null && map != null;
   GameSummary? get game => detail?.game;
-  List<String> get steps => JoinService.steps;
+  List<Tr> get steps => JoinService.steps;
   bool get lastStep => step == steps.length - 1;
 
   /// A rendszer vissza gombja csak az első lépésen hagyja el a képernyőt.
@@ -57,13 +57,13 @@ class JoinState extends Equatable {
   String get trimmedName => name.trim();
 
   /// A névmező alatt látható hiba.
-  String? get shownNameError => touched ? nameError : null;
+  Tr? get shownNameError => touched ? nameError : null;
 
   /// A Tovább gomb engedélyezett-e.
   bool get canContinue => !(step == 0 && touched && nameError != null);
 
-  String get nextLabel => lastStep ? 'Jelentkezés megerősítése' : 'Tovább';
-  String get backLabel => step > 0 ? '← Vissza' : '← Mégse';
+  Tr get nextLabel => lastStep ? const Tr('join.confirm') : const Tr('join.next');
+  Tr get backLabel => step > 0 ? const Tr('join.back') : const Tr('join.cancel');
 
   StartSlotDto? get slot => detail?.slot(start);
   BackgroundDto? get backgroundDto => detail?.background(background);
@@ -73,7 +73,7 @@ class JoinState extends Equatable {
   JoinForm get form => (name: name, tincture: tincture, background: background, start: start, startGood: startGood);
 
   /// Az összegzés „Kezdés” sora.
-  String get startText => game == null ? '' : (game!.running ? 'Most (a játék már fut)' : game!.startsAtText);
+  Tr get startText => game == null ? const Tr.raw('') : (game!.running ? const Tr('join.start_now') : game!.startsAtText);
 
   JoinState copyWith({
     String? gameId,
@@ -83,7 +83,7 @@ class JoinState extends Equatable {
     bool clearFailure = false,
     int? step,
     String? name,
-    String? nameError,
+    Tr? nameError,
     bool clearNameError = false,
     bool? touched,
     String? tincture,

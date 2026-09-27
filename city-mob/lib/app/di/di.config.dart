@@ -13,14 +13,18 @@
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:tron_api/tron_api.dart' as _i200;
 
 import '../../core/auth_interceptor.dart' as _i988;
 import '../../core/session_events.dart' as _i325;
 import '../../data/datasource/auth/identity_datasource.dart' as _i948;
+import '../../data/datasource/local/translation_local_datasource.dart' as _i777;
 import '../../data/datasource/local/user_local_datasource.dart' as _i809;
 import '../../data/datasource/remote/remote_datasources.dart' as _i931;
+import '../../data/datasource/remote/translation_remote_datasource.dart' as _i8;
 import '../../data/repository/repositories.dart' as _i280;
+import '../../data/repository/translation_repository.dart' as _i850;
 import '../../domain/service/auth_service.dart' as _i657;
 import '../../domain/service/city_service.dart' as _i77;
 import '../../domain/service/game_service.dart' as _i566;
@@ -43,6 +47,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final networkModule = _$NetworkModule();
+    gh.lazySingleton<_i460.SharedPreferencesAsync>(
+      () => networkModule.preferences,
+    );
     gh.lazySingleton<_i325.SessionEvents>(
       () => _i325.SessionEvents(),
       dispose: (i) => i.dispose(),
@@ -54,6 +61,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i809.UserLocalDataSource(),
     );
     gh.lazySingleton<_i77.CityService>(() => _i77.CityService());
+    gh.lazySingleton<_i777.TranslationLocalDataSource>(
+      () =>
+          _i777.TranslationLocalDataSource(gh<_i460.SharedPreferencesAsync>()),
+    );
     gh.lazySingleton<_i988.AuthInterceptor>(
       () => _i988.AuthInterceptor(
         gh<_i948.IdentityDataSource>(),
@@ -78,6 +89,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i200.AdminApi>(
       () => networkModule.adminApi(gh<_i200.TronApi>()),
     );
+    gh.lazySingleton<_i200.I18nApi>(
+      () => networkModule.i18nApi(gh<_i200.TronApi>()),
+    );
     gh.lazySingleton<_i931.GameRemoteDataSource>(
       () =>
           _i931.GameRemoteDataSource(gh<_i200.GameApi>(), gh<_i200.AdminApi>()),
@@ -90,6 +104,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i280.MapRepository>(
       () => _i280.MapRepository(gh<_i931.LobbyRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i8.TranslationRemoteDataSource>(
+      () => _i8.TranslationRemoteDataSource(gh<_i200.I18nApi>()),
     );
     gh.lazySingleton<_i931.AuthRemoteDataSource>(
       () => _i931.AuthRemoteDataSource(gh<_i200.AuthApi>()),
@@ -114,6 +131,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i978.LobbyService(
         gh<_i280.LobbyRepository>(),
         gh<_i280.MapRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i850.TranslationRepository>(
+      () => _i850.TranslationRepository(
+        gh<_i8.TranslationRemoteDataSource>(),
+        gh<_i777.TranslationLocalDataSource>(),
       ),
     );
     gh.lazySingleton<_i360.JoinService>(

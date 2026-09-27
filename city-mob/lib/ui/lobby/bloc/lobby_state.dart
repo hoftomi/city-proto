@@ -18,8 +18,7 @@ class LobbyState extends Equatable {
   /// A „Saját” fül jelvénye.
   String? get mineBadge => groups.mine.isEmpty ? null : '${groups.mine.length}';
 
-  String get emptyText =>
-      tab == LobbyTab.mine ? 'Még nem jelentkeztél játékra. Válassz egyet az Új játékok közül.' : 'Nincs itt játék.';
+  Tr get emptyText => tab == LobbyTab.mine ? const Tr('lobby.empty_mine') : const Tr('lobby.empty');
 
   LobbyState copyWith({bool? loading, bool? loaded, LobbyGroups? groups, LobbyTab? tab, Failure? failure, bool clearFailure = false}) {
     return LobbyState(

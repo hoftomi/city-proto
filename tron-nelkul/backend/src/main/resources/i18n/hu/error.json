@@ -1,0 +1,6 @@
+{
+  "offline": "Nem érem el a szervert. Ellenőrizd a kapcsolatot.",
+  "unknown": "Hiba történt. Próbáld újra.",
+  "status": "Hiba történt ({code}).",
+  "session_expired": "A munkamenet lejárt. Jelentkezz be újra."
+}

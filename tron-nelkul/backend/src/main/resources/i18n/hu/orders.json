@@ -1,0 +1,27 @@
+{
+  "empty_title": "Üres a parancslap",
+  "empty_body": "Nyiss meg egy várost, és a Vásártéren, a Városházán vagy az Alvilágban adj hozzá parancsot. A lepecsételt lap {time} érlelés után lép érvénybe.",
+  "reserved_gold": "Lefoglalt arany:",
+  "gold_of": "/ {total} A",
+  "maturation": "Érlelés: {time}",
+  "still_maturing_title": "Még érlelődik az előző lapod",
+  "still_maturing_body": "A vázlatot megtarthatod, és lepecsételheted, amint az előző lap lefutott.",
+  "seal_hint": "A lepecsételt parancslap nem módosítható és nem vonható vissza. A költségek (PP, arany) lepecsételéskor lefoglalódnak.",
+  "cost_pp": "{pp} PP",
+  "cost_gold": "{gold} A",
+  "threat": {
+    "eyebrow": "Kivásárlási ajánlat · lefut {at} ({left})",
+    "title": "{name} ki akar vásárolni",
+    "body": "{pts} pontot a(z) {good} részesedésedből ({city}). Védekező vétellel kiválthatod: {cost} A.",
+    "defend": "Védekezés a Vásártéren",
+    "defending": "Védekezés folyamatban",
+    "draft_only": "A védekező vétel még csak a vázlaton van: pecsételd le, mielőtt az ajánlat lefut.",
+    "hint": "A védekező vétel akkor hat, ha lepecsételed, mielőtt az ajánlat lefut (lefut: {at})."
+  },
+  "lap": {
+    "sealed_at": "Lepecsételve {time}",
+    "maturing": "Érlelődik: {left} múlva lép érvénybe ({at})",
+    "executing": "Végrehajtás folyamatban…",
+    "hint": "Ez idő alatt a rivális kémek kifürkészhetik. Őrökkel védekezhetsz az Alvilágban. Új lapot a végrehajtás után pecsételhetsz."
+  }
+}

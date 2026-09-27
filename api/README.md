@@ -16,7 +16,8 @@ Az [`openapi.yaml`](openapi.yaml) (OpenAPI 3.0.3) a Trón nélkül API-jának **
 
 ## Megállapodások
 
-- **Azonosítás:** minden végpont Firebase ID tokent vár (`bearerAuth`), kivéve a `/api/auth/discord` végpontot.
+- **Feliratok:** a mobil kliens minden felirata a `GET /api/i18n/{lang}` végpontról jön (easy_localization formátum, névterenként), bejelentkezés nélkül. Forrás: `tron-nelkul/backend/src/main/resources/i18n`.
+- **Azonosítás:** minden végpont Firebase ID tokent vár (`bearerAuth`), kivéve a `/api/auth/discord` és a `/api/i18n/{lang}` végpontot.
 - **Hibák:** RFC 9457 ProblemDetail, a `detail` mező magyar, megjeleníthető szöveg.
 - **Mezők:** minden mező `required`. A hiányozható értékek `nullable: true` jelölést kapnak, így a generált konstruktorok a mezőket a sémabeli sorrendben várják.
 - **Időpontok:** ISO-8601. Javában `Instant`, Dartban `DateTime`.

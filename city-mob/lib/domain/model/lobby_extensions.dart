@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:tron_api/tron_api.dart';
 
+import '../../core/tr.dart';
 import '../../util/format.dart';
 import 'extensions.dart';
 
@@ -38,20 +39,23 @@ extension GameSummaryLobbyX on GameSummary {
   }
 
   /// Rövid időzítés: hol tart, mikor kezdődik, mikor nyílik.
-  String get whenText {
-    if (running) return '$round. elszámolás / $maxRounds';
-    if (open && startsAt != null) return 'Kezdés ${relativeDays(startsAt!)}';
-    if (announced && opensAt != null) return 'Jelentkezés ${relativeDays(opensAt!)} nyílik';
-    return 'Lezárult';
+  Tr get whenText {
+    if (running) return Tr('lobby.round_of', {'round': '$round', 'max': '$maxRounds'});
+    if (open && startsAt != null) return Tr('lobby.when.starts', {'when': relativeDays(startsAt!)});
+    if (announced && opensAt != null) return Tr('lobby.when.opens', {'when': relativeDays(opensAt!)});
+    return const Tr('lobby.when.closed');
   }
 
   /// A részletek „Kezdés” sora: induló játéknál a pontos dátum.
-  String get startText => startsAt != null && !running && !finished ? dateLong(startsAt!) : whenText;
+  Tr get startText => startsAt != null && !running && !finished ? Tr.raw(dateLong(startsAt!)) : whenText;
 
   /// A kezdés dátuma, vagy „hamarosan”.
-  String get startsAtText => startsAt != null ? dateLong(startsAt!) : 'hamarosan';
+  Tr get startsAtText => startsAt != null ? Tr.raw(dateLong(startsAt!)) : const Tr('lobby.when.soon');
 
-  String get winnerText => 'Győztes: ${winner ?? '–'}';
+  Tr get winnerText => Tr('lobby.winner', {'winner': winner ?? '–'});
+
+  /// A lezárult játék sora: győztes, és ha játszottál, a helyezésed.
+  Tr get resultText => myPlace == null ? winnerText : Tr('lobby.winner_place', {'winner': winner ?? '–', 'place': '$myPlace'});
 }
 
 /// A játékok a játékválasztó csoportjaiba sorolva.

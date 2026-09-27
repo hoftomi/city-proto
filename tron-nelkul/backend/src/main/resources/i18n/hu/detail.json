@@ -1,0 +1,26 @@
+{
+  "back": "← Játékok",
+  "fact": {
+    "start": "Kezdés",
+    "length": "Hossz",
+    "houses": "Házak",
+    "cities": "Városállamok",
+    "victory": "Győzelem"
+  },
+  "length_value": "{days} nap · napi {rounds} elszámolás ({max} elszámolás)",
+  "houses_value": "{players} / {max} játékos + {npc} NPC-ház",
+  "cities_value": "{cities} · ágak: Vásártér, Városháza, Alvilág",
+  "victory_value": "A legtöbb Legitimitás a Koronázási Tanácson",
+  "join": "Jelentkezés",
+  "join_running": "Csatlakozás a futó játékhoz",
+  "full": "A játék betelt",
+  "not_yet": "Még nem lehet jelentkezni",
+  "not_yet_body": "{when}.",
+  "my_place": "A te helyezésed: {place}.",
+  "joined_info": "Jelentkeztél. A játék {start} indul, addig a jelentkezésed visszavonható.",
+  "withdraw": "Jelentkezés visszavonása",
+  "joined": "Jelentkeztél",
+  "joined_body": "Értesítünk, amikor a játék indul.",
+  "withdrawn": "Jelentkezés visszavonva.",
+  "failed": "Nem sikerült"
+}

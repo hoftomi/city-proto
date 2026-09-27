@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -48,7 +49,7 @@ class CityViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '$name látképe. Kijelölve: ${selected == null ? 'nincs' : districtName(selected!)}.',
+      label: 'ui.city_view.semantics'.tr(namedArgs: {'name': name, 'district': selected == null ? 'ui.city_view.none'.tr() : districtName(selected!)}),
       child: FutureBuilder<K4Assets>(
         future: K4Assets.load(),
         builder: (ctx, snap) => K4Viewport(

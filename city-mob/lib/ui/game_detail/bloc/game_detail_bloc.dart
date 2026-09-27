@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../../core/failure.dart';
+import '../../../core/tr.dart';
 import '../../../domain/service/join_service.dart';
 import '../../../domain/service/lobby_service.dart';
 import '../../common/notice.dart';
@@ -23,7 +24,7 @@ class GameDetailBloc extends Bloc<GameDetailEvent, GameDetailState> {
     on<GameDetailRefreshRequested>((e, emit) => _load(emit), transformer: droppable());
     on<GameDetailWithdrawRequested>(_withdraw, transformer: droppable());
     on<GameDetailJoined>((e, emit) async {
-      emit(state.copyWith(notice: _notice('Jelentkeztél', body: 'Értesítünk, amikor a játék indul.', tone: 'ok')));
+      emit(state.copyWith(notice: _notice(const Tr('detail.joined'), body: const Tr('detail.joined_body'), tone: 'ok')));
       await _load(emit);
     });
   }
@@ -47,13 +48,13 @@ class GameDetailBloc extends Bloc<GameDetailEvent, GameDetailState> {
     emit(state.copyWith(busy: true));
     final r = await _lobby.withdraw(id);
     if (r.isLeft) {
-      emit(state.copyWith(busy: false, notice: _notice('Nem sikerült', body: r.left.message, tone: 'danger')));
+      emit(state.copyWith(busy: false, notice: _notice(const Tr('detail.failed'), body: r.left.message, tone: 'danger')));
       return;
     }
-    emit(state.copyWith(notice: _notice('Jelentkezés visszavonva.', tone: 'ok')));
+    emit(state.copyWith(notice: _notice(const Tr('detail.withdrawn'), tone: 'ok')));
     await _load(emit);
     emit(state.copyWith(busy: false));
   }
 
-  Notice _notice(String title, {String? body, String tone = 'info'}) => Notice((state.notice?.seq ?? 0) + 1, title, body: body, tone: tone);
+  Notice _notice(Tr title, {Tr? body, String tone = 'info'}) => Notice((state.notice?.seq ?? 0) + 1, title, body: body, tone: tone);
 }

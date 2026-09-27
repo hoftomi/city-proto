@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -40,13 +41,13 @@ class _GameDetailView extends StatelessWidget {
     final c = context.tn;
     return BlocListener<GameDetailBloc, GameDetailState>(
       listenWhen: (a, b) => b.notice != null && a.notice != b.notice,
-      listener: (context, s) => showToast(context, s.notice!.title, body: s.notice!.body, tone: s.notice!.tone),
+      listener: (context, s) => showToast(context, s.notice!.title.text, body: s.notice!.body?.text, tone: s.notice!.tone),
       child: Scaffold(
         body: TnScreen(
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             TnHeader(
               leading: TnButton(
-                label: '← Játékok',
+                label: 'detail.back'.tr(),
                 kind: TnButtonKind.quiet,
                 small: true,
                 onPressed: () => context.canPop() ? context.pop() : context.go(Routes.lobby),
@@ -56,7 +57,7 @@ class _GameDetailView extends StatelessWidget {
               child: BlocBuilder<GameDetailBloc, GameDetailState>(builder: (context, s) {
                 if (s.failure != null) {
                   return Center(
-                      child: Padding(padding: const EdgeInsets.all(16), child: Notice(tone: 'danger', title: 'Nem sikerült betölteni', body: s.failure!.message)));
+                      child: Padding(padding: const EdgeInsets.all(16), child: Notice(tone: 'danger', title: 'lobby.load_failed'.tr(), body: s.failure!.message.text)));
                 }
                 if (!s.ready) return const Center(child: CircularProgressIndicator());
                 final g = s.game!;
@@ -70,27 +71,27 @@ class _GameDetailView extends StatelessWidget {
                   const SizedBox(height: 16),
                   TnCard(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      _fact(c, 'Kezdés', g.startText),
-                      _fact(c, 'Hossz', '${g.days} nap · napi ${g.roundsPerDay} elszámolás (${g.maxRounds} elszámolás)'),
-                      _fact(c, 'Házak', '${g.players} / ${g.maxPlayers} játékos + ${g.npcCount} NPC-ház'),
-                      _fact(c, 'Városállamok', '${g.cities} · ágak: Vásártér, Városháza, Alvilág'),
-                      _fact(c, 'Győzelem', 'A legtöbb Legitimitás a Koronázási Tanácson'),
+                      _fact(c, 'detail.fact.start'.tr(), g.startText.text),
+                      _fact(c, 'detail.fact.length'.tr(), 'detail.length_value'.tr(namedArgs: {'days': '${g.days}', 'rounds': '${g.roundsPerDay}', 'max': '${g.maxRounds}'})),
+                      _fact(c, 'detail.fact.houses'.tr(), 'detail.houses_value'.tr(namedArgs: {'players': '${g.players}', 'max': '${g.maxPlayers}', 'npc': '${g.npcCount}'})),
+                      _fact(c, 'detail.fact.cities'.tr(), 'detail.cities_value'.tr(namedArgs: {'cities': '${g.cities}'})),
+                      _fact(c, 'detail.fact.victory'.tr(), 'detail.victory_value'.tr()),
                       if (g.tags.isNotEmpty) ...[const SizedBox(height: 8), Wrap(spacing: 6, runSpacing: 6, children: [for (final t in g.tags) Tag(t)])],
                     ]),
                   ),
                   const SizedBox(height: 16),
                   if (g.withdrawable && h != null) _MyHouseCard(g: g, house: h, busy: s.busy),
                   if (g.enterable)
-                    TnButton(label: 'Belépés a játékba', icon: 'terkep', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.map(g.id))),
+                    TnButton(label: 'lobby.enter_game'.tr(), icon: 'terkep', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.map(g.id))),
                   if (g.canJoin)
                     TnButton(
-                      label: g.running ? 'Csatlakozás a futó játékhoz' : 'Jelentkezés',
+                      label: g.running ? 'detail.join_running'.tr() : 'detail.join'.tr(),
                       kind: TnButtonKind.primary,
                       onPressed: () => _join(context, g.id),
                     ),
-                  if (g.closedFull) const Notice(tone: 'warn', title: 'A játék betelt'),
-                  if (g.announced) Notice(tone: 'info', title: 'Még nem lehet jelentkezni', body: '${g.whenText}.'),
-                  if (g.finished) Notice(tone: 'info', title: g.winnerText, body: g.myPlace == null ? null : 'A te helyezésed: ${g.myPlace}.'),
+                  if (g.closedFull) Notice(tone: 'warn', title: 'detail.full'.tr()),
+                  if (g.announced) Notice(tone: 'info', title: 'detail.not_yet'.tr(), body: 'detail.not_yet_body'.tr(namedArgs: {'when': g.whenText.text})),
+                  if (g.finished) Notice(tone: 'info', title: g.winnerText.text, body: g.myPlace == null ? null : 'detail.my_place'.tr(namedArgs: {'place': '${g.myPlace}'})),
                 ]);
               }),
             ),
@@ -129,10 +130,10 @@ class _MyHouseCard extends StatelessWidget {
           if (house.backgroundName != null) Text(' · ${house.backgroundName}', style: TnText.body(c.inkMuted)),
         ]),
         const SizedBox(height: 8),
-        Text('Jelentkeztél. A játék ${g.startsAtText} indul, addig a jelentkezésed visszavonható.', style: TnText.body(c.inkMuted)),
+        Text('detail.joined_info'.tr(namedArgs: {'start': g.startsAtText.text}), style: TnText.body(c.inkMuted)),
         const SizedBox(height: 12),
         TnButton(
-          label: 'Jelentkezés visszavonása',
+          label: 'detail.withdraw'.tr(),
           kind: TnButtonKind.danger,
           small: true,
           busy: busy,

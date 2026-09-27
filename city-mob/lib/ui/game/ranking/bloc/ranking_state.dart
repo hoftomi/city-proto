@@ -8,7 +8,7 @@ class RankingState extends Equatable {
     this.key,
     this.status = RankingStatus.initial,
     this.rows = const [],
-    this.caption = '',
+    this.caption = const Tr.raw(''),
     this.popularity = const [],
     this.failure,
   });
@@ -21,7 +21,7 @@ class RankingState extends Equatable {
   final List<RankRow> rows;
 
   /// A fejléc: hányadik elszámolás után, mikor a választás.
-  final String caption;
+  final Tr caption;
   final List<PopularityRow> popularity;
   final Failure? failure;
 
@@ -36,7 +36,7 @@ class RankingState extends Equatable {
     String? key,
     RankingStatus? status,
     List<RankRow>? rows,
-    String? caption,
+    Tr? caption,
     List<PopularityRow>? popularity,
     Failure? failure,
     bool clearFailure = false,

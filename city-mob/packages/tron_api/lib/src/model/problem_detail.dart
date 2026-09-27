@@ -29,6 +29,8 @@ class ProblemDetail {
      this.detail,
 
      this.instance,
+
+     this.code,
   });
 
   @JsonKey(
@@ -91,6 +93,19 @@ class ProblemDetail {
 
 
 
+      /// Opcionális gépi kód, amely alapján a kliens dönthet (például house_name: a ház neve hibás vagy foglalt).
+  @JsonKey(
+    
+    name: r'code',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? code;
+
+
+
 
 
     @override
@@ -99,7 +114,8 @@ class ProblemDetail {
       other.title == title &&
       other.status == status &&
       other.detail == detail &&
-      other.instance == instance;
+      other.instance == instance &&
+      other.code == code;
 
     @override
     int get hashCode =>
@@ -107,7 +123,8 @@ class ProblemDetail {
         title.hashCode +
         status.hashCode +
         detail.hashCode +
-        instance.hashCode;
+        instance.hashCode +
+        code.hashCode;
 
   factory ProblemDetail.fromJson(Map<String, dynamic> json) => _$ProblemDetailFromJson(json);
 

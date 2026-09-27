@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tron_api/tron_api.dart';
 
+import '../../../../core/tr.dart';
 import '../../../../domain/model/city_extensions.dart';
 import '../../../../domain/model/extensions.dart';
 import '../../../../domain/service/city_service.dart';
@@ -64,7 +65,7 @@ class CityBloc extends Bloc<CityEvent, CityState> {
     on<CityDialogClosed>((e, emit) => emit(state.copyWith(moveSpyOpen: false, clearSale: true)));
     on<CityOfferAccepted>((e, emit) {
       final o = state.game?.offers.where((o) => o.id == e.offerId).firstOrNull;
-      if (o != null) _game.add(GameOfferAccepted(o.id, success: 'Megvetted: ${o.of_.name} tervei.'));
+      if (o != null) _game.add(GameOfferAccepted(o.id, success: Tr('city.sale.accepted', {'house': o.of_.name})));
     });
     on<CityOfferDeclined>((e, emit) {
       if (state.game?.offers.any((o) => o.id == e.offerId) ?? false) _game.add(GameOfferDeclined(e.offerId));
@@ -94,8 +95,7 @@ class CityBloc extends Bloc<CityEvent, CityState> {
     if (o != null) _game.add(GameOrderAdded(o));
   }
 
-  void _good(Emitter<CityState> emit, String goodId, GoodForm Function(GoodForm) f) =>
-      emit(state.copyWith(goods: {...state.goods, goodId: f(state.goods[goodId] ?? const GoodForm())}));
+  void _good(Emitter<CityState> emit, String goodId, GoodForm Function(GoodForm) f) => emit(state.copyWith(goods: {...state.goods, goodId: f(state.goods[goodId] ?? const GoodForm())}));
 
   void _goodOrder(String goodId, OrderRequest? Function(CityView cv, GoodPlan p) build) => _order((s, cv) {
         final g = cv.goods.where((g) => g.id == goodId).firstOrNull;
@@ -107,10 +107,18 @@ class CityBloc extends Bloc<CityEvent, CityState> {
     if (s == null) return;
     final d = _service.saleDefaults(s, e.intelId);
     if (d == null) {
-      emit(state.copyWith(notice: Notice((state.notice?.seq ?? 0) + 1, 'Nem sikerült', body: 'Nincs kinek eladni.', tone: 'danger')));
+      emit(
+        state.copyWith(
+          notice: Notice((state.notice?.seq ?? 0) + 1, const Tr('city.sale.failed'), body: const Tr('city.sale.no_buyer'), tone: 'danger'),
+        ),
+      );
       return;
     }
-    emit(state.copyWith(sale: IntelSaleForm(intelId: e.intelId, buyer: d.$1, price: d.$2)));
+    emit(
+      state.copyWith(
+        sale: IntelSaleForm(intelId: e.intelId, buyer: d.$1, price: d.$2),
+      ),
+    );
   }
 
   void _saleSubmitted(CityIntelSaleSubmitted e, Emitter<CityState> emit) {
@@ -118,7 +126,7 @@ class CityBloc extends Bloc<CityEvent, CityState> {
     emit(state.copyWith(clearSale: true));
     if (s == null || f == null || !_service.validBuyer(s, f.intelId, f.buyer)) return;
     final price = _service.salePrice(s, f.price);
-    _game.add(GameIntelOffered(f.intelId, f.buyer, price, success: 'Felkínálva: ${s.houseName(f.buyer)}, $price A.'));
+    _game.add(GameIntelOffered(f.intelId, f.buyer, price, success: Tr('city.sale.offered', {'house': s.houseName(f.buyer), 'price': '$price'})));
   }
 
   @override

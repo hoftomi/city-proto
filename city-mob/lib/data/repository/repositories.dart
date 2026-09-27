@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../core/failure.dart';
+import '../../core/tr.dart';
 import '../datasource/auth/identity_datasource.dart';
 import '../datasource/local/user_local_datasource.dart';
 import '../datasource/remote/remote_datasources.dart';
@@ -52,7 +53,7 @@ class AuthRepository {
             await _identity.signInWithCustomToken(await _remote.discordCustomToken(code.code, code.verifier, code.redirectUri));
             done = true;
           default:
-            throw const Failure('Ismeretlen szolgáltató.');
+            throw const Failure(Tr('auth.unknown_provider'));
         }
         if (!done) return null;
         try {

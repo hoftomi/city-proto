@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../../core/failure.dart';
+import '../../../core/tr.dart';
 import '../../../domain/model/extensions.dart';
 import '../../../domain/model/join_extensions.dart';
 import '../../../domain/model/lobby_extensions.dart';
@@ -67,7 +68,7 @@ class JoinBloc extends Bloc<JoinEvent, JoinState> {
       (f) => emit(state.copyWith(
         busy: false,
         step: _service.nameRejected(f) ? 0 : null,
-        notice: Notice((state.notice?.seq ?? 0) + 1, 'Nem sikerült', body: f.message, tone: 'danger'),
+        notice: Notice((state.notice?.seq ?? 0) + 1, const Tr('join.failed'), body: f.message, tone: 'danger'),
       )),
       (g) => emit(state.copyWith(busy: false, outcome: g.running || d.game.running ? JoinOutcome.enterGame : JoinOutcome.backToDetail)),
     );

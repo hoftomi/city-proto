@@ -12,6 +12,7 @@ export 'package:tron_api/src/auth/oauth.dart';
 export 'package:tron_api/src/api/admin_api.dart';
 export 'package:tron_api/src/api/auth_api.dart';
 export 'package:tron_api/src/api/game_api.dart';
+export 'package:tron_api/src/api/i18n_api.dart';
 export 'package:tron_api/src/api/lobby_api.dart';
 
 export 'package:tron_api/src/model/action_info.dart';

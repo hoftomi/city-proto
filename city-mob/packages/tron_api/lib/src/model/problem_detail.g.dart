@@ -17,6 +17,8 @@ abstract class _$ProblemDetailCWProxy {
 
   ProblemDetail instance(String? instance);
 
+  ProblemDetail code(String? code);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ProblemDetail(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$ProblemDetailCWProxy {
     int? status,
     String? detail,
     String? instance,
+    String? code,
   });
 }
 
@@ -54,6 +57,9 @@ class _$ProblemDetailCWProxyImpl implements _$ProblemDetailCWProxy {
   ProblemDetail instance(String? instance) => this(instance: instance);
 
   @override
+  ProblemDetail code(String? code) => this(code: code);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ProblemDetail(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -66,6 +72,7 @@ class _$ProblemDetailCWProxyImpl implements _$ProblemDetailCWProxy {
     Object? status = const $CopyWithPlaceholder(),
     Object? detail = const $CopyWithPlaceholder(),
     Object? instance = const $CopyWithPlaceholder(),
+    Object? code = const $CopyWithPlaceholder(),
   }) {
     return ProblemDetail(
       type: type == const $CopyWithPlaceholder()
@@ -88,6 +95,10 @@ class _$ProblemDetailCWProxyImpl implements _$ProblemDetailCWProxy {
           ? _value.instance
           // ignore: cast_nullable_to_non_nullable
           : instance as String?,
+      code: code == const $CopyWithPlaceholder()
+          ? _value.code
+          // ignore: cast_nullable_to_non_nullable
+          : code as String?,
     );
   }
 }
@@ -110,6 +121,7 @@ ProblemDetail _$ProblemDetailFromJson(Map<String, dynamic> json) =>
         status: $checkedConvert('status', (v) => (v as num?)?.toInt()),
         detail: $checkedConvert('detail', (v) => v as String?),
         instance: $checkedConvert('instance', (v) => v as String?),
+        code: $checkedConvert('code', (v) => v as String?),
       );
       return val;
     });
@@ -121,4 +133,5 @@ Map<String, dynamic> _$ProblemDetailToJson(ProblemDetail instance) =>
       'status': ?instance.status,
       'detail': ?instance.detail,
       'instance': ?instance.instance,
+      'code': ?instance.code,
     };

@@ -1,0 +1,54 @@
+{
+  "step": {
+    "house": "Ház",
+    "background": "Háttér",
+    "start": "Kezdőhely",
+    "summary": "Összegzés"
+  },
+  "step_semantics": "{n}. lépés: {name}",
+  "step_semantics_current": "{n}. lépés: {name}, aktuális",
+  "name_too_short": "Legalább {min} betű kell.",
+  "name_too_long": "Legfeljebb {max} betű lehet.",
+  "next": "Tovább",
+  "confirm": "Jelentkezés megerősítése",
+  "back": "← Vissza",
+  "cancel": "← Mégse",
+  "start_now": "Most (a játék már fut)",
+  "failed": "Nem sikerült",
+  "house": {
+    "title": "Alapítsd meg a házad",
+    "name_placeholder": "Házad neve",
+    "name_label": "A ház neve",
+    "name_hint": "például Kékholló",
+    "name_helper": "Így látnak a többiek a térképen és a ranglistán.",
+    "tincture_label": "Tinktúra (a házad színe)",
+    "tincture_note": "Egy tinktúrát több ház is választhat; a nevek egyediek."
+  },
+  "background": {
+    "title": "Honnan jön a házad?",
+    "intro": "A háttér csak induló bónuszt ad, egyik ágba sem zár be. Mindhárom ágban játszhatsz: Vásártér, Városháza, Alvilág."
+  },
+  "start": {
+    "title": "Hol áll a birtokod?",
+    "intro": "A birtokodból két szomszédos városba indulsz ingyenes útvonallal. Akciót csak a hálózatodban lévő városban indíthatsz.",
+    "neighbors": "Szomszédos: {names}",
+    "home_city": "Kezdőváros: {name}",
+    "good_label": "Induló árucikk",
+    "good_intro": "A Kereskedőház 20 részesedést kap {city} egyik árucikkéből. Melyikből?",
+    "good_intro_default": "A Kereskedőház 20 részesedést kap a kezdőváros egyik árucikkéből. Melyikből?",
+    "good_line": "20 részesedés · azonnal van eladható árud"
+  },
+  "summary": {
+    "title": "Minden készen áll",
+    "game": "Játék",
+    "start": "Kezdés",
+    "slot": "Kezdőhely",
+    "slot_value": "{name} ({neighbors})",
+    "home_city": "Kezdőváros",
+    "good": "Induló árucikk",
+    "good_value": "20 részesedés · {good}",
+    "kit": "Induló készlet",
+    "kit_value": "10 PP · 30 arany · 20 népszerűség a kezdővárosban · 2 útvonal",
+    "note": "A kezdésig bármikor visszavonhatod a jelentkezést. A ház neve és tinktúrája a kezdés után már nem változtatható."
+  }
+}

@@ -3,11 +3,15 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tron_api/tron_api.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/game_view_extensions.dart';
+
+import '../../helpers/l10n.dart';
 
 GameState _state() => GameState.fromJson(jsonDecode(File('test/fixtures/game_state.json').readAsStringSync()) as Map<String, dynamic>);
 
 void main() {
+  setUpAll(loadTestTranslations);
   final s = _state();
   final sealed = DateTime.utc(2026, 9, 4, 9, 30), exec = DateTime.utc(2026, 9, 4, 11, 30);
 
@@ -30,7 +34,9 @@ void main() {
 
   test('szövegek: érlelés, rangsor fejléce, kártya felirata, költség, sor meta', () {
     expect(s.maturationText, '2 ó');
-    expect(s.rankingCaption, '6. elszámolás után · választás 6 elszámolás múlva');
+    expect(s.rankingCaption, const Tr('ranking.caption', {'n': '6', 'm': '6'}));
+    expect(s.rankingCaption.text, '6. elszámolás után · választás 6 elszámolás múlva');
+    expect(s.copyWith(clock: s.clock.copyWith(nextElectionIn: 1)).rankingCaption, const Tr('ranking.caption_next', {'n': '6'}));
     expect(s.cities.first.cardEyebrow, 'Gabonavidék · 1 lépés');
     expect(s.cities[2].cardEyebrow, 'Kikötőváros · kulcsváros');
     expect(Cost(pp: 2, gold: 0).text, '2 PP');
@@ -39,6 +45,7 @@ void main() {
     expect(s.lap!.orders.first.meta, 'Közös');
     expect(s.lap!.orders.first.lapLabel, 'Útvonal kiépítése: Szélmező → Feketerév');
     expect(electionText(1), 'a következő elszámoláskor');
+    expect(electionText(3), '3 elszámolás múlva');
   });
 
   test('jelvény, útvonal-parancs, népszerűség, szűrő', () {
@@ -54,6 +61,7 @@ void main() {
     expect(ReportFilter.nyilvanos.accepts(pub), isTrue);
     expect(ReportFilter.sajat.accepts(pub), isFalse);
     expect(ReportFilter.mind.accepts(pub), isTrue);
+    expect(ReportFilter.values.map((f) => f.label), ['Mind', 'Saját', 'Nyilvános']);
   });
 
   test('védekezés csak a vázlaton', () {

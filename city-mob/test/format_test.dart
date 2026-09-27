@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tron_nelkul/util/format.dart';
+
+import 'helpers/l10n.dart';
 import 'package:tron_nelkul/widgets/paint_util.dart';
 
 void main() {
+  setUpAll(loadTestTranslations);
+
   test('magyar számformázás', () {
     expect(num1(42.34), '42,3');
     expect(signed(-2), '−2');

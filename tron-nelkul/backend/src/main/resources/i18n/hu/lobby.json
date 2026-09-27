@@ -1,0 +1,34 @@
+{
+  "sign_out": "Kilépés",
+  "continue": "Folytasd, ahol abbahagytad",
+  "enter_game": "Belépés a játékba",
+  "load_failed": "Nem sikerült betölteni",
+  "tab": {
+    "fresh": "Új játékok",
+    "mine": "Saját",
+    "finished": "Lezárult"
+  },
+  "empty": "Nincs itt játék.",
+  "empty_mine": "Még nem jelentkeztél játékra. Válassz egyet az Új játékok közül.",
+  "round_of": "{round}. elszámolás / {max}",
+  "schedule": "{days} nap · napi {rounds} elszámolás",
+  "houses": "{players} / {max} ház",
+  "game_semantics": "{name}, {season}. {when}.",
+  "winner": "Győztes: {winner}",
+  "winner_place": "Győztes: {winner} · a te helyezésed: {place}.",
+  "when": {
+    "starts": "Kezdés {when}",
+    "opens": "Jelentkezés {when} nyílik",
+    "closed": "Lezárult",
+    "soon": "hamarosan"
+  },
+  "badge": {
+    "joined": "Jelentkeztél",
+    "almost_full": "Majdnem tele",
+    "running_joinable": "Fut · még csatlakozhatsz",
+    "running": "Fut",
+    "open": "Jelentkezés nyitva",
+    "soon": "Hamarosan",
+    "finished": "Lezárult"
+  }
+}

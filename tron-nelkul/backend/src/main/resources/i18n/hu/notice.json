@@ -1,0 +1,10 @@
+{
+  "sealed": "Parancslap lepecsételve. {time} múlva lép érvénybe.",
+  "offer_sent": "Ajánlat elküldve",
+  "offer_bought": "Megvetted az információt",
+  "settled": "Elszámolás lefutott.",
+  "advanced_next": "Előre a következő eseményig.",
+  "advanced_minutes": "Előre {minutes} percet.",
+  "order_added": "Parancslapra került",
+  "order_added_named": "Parancslapra került: {label}"
+}

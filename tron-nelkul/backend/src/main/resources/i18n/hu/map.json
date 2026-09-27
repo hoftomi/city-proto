@@ -1,0 +1,12 @@
+{
+  "tap_city": "Koppints egy városra a térképen.",
+  "your_popularity": "Népszerűséged",
+  "unreachable_title": "Nem vezet ide útvonalad",
+  "unreachable_body": "Akciót csak a hálózatodban lévő városban indíthatsz. Építs útvonalat egy szomszédos városból.",
+  "route_from": "Útvonal innen: {from}",
+  "open_city": "Város megnyitása",
+  "your_shares": "Részesedésed",
+  "no_shares": "Nincs részesedésed · Város: {city}",
+  "key_city": "kulcsváros",
+  "distance": "{n} lépés"
+}

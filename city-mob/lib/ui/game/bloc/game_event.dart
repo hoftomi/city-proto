@@ -60,7 +60,7 @@ class GameIntelOffered extends GameEvent {
   final int price;
 
   /// A sikerüzenet (például „Felkínálva: Varjúvár, 12 A.”); alapból „Ajánlat elküldve”.
-  final String? success;
+  final Tr? success;
 
   @override
   List<Object?> get props => [intelId, buyerId, price, success];
@@ -71,7 +71,7 @@ class GameOfferAccepted extends GameEvent {
   final String offerId;
 
   /// A sikerüzenet (például „Megvetted: Varjúvár tervei.”); alapból „Megvetted az információt”.
-  final String? success;
+  final Tr? success;
 
   @override
   List<Object?> get props => [offerId, success];

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,7 +38,7 @@ class _ReportsView extends StatelessWidget {
     return GameTabScroll(
       onRefresh: () => context.read<ReportsBloc>().add(const ReportsRefreshRequested()),
       child: BlocBuilder<ReportsBloc, ReportsState>(builder: (context, s) {
-        if (s.status == ReportsStatus.failure) return Notice(tone: 'danger', title: 'Nem sikerült betölteni', body: s.failure?.message);
+        if (s.status == ReportsStatus.failure) return Notice(tone: 'danger', title: 'reports.load_failed'.tr(), body: s.failure?.message.text);
         if (s.loading) return const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()));
         final list = s.visible;
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -46,7 +47,7 @@ class _ReportsView extends StatelessWidget {
               TnMiniButton(on: s.filter == f, onTap: () => context.read<ReportsBloc>().add(ReportsFilterChanged(f)), child: Text(f.label)),
           ]),
           const SizedBox(height: 12),
-          if (list.isEmpty) TnCard(child: Text('Még nincs jelentés. Az első az elszámolás vagy a parancslapod lefutása után érkezik.', style: TnText.body(c.inkMuted))),
+          if (list.isEmpty) TnCard(child: Text('reports.empty'.tr(), style: TnText.body(c.inkMuted))),
           for (final r in list) ...[ReportCard(report: r), const SizedBox(height: 12)],
         ]);
       }),

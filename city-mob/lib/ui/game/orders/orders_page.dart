@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -40,8 +41,8 @@ class OrdersPage extends StatelessWidget {
             if (s.draft.isEmpty)
               TnCard(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  Text('Üres a parancslap', style: TnText.bodyStrong(c.ink)),
-                  Text('Nyiss meg egy várost, és a Vásártéren, a Városházán vagy az Alvilágban adj hozzá parancsot. A lepecsételt lap ${s.maturationText} érlelés után lép érvénybe.',
+                  Text('orders.empty_title'.tr(), style: TnText.bodyStrong(c.ink)),
+                  Text('orders.empty_body'.tr(namedArgs: {'time': s.maturationText}),
                       style: TnText.body(c.inkMuted)),
                 ]),
               )
@@ -59,19 +60,19 @@ class OrdersPage extends StatelessWidget {
               const SizedBox(height: 8),
               Wrap(alignment: WrapAlignment.spaceBetween, spacing: 12, runSpacing: 4, children: [
                 Text.rich(TextSpan(style: TnText.caption(c.inkMuted), children: [
-                  const TextSpan(text: 'Lefoglalt arany: '),
+                  TextSpan(text: '${'orders.reserved_gold'.tr()} '),
                   TextSpan(text: '${s.draftCost.gold}', style: TnText.data(s.overGold ? c.danger : c.ink)),
-                  TextSpan(text: ' / ${s.me.gold.floor()} A'),
+                  TextSpan(text: ' ${'orders.gold_of'.tr(namedArgs: {'total': '${s.me.gold.floor()}'})}'),
                 ])),
-                Text('Érlelés: ${s.maturationText}', style: TnText.caption(c.inkMuted)),
+                Text('orders.maturation'.tr(namedArgs: {'time': s.maturationText}), style: TnText.caption(c.inkMuted)),
               ]),
               if (maturing) ...[
                 const SizedBox(height: 12),
-                const Notice(tone: 'warn', title: 'Még érlelődik az előző lapod', body: 'A vázlatot megtarthatod, és lepecsételheted, amint az előző lap lefutott.'),
+                Notice(tone: 'warn', title: 'orders.still_maturing_title'.tr(), body: 'orders.still_maturing_body'.tr()),
               ],
             ],
             const SizedBox(height: 12),
-            Text('A lepecsételt parancslap nem módosítható és nem vonható vissza. A költségek (PP, arany) lepecsételéskor lefoglalódnak.', style: TnText.caption(c.inkMuted)),
+            Text('orders.seal_hint'.tr(), style: TnText.caption(c.inkMuted)),
           ]);
         },
       ),
@@ -93,14 +94,14 @@ class _ThreatCard extends StatelessWidget {
     return TnCard(
       tone: TnCardTone.threat,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Eyebrow('Kivásárlási ajánlat · lefut $at ($left)'),
+        Eyebrow('orders.threat.eyebrow'.tr(namedArgs: {'at': at, 'left': left})),
         const SizedBox(height: 4),
-        Text('${t.by.name} ki akar vásárolni', style: TnText.bodyStrong(c.ink)),
-        Text('${t.pts} pontot a(z) ${t.goodName} részesedésedből (${t.cityName}). Védekező vétellel kiválthatod: ${t.defendCost} A.', style: TnText.body(c.inkMuted)),
+        Text('orders.threat.title'.tr(namedArgs: {'name': t.by.name}), style: TnText.bodyStrong(c.ink)),
+        Text('orders.threat.body'.tr(namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'city': t.cityName, 'cost': '${t.defendCost}'}), style: TnText.body(c.inkMuted)),
         const SizedBox(height: 8),
         Row(children: [
           TnButton(
-            label: 'Védekezés a Vásártéren',
+            label: 'orders.threat.defend'.tr(),
             icon: 'kereskedok',
             small: true,
             onPressed: () => context.go(Routes.city(gameId, cityId: t.cityId, district: 'keresk')),
@@ -110,12 +111,12 @@ class _ThreatCard extends StatelessWidget {
           const SizedBox(height: 8),
           Notice(
             tone: 'info',
-            title: 'Védekezés folyamatban',
-            body: draftOnly ? 'A védekező vétel még csak a vázlaton van: pecsételd le, mielőtt az ajánlat lefut.' : null,
+            title: 'orders.threat.defending'.tr(),
+            body: draftOnly ? 'orders.threat.draft_only'.tr() : null,
           ),
         ],
         const SizedBox(height: 8),
-        Text('A védekező vétel akkor hat, ha lepecsételed, mielőtt az ajánlat lefut (lefut: $at).', style: TnText.caption(c.inkMuted)),
+        Text('orders.threat.hint'.tr(namedArgs: {'at': at}), style: TnText.caption(c.inkMuted)),
       ]),
     );
   }
@@ -135,10 +136,10 @@ class _LapCard extends StatelessWidget {
     return TnCard(
       tone: TnCardTone.pending,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Eyebrow('Lepecsételve ${hhmm(lap.sealedAt)}'),
+        Eyebrow('orders.lap.sealed_at'.tr(namedArgs: {'time': hhmm(lap.sealedAt)})),
         const SizedBox(height: 4),
         Text(
-          maturing ? 'Érlelődik: $left múlva lép érvénybe (${hhmm(lap.executeAt)})' : 'Végrehajtás folyamatban…',
+          maturing ? 'orders.lap.maturing'.tr(namedArgs: {'left': left, 'at': hhmm(lap.executeAt)}) : 'orders.lap.executing'.tr(),
           style: TnText.bodyStrong(c.ink),
         ),
         const SizedBox(height: 8),
@@ -154,7 +155,7 @@ class _LapCard extends StatelessWidget {
             ]),
           ),
         const SizedBox(height: 8),
-        Text('Ez idő alatt a rivális kémek kifürkészhetik. Őrökkel védekezhetsz az Alvilágban. Új lapot a végrehajtás után pecsételhetsz.', style: TnText.caption(c.inkMuted)),
+        Text('orders.lap.hint'.tr(), style: TnText.caption(c.inkMuted)),
       ]),
     );
   }

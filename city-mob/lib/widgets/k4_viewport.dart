@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -144,11 +145,11 @@ class _K4ViewportState extends State<K4Viewport> with SingleTickerProviderStateM
                   child: AnimatedBuilder(
                     animation: _ctl,
                     builder: (_, _) => Column(mainAxisSize: MainAxisSize.min, children: [
-                      _Btn(label: 'Nagyítás', text: '+', onTap: _scale < widget.maxZoom - 0.01 ? () => _go(_scale + 0.6, _center) : null),
+                      _Btn(label: 'ui.viewport.zoom_in'.tr(), text: '+', onTap: _scale < widget.maxZoom - 0.01 ? () => _go(_scale + 0.6, _center) : null),
                       const SizedBox(height: 5),
-                      _Btn(label: 'Kicsinyítés', text: '−', onTap: _scale > 1.01 ? () => _go(_scale - 0.6, _center) : null),
+                      _Btn(label: 'ui.viewport.zoom_out'.tr(), text: '−', onTap: _scale > 1.01 ? () => _go(_scale - 0.6, _center) : null),
                       const SizedBox(height: 5),
-                      _Btn(label: 'Teljes nézet', icon: Icons.fullscreen_exit_rounded, onTap: _scale > 1.01 ? () => _go(1, const Offset(0.5, 0.5)) : null),
+                      _Btn(label: 'ui.viewport.reset'.tr(), icon: Icons.fullscreen_exit_rounded, onTap: _scale > 1.01 ? () => _go(1, const Offset(0.5, 0.5)) : null),
                     ]),
                   ),
                 ),

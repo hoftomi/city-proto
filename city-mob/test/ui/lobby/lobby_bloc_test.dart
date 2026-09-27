@@ -3,11 +3,13 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/lobby_extensions.dart';
 import 'package:tron_nelkul/domain/service/lobby_service.dart';
 import 'package:tron_nelkul/ui/auth/bloc/auth_bloc.dart';
 import 'package:tron_nelkul/ui/lobby/bloc/lobby_bloc.dart';
 
+import '../../helpers/l10n.dart';
 import 'lobby_fixtures.dart';
 
 class _MockLobby extends Mock implements LobbyService {}
@@ -25,6 +27,8 @@ void main() {
   final soon = summary(id: 's', status: 'hamarosan');
   final done = summary(id: 'd', status: 'lezarult', myHouse: house());
   final all = [runningMine, openMine, fresh, runningOther, soon, done];
+
+  setUpAll(loadTestTranslations);
 
   setUp(() {
     lobby = _MockLobby();
@@ -54,7 +58,16 @@ void main() {
       expect(summary(players: 10).canJoin, isFalse);
       expect(summary(players: 10).closedFull, isTrue);
       expect(runningMine.enterable, isTrue);
-      expect(runningMine.whenText, '5. elszámolás / 20');
+      expect(runningMine.whenText, const Tr('lobby.round_of', {'round': '5', 'max': '20'}));
+      expect(done.whenText, const Tr('lobby.when.closed'));
+      expect(done.resultText, const Tr('lobby.winner', {'winner': '–'}));
+      expect(fresh.startsAtText, const Tr('lobby.when.soon'));
+    });
+
+    test('a feliratok a fordításból jönnek', () {
+      expect(runningMine.whenText.text, '5. elszámolás / 20');
+      expect(const Tr('lobby.empty_mine').text, startsWith('Még nem jelentkeztél'));
+      expect(const Tr('lobby.winner_place', {'winner': 'X', 'place': '2'}).text, 'Győztes: X · a te helyezésed: 2.');
     });
   });
 
@@ -77,7 +90,7 @@ void main() {
     'hiba, majd sikeres frissítés törli',
     setUp: () {
       var n = 0;
-      when(() => lobby.games()).thenAnswer((_) async => n++ == 0 ? const Left(Failure('baj')) : Right(all));
+      when(() => lobby.games()).thenAnswer((_) async => n++ == 0 ? const Left(Failure(Tr.raw('baj'))) : Right(all));
     },
     build: () => LobbyBloc(lobby, auth),
     act: (b) async {
@@ -98,7 +111,7 @@ void main() {
     build: () => LobbyBloc(lobby, auth),
     act: (b) => b.add(const LobbyTabSelected(LobbyTab.mine)),
     expect: () => [const LobbyState(tab: LobbyTab.mine)],
-    verify: (b) => expect(b.state.emptyText, startsWith('Még nem jelentkeztél')),
+    verify: (b) => expect(b.state.emptyText, const Tr('lobby.empty_mine')),
   );
 
   blocTest<LobbyBloc, LobbyState>(

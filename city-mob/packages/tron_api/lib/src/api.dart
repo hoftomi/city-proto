@@ -10,6 +10,7 @@ import 'package:tron_api/src/auth/oauth.dart';
 import 'package:tron_api/src/api/admin_api.dart';
 import 'package:tron_api/src/api/auth_api.dart';
 import 'package:tron_api/src/api/game_api.dart';
+import 'package:tron_api/src/api/i18n_api.dart';
 import 'package:tron_api/src/api/lobby_api.dart';
 
 class TronApi {
@@ -119,6 +120,12 @@ class TronApi {
   /// by doing that all interceptors will not be executed
   GameApi getGameApi() {
     return GameApi(dio);
+  }
+
+  /// Get I18nApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  I18nApi getI18nApi() {
+    return I18nApi(dio);
   }
 
   /// Get LobbyApi instance, base route and serializer can be overridden by a given but be careful,

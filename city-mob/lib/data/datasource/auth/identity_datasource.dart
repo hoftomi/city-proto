@@ -12,6 +12,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/config.dart';
 import '../../../core/failure.dart';
+import '../../../core/tr.dart';
 import '../../../firebase_options.dart';
 
 /// A Discord PKCE-folyamatának eredménye: a kód, amelyet a backend vált be.
@@ -48,13 +49,12 @@ class IdentityDataSource {
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) return false;
       if (e.code == GoogleSignInExceptionCode.clientConfigurationError) {
-        throw const Failure('A Google-belépés nincs beállítva: a Firebase-projektben kapcsold be a Google-belépést, '
-            'add meg az SHA-1 ujjlenyomatot, és töltsd le újra a google-services.json fájlt.');
+        throw const Failure(Tr('auth.google_not_configured'));
       }
-      throw const Failure('A Google-belépés nem sikerült. Próbáld újra.');
+      throw const Failure(Tr('auth.google_failed'));
     }
     final idToken = account.authentication.idToken;
-    if (idToken == null) throw const Failure('A Google nem adott azonosító tokent.');
+    if (idToken == null) throw const Failure(Tr('auth.google_no_token'));
     await _firebase(() => _fb.signInWithCredential(GoogleAuthProvider.credential(idToken: idToken)));
     return true;
   }
@@ -70,10 +70,10 @@ class IdentityDataSource {
       );
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) return false;
-      throw const Failure('Az Apple-belépés nem sikerült. Próbáld újra.');
+      throw const Failure(Tr('auth.apple_failed'));
     }
     final token = cred.identityToken;
-    if (token == null) throw const Failure('Az Apple nem adott azonosító tokent.');
+    if (token == null) throw const Failure(Tr('auth.apple_no_token'));
     // Az Apple a nevet csak az első belépéskor adja át: a Firebase-fiókba mentjük, így az ID tokenben is ott lesz.
     final name = [cred.givenName, cred.familyName].where((e) => e != null && e.isNotEmpty).join(' ');
     await _firebase(() async {
@@ -91,7 +91,7 @@ class IdentityDataSource {
 
   /// Discord: OAuth 2.0 authorization code + PKCE a rendszerböngészőben. null, ha a felhasználó megszakította.
   Future<DiscordCode?> discordCode() async {
-    if (!Config.discordConfigured) throw const Failure('A Discord-belépés nincs beállítva (DISCORD_CLIENT_ID).');
+    if (!Config.discordConfigured) throw const Failure(Tr('auth.discord_not_configured'));
     final verifier = _randomString(64);
     final challenge = base64Url.encode(sha256.convert(ascii.encode(verifier)).bytes).replaceAll('=', '');
     final state = _randomString(24);
@@ -112,7 +112,7 @@ class IdentityDataSource {
       return null;
     }
     final params = Uri.parse(result).queryParameters;
-    if (params['state'] != state) throw const Failure('A Discord-válasz nem ehhez a belépéshez tartozik.');
+    if (params['state'] != state) throw const Failure(Tr('auth.discord_state_mismatch'));
     final code = params['code'];
     if (code == null) return null;
     return DiscordCode(code, verifier, Config.discordRedirectUri);
@@ -126,12 +126,12 @@ class IdentityDataSource {
     try {
       return await f();
     } on FirebaseAuthException catch (e) {
-      throw Failure(switch (e.code) {
-        'network-request-failed' => 'Nincs internetkapcsolat. Próbáld újra.',
-        'user-disabled' => 'Ezt a fiókot letiltották.',
-        'account-exists-with-different-credential' => 'Ezzel az e-mail-címmel már beléptél egy másik szolgáltatóval. Azzal próbáld.',
-        _ => 'A belépés nem sikerült. Próbáld újra.',
-      });
+      throw Failure(Tr(switch (e.code) {
+        'network-request-failed' => 'auth.network',
+        'user-disabled' => 'auth.disabled',
+        'account-exists-with-different-credential' => 'auth.account_exists',
+        _ => 'auth.failed',
+      }));
     }
   }
 

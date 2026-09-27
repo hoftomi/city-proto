@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,11 +27,11 @@ class GameShellPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<GameBloc, GameViewState>(
       listenWhen: (a, b) => b.notice != null && a.notice != b.notice,
-      listener: (context, s) => showToast(context, s.notice!.title, body: s.notice!.body, tone: s.notice!.tone),
+      listener: (context, s) => showToast(context, s.notice!.title.text, body: s.notice!.body?.text, tone: s.notice!.tone),
       child: BlocBuilder<GameBloc, GameViewState>(
         buildWhen: (a, b) => a.status != b.status || a.ready != b.ready,
         builder: (context, v) {
-          if (v.status == GameStatus.failure && v.game == null) return _Failure(message: v.failure?.message ?? '', gameId: v.gameId);
+          if (v.status == GameStatus.failure && v.game == null) return _Failure(message: v.failure?.message.text ?? '', gameId: v.gameId);
           if (!v.ready) return const Scaffold(body: TnScreen(child: Center(child: CircularProgressIndicator())));
           return Scaffold(
             body: TnScreen(
@@ -62,15 +63,15 @@ class _Failure extends StatelessWidget {
     return Scaffold(
       body: TnScreen(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          TnHeader(leading: TnButton(label: '← Játékok', kind: TnButtonKind.quiet, small: true, onPressed: () => context.go(Routes.lobby))),
+          TnHeader(leading: TnButton(label: 'shell.back_to_lobby'.tr(), kind: TnButtonKind.quiet, small: true, onPressed: () => context.go(Routes.lobby))),
           Expanded(
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Notice(tone: 'danger', title: 'Nem sikerült betölteni a játékot', body: message),
+                  Notice(tone: 'danger', title: 'shell.load_failed'.tr(), body: message),
                   const SizedBox(height: 12),
-                  TnButton(label: 'Újra', onPressed: gameId == null ? null : () => context.read<GameBloc>().add(GameStarted(gameId!))),
+                  TnButton(label: 'common.retry'.tr(), onPressed: gameId == null ? null : () => context.read<GameBloc>().add(GameStarted(gameId!))),
                 ]),
               ),
             ),
@@ -101,7 +102,7 @@ class _TopBar extends StatelessWidget {
                 button: true,
                 child: InkWell(
                   onTap: () => context.go(Routes.lobby),
-                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Text('← Játékok', style: TnText.data(c.frameHi, size: 12, weight: FontWeight.w900))),
+                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Text('shell.back_to_lobby'.tr(), style: TnText.data(c.frameHi, size: 12, weight: FontWeight.w900))),
                 ),
               ),
               const SizedBox(width: 12),
@@ -124,7 +125,7 @@ class _TopBar extends StatelessWidget {
               ResourceChip(kind: 'arany', value: me.gold.floor()),
               ResourceChip(kind: 'pp', value: me.pp, max: me.ppMax),
               ResourceChip(kind: 'legit', value: me.legit),
-              if (lap != null) Text('lapod ${durText(v.until(lap.executeAt))} múlva él', style: TnText.caption(const Color(0xFFD9C49A))),
+              if (lap != null) Text('shell.lap_live_in'.tr(namedArgs: {'time': durText(v.until(lap.executeAt))}), style: TnText.caption(const Color(0xFFD9C49A))),
             ]),
           ]),
         );
@@ -159,10 +160,10 @@ class _AdminBar extends StatelessWidget {
               Text(v.now == null ? '' : shortDateTime(v.now!), style: TnText.data(c.ink)),
             ]),
             Wrap(spacing: 5, runSpacing: 5, children: [
-              btn('+30 p', const GameAdminAdvanceRequested(30)),
-              btn('+2 ó', const GameAdminAdvanceRequested(120)),
-              btn('Következő esemény ›', const GameAdminAdvanceRequested(null), on: true),
-              btn('Elszámolás most', const GameAdminSettleRequested()),
+              btn('shell.admin.advance_30m'.tr(), const GameAdminAdvanceRequested(30)),
+              btn('shell.admin.advance_2h'.tr(), const GameAdminAdvanceRequested(120)),
+              btn('shell.admin.next_event'.tr(), const GameAdminAdvanceRequested(null), on: true),
+              btn('shell.admin.settle_now'.tr(), const GameAdminSettleRequested()),
             ]),
           ]),
         );
@@ -184,11 +185,11 @@ class _NavBar extends StatelessWidget {
         active: shell.currentIndex,
         onChange: shell.goBranch,
         items: [
-          const TnNavItem('Térkép', icon: 'terkep'),
-          const TnNavItem('Város', icon: 'varos'),
-          const TnNavItem('Jelentések', icon: 'kem'),
-          TnNavItem('Parancslap', icon: 'pp', badge: badgeText(orders)),
-          const TnNavItem('Rangsor', icon: 'legit'),
+          TnNavItem('shell.nav.map'.tr(), icon: 'terkep'),
+          TnNavItem('shell.nav.city'.tr(), icon: 'varos'),
+          TnNavItem('shell.nav.reports'.tr(), icon: 'kem'),
+          TnNavItem('shell.nav.orders'.tr(), icon: 'pp', badge: badgeText(orders)),
+          TnNavItem('shell.nav.ranking'.tr(), icon: 'legit'),
         ],
       ),
     );

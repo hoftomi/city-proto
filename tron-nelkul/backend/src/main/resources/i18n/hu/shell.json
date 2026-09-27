@@ -1,0 +1,18 @@
+{
+  "back_to_lobby": "← Játékok",
+  "load_failed": "Nem sikerült betölteni a játékot",
+  "lap_live_in": "lapod {time} múlva él",
+  "admin": {
+    "advance_30m": "+30 p",
+    "advance_2h": "+2 ó",
+    "next_event": "Következő esemény ›",
+    "settle_now": "Elszámolás most"
+  },
+  "nav": {
+    "map": "Térkép",
+    "city": "Város",
+    "reports": "Jelentések",
+    "orders": "Parancslap",
+    "ranking": "Rangsor"
+  }
+}

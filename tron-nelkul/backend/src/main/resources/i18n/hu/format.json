@@ -1,0 +1,48 @@
+{
+  "branch": {
+    "keresk": "Vásártér",
+    "polit": "Városháza",
+    "kem": "Alvilág",
+    "kozos": "Közös"
+  },
+  "tincture": {
+    "voros": "Vörös",
+    "kek": "Kék",
+    "zold": "Zöld",
+    "arany": "Arany",
+    "bibor": "Bíbor",
+    "fekete": "Fekete",
+    "narancs": "Narancs",
+    "szeder": "Szeder"
+  },
+  "month": {
+    "1": "január",
+    "2": "február",
+    "3": "március",
+    "4": "április",
+    "5": "május",
+    "6": "június",
+    "7": "július",
+    "8": "augusztus",
+    "9": "szeptember",
+    "10": "október",
+    "11": "november",
+    "12": "december"
+  },
+  "weekday": {
+    "1": "hétfő",
+    "2": "kedd",
+    "3": "szerda",
+    "4": "csütörtök",
+    "5": "péntek",
+    "6": "szombat",
+    "7": "vasárnap"
+  },
+  "date_long": "{month} {day}., {weekday}, {time}",
+  "today_at": "ma {time}",
+  "tomorrow": "holnap",
+  "in_days": "{days} nap múlva",
+  "dur_m": "{m} p",
+  "dur_h": "{h} ó",
+  "dur_hm": "{h} ó {m} p"
+}

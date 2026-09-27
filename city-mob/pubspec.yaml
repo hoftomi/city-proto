@@ -29,6 +29,9 @@ dependencies:
   injectable: ^3.0.0
   either_dart: ^1.0.0
   dio: ^5.11.1
+  # Feliratok: a backend /api/i18n végpontjáról (TranslationRepository), offline a gyorsítótárból
+  easy_localization: ^3.0.8
+  shared_preferences: ^2.5.5
   # Az api/openapi.yaml-ból generált kliens (tools/generate_api.sh)
   tron_api:
     path: packages/tron_api
@@ -55,3 +58,5 @@ flutter:
     - assets/k4/cityview/
     # A Cinzel és a Nunito Sans (OFL) offline is betöltődik, a google_fonts innen veszi őket
     - assets/google_fonts/
+    # Tartalék feliratok első indításhoz hálózat nélkül (tools/sync_translations.py a backend i18n fájljaiból)
+    - assets/translations/

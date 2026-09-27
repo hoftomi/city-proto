@@ -1,0 +1,260 @@
+// Trón nélkül – adatbázis-séma (Flyway V1 + V2 után)
+// Szerkesztés: https://dbdiagram.io → Import / illeszd be ezt a fájlt.
+// Forrás: tron-nelkul/backend (JPA entitások, db/migration, engine/EngineState.java)
+
+Project tron_nelkul {
+  database_type: 'PostgreSQL'
+  Note: '''
+  Hibrid modell: relációsan csak a lobbihoz, jogosultsághoz és jelentésekhez szükséges adat van tárolva.
+  A futó játék teljes állapota a games.state JSONB oszlopban van (EngineState).
+  Az "engine_state" csoport táblái NEM valódi táblák, hanem a JSON-dokumentum szerkezete.
+  '''
+}
+
+// ───────────────────────── Relációs táblák ─────────────────────────
+
+Table users {
+  id uuid [pk, note: 'belső azonosító']
+  display_name varchar(80) [not null, note: 'megjelenített név']
+  role varchar(20) [not null, default: 'PLAYER', note: 'PLAYER vagy ADMIN']
+  created_at timestamptz [not null, note: 'regisztráció ideje']
+}
+
+Table user_identities {
+  id uuid [pk, note: 'azonosító']
+  user_id uuid [not null, note: 'melyik felhasználóé']
+  provider varchar(20) [not null, note: 'google, apple, discord']
+  subject varchar(200) [not null, note: 'fiók-ID a szolgáltatónál']
+  email varchar(320) [note: 'e-mail, ha van']
+
+  indexes {
+    (provider, subject) [unique, name: 'uq_identity']
+  }
+  Note: 'Egy külső fiók (Google, Apple, Discord) hozzárendelése egy felhasználóhoz.'
+}
+
+Table games {
+  id varchar(40) [pk, note: 'olvasható játék-ID']
+  name varchar(80) [not null, note: 'játék neve']
+  season varchar(80) [not null, note: 'szezon neve']
+  status varchar(20) [not null, note: 'ANNOUNCED / OPEN / RUNNING / FINISHED (API: hamarosan / nyitott / fut / lezarult)']
+  map_id varchar(40) [not null, note: 'térkép a kódbeli katalógusból']
+  starts_at timestamptz [note: 'szezon kezdete']
+  opens_at timestamptz [note: 'jelentkezés nyitása']
+  days integer [not null, note: 'szezon hossza napban']
+  rounds_per_day integer [not null, default: 2, note: 'elszámolás naponta']
+  max_players integer [not null, note: 'férőhely']
+  npc_count integer [not null, note: 'NPC-házak száma']
+  tags varchar(300) [not null, default: '', note: 'címkék, vesszővel elválasztva']
+  settlements integer [not null, default: 0, note: 'eddigi elszámolások (másolat az állapotból)']
+  maturation_minutes integer [not null, default: 120, note: 'parancs érlelési ideje percben (3.1)']
+  time_offset_minutes integer [not null, default: 0, note: 'fejlesztői időeltolás (admin előretekerés)']
+  mode varchar(20) [not null, default: 'polgar', note: 'játékmód']
+  state jsonb [note: 'a szabálymotor teljes állapota (EngineState); indulás előtt null']
+  winner varchar(80) [note: 'győztes ház']
+  created_at timestamptz [not null, note: 'létrehozás']
+}
+
+Table players {
+  id uuid [pk, note: 'ház azonosító']
+  game_id varchar(40) [not null, note: 'melyik játékban']
+  user_id uuid [note: 'tulajdonos felhasználó; NPC-nél null']
+  house_name varchar(40) [not null, note: 'háznév, játékon belül egyedi (kisbetűsítve)']
+  tincture varchar(20) [not null, note: 'címerszín']
+  background varchar(20) [note: 'háttér: kereskedo / nemesi / arnyek']
+  start_slot varchar(40) [note: 'kezdő birtok']
+  npc boolean [not null, default: false, note: 'gépi ház-e']
+  persona varchar(20) [note: 'NPC stratégia: kalmar / felvasarlo / politikus / kem']
+  start_good varchar(40) [note: 'Kereskedőház induló árucikke a kezdővárosban (2.2)']
+  legit integer [not null, default: 0, note: 'Legitimitás másolata az állapotból (lobbi helyezés)']
+  created_at timestamptz [not null, note: 'csatlakozás']
+
+  indexes {
+    (game_id, user_id) [unique, name: 'uq_player_user']
+    `(game_id, lower(house_name))` [unique, name: 'uq_player_house']
+    game_id [name: 'ix_players_game']
+  }
+}
+
+Table reports {
+  id uuid [pk, note: 'azonosító']
+  game_id varchar(40) [not null, note: 'melyik játék']
+  player_id uuid [not null, note: 'címzett ház']
+  settlement integer [not null, note: 'hányadik elszámolásnál keletkezett']
+  kind varchar(20) [not null, note: 'kem / frakcio / diplomacia / esemeny']
+  confidence varchar(20) [note: 'kémhír biztossága (pl. eros)']
+  title varchar(200) [not null, note: 'cím']
+  body varchar(2000) [not null, note: 'szöveg']
+  tone varchar(20) [not null, note: 'info / ok / warn']
+  is_public boolean [not null, default: false, note: 'nyilvános krónika-e']
+  created_at timestamptz [not null, note: 'a játék órája szerint']
+
+  indexes {
+    (game_id, player_id, created_at) [name: 'ix_reports_player']
+  }
+}
+
+Ref: user_identities.user_id > users.id [delete: cascade]
+Ref: players.user_id > users.id
+Ref: players.game_id > games.id [delete: cascade]
+Ref: reports.game_id > games.id [delete: cascade]
+Ref: reports.player_id > players.id [delete: cascade]
+
+// ─────────────── games.state JSONB – EngineState (logikai szerkezet) ───────────────
+// A kapcsolatok itt nem adatbázis-kényszerek, csak szöveges azonosítók.
+
+Table engine_state [headercolor: #8E44AD] {
+  game_id varchar [pk, note: 'games.id – a dokumentum a games.state oszlopban van']
+  clock bigint [note: 'eddig feldolgozott idő (epoch ms, a játék órája)']
+  settlements int [note: 'lefutott elszámolások']
+  seq bigint [note: 'belső ID-számláló']
+  festivals json [note: '"város|ház" → utolsó fesztivál elszámolása']
+  protection json [note: '"város|árucikk|ház" → eddig az elszámolásig nem vásárolható ki']
+}
+
+Table es_player [headercolor: #8E44AD] {
+  id varchar [pk, note: 'players.id szövegként (map kulcs)']
+  name varchar [note: 'háznév']
+  tincture varchar [note: 'címerszín']
+  persona varchar [note: 'NPC stratégia']
+  background varchar [note: 'háttér']
+  estate varchar [note: '"birtok:<id>", NPC-nél null']
+  gold double [note: 'arany']
+  pp int [note: 'parancspont']
+  legit int [note: 'Legitimitás']
+  last_info_sale int [note: 'utolsó információeladás elszámolása']
+  npc boolean [note: 'gépi ház-e']
+  next_plan_at bigint [note: 'NPC következő pecsételése (ms, 0 = nincs)']
+  verified json [note: 'hír-ID → igaz volt-e a terjesztéskor']
+}
+
+Table es_city [headercolor: #8E44AD] {
+  city varchar [pk, note: 'város-ID (map kulcs)']
+  pop json [note: 'ház → népszerűség 0–100 (alap 10)']
+  parties json [note: 'ház → pártprogram']
+  council json [note: 'ház → tanácsi helyek']
+  spies json [note: 'ház → kémek száma']
+  guards json [note: 'ház → őrök száma']
+  last_tax_pool double [note: 'utolsó adóalap']
+}
+
+Table es_good [headercolor: #8E44AD] {
+  city varchar [note: 'melyik város']
+  good varchar [note: 'árucikk-ID (map kulcs)']
+  name varchar [note: 'megjelenített név']
+  supply int [note: 'kínálat']
+  demand int [note: 'kereslet']
+  shares json [note: 'ház → részesedés pont']
+  margins json [note: 'ház → árfokozat']
+  sold json [note: 'ház → utolsó elszámolás eladása ("_varos" = a Város)']
+  history json [note: 'utolsó 3 elszámolás átlagos haszna pontonként']
+  indexes {
+    (city, good) [pk]
+  }
+}
+
+Table es_route [headercolor: #8E44AD] {
+  player varchar [note: 'tulajdonos ház (map kulcs)']
+  "from" varchar [note: 'kezdő csomópont']
+  "to" varchar [note: 'cél csomópont']
+}
+
+Table es_lap [headercolor: #8E44AD] {
+  id varchar [pk, note: 'parancslap-ID']
+  player varchar [note: 'tulajdonos ház']
+  sealed_at bigint [note: 'pecsételés ideje (ms)']
+  execute_at bigint [note: 'végrehajtás ideje (ms)']
+  pp int [note: 'lefoglalt parancspont']
+  gold int [note: 'lefoglalt arany']
+  Note: 'Érlelő parancslap (3.1).'
+}
+
+Table es_order [headercolor: #8E44AD] {
+  id varchar [pk, note: 'parancs-ID']
+  lap_id varchar [note: 'melyik lapon van; vázlatnál null (drafts: ház → [Order])']
+  type varchar [note: 'parancs típusa']
+  city varchar [note: 'célváros']
+  good varchar [note: 'célárucikk']
+  level varchar [note: 'árfokozat vagy pártprogram']
+  target varchar [note: 'célpont ház']
+  template varchar [note: 'hírsablon']
+  news_id varchar [note: 'érintett hír']
+  order_id varchar [note: 'érintett parancs']
+  "from" varchar [note: 'útvonal eleje']
+  "to" varchar [note: 'útvonal vége']
+  pts int [note: 'pontok']
+  gold int [note: 'lepecsételéskor lefoglalt arany']
+  Note: 'Csak a típushoz tartozó mezők töltöttek.'
+}
+
+Table es_news [headercolor: #8E44AD] {
+  id varchar [pk, note: 'hír-ID']
+  city varchar [note: 'város']
+  author varchar [note: 'szerző ház']
+  target varchar [note: 'érintett ház']
+  template varchar [note: 'sablon']
+  good varchar [note: 'érintett árucikk']
+  good_name varchar [note: 'árucikk neve']
+  effect int [note: 'hatás mértéke']
+  true_at_creation boolean [note: 'igaz volt-e születéskor']
+  debunked boolean [note: 'megcáfolták-e']
+  created_at bigint [note: 'létrehozás (ms)']
+}
+
+Table es_market_event [headercolor: #8E44AD] {
+  type varchar [note: 'buyout / defend / defendUsed']
+  city varchar [note: 'város']
+  good varchar [note: 'árucikk']
+  "by" varchar [note: 'kezdeményező ház']
+  target varchar [note: 'érintett ház']
+  lap_id varchar [note: 'forrás parancslap']
+  order_id varchar [note: 'forrás parancs']
+  settlement int [note: 'elszámolás sorszáma']
+}
+
+Table es_intel [headercolor: #8E44AD] {
+  id varchar [pk, note: 'felderítés-ID']
+  owner varchar [note: 'ki tudja']
+  lap_id varchar [note: 'kifürkészett parancslap']
+  "of" varchar [note: 'kinek a lapja']
+  execute_at bigint [note: 'a lap végrehajtása (ms)']
+  lines json [note: 'megismert sorok']
+  depth int [note: 'felderítés mélysége']
+  bought boolean [note: 'vásárolt-e']
+  offered_to json [note: 'kiknek ajánlották fel']
+}
+
+Table es_offer [headercolor: #8E44AD] {
+  id varchar [pk, note: 'ajánlat-ID']
+  intel_id varchar [note: 'eladott felderítés']
+  seller varchar [note: 'eladó ház']
+  buyer varchar [note: 'vevő ház']
+  price int [note: 'ár; a vevő elfogadáskor fizet (7.5)']
+}
+
+TableGroup engine_state_json [note: 'games.state JSONB belső szerkezete'] {
+  engine_state
+  es_player
+  es_city
+  es_good
+  es_route
+  es_lap
+  es_order
+  es_news
+  es_market_event
+  es_intel
+  es_offer
+}
+
+Ref: engine_state.game_id - games.id
+Ref: es_player.id - players.id
+Ref: es_good.city > es_city.city
+Ref: es_route.player > es_player.id
+Ref: es_lap.player > es_player.id
+Ref: es_order.lap_id > es_lap.id
+Ref: es_news.author > es_player.id
+Ref: es_market_event.by > es_player.id
+Ref: es_intel.owner > es_player.id
+Ref: es_intel.lap_id > es_lap.id
+Ref: es_offer.intel_id > es_intel.id
+Ref: es_offer.seller > es_player.id

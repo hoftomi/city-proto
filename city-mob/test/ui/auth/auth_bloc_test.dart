@@ -5,6 +5,7 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_nelkul/core/failure.dart';
+import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/service/auth_service.dart';
 import 'package:tron_nelkul/ui/auth/bloc/auth_bloc.dart';
 import 'package:tron_api/tron_api.dart';
@@ -65,11 +66,11 @@ void main() {
 
   blocTest<AuthBloc, AuthState>('sikertelen belépés: a hibaüzenet az állapotban',
       build: () {
-        when(() => service.signIn('discord')).thenAnswer((_) async => const Left(Failure('A belépés nem sikerült.')));
+        when(() => service.signIn('discord')).thenAnswer((_) async => const Left(Failure(Tr('auth.failed'))));
         return AuthBloc(service);
       },
       act: (b) => b.add(const AuthSignInRequested('discord')),
-      expect: () => [const AuthState(busyProvider: 'discord'), const AuthState(error: 'A belépés nem sikerült.')]);
+      expect: () => [const AuthState(busyProvider: 'discord'), const AuthState(error: Tr('auth.failed'))]);
 
   blocTest<AuthBloc, AuthState>('401 után kiléptet, és jelzi, hogy lejárt a munkamenet',
       build: () {
@@ -83,6 +84,6 @@ void main() {
         expired.add(null);
       },
       skip: 1,
-      expect: () => [const AuthState(status: AuthStatus.signedOut, error: 'A munkamenet lejárt. Jelentkezz be újra.')],
+      expect: () => [const AuthState(status: AuthStatus.signedOut, error: Tr('error.session_expired'))],
       verify: (_) => verify(() => service.signOut()).called(1));
 }

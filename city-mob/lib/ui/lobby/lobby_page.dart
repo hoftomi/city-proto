@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -48,23 +49,23 @@ class _LobbyView extends StatelessWidget {
       body: TnScreen(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           TnHeader(
-            title: Text('Trón nélkül', style: woodTitle(c, size: 18)),
+            title: Text('app.title'.tr(), style: woodTitle(c, size: 18)),
             actions: [
               if (userName != null) Flexible(child: Text(userName, overflow: TextOverflow.ellipsis, style: TnText.caption(const Color(0xFFD9C49A)))),
               TnButton(
-                  label: 'Kilépés', kind: TnButtonKind.quiet, small: true, onPressed: () => context.read<LobbyBloc>().add(const LobbySignOutRequested())),
+                  label: 'lobby.sign_out'.tr(), kind: TnButtonKind.quiet, small: true, onPressed: () => context.read<LobbyBloc>().add(const LobbySignOutRequested())),
             ],
           ),
           Expanded(
             child: BlocBuilder<LobbyBloc, LobbyState>(builder: (context, s) {
               final bloc = context.read<LobbyBloc>();
-              if (s.failure != null) return _ErrorView(message: s.failure!.message, onRetry: () => bloc.add(const LobbyRefreshRequested()));
+              if (s.failure != null) return _ErrorView(message: s.failure!.message.text, onRetry: () => bloc.add(const LobbyRefreshRequested()));
               if (!s.loaded) return const Center(child: CircularProgressIndicator());
               return RefreshIndicator(
                 onRefresh: () => _refresh(bloc),
                 child: ListView(padding: const EdgeInsets.all(16), children: [
                   if (s.groups.running.isNotEmpty) ...[
-                    const Eyebrow('Folytasd, ahol abbahagytad'),
+                    Eyebrow('lobby.continue'.tr()),
                     const SizedBox(height: 8),
                     for (final g in s.groups.running) ...[
                       _ContinueCard(g: g, onEnter: () => context.go(Routes.map(g.id))),
@@ -76,13 +77,13 @@ class _LobbyView extends StatelessWidget {
                     active: s.tab.name,
                     onChange: (t) => bloc.add(LobbyTabSelected(LobbyTab.values.byName(t))),
                     tabs: [
-                      TnTabItem(LobbyTab.fresh.name, 'Új játékok'),
-                      TnTabItem(LobbyTab.mine.name, 'Saját', badge: s.mineBadge),
-                      TnTabItem(LobbyTab.finished.name, 'Lezárult'),
+                      TnTabItem(LobbyTab.fresh.name, 'lobby.tab.fresh'.tr()),
+                      TnTabItem(LobbyTab.mine.name, 'lobby.tab.mine'.tr(), badge: s.mineBadge),
+                      TnTabItem(LobbyTab.finished.name, 'lobby.tab.finished'.tr()),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  if (s.games.isEmpty) Text(s.emptyText, style: TnText.body(c.inkMuted)),
+                  if (s.games.isEmpty) Text(s.emptyText.text, style: TnText.body(c.inkMuted)),
                   for (final g in s.games) ...[_GameCard(g: g, onTap: () => _open(context, g)), const SizedBox(height: 12)],
                 ]),
               );
@@ -111,10 +112,10 @@ class _ContinueCard extends StatelessWidget {
           HouseCrest(tincture: h.tincture, initial: h.houseName.characters.first, size: 26, name: h.houseName),
           const SizedBox(width: 8),
           Expanded(child: Text(g.name, style: TnText.bodyStrong(c.ink))),
-          Text('${g.round}. elszámolás / ${g.maxRounds}', style: TnText.caption(c.inkMuted)),
+          Text('lobby.round_of'.tr(namedArgs: {'round': '${g.round}', 'max': '${g.maxRounds}'}), style: TnText.caption(c.inkMuted)),
         ]),
         const SizedBox(height: 12),
-        TnButton(label: 'Belépés a játékba', icon: 'terkep', kind: TnButtonKind.primary, onPressed: onEnter),
+        TnButton(label: 'lobby.enter_game'.tr(), icon: 'terkep', kind: TnButtonKind.primary, onPressed: onEnter),
       ]),
     );
   }
@@ -130,7 +131,7 @@ class _GameCard extends StatelessWidget {
     final c = context.tn;
     return Semantics(
       button: true,
-      label: '${g.name}, ${g.season}. ${g.whenText}.',
+      label: 'lobby.game_semantics'.tr(namedArgs: {'name': g.name, 'season': g.season, 'when': g.whenText.text}),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -149,18 +150,18 @@ class _GameCard extends StatelessWidget {
             ]),
             const SizedBox(height: 12),
             Wrap(spacing: 16, runSpacing: 4, children: [
-              _fact(c, 'clock', g.whenText),
-              _fact(c, 'terkep', '${g.days} nap · napi ${g.roundsPerDay} elszámolás'),
+              _fact(c, 'clock', g.whenText.text),
+              _fact(c, 'terkep', 'lobby.schedule'.tr(namedArgs: {'days': '${g.days}', 'rounds': '${g.roundsPerDay}'})),
             ]),
             const SizedBox(height: 12),
             if (!g.finished)
               Row(children: [
                 Expanded(child: TnMeter(value: g.fill, green: true)),
                 const SizedBox(width: 12),
-                Text('${g.players} / ${g.maxPlayers} ház', style: TnText.data(c.ink)),
+                Text('lobby.houses'.tr(namedArgs: {'players': '${g.players}', 'max': '${g.maxPlayers}'}), style: TnText.data(c.ink)),
               ])
             else
-              Text('${g.winnerText}${g.myPlace != null ? ' · a te helyezésed: ${g.myPlace}.' : ''}', style: TnText.caption(c.inkMuted)),
+              Text(g.resultText.text, style: TnText.caption(c.inkMuted)),
             if (g.myHouse != null) ...[
               const SizedBox(height: 8),
               Row(children: [
@@ -195,9 +196,9 @@ class _ErrorView extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Notice(tone: 'danger', title: 'Nem sikerült betölteni', body: message),
+            Notice(tone: 'danger', title: 'lobby.load_failed'.tr(), body: message),
             const SizedBox(height: 12),
-            TnButton(label: 'Újra', onPressed: onRetry),
+            TnButton(label: 'common.retry'.tr(), onPressed: onRetry),
           ]),
         ),
       );

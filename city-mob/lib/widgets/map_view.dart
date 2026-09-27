@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tron_api/tron_api.dart';
@@ -66,7 +67,7 @@ class MapView extends StatelessWidget {
           child: IgnorePointer(child: Image.asset(asset, fit: BoxFit.fill, filterQuality: FilterQuality.medium, gaplessPlayback: true)),
         );
     return Semantics(
-      label: '${map.name} térképe',
+      label: 'ui.map.semantics'.tr(namedArgs: {'name': map.name}),
       child: Stack(clipBehavior: Clip.none, children: [
         Positioned.fill(child: Image.asset('assets/k4/map/${map.id}.webp', fit: BoxFit.fill, filterQuality: FilterQuality.medium, gaplessPlayback: true)),
         Positioned.fill(child: IgnorePointer(child: CustomPaint(painter: _RoutePainter(map, state, showStarts ? selectedStart : null, selected, k)))),
@@ -78,16 +79,16 @@ class MapView extends StatelessWidget {
             left: (estatePos.$1 - 40) * k,
             top: (estatePos.$2 + 10) * k,
             width: 80 * k,
-            child: IgnorePointer(child: Text('Birtokod', textAlign: TextAlign.center, style: K4.label(7 * k))),
+            child: IgnorePointer(child: Text('ui.map.estate'.tr(), textAlign: TextAlign.center, style: K4.label(7 * k))),
           ),
         ],
         for (final c in map.cities)
           sprite('assets/k4/cities/${c.id}_${_reachable(c.id, nearStart) ? 'on' : 'off'}.webp', c.x, c.y, a.cityBox),
         if (onSelect != null)
           for (final c in map.cities)
-            _hit(k, c.x, c.y, '${c.name}${_reachLabel(c.id)}', () => onSelect!(c.id), selected == c.id),
+            _hit(k, c.x, c.y, _cityLabel(c), () => onSelect!(c.id), selected == c.id),
         if (showStarts && onSelectStart != null)
-          for (final s in map.starts) _hit(k, s.x, s.y, 'Kezdőhely: ${s.name}', () => onSelectStart!(s.id), selectedStart == s.id),
+          for (final s in map.starts) _hit(k, s.x, s.y, 'ui.map.start'.tr(namedArgs: {'name': s.name}), () => onSelectStart!(s.id), selectedStart == s.id),
       ]),
     );
   }
@@ -99,10 +100,10 @@ class MapView extends StatelessWidget {
     return cv == null || cv.reachable;
   }
 
-  String _reachLabel(String id) {
-    final cv = state?.cities.where((x) => x.id == id).firstOrNull;
-    if (cv == null) return '';
-    return cv.reachable ? ', elérhető' : ', nem vezet ide útvonalad';
+  String _cityLabel(CityDef c) {
+    final cv = state?.cities.where((x) => x.id == c.id).firstOrNull;
+    if (cv == null) return c.name;
+    return (cv.reachable ? 'ui.map.city_reachable' : 'ui.map.city_unreachable').tr(namedArgs: {'name': c.name});
   }
 
   Widget _hit(double k, num x, num y, String label, VoidCallback onTap, bool selected) {

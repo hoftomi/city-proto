@@ -1,5 +1,6 @@
 import 'package:tron_api/tron_api.dart';
 
+import '../../core/tr.dart';
 import 'extensions.dart';
 
 /// A városnézet számolt értékei (tiszta függvények a generált modelleken). A CityState getterei és a
@@ -12,13 +13,13 @@ const cityDistricts = ['keresk', 'polit', 'kem'];
 String cityDistrict(String? d) => cityDistricts.contains(d) ? d! : 'keresk';
 
 /// „N elszámolás múlva” vagy „a következő elszámoláskor”.
-String electionText(int n) => n <= 1 ? 'a következő elszámoláskor' : '$n elszámolás múlva';
+Tr electionText(int n) => n <= 1 ? const Tr('city.election_next') : Tr('city.election_in', {'n': '$n'});
 
 /// Népszerűségi hatás előjellel: „+3”, „0”, „−1”.
 String popDelta(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '0');
 
 /// Egy chip a város fejlécében (StatChip).
-typedef CityStat = ({String label, String value, String? suffix, String? tone, String art});
+typedef CityStat = ({Tr label, Tr value, Tr? suffix, String? tone, String art});
 
 /// Mit tehet a kémhálózat egy hírrel: semmit, ellenőrizheti, vagy (ha hamisnak bizonyult) leleplezheti.
 enum NewsCheck { none, verify, debunk }
@@ -34,12 +35,24 @@ extension CityGameX on GameState {
 
   /// A fejléc chipjei: népszerűség, adó, választás, kampányidőszak.
   List<CityStat> cityStats(CityView cv) => [
-        (label: 'Népszerűséged', value: '${cv.myPop.round()}', suffix: null, tone: cv.lowPop(rules) ? 'warn' : null, art: 'nep'),
-        (label: 'Adó', value: '${cv.taxPercent}%', suffix: null, tone: null, art: 'ado'),
+        (label: const Tr('city.stat.popularity'), value: Tr.raw('${cv.myPop.round()}'), suffix: null, tone: cv.lowPop(rules) ? 'warn' : null, art: 'nep'),
+        (label: const Tr('city.stat.tax'), value: Tr.raw('${cv.taxPercent}%'), suffix: null, tone: null, art: 'ado'),
         clock.nextElectionIn <= 1
-            ? (label: 'Választás', value: 'a következő', suffix: 'elszámoláskor', tone: null, art: 'foundParty')
-            : (label: 'Választás', value: '${clock.nextElectionIn}', suffix: 'elszámolás múlva', tone: null, art: 'foundParty'),
-        if (clock.campaign) (label: 'Kampányidőszak', value: '×2', suffix: 'fesztivál', tone: 'warn', art: 'festival'),
+            ? (
+                label: const Tr('city.stat.election'),
+                value: const Tr('city.stat.election_next'),
+                suffix: const Tr('city.stat.election_next_suffix'),
+                tone: null,
+                art: 'foundParty',
+              )
+            : (
+                label: const Tr('city.stat.election'),
+                value: Tr.raw('${clock.nextElectionIn}'),
+                suffix: const Tr('city.stat.election_in_suffix'),
+                tone: null,
+                art: 'foundParty',
+              ),
+        if (clock.campaign) (label: const Tr('city.stat.campaign'), value: const Tr.raw('×2'), suffix: const Tr('city.stat.campaign_suffix'), tone: 'warn', art: 'festival'),
       ];
 
   /// A negyedek zászlóinak tinktúrája: Vásártér – legtöbb részesedés, Városháza – legtöbb tanácshely,
@@ -65,8 +78,7 @@ extension CityGameX on GameState {
 
   /// Igaz, ha a fenyegetés elleni védekező vétel csak a vázlaton van (még nincs lepecsételve).
   /// Az OrderView nem hivatkozik az ajánlatra, ezért városra szűrünk.
-  bool defendOnlyInDraft(Threat t) =>
-      draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(lap?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
+  bool defendOnlyInDraft(Threat t) => draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(lap?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
 
   /// Ahová kém költözhet innen (7.1): a hálózatod többi városa.
   List<CityView> spyDestinations(String fromCity) => cities.where((x) => x.reachable && x.id != fromCity).toList();
@@ -160,7 +172,10 @@ class GoodPlan {
   List<int> get boOptions => [for (var i = 1; i <= (boMax < 1 ? 1 : boMax); i++) i];
 
   /// A saját sorok indexei az eladók táblázatában.
-  Set<int> get selfRows => {for (var i = 0; i < sellers.length; i++) if (sellers[i].house?.self == true) i};
+  Set<int> get selfRows => {
+        for (var i = 0; i < sellers.length; i++)
+          if (sellers[i].house?.self == true) i,
+      };
 }
 
 /// A hírszerkesztő számolt állapota: sablon, célpont, a célpont árucikkei és hogy beküldhető-e.

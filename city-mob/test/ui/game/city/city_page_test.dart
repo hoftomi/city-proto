@@ -11,6 +11,7 @@ import 'package:tron_nelkul/theme/tokens.dart';
 import 'package:tron_nelkul/ui/game/bloc/game_bloc.dart';
 import 'package:tron_nelkul/ui/game/city/city_page.dart';
 
+import '../../../helpers/l10n.dart';
 import 'city_service_test.dart' show fixtureState;
 
 class _Game extends MockBloc<GameEvent, GameViewState> implements GameBloc {}
@@ -18,6 +19,7 @@ class _Game extends MockBloc<GameEvent, GameViewState> implements GameBloc {}
 void main() {
   final s = fixtureState();
 
+  setUpAll(loadTestTranslations);
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
     registerFallbackValue(const GameTicked());

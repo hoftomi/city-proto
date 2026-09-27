@@ -6,6 +6,7 @@ lib/src/api.dart
 lib/src/api/admin_api.dart
 lib/src/api/auth_api.dart
 lib/src/api/game_api.dart
+lib/src/api/i18n_api.dart
 lib/src/api/lobby_api.dart
 lib/src/auth/api_key_auth.dart
 lib/src/auth/auth.dart
@@ -60,4 +61,3 @@ lib/src/model/terrain_def.dart
 lib/src/model/threat.dart
 lib/src/model/user_dto.dart
 lib/tron_api.dart
-pubspec.yaml

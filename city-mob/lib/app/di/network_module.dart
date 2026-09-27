@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../core/auth_interceptor.dart';
@@ -32,4 +33,10 @@ abstract class NetworkModule {
 
   @lazySingleton
   AdminApi adminApi(TronApi api) => api.getAdminApi();
+
+  @lazySingleton
+  I18nApi i18nApi(TronApi api) => api.getI18nApi();
+
+  @lazySingleton
+  SharedPreferencesAsync get preferences => SharedPreferencesAsync();
 }

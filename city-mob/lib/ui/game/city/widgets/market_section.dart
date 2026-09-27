@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,52 +20,56 @@ class MarketSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.tn, r = s.rules, cv = s.city!;
     final bloc = context.read<CityBloc>();
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      for (final t in s.threats) ...[
-        TnCard(
-          tone: TnCardTone.threat,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Notice(
-              tone: 'danger',
-              title: '${t.by.name} ki akar vásárolni',
-              body: '${t.pts} pont ${t.goodName} · lefut: ${at(t.executeAt)} (${durText(s.until(t.executeAt))} múlva)',
-            ),
-            gap(8),
-            if (t.defending)
-              Notice(
-                tone: 'info',
-                title: 'Védekezés folyamatban',
-                body: s.defendOnlyInDraft(t) ? 'A védekező vétel még csak a vázlaton van: pecsételd le, mielőtt az ajánlat lefut.' : null,
-              )
-            else if (s.can)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TnButton(
-                  label: 'Védekező vétel · ${s.catalog.pp('defend')} PP · ${t.defendCost} A',
-                  art: 'defend',
-                  kind: TnButtonKind.danger,
-                  busy: s.busy,
-                  onPressed: () => bloc.add(CityDefendRequested(t.orderId)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final t in s.threats) ...[
+          TnCard(
+            tone: TnCardTone.threat,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Notice(
+                  tone: 'danger',
+                  title: 'city.market.threat_title'.tr(namedArgs: {'house': t.by.name}),
+                  body: 'city.market.threat_body'.tr(
+                    namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'time': at(t.executeAt), 'left': durText(s.until(t.executeAt))},
+                  ),
                 ),
-              ),
-            gap(8),
-            hint(context, 'A védekező vétel akkor hat, ha lepecsételed, mielőtt az ajánlat lefut (lefut: ${at(t.executeAt)}).'),
-          ]),
-        ),
-        gap(),
+                gap(8),
+                if (t.defending)
+                  Notice(tone: 'info', title: 'city.market.defending'.tr(), body: s.defendOnlyInDraft(t) ? 'city.market.defend_draft'.tr() : null)
+                else if (s.can)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TnButton(
+                      label: 'city.market.defend'.tr(namedArgs: {'pp': '${s.catalog.pp('defend')}', 'gold': '${t.defendCost}'}),
+                      art: 'defend',
+                      kind: TnButtonKind.danger,
+                      busy: s.busy,
+                      onPressed: () => bloc.add(CityDefendRequested(t.orderId)),
+                    ),
+                  ),
+                gap(8),
+                hint(context, 'city.market.defend_hint'.tr(namedArgs: {'time': at(t.executeAt)})),
+              ],
+            ),
+          ),
+          gap(),
+        ],
+        if (s.lowPop) ...[
+          Notice(
+            tone: 'warn',
+            title: 'city.market.low_pop_title'.tr(),
+            body: 'city.market.low_pop_body'.tr(namedArgs: {'threshold': '${r.lowPopThreshold}'}),
+          ),
+          gap(),
+        ],
+        if (cv.goods.isEmpty) Text('city.market.no_goods'.tr(), style: TnText.body(c.inkMuted)),
+        for (final g in cv.goods) ...[_GoodCard(key: ValueKey('${cv.id}/${g.id}'), s: s, p: s.goodPlan(g)), gap()],
+        hint(context, 'city.market.profit_hint'.tr(namedArgs: {'base': '${r.basePrice}'})),
       ],
-      if (s.lowPop) ...[
-        Notice(tone: 'warn', title: 'Alacsony népszerűség', body: 'Itt ${r.lowPopThreshold} alatt van a népszerűséged, ezért minden aranyköltség +50%.'),
-        gap(),
-      ],
-      if (cv.goods.isEmpty) Text('Ebben a városban nincs árucikk.', style: TnText.body(c.inkMuted)),
-      for (final g in cv.goods) ...[
-        _GoodCard(key: ValueKey('${cv.id}/${g.id}'), s: s, p: s.goodPlan(g)),
-        gap(),
-      ],
-      hint(context,
-          'Haszon = eladott egység × ${r.basePrice} A alapár × haszonkulcs. Az olcsóbb és népszerűbb eladó többet ad el; az olcsóság népszerűséget hoz, a drágaság aranyat.'),
-    ]);
+    );
   }
 }
 
@@ -78,97 +83,131 @@ class _GoodCard extends StatelessWidget {
     final c = context.tn, r = s.rules, cat = s.catalog, g = p.good;
     final bloc = context.read<CityBloc>();
     return TnCard(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, runSpacing: 4, children: [
-          ArtTitle(g.name, art: g.id, artSize: 30),
-          Text('kínálat ${g.supply} · kereslet ${g.demand} · érték ${numText(g.marketValue)} A/pont', style: TnText.data(c.inkMuted, size: 12)),
-        ]),
-        gap(8),
-        ShareBar(good: g),
-        gap(8),
-        MiniTable(
-          cols: const [Col('Eladó', flex: 5), Col('Rész.', flex: 2, right: true), Col('Fokozat', flex: 5), Col('Eladott', flex: 3, right: true)],
-          selfRows: p.selfRows,
-          empty: 'Még senki sem árulja.',
-          rows: [
-            for (final x in p.sellers)
-              [
-                x.house == null ? Text('Város', style: TnText.body(c.inkMuted).copyWith(fontSize: 14)) : HouseName(x.house!),
-                Text('${x.shares}', style: TnText.data(c.ink)),
-                Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-                  Text(cat.marginLabel(x.margin), style: TnText.body(c.ink).copyWith(fontSize: 14)),
-                  if (x.cheapest) const TinyTag('legolcsóbb'),
-                  if (x.protectedNow) const TinyTag('védett', tone: 'muted'),
-                ]),
-                Text(x.sold == null ? '–' : numText(x.sold!), style: TnText.data(c.ink)),
-              ],
-          ],
-        ),
-        if (s.can && g.myShares > 0) ...[
-          gap(),
-          FieldLabel('Haszonkulcsod · ${cat.pp('margin')} PP', art: 'margin'),
-          gap(6),
-          OptionRow(
-            items: [for (final m in cat.margins) OptionItem(m.id, '${m.percent}%', m.label, '${popDelta(m.pop)} N')],
-            selected: g.myMargin,
-            onPick: s.busy ? null : (id) => bloc.add(CityMarginPicked(g.id, id)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              ArtTitle(g.name, art: g.id, artSize: 30),
+              Text(
+                'city.market.good_stats'.tr(namedArgs: {'supply': '${g.supply}', 'demand': '${g.demand}', 'value': numText(g.marketValue)}),
+                style: TnText.data(c.inkMuted, size: 12),
+              ),
+            ],
           ),
-        ],
-        if (s.can) ...[
-          gap(),
-          Wrap(spacing: 12, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.end, children: [
-            SizedBox(
-              width: 150,
-              child: TnSelect<int>(
-                label: 'Vétel a Várostól (${g.cityShares} szabad)',
-                value: p.buyPts,
-                items: [for (final i in p.buyOptions) (i, '$i pont')],
-                onChanged: p.canBuy ? (v) => bloc.add(CityBuyPointsChanged(g.id, v)) : null,
-              ),
-            ),
-            TnButton(
-              label: 'Vétel · ${cat.pp('buyShares')} PP · ${p.buyCost} A',
-              art: 'buyShares',
-              small: true,
-              busy: s.busy,
-              onPressed: p.canBuy ? () => bloc.add(CityBuySubmitted(g.id)) : null,
-            ),
-          ]),
-          if (p.rivals.isNotEmpty) ...[
+          gap(8),
+          ShareBar(good: g),
+          gap(8),
+          MiniTable(
+            cols: [
+              Col('city.market.col_seller'.tr(), flex: 5),
+              Col('city.market.col_shares'.tr(), flex: 2, right: true),
+              Col('city.market.col_margin'.tr(), flex: 5),
+              Col('city.market.col_sold'.tr(), flex: 3, right: true),
+            ],
+            selfRows: p.selfRows,
+            empty: 'city.market.no_sellers'.tr(),
+            rows: [
+              for (final x in p.sellers)
+                [
+                  x.house == null ? Text('city.market.city_seller'.tr(), style: TnText.body(c.inkMuted).copyWith(fontSize: 14)) : HouseName(x.house!),
+                  Text('${x.shares}', style: TnText.data(c.ink)),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(cat.marginLabel(x.margin), style: TnText.body(c.ink).copyWith(fontSize: 14)),
+                      if (x.cheapest) TinyTag('city.market.cheapest'.tr()),
+                      if (x.protectedNow) TinyTag('city.market.protected'.tr(), tone: 'muted'),
+                    ],
+                  ),
+                  Text(x.sold == null ? '–' : numText(x.sold!), style: TnText.data(c.ink)),
+                ],
+            ],
+          ),
+          if (s.can && g.myShares > 0) ...[
             gap(),
-            Wrap(spacing: 12, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.end, children: [
-              SizedBox(
-                width: 170,
-                child: TnSelect<String>(
-                  label: 'Kivásárlás',
-                  value: p.targetId,
-                  items: [for (final x in p.rivals) (x.house!.playerId, '${x.house!.name} (${x.shares})')],
-                  onChanged: (v) => bloc.add(CityBuyoutTargetChanged(g.id, v)),
+            FieldLabel('city.market.my_margin'.tr(namedArgs: {'pp': '${cat.pp('margin')}'}), art: 'margin'),
+            gap(6),
+            OptionRow(
+              items: [
+                for (final m in cat.margins) OptionItem(m.id, '${m.percent}%', m.label, 'city.pop_delta'.tr(namedArgs: {'delta': popDelta(m.pop)})),
+              ],
+              selected: g.myMargin,
+              onPick: s.busy ? null : (id) => bloc.add(CityMarginPicked(g.id, id)),
+            ),
+          ],
+          if (s.can) ...[
+            gap(),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              crossAxisAlignment: WrapCrossAlignment.end,
+              children: [
+                SizedBox(
+                  width: 150,
+                  child: TnSelect<int>(
+                    label: 'city.market.buy_label'.tr(namedArgs: {'free': '${g.cityShares}'}),
+                    value: p.buyPts,
+                    items: [
+                      for (final i in p.buyOptions) (i, 'city.market.points'.tr(namedArgs: {'n': '$i'})),
+                    ],
+                    onChanged: p.canBuy ? (v) => bloc.add(CityBuyPointsChanged(g.id, v)) : null,
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 90,
-                child: TnSelect<int>(
-                  label: 'Pont',
-                  value: p.boPts,
-                  items: [for (final i in p.boOptions) (i, '$i')],
-                  onChanged: (v) => bloc.add(CityBuyoutPointsChanged(g.id, v)),
+                TnButton(
+                  label: 'city.market.buy'.tr(namedArgs: {'pp': '${cat.pp('buyShares')}', 'gold': '${p.buyCost}'}),
+                  art: 'buyShares',
+                  small: true,
+                  busy: s.busy,
+                  onPressed: p.canBuy ? () => bloc.add(CityBuySubmitted(g.id)) : null,
                 ),
+              ],
+            ),
+            if (p.rivals.isNotEmpty) ...[
+              gap(),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 170,
+                    child: TnSelect<String>(
+                      label: 'city.market.buyout_label'.tr(),
+                      value: p.targetId,
+                      items: [for (final x in p.rivals) (x.house!.playerId, '${x.house!.name} (${x.shares})')],
+                      onChanged: (v) => bloc.add(CityBuyoutTargetChanged(g.id, v)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 90,
+                    child: TnSelect<int>(
+                      label: 'city.market.points_label'.tr(),
+                      value: p.boPts,
+                      items: [for (final i in p.boOptions) (i, '$i')],
+                      onChanged: (v) => bloc.add(CityBuyoutPointsChanged(g.id, v)),
+                    ),
+                  ),
+                  TnButton(
+                    label: 'city.market.buyout'.tr(namedArgs: {'pp': '${cat.pp('buyout')}', 'gold': '${p.boCost}'}),
+                    art: 'buyout',
+                    small: true,
+                    kind: TnButtonKind.danger,
+                    busy: s.busy,
+                    onPressed: p.target == null ? null : () => bloc.add(CityBuyoutSubmitted(g.id)),
+                  ),
+                ],
               ),
-              TnButton(
-                label: 'Ajánlat · ${cat.pp('buyout')} PP · ${p.boCost} A',
-                art: 'buyout',
-                small: true,
-                kind: TnButtonKind.danger,
-                busy: s.busy,
-                onPressed: p.target == null ? null : () => bloc.add(CityBuyoutSubmitted(g.id)),
-              ),
-            ]),
-            gap(4),
-            hint(context, 'Kivásárlás: a piaci érték ${r.buyoutPremiumPercent}%-áért, a pénzt a rivális kapja. Érlelés alatt védekező vétellel kiválthatja.'),
+              gap(4),
+              hint(context, 'city.market.buyout_hint'.tr(namedArgs: {'percent': '${r.buyoutPremiumPercent}'})),
+            ],
           ],
         ],
-      ]),
+      ),
     );
   }
 }
