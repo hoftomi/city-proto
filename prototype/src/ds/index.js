@@ -1,5 +1,5 @@
 // Trón nélkül design system — ES module build of components/bundle.js
-/* @ds-bundle: {"format":4,"namespace":"TronNelkul","components":[{"name":"InfluenceBar"},{"name":"ControlBadge"},{"name":"SuspicionMeter"},{"name":"CommandPoints"},{"name":"ReportCard"},{"name":"OrderSheet"},{"name":"HouseCrest"},{"name":"FactionTag"},{"name":"StabilityChip"},{"name":"TickTimer"},{"name":"ResourceChip"},{"name":"MapCanvas"},{"name":"MapCity"},{"name":"MapRoute"},{"name":"MapEstate"},{"name":"MapTerrain"},{"name":"MapCompass"},{"name":"MapCartouche"},{"name":"CityView"},{"name":"AppBar"},{"name":"NavBar"},{"name":"Button"},{"name":"TextField"},{"name":"Select"},{"name":"Tabs"},{"name":"Toast"},{"name":"Sheet"},{"name":"DataTable"},{"name":"Icon"}]} */
+/* @ds-bundle: {"format":4,"namespace":"TronNelkul","components":[{"name":"InfluenceBar"},{"name":"ControlBadge"},{"name":"SuspicionMeter"},{"name":"CommandPoints"},{"name":"ReportCard"},{"name":"OrderSheet"},{"name":"HouseCrest"},{"name":"FactionTag"},{"name":"StabilityChip"},{"name":"TickTimer"},{"name":"ResourceChip"},{"name":"MapCanvas"},{"name":"MapCity"},{"name":"MapRoute"},{"name":"MapEstate"},{"name":"MapTerrain"},{"name":"MapCompass"},{"name":"MapCartouche"},{"name":"CityView"},{"name":"AppBar"},{"name":"NavBar"},{"name":"Button"},{"name":"TextField"},{"name":"Select"},{"name":"Tabs"},{"name":"Toast"},{"name":"Sheet"},{"name":"DataTable"},{"name":"Icon"},{"name":"GameIcon"}]} */
 import React from 'react';
 
   var h = React.createElement;
@@ -41,11 +41,269 @@ import React from 'react';
       paths.map(function (d, i) { return h('path', { key: i, d: d }); }));
   }
 
+  /* ---------- GameIcon: teli, illusztratív ikonok (erőforrás, árucikk, akció, ág) ---------- */
+  // Elemenként: [tag, attribútumok]. f = kitöltés (--ic-* token), s = körvonal token ('none' = nincs), sw = vonalvastagság.
+  var GAME = {
+    /* Erőforrások */
+    arany: [
+      ['circle', { cx: 15.5, cy: 8.5, r: 5.5, f: 'gold-lo' }],
+      ['circle', { cx: 10, cy: 14, r: 7, f: 'gold' }],
+      ['circle', { cx: 10, cy: 14, r: 4.4, f: 'gold-hi', s: 'gold-lo' }],
+      ['path', { d: 'M10 11.3v5.4', s: 'gold-lo', sw: 1.8 }],
+      ['path', { d: 'M5.6 11.4a5 5 0 0 1 2.2-2.2', s: 'white', sw: 1.2 }]
+    ],
+    pp: [
+      ['path', { d: 'M8.5 14.5 6 22l3-1.4 2.2 2 1-6.6z', f: 'red-lo' }],
+      ['path', { d: 'M15.5 14.5 18 22l-3-1.4-2.2 2-1-6.6z', f: 'red-lo' }],
+      ['path', { d: 'M12 2.5l1.6 1.2 2-.3 1 1.7 1.9.8-.1 2 1.2 1.6-1.2 1.6.1 2-1.9.8-1 1.7-2-.3L12 17.5l-1.6-1.2-2 .3-1-1.7-1.9-.8.1-2L4.4 10.5l1.2-1.6-.1-2 1.9-.8 1-1.7 2 .3z', f: 'red' }],
+      ['circle', { cx: 12, cy: 10, r: 4.2, f: 'red-hi', s: 'red-lo' }],
+      ['path', { d: 'M9.8 11.6l.6-2.8 1.6 1.4 1.6-1.4.6 2.8z', f: 'gold-hi', s: 'red-lo', sw: 0.9 }]
+    ],
+    legit: [
+      ['path', { d: 'M4 18.5h16v2.5H4z', f: 'gold-lo' }],
+      ['path', { d: 'M4 18.5 3 8.5l5 3.8L12 5l4 7.3 5-3.8-1 10z', f: 'gold' }],
+      ['circle', { cx: 3, cy: 8, r: 1.4, f: 'gold-hi' }],
+      ['circle', { cx: 12, cy: 4.5, r: 1.4, f: 'gold-hi' }],
+      ['circle', { cx: 21, cy: 8, r: 1.4, f: 'gold-hi' }],
+      ['circle', { cx: 12, cy: 14.5, r: 1.9, f: 'red' }],
+      ['circle', { cx: 7.3, cy: 15.6, r: 1.2, f: 'blue' }],
+      ['circle', { cx: 16.7, cy: 15.6, r: 1.2, f: 'blue' }]
+    ],
+    nep: [
+      ['path', { d: 'M12 20.5s-8.5-5-8.5-10.8A4.6 4.6 0 0 1 12 7.2a4.6 4.6 0 0 1 8.5 2.5c0 5.8-8.5 10.8-8.5 10.8z', f: 'rose' }],
+      ['path', { d: 'M6.6 9.6a2.4 2.4 0 0 1 2.3-2', s: 'white', sw: 1.4 }]
+    ],
+    ado: [
+      ['path', { d: 'M9 6.5h6l-1.3-3h-3.4z', f: 'brown-hi' }],
+      ['path', { d: 'M9 6.5C5 9.5 3.5 13.5 3.5 16a5 5 0 0 0 5 5h7a5 5 0 0 0 5-5c0-2.5-1.5-6.5-5.5-9.5z', f: 'brown-hi' }],
+      ['path', { d: 'M8.5 7.2h7', s: 'brown', sw: 1.6 }],
+      ['circle', { cx: 12, cy: 14.5, r: 3.6, f: 'gold', s: 'gold-lo' }],
+      ['path', { d: 'M12 12.8v3.4', s: 'gold-lo', sw: 1.4 }]
+    ],
+
+    /* Árucikkek */
+    gabona: [
+      ['path', { d: 'M12 21V8M12 21 8 11M12 21l4-10', s: 'brown', sw: 1.3 }],
+      ['ellipse', { cx: 12, cy: 6, rx: 2.1, ry: 3.6, f: 'gold' }],
+      ['ellipse', { cx: 7.4, cy: 9, rx: 1.9, ry: 3.3, f: 'gold', t: 'rotate(-28 7.4 9)' }],
+      ['ellipse', { cx: 16.6, cy: 9, rx: 1.9, ry: 3.3, f: 'gold', t: 'rotate(28 16.6 9)' }],
+      ['path', { d: 'M9.3 15.5h5.4', s: 'red', sw: 2.2 }]
+    ],
+    bor: [
+      ['rect', { x: 10, y: 1.8, width: 4, height: 2.6, rx: 0.6, f: 'brown-hi' }],
+      ['path', { d: 'M10 4.4h4V7c0 1 3.2 2 3.2 6.3V20a1 1 0 0 1-1 1H7.8a1 1 0 0 1-1-1v-6.7C6.8 9 10 8 10 7z', f: 'wine' }],
+      ['rect', { x: 8.3, y: 12.5, width: 7.4, height: 4.5, rx: 0.5, f: 'paper' }],
+      ['path', { d: 'M9 10.5c.5-.8 1-1.2 1.6-1.6', s: 'white', sw: 1.2 }]
+    ],
+    vas: [
+      ['path', { d: 'M2.5 20.5l1.7-4.5h7.1l1.7 4.5z', f: 'steel' }],
+      ['path', { d: 'M11.5 20.5l1.7-4.5h7.1l1.7 4.5z', f: 'steel' }],
+      ['path', { d: 'M7 16l1.7-4.5h7.1L17.5 16z', f: 'steel-hi' }],
+      ['path', { d: 'M9.5 12.8h5M4.8 17.3h5.9M13.8 17.3h5.9', s: 'white', sw: 1 }]
+    ],
+    ko: [
+      ['rect', { x: 2.5, y: 14, width: 9.5, height: 6.5, rx: 0.8, f: 'stone' }],
+      ['rect', { x: 12, y: 14, width: 9.5, height: 6.5, rx: 0.8, f: 'stone-lo' }],
+      ['rect', { x: 7, y: 7.5, width: 10, height: 6.5, rx: 0.8, f: 'stone-hi' }],
+      ['path', { d: 'M10 10l1.5 1.2M5 17l1.4-1M15 18.5l2-1', s: 'line', sw: 0.9 }]
+    ],
+    so: [
+      ['path', { d: 'M5 13c1-4.2 3.8-7.5 7-7.5s6 3.3 7 7.5z', f: 'white' }],
+      ['path', { d: 'M2.5 13h19a9.5 7.5 0 0 1-19 0z', f: 'brown' }],
+      ['path', { d: 'M5 16.5c2 1.3 4.3 2 7 2', s: 'brown-hi', sw: 1.2 }],
+      ['circle', { cx: 10, cy: 9.5, r: 0.7, f: 'stone', s: 'none' }],
+      ['circle', { cx: 13.5, cy: 10.8, r: 0.7, f: 'stone', s: 'none' }]
+    ],
+    hal: [
+      ['path', { d: 'M17 12l4.5-4v8z', f: 'blue' }],
+      ['path', { d: 'M2.5 12c3-5.2 10-6.2 14.8-1.3v2.6C12.5 18.2 5.5 17.2 2.5 12z', f: 'sky' }],
+      ['path', { d: 'M4.5 13.3c3.5 2.4 8 2.6 12.3.3', s: 'white', sw: 1.2 }],
+      ['path', { d: 'M9 7.9c1.2-2 3-3 5-3.2-.4 1.4-.9 2.5-1.6 3.6', f: 'blue' }],
+      ['circle', { cx: 6.3, cy: 11, r: 1, f: 'line', s: 'none' }]
+    ],
+    fuszer: [
+      ['path', { d: 'M8 9 7 4.5l3 2 2-3.2 2 3.2 3-2L16 9z', f: 'orange-hi' }],
+      ['path', { d: 'M8 9c-2.4 3-3.5 6-3.5 8a4 4 0 0 0 4 4h7a4 4 0 0 0 4-4c0-2-1.1-5-3.5-8z', f: 'orange' }],
+      ['path', { d: 'M7.6 9.2h8.8', s: 'red-lo', sw: 1.8 }],
+      ['circle', { cx: 10, cy: 14.5, r: 0.9, f: 'red', s: 'none' }],
+      ['circle', { cx: 14, cy: 16.5, r: 0.9, f: 'red', s: 'none' }],
+      ['circle', { cx: 11.5, cy: 18.3, r: 0.9, f: 'red', s: 'none' }]
+    ],
+    tozeg: [
+      ['rect', { x: 2.5, y: 15, width: 9.5, height: 5.5, rx: 1, f: 'peat' }],
+      ['rect', { x: 12, y: 15, width: 9.5, height: 5.5, rx: 1, f: 'peat' }],
+      ['rect', { x: 7, y: 9.5, width: 10, height: 5.5, rx: 1, f: 'brown' }],
+      ['path', { d: 'M12 9.5c-2-1.6-1.6-3.6 0-6 .3 1.4 1.3 2 1.8 3 .4 1-.2 2.3-1.8 3z', f: 'orange' }],
+      ['path', { d: 'M5 17.5h4M14.5 18h4M9.5 12.2h5', s: 'brown-hi', sw: 1 }]
+    ],
+    csempesz: [
+      ['rect', { x: 3, y: 8.5, width: 18, height: 12.5, rx: 0.8, f: 'brown-hi' }],
+      ['path', { d: 'M3 8.5l18 12.5M21 8.5 3 21', s: 'brown', sw: 1.4 }],
+      ['path', { d: 'M2 10.5c4-3.5 9-4.2 13.5-2.2l6.5.7-1.2 5c-5.8-2.2-12.2-1.4-18.8 1z', f: 'black' }],
+      ['path', { d: 'M8.5 8.2l1.2 5.4', s: 'gold-lo', sw: 1.3 }]
+    ],
+    gyapju: [
+      ['circle', { cx: 11.5, cy: 11.5, r: 7.8, f: 'cream' }],
+      ['path', { d: 'M4.3 9.8c3.4.6 7 3.3 8.6 8.9M4.5 14.2c2.6.3 5 2 6 4.9M6.6 5.9c3.2 1.6 6.3 5.4 7.4 11.3M10.6 3.9c2.8 2 5 6.2 5.4 11M15.3 4.9c1.6 1.9 2.7 4.7 3 8', s: 'cream-lo', sw: 1.1 }],
+      ['path', { d: 'M17.5 17c1.5 1.5 3 2.5 4.5 2.2', s: 'cream-lo', sw: 1.3 }]
+    ],
+    lo: [
+      ['path', { d: 'M7 21l1-5.5c-2-1.2-3-3.2-3-5.5 0-3.8 3-6.8 7-6.8L14 1.5l1.2 3c3 1.2 4.8 4 4.8 7l-1 3.2-3-1-2 1.3V21z', f: 'brown' }],
+      ['path', { d: 'M14 1.5l1.2 3c-2.4.4-4.4 2-5.2 4.5-.7 2-.5 4.3.5 6.3', s: 'line', f: 'none' }],
+      ['path', { d: 'M12 3.2c-1.3 1.2-2.3 3-2.5 5 1.5-1.2 2.5-1.3 4-1.4', f: 'peat' }],
+      ['circle', { cx: 15.3, cy: 8.3, r: 0.9, f: 'line', s: 'none' }],
+      ['path', { d: 'M18.3 14.5l.6-1', s: 'line' }]
+    ],
+
+    /* Ágak */
+    vasarter: [
+      ['rect', { x: 4, y: 11.5, width: 16, height: 9, f: 'brown-hi' }],
+      ['rect', { x: 5.5, y: 15, width: 13, height: 5.5, f: 'brown' }],
+      ['path', { d: 'M2.5 11.5 4.5 4h15l2 7.5z', f: 'cream' }],
+      ['path', { d: 'M6.5 4 5.4 11.5h3.2L9.2 4zM12 4v7.5h3L14.8 4zM17.5 4l1.1 7.5h2.9l-2-7.5z', f: 'red', s: 'none' }],
+      ['path', { d: 'M2.5 11.5 4.5 4h15l2 7.5z', f: 'none' }],
+      ['circle', { cx: 9, cy: 14.6, r: 1.3, f: 'gold' }],
+      ['circle', { cx: 15, cy: 14.6, r: 1.3, f: 'green' }]
+    ],
+    varoshaza: [
+      ['path', { d: 'M12 2.5 3 8h18z', f: 'blue' }],
+      ['rect', { x: 3.5, y: 8, width: 17, height: 2, f: 'stone-hi' }],
+      ['path', { d: 'M5.5 10h2.2v8H5.5zM10.9 10h2.2v8h-2.2zM16.3 10h2.2v8h-2.2z', f: 'stone-hi' }],
+      ['rect', { x: 2.5, y: 18, width: 19, height: 3, f: 'stone' }],
+      ['circle', { cx: 12, cy: 6, r: 1.1, f: 'gold', s: 'none' }]
+    ],
+    alvilag: [
+      ['path', { d: 'M18.5 3.5 20.5 5.5 11 15l-2-2z', f: 'steel-hi' }],
+      ['path', { d: 'M7.5 12l4.5 4.5M8.5 15.5 6 18', s: 'line', sw: 1.6 }],
+      ['circle', { cx: 5.3, cy: 18.7, r: 1.3, f: 'gold' }],
+      ['path', { d: 'M2.5 7.5c2.5-1.2 5-1.2 7 .5 2-1.7 4.5-1.7 7-.5 0 3.3-1.5 6-3.7 6-1.5 0-2.4-.8-3.3-2.2-.9 1.4-1.8 2.2-3.3 2.2-2.2 0-3.7-2.7-3.7-6z', f: 'black' }],
+      ['ellipse', { cx: 6.1, cy: 9.2, rx: 1.3, ry: 0.8, f: 'white', s: 'none' }],
+      ['ellipse', { cx: 12.9, cy: 9.2, rx: 1.3, ry: 0.8, f: 'white', s: 'none' }]
+    ],
+
+    /* Akciók */
+    route: [
+      ['path', { d: 'M11 3h2v18.5h-2z', f: 'brown' }],
+      ['path', { d: 'M5 5h11.5L19 7.2 16.5 9.5H5z', f: 'gold' }],
+      ['path', { d: 'M19 11H7.5L5 13.2l2.5 2.3H19z', f: 'paper' }],
+      ['path', { d: 'M7.5 7.2h6M10 13.2h6', s: 'gold-lo', sw: 1 }],
+      ['path', { d: 'M5.5 21.5h13', s: 'green', sw: 1.8 }]
+    ],
+    margin: [
+      ['path', { d: 'M3 12.5 11.5 4H20v8.5L11.5 21z', f: 'gold-hi' }],
+      ['circle', { cx: 16.2, cy: 7.8, r: 1.5, f: 'paper' }],
+      ['path', { d: 'M9 15l4.5-4.5', s: 'red', sw: 1.4 }],
+      ['circle', { cx: 9.5, cy: 11.3, r: 1.1, f: 'none', s: 'red' }],
+      ['circle', { cx: 13, cy: 14.8, r: 1.1, f: 'none', s: 'red' }]
+    ],
+    buyShares: [
+      ['circle', { cx: 11, cy: 13, r: 8, f: 'paper' }],
+      ['path', { d: 'M11 13V5a8 8 0 0 1 8 8z', f: 'gold' }],
+      ['path', { d: 'M11 13l-6.2 5.1A8 8 0 0 1 3 13z', f: 'sky' }],
+      ['circle', { cx: 18.5, cy: 5, r: 3.5, f: 'green' }],
+      ['path', { d: 'M18.5 3.3v3.4M16.8 5h3.4', s: 'white', sw: 1.4 }]
+    ],
+    buyout: [
+      ['path', { d: 'M10 13.5V5.5a8 8 0 1 0 8 8z', f: 'sky' }],
+      ['path', { d: 'M13 10.5V2.5a8 8 0 0 1 8 8z', f: 'gold' }],
+      ['path', { d: 'M3.5 20.5c3 1.5 7 1 9.5-1.5', s: 'red', sw: 1.6, f: 'none' }],
+      ['path', { d: 'M13.8 17.5l-.6 2.3-2.3-.3', s: 'red', sw: 1.6, f: 'none' }]
+    ],
+    defend: [
+      ['path', { d: 'M12 2.5l8 3v6.5c0 4.5-3.2 7.8-8 9.5-4.8-1.7-8-5-8-9.5V5.5z', f: 'blue' }],
+      ['path', { d: 'M12 2.5v19c-4.8-1.7-8-5-8-9.5V5.5z', f: 'sky', s: 'none' }],
+      ['path', { d: 'M12 2.5l8 3v6.5c0 4.5-3.2 7.8-8 9.5-4.8-1.7-8-5-8-9.5V5.5z', f: 'none' }],
+      ['circle', { cx: 12, cy: 11.5, r: 3.3, f: 'gold', s: 'gold-lo' }],
+      ['path', { d: 'M12 10v3', s: 'gold-lo', sw: 1.3 }]
+    ],
+    foundParty: [
+      ['path', { d: 'M5 2.5h1.8v19H5z', f: 'brown' }],
+      ['path', { d: 'M6.8 4H20l-3 4.5 3 4.5H6.8z', f: 'blue' }],
+      ['path', { d: 'M6.8 8.5H17', s: 'gold', sw: 1.6 }],
+      ['circle', { cx: 5.9, cy: 2.4, r: 1.3, f: 'gold' }],
+      ['path', { d: 'M3 21.5h6', s: 'line', sw: 1.6 }]
+    ],
+    program: [
+      ['path', { d: 'M5 5.5h11v13.5a2 2 0 0 1-2 2H4.5a2 2 0 0 1-2-2v-1.5H5z', f: 'paper' }],
+      ['path', { d: 'M5 5.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1H16', f: 'cream' }],
+      ['path', { d: 'M7.5 9.5h5.5M7.5 12.5h5.5M7.5 15.5h3.5', s: 'stone-lo', sw: 1.1 }],
+      ['path', { d: 'M21.5 2.5c-3 .5-6 3.5-7.5 8.5l1 .5c3.5-2.5 6-5.5 6.5-9z', f: 'white' }],
+      ['path', { d: 'M14 11l-1.2 2.5', s: 'line', sw: 1.2 }]
+    ],
+    festival: [
+      ['path', { d: 'M1.5 5c7 4 14 4 21 0', s: 'brown', sw: 1.3, f: 'none' }],
+      ['path', { d: 'M3.5 6.2 5 12l2.5-4.7z', f: 'red' }],
+      ['path', { d: 'M9 7.8 10.3 13.5 12.5 8.1z', f: 'gold' }],
+      ['path', { d: 'M14.5 8 15.8 13.4l2.3-5.9z', f: 'blue' }],
+      ['path', { d: 'M19.8 6.6l.9 5.4 2-4.9z', f: 'green' }],
+      ['path', { d: 'M12 16.5v5M9.5 19h5M10.2 17.2l3.6 3.6M13.8 17.2l-3.6 3.6', s: 'orange', sw: 1.3 }]
+    ],
+    news: [
+      ['path', { d: 'M3 10.5v3l2 .5 12 5V5L5 10z', f: 'gold' }],
+      ['path', { d: 'M17 5c2 1.5 3 4 3 7s-1 5.5-3 7z', f: 'gold-hi' }],
+      ['rect', { x: 1.8, y: 10, width: 2.4, height: 4, rx: 0.8, f: 'gold-lo' }],
+      ['path', { d: 'M6 14.5l1.2 6h3l-1.2-5', f: 'red' }],
+      ['path', { d: 'M8 9.8l6-2.5', s: 'white', sw: 1.1 }]
+    ],
+    hireSpy: [
+      ['path', { d: 'M12 2.5c-4 0-6.5 3.5-6.5 7.5v4L3 21.5h18L18.5 14v-4c0-4-2.5-7.5-6.5-7.5z', f: 'purple' }],
+      ['path', { d: 'M12 6c-2.2 0-3.6 2-3.6 4.2 0 2.5 1.6 4.3 3.6 4.3s3.6-1.8 3.6-4.3C15.6 8 14.2 6 12 6z', f: 'black' }],
+      ['path', { d: 'M9.8 10h1.4M12.8 10h1.4', s: 'gold-hi', sw: 1.2 }],
+      ['circle', { cx: 18, cy: 18, r: 3.3, f: 'gold', s: 'gold-lo' }],
+      ['path', { d: 'M18 16.6v2.8', s: 'gold-lo', sw: 1.2 }]
+    ],
+    guard: [
+      ['path', { d: 'M9.5 2.5h5l1 2.5h-7z', f: 'steel' }],
+      ['path', { d: 'M12 1v1.5', s: 'line', sw: 1.3 }],
+      ['path', { d: 'M7 5h10l-1 13H8z', f: 'gold-hi' }],
+      ['path', { d: 'M12 8.5c-2 2-2.2 4 0 6.5 2.2-2.5 2-4.5 0-6.5z', f: 'orange' }],
+      ['path', { d: 'M7 5h10M8 18h8', s: 'steel-lo', sw: 1.6 }],
+      ['path', { d: 'M7.5 18h9l.8 3.5H6.7z', f: 'steel' }]
+    ],
+    spy: [
+      ['path', { d: 'M3 15.5 14.5 7l2.8 3.8L5.8 19.3z', f: 'gold' }],
+      ['path', { d: 'M14.5 7 17.5 4.8l2.8 3.8-3 2.2z', f: 'gold-hi' }],
+      ['ellipse', { cx: 18.9, cy: 6.7, rx: 1.3, ry: 2.4, f: 'sky', t: 'rotate(-36 18.9 6.7)' }],
+      ['path', { d: 'M8 11.8l2.8 3.8', s: 'gold-lo', sw: 1.3 }],
+      ['path', { d: 'M6.5 19l-1.5 3M8.5 17.5l2 4', s: 'brown', sw: 1.4 }]
+    ],
+    verify: [
+      ['path', { d: 'M3 3.5h11v17H3z', f: 'paper' }],
+      ['path', { d: 'M5.5 7h6M5.5 10h6M5.5 13h4', s: 'stone-lo', sw: 1.1 }],
+      ['path', { d: 'M17.2 17.2 21.5 21.5', s: 'brown', sw: 2.6 }],
+      ['circle', { cx: 14.5, cy: 14.5, r: 4.3, f: 'sky' }],
+      ['path', { d: 'M12.6 14.6l1.4 1.4 2.6-2.8', s: 'green', sw: 1.6 }]
+    ],
+    debunk: [
+      ['path', { d: 'M3 3.5h8l-1.5 4 2 3.5-1.5 4 1.5 5.5H3z', f: 'paper' }],
+      ['path', { d: 'M13.5 3.5H21v17h-7.5l-1-5.5 1.5-4-2-3.5z', f: 'paper', t: 'translate(1 1) rotate(6 17 12)' }],
+      ['path', { d: 'M5 7.5h3.5M5 10.5h4M5 13.5h3', s: 'stone-lo', sw: 1.1 }],
+      ['path', { d: 'M15.5 9.5l4 4M19.5 9.5l-4 4', s: 'red', sw: 2 }]
+    ]
+  };
+  var BRANCH_OF = { route: null, margin: 'vasarter', buyShares: 'vasarter', buyout: 'vasarter', defend: 'vasarter', foundParty: 'varoshaza', program: 'varoshaza', festival: 'varoshaza', news: 'varoshaza', hireSpy: 'alvilag', guard: 'alvilag', spy: 'alvilag', verify: 'alvilag', debunk: 'alvilag' };
+  function icv(k) { return k === 'none' ? 'none' : 'var(--ic-' + k + ')'; }
+  function GameIcon(p) {
+    var name = p.name, parts = GAME[name];
+    if (!parts) return h(Icon, { name: p.name, size: p.size, label: p.label, className: p.className });
+    var size = p.size || 20, tile = p.tile === true ? BRANCH_OF[name] || 'kozos' : p.tile;
+    var art = h('svg', { className: cx('tn-gicon', p.className), width: size, height: size, viewBox: '0 0 24 24', 'aria-hidden': p.label && !tile ? undefined : true, role: p.label && !tile ? 'img' : undefined, 'aria-label': tile ? undefined : p.label },
+      parts.map(function (e, i) {
+        var a = e[1], o = { key: i, fill: icv(a.f || 'none'), stroke: icv(a.s || 'line'), strokeWidth: a.sw || 1.1, strokeLinecap: 'round', strokeLinejoin: 'round' };
+        Object.keys(a).forEach(function (k) { if (k === 't') o.transform = a.t; else if (['f', 's', 'sw'].indexOf(k) < 0) o[k] = a[k]; });
+        return h(e[0], o);
+      }));
+    if (!tile) return art;
+    return h('span', { className: cx('tn-gtile', 'tn-gtile-' + tile), style: { width: Math.round(size * 1.6), height: Math.round(size * 1.6) }, role: p.label ? 'img' : undefined, 'aria-label': p.label, 'aria-hidden': p.label ? undefined : true }, art);
+  }
+  GameIcon.names = Object.keys(GAME);
+  GameIcon.branchOf = BRANCH_OF;
+
   /* ---------- Base UI ---------- */
   function Button(p) {
-    var rest = Object.assign({}, p); ['variant', 'size', 'icon', 'className', 'children'].forEach(function (k) { delete rest[k]; });
+    var rest = Object.assign({}, p); ['variant', 'size', 'icon', 'art', 'className', 'children'].forEach(function (k) { delete rest[k]; });
     return h('button', Object.assign({ type: 'button' }, rest, { className: cx('tn-btn', p.variant && p.variant !== 'default' && 'tn-btn-' + p.variant, p.size === 'sm' && 'tn-btn-sm', p.className) }),
-      p.icon ? h(Icon, { name: p.icon, size: p.size === 'sm' ? 16 : 18 }) : null, p.children);
+      p.art ? h(GameIcon, { name: p.art, size: p.size === 'sm' ? 18 : 20 }) : p.icon ? h(Icon, { name: p.icon, size: p.size === 'sm' ? 16 : 18 }) : null, p.children);
   }
 
   function TextField(p) {
@@ -70,8 +328,8 @@ import React from 'react';
     var st = React.useState(p.active || (p.tabs && p.tabs[0] && p.tabs[0].id));
     var active = p.onChange ? p.active : st[0];
     return h('div', { className: 'tn-tabs', role: 'tablist' }, (p.tabs || []).map(function (t) {
-      return h('button', { key: t.id, role: 'tab', className: 'tn-tab', 'aria-selected': t.id === active ? 'true' : 'false', onClick: function () { p.onChange ? p.onChange(t.id) : st[1](t.id); } },
-        t.label, t.badge ? h('span', { className: 'tn-tab-badge' }, t.badge) : null);
+      return h('button', { key: t.id, role: 'tab', className: cx('tn-tab', t.tone && 'tn-tab-' + t.tone), 'aria-selected': t.id === active ? 'true' : 'false', onClick: function () { p.onChange ? p.onChange(t.id) : st[1](t.id); } },
+        t.art ? h(GameIcon, { name: t.art, size: 18 }) : null, t.label, t.badge ? h('span', { className: 'tn-tab-badge' }, t.badge) : null);
     }));
   }
 
@@ -108,12 +366,12 @@ import React from 'react';
   }
 
   /* ---------- Game ---------- */
-  var RES = { arany: ['arany', 'Arany'], bp: ['bp', 'Befolyáspont'], ke: ['ke', 'Katonai erő'], legit: ['legit', 'Legitimitás'], pp: ['pp', 'Parancspont'] };
-  var RES_SHORT = { arany: 'A', bp: 'BP', ke: 'KE', legit: 'L', pp: 'PP' };
+  var RES = { nep: ['nep', 'Népszerűség'], ado: ['ado', 'Adó'], arany: ['arany', 'Arany'], bp: ['bp', 'Befolyáspont'], ke: ['ke', 'Katonai erő'], legit: ['legit', 'Legitimitás'], pp: ['pp', 'Parancspont'] };
+  var RES_SHORT = { nep: 'N', arany: 'A', bp: 'BP', ke: 'KE', legit: 'L', pp: 'PP' };
   function ResourceChip(p) {
     var r = RES[p.kind] || RES.arany, d = p.delta;
-    return h('span', { className: 'tn-res', title: r[1] },
-      h(Icon, { name: r[0], size: 14, label: r[1] }), h('span', null, p.value),
+    return h('span', { className: cx('tn-res', 'tn-res-' + p.kind), title: r[1] },
+      GAME[r[0]] ? h(GameIcon, { name: r[0], size: 18, label: r[1] }) : h(Icon, { name: r[0], size: 14, label: r[1] }), h('span', null, p.value),
       d != null ? h('span', { className: cx('tn-res-delta', d < 0 && 'tn-neg') }, (d > 0 ? '+' : d < 0 ? '−' : '±') + Math.abs(d)) : null);
   }
 
@@ -215,7 +473,7 @@ import React from 'react';
       h('div', { className: 'tn-orders-head' }, h('span', { className: 'tn-sheet-title', style: { fontSize: 18 } }, 'Parancslap'), h('span', { className: 'tn-muted', style: { fontSize: 13 } }, p.round ? p.round + '. kör' : '')),
       h('ol', { className: 'tn-orders-list' }, orders.map(function (o, i) {
         return h('li', { key: i, className: 'tn-order' },
-          h('span', { className: 'tn-order-label' }, o.label, o.hidden ? h('span', { className: 'tn-hidden-tag' }, 'Rejtett') : null),
+          h('span', { className: 'tn-order-label' }, o.art ? h(GameIcon, { name: o.art, size: 16, tile: true, className: 'tn-order-art' }) : null, o.label, o.hidden ? h('span', { className: 'tn-hidden-tag' }, 'Rejtett') : null),
           h('span', { className: 'tn-order-cost' }, costText(o.cost), p.onRemove && !p.sealed ? h('button', { type: 'button', className: 'tn-order-remove', 'aria-label': o.label + ' törlése', onClick: function () { p.onRemove(i); } }, h(Icon, { name: 'close', size: 14 })) : null),
           h('span', { className: 'tn-order-meta' }, [o.city, o.faction && FACTIONS[o.faction] ? FACTIONS[o.faction][1] : o.faction, o.note].filter(Boolean).join(' · ')));
       })),
@@ -340,8 +598,8 @@ import React from 'react';
   var GATES = [[40, 160], [185, 35], [320, 110], [210, 250]];
   var STREETS = [[[40, 160], [180, 140]], [[180, 140], [320, 110]], [[185, 35], [180, 140]], [[180, 140], [210, 250]]];
   var DISTRICTS = {
-    nemesseg: { poly: [[60, 70], [150, 30], [185, 35], [180, 140], [40, 160]], name: 'Felsőváros', label: [110, 138], flag: [138, 72] },
-    katonasag: { poly: [[185, 35], [260, 40], [320, 110], [180, 140]], name: 'Citadella', label: [226, 124], flag: [262, 52] },
+    nemesseg: { poly: [[60, 70], [150, 30], [185, 35], [180, 140], [40, 160]], name: 'Városháza', label: [110, 138], flag: [138, 72] },
+    katonasag: { poly: [[185, 35], [260, 40], [320, 110], [180, 140]], name: 'Alvilág', label: [226, 124], flag: [262, 52] },
     kereskedok: { poly: [[40, 160], [180, 140], [320, 110], [300, 200], [210, 250], [100, 240]], name: 'Vásártér', label: [185, 224], flag: [224, 162] }
   };
   function inPoly(x, y, poly) { var c = false; for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) { var a = poly[i], b = poly[j]; if (((a[1] > y) !== (b[1] > y)) && (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0])) c = !c; } return c; }
@@ -407,7 +665,7 @@ import React from 'react';
       stab === 'lazongo' ? [[86, 196], [270, 150], [120, 60]].map(function (q, i) { return h(Flame, { key: 'fx' + i, x: q[0], y: q[1] }); }) : null,
       stab === 'ingatag' ? h('g', { fill: 'var(--ink-muted)', opacity: 0.55 }, [[290, 150, 4], [293, 141, 5], [289, 130, 6.5]].map(function (q, i) { return h('circle', { key: i, cx: q[0], cy: q[1], r: q[2] }); })) : null,
       p.onSelect ? Object.keys(DISTRICTS).map(function (k) {
-        return h('polygon', { key: 'hit' + k, points: DISTRICTS[k].poly.map(function (q) { return q.join(','); }).join(' '), className: 'tn-cv-hit', role: 'button', tabIndex: 0, 'aria-label': DISTRICTS[k].name + ', ' + FACTIONS[k][1], 'aria-pressed': sel === k ? 'true' : 'false',
+        return h('polygon', { key: 'hit' + k, points: DISTRICTS[k].poly.map(function (q) { return q.join(','); }).join(' '), className: 'tn-cv-hit', role: 'button', tabIndex: 0, 'aria-label': DISTRICTS[k].name, 'aria-pressed': sel === k ? 'true' : 'false',
           onClick: function () { p.onSelect(k); }, onKeyDown: function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.onSelect(k); } } });
       }) : null);
   }
@@ -430,7 +688,7 @@ import React from 'react';
   }
 
   const TN = ({
-    Icon: Icon, Button: Button, TextField: TextField, Select: Select, Tabs: Tabs, Toast: Toast, Sheet: Sheet, DataTable: DataTable,
+    Icon: Icon, GameIcon: GameIcon, Button: Button, TextField: TextField, Select: Select, Tabs: Tabs, Toast: Toast, Sheet: Sheet, DataTable: DataTable,
     ResourceChip: ResourceChip, CommandPoints: CommandPoints, HouseCrest: HouseCrest, FactionTag: FactionTag, StabilityChip: StabilityChip,
     ControlBadge: ControlBadge, InfluenceBar: InfluenceBar, SuspicionMeter: SuspicionMeter, ReportCard: ReportCard, OrderSheet: OrderSheet,
     TickTimer: TickTimer, MapCanvas: MapCanvas, MapTerrain: MapTerrain, MapCompass: MapCompass, MapCartouche: MapCartouche, CityView: CityView, AppBar: AppBar, NavBar: NavBar, MapRoute: MapRoute, MapCity: MapCity, MapEstate: MapEstate

@@ -9,3 +9,4 @@ Gomb négy változatban és egy kis méretben. Az alapváltozat a csendes, máso
 - `danger`: körvonalas, visszafordíthatatlan vagy lebukással járó akcióhoz (például Lejáratás).
 - Az érintési cél legalább 44px magas. A `sm` méret csak kártyákon belül használható.
 - A gomb felirata ige: „Lepecsételés”, „Útvonal kiépítése”.
+- `art`: teli játékikon (`GameIcon`) a felirat előtt, az `icon` helyett. Akciógombokon ezt használd.

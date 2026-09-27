@@ -52,6 +52,45 @@
   --link: var(--verdigris);
   --shadow-float: 0 2px 4px #1b262c14, 0 12px 32px -4px #1b262c33;
   --focus-ring: 0 0 0 2px #eceee6, 0 0 0 4px #1f6b61;
+  /* Illusztratív ikonok (GameIcon): témafüggetlen festékek */
+  --ic-line: #33261d;
+  --ic-white: #fffaf0;
+  --ic-paper: #f3ead3;
+  --ic-cream: #ecdcb8;
+  --ic-cream-lo: #b89c68;
+  --ic-gold-hi: #f7d774;
+  --ic-gold: #e3a92f;
+  --ic-gold-lo: #a86f14;
+  --ic-red-hi: #e0625c;
+  --ic-red: #bf2f35;
+  --ic-red-lo: #86202a;
+  --ic-rose: #e4566f;
+  --ic-wine: #7c1f48;
+  --ic-orange-hi: #f2a65a;
+  --ic-orange: #de7227;
+  --ic-green: #4f9d3c;
+  --ic-sky: #8cc3e6;
+  --ic-blue: #3a6fbf;
+  --ic-purple: #5c3f8f;
+  --ic-black: #34303b;
+  --ic-brown-hi: #c28b55;
+  --ic-brown: #8b5a32;
+  --ic-peat: #5a3a24;
+  --ic-steel-hi: #d2dade;
+  --ic-steel: #95a3ad;
+  --ic-steel-lo: #5f6d77;
+  --ic-stone-hi: #d9d2c3;
+  --ic-stone: #b3aa98;
+  --ic-stone-lo: #857c6c;
+  /* Hatalmi ágak jelölőszínei (csak ikonhátteret, fület és ágcímkét színeznek) */
+  --branch-vasarter: #b86e0a;
+  --branch-vasarter-soft: #f6e4c4;
+  --branch-varoshaza: #3553a8;
+  --branch-varoshaza-soft: #dde4f5;
+  --branch-alvilag: #5d4a86;
+  --branch-alvilag-soft: #e6e0f0;
+  --branch-kozos: #5b6b58;
+  --branch-kozos-soft: #e3e8dc;
 }
 [data-theme="dark"] {
   --paper: #12181c;
@@ -92,4 +131,15 @@
   --link: var(--verdigris);
   --shadow-float: 0 12px 32px -4px #000000cc;
   --focus-ring: 0 0 0 2px #12181c, 0 0 0 4px #5fc2ae;
+  --branch-vasarter: #eaa24a;
+  --branch-vasarter-soft: #3a2a12;
+  --branch-varoshaza: #8aa6ee;
+  --branch-varoshaza-soft: #1c2640;
+  --branch-alvilag: #b7a3e0;
+  --branch-alvilag-soft: #2a2238;
+  --branch-kozos: #a7b7a2;
+  --branch-kozos-soft: #243026;
+  --ic-black: #4b4555;
+  --ic-peat: #6f4a2f;
+  --ic-purple: #6a4ca3;
 }

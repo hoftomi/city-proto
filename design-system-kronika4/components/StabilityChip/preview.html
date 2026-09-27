@@ -1,0 +1,12 @@
+<!-- @dsCard group="Városok" height=64 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>StabilityChip</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-row'},h(T.StabilityChip,{level:'stabil'}),h(T.StabilityChip,{level:'ingatag'}),h(T.StabilityChip,{level:'lazongo'})));
+</script>
+</body>
+</html>

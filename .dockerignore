@@ -1,0 +1,7 @@
+# A backend képéhez csak az API-szerződés és a backend kell
+*
+!api/
+!tron-nelkul/backend/
+tron-nelkul/backend/build/
+tron-nelkul/backend/.gradle/
+tron-nelkul/backend/.idea/

@@ -4,7 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 
-flutter create . --org hu.webstar --project-name tron_nelkul --platforms android,ios
+flutter create . --org com.hof --project-name tron_nelkul --platforms android,ios
 
 # Android: internet, fejlesztői http, Discord-visszahívás
 cp platform/android/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
@@ -18,4 +18,4 @@ done
 
 flutter pub get
 echo
-echo "Kész. Indítás: flutter run --dart-define=DEV_LOGIN=true"
+echo "Kész. Ha még nem tetted meg: flutterfire configure, majd flutter run"

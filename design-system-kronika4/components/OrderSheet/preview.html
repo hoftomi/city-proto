@@ -1,0 +1,12 @@
+<!-- @dsCard group="Parancsok" height=380 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>OrderSheet</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack',style:{maxWidth:440}},h(T.OrderSheet,{available:10,orders:[{art:'buyShares',label:'5 részesedés (Só) a Várostól',city:'Feketerév',faction:'Vásártér',cost:{pp:1,arany:15}},{art:'foundParty',label:'Pártalapítás',city:'Szélmező',faction:'Városháza',cost:{pp:2,arany:40}},{art:'spy',label:'Kifürkészés: Varjúvár parancslapja',city:'Feketerév',faction:'Alvilág',cost:{pp:1}},{art:'route',label:'Útvonal: Szélmező → Vaskapu',faction:'Közös',cost:{pp:1,arany:3}}],onRemove:function(){}})));
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=130 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Tabs</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack'},h(T.Tabs,{tabs:[{id:'n',label:'Új játékok'},{id:'s',label:'Saját',badge:2},{id:'l',label:'Lezárult'}]}),h(T.Tabs,{active:'v',tabs:[{id:'v',label:'Vásártér',art:'vasarter',tone:'vasarter'},{id:'h',label:'Városháza',art:'varoshaza',tone:'varoshaza'},{id:'a',label:'Alvilág',art:'alvilag',tone:'alvilag'}]})));
+</script>
+</body>
+</html>

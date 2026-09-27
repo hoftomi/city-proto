@@ -1,0 +1,1833 @@
+# Trón nélkül – API-szerződés. Ez az egyetlen igazságforrás: a backend és a mobil is ebből generál.
+openapi: 3.0.3
+info:
+  title: Trón nélkül API
+  version: 0.0.2
+  description: 'A Trón nélkül szerverének API-ja (szabálykönyv v0.2). Ebből generálja a Spring backend az interfészeket és a modelleket (openapi-generator, spring), és a mobil kliens a Dio-alapú kéréseket és a modelleket (dart-dio). Minden hiba RFC 9457 ProblemDetail, a detail mező magyar szöveg. Arany: a játékos készlete tizedes, minden költség egész. Időpontok: ISO-8601.'
+servers:
+- url: http://localhost:8080
+  description: Helyi fejlesztés
+tags:
+- name: auth
+  description: Bejelentkezés
+- name: lobby
+  description: Játékválasztó és jelentkezés
+- name: game
+  description: A játék
+- name: admin
+  description: Fejlesztői végpontok (ADMIN)
+security:
+- bearerAuth: []
+paths:
+  /api/auth/discord:
+    post:
+      operationId: discordLogin
+      tags:
+      - auth
+      summary: Discord-kód cseréje Firebase custom tokenre
+      description: A Google- és az Apple-belépés közvetlenül a Firebase-szel megy. A Discord-kódot a szerver ellenőrzi, és Firebase custom tokent ad.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscordRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenResponse'
+        default:
+          $ref: '#/components/responses/Problem'
+      security: []
+  /api/me:
+    get:
+      operationId: getMe
+      tags:
+      - auth
+      summary: A bejelentkezett felhasználó (az első hívás létrehozza)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games:
+    get:
+      operationId: listGames
+      tags:
+      - lobby
+      summary: Játékok listája, saját házzal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameSummary'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}:
+    get:
+      operationId: getGame
+      tags:
+      - lobby
+      summary: 'Játék részletei: kezdőhelyek, hátterek, tinktúrák'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameDetail'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/maps/{mapId}:
+    get:
+      operationId: getMap
+      tags:
+      - lobby
+      summary: 'Térkép: városok, utak, kezdőhelyek, domborzat (gyorsítótárazható)'
+      parameters:
+      - name: mapId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A térkép azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapDef'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/join:
+    post:
+      operationId: joinGame
+      tags:
+      - lobby
+      summary: Jelentkezés (futó játékba az első 3 elszámolásig)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinRequest'
+      responses:
+        '201':
+          description: Létrejött
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSummary'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      operationId: withdrawGame
+      tags:
+      - lobby
+      summary: Jelentkezés visszavonása (csak a kezdés előtt)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '204':
+          description: Visszavonva
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/state:
+    get:
+      operationId: getState
+      tags:
+      - game
+      summary: A játékos nézete (előtte a szerver lefuttatja az esedékes eseményeket)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/orders:
+    post:
+      operationId: addOrder
+      tags:
+      - game
+      summary: Parancs a vázlatra
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/orders/{orderId}:
+    delete:
+      operationId: removeOrder
+      tags:
+      - game
+      summary: Parancs törlése a vázlatról
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A parancs azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/seal:
+    post:
+      operationId: seal
+      tags:
+      - game
+      summary: 'Lepecsételés: a vázlatból érlelő parancslap lesz (visszavonni nem lehet)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/intel/{intelId}/offer:
+    post:
+      operationId: offerIntel
+      tags:
+      - game
+      summary: Kifürkészett parancslap felkínálása egy megnevezett háznak (7.5)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      - name: intelId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A kifürkészett terv azonosítója
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/offers/{offerId}/accept:
+    post:
+      operationId: acceptOffer
+      tags:
+      - game
+      summary: 'Ajánlat elfogadása (letét: fizetés, és azonnal megkapod)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      - name: offerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Az ajánlat azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/offers/{offerId}/decline:
+    post:
+      operationId: declineOffer
+      tags:
+      - game
+      summary: Ajánlat elutasítása
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      - name: offerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Az ajánlat azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/reports:
+    get:
+      operationId: getReports
+      tags:
+      - game
+      summary: Jelentések (a legutóbbi 100)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportView'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/{id}/ranking:
+    get:
+      operationId: getRanking
+      tags:
+      - game
+      summary: Rangsor Legitimitás szerint
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankRow'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/start:
+    post:
+      operationId: adminStart
+      tags:
+      - admin
+      summary: Játék indítása (ADMIN)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/settle:
+    post:
+      operationId: adminSettle
+      tags:
+      - admin
+      summary: Azonnali elszámolás (ADMIN)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/advance:
+    post:
+      operationId: adminAdvance
+      tags:
+      - admin
+      summary: 'Az óra előretekerése; minutes = null: a következő eseményig (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A játék azonosítója
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvanceRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase ID token
+  responses:
+    Problem:
+      description: Hiba (RFC 9457)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+  schemas:
+    ActionInfo:
+      type: object
+      description: 'gold: null, ha számolt (részesedés, kivásárlás, védekezés).'
+      required:
+      - id
+      - label
+      - branch
+      - pp
+      - gold
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        branch:
+          type: string
+        pp:
+          type: integer
+          format: int32
+        gold:
+          type: integer
+          format: int32
+          nullable: true
+    AdminResult:
+      type: object
+      description: Az admin művelet eredménye.
+      properties:
+        started:
+          type: string
+          nullable: true
+        settlements:
+          type: integer
+          format: int32
+          nullable: true
+        advancedMinutes:
+          type: integer
+          format: int32
+          nullable: true
+    AdvanceRequest:
+      type: object
+      required: []
+      properties:
+        minutes:
+          type: integer
+          format: int32
+          nullable: true
+    BackgroundDto:
+      type: object
+      required:
+      - id
+      - name
+      - icon
+      - perks
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        perks:
+          type: array
+          items:
+            type: string
+    Buildable:
+      type: object
+      required:
+      - from
+      - to
+      - fromName
+      - toName
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        fromName:
+          type: string
+        toName:
+          type: string
+    Catalog:
+      type: object
+      required:
+      - actions
+      - margins
+      - programs
+      - news
+      - rules
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInfo'
+        margins:
+          type: array
+          items:
+            $ref: '#/components/schemas/LevelInfo'
+        programs:
+          type: array
+          items:
+            $ref: '#/components/schemas/LevelInfo'
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsTemplateInfo'
+        rules:
+          $ref: '#/components/schemas/RulesInfo'
+    CityDef:
+      type: object
+      description: Egy városállam a térképen.
+      required:
+      - id
+      - name
+      - x
+      - y
+      - key
+      - coast
+      - profile
+      - goods
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        x:
+          type: integer
+          format: int32
+        y:
+          type: integer
+          format: int32
+        key:
+          type: boolean
+        coast:
+          type: boolean
+        profile:
+          type: string
+        goods:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoodDef'
+    CityView:
+      type: object
+      description: 'reach: reachable | unreachable. present: a városban jelen lévő más házak (hír célpontja lehet). foreignSpies: pletyka a más házak kémeiről (csak a nevük). myProgram: null, ha nincs pártod itt.'
+      required:
+      - id
+      - name
+      - profile
+      - key
+      - coast
+      - reach
+      - distance
+      - myPop
+      - taxRate
+      - lastTaxPool
+      - councilSeats
+      - goods
+      - pop
+      - parties
+      - myProgram
+      - mySpies
+      - myGuards
+      - foreignSpies
+      - present
+      - news
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        profile:
+          type: string
+        key:
+          type: boolean
+        coast:
+          type: boolean
+        reach:
+          type: string
+        distance:
+          type: integer
+          format: int32
+          nullable: true
+        myPop:
+          type: number
+          format: double
+        taxRate:
+          type: number
+          format: double
+        lastTaxPool:
+          type: number
+          format: double
+          nullable: true
+        councilSeats:
+          type: integer
+          format: int32
+        goods:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoodView'
+        pop:
+          type: array
+          items:
+            $ref: '#/components/schemas/PopRow'
+        parties:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyView'
+        myProgram:
+          type: string
+          nullable: true
+        mySpies:
+          type: integer
+          format: int32
+        myGuards:
+          type: integer
+          format: int32
+        foreignSpies:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseRef'
+        present:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseRef'
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsView'
+    ClockView:
+      type: object
+      description: 'now: a játék órája (fejlesztéskor előretekerhető). campaign: a következő elszámolás választás, a fesztivál hatása és ára dupla. nextElectionIn: ennyi elszámolás múlva lesz választás.'
+      required:
+      - now
+      - nextSettlementAt
+      - settlements
+      - maxSettlements
+      - nextElectionIn
+      - campaign
+      - maturationMinutes
+      properties:
+        now:
+          type: string
+          format: date-time
+        nextSettlementAt:
+          type: string
+          format: date-time
+        settlements:
+          type: integer
+          format: int32
+        maxSettlements:
+          type: integer
+          format: int32
+        nextElectionIn:
+          type: integer
+          format: int32
+        campaign:
+          type: boolean
+        maturationMinutes:
+          type: integer
+          format: int32
+    Cost:
+      type: object
+      required:
+      - pp
+      - gold
+      properties:
+        pp:
+          type: integer
+          format: int32
+        gold:
+          type: integer
+          format: int32
+    CustomTokenResponse:
+      type: object
+      description: Firebase custom token a Discord-belépéshez.
+      required:
+      - customToken
+      properties:
+        customToken:
+          type: string
+    DiscordRequest:
+      type: object
+      description: Discord authorization code + PKCE.
+      required:
+      - code
+      - codeVerifier
+      - redirectUri
+      properties:
+        code:
+          type: string
+        codeVerifier:
+          type: string
+        redirectUri:
+          type: string
+    GameDetail:
+      type: object
+      required:
+      - game
+      - starts
+      - backgrounds
+      - tinctures
+      properties:
+        game:
+          $ref: '#/components/schemas/GameSummary'
+        starts:
+          type: array
+          items:
+            $ref: '#/components/schemas/StartSlotDto'
+        backgrounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackgroundDto'
+        tinctures:
+          type: array
+          items:
+            type: string
+    GameState:
+      type: object
+      required:
+      - gameId
+      - gameName
+      - mapId
+      - status
+      - clock
+      - me
+      - routes
+      - buildable
+      - cities
+      - draft
+      - draftCost
+      - lap
+      - rivalLaps
+      - threats
+      - intel
+      - offers
+      - houses
+      - catalog
+      properties:
+        gameId:
+          type: string
+        gameName:
+          type: string
+        mapId:
+          type: string
+        status:
+          type: string
+        clock:
+          $ref: '#/components/schemas/ClockView'
+        me:
+          $ref: '#/components/schemas/Me'
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RouteView'
+        buildable:
+          type: array
+          items:
+            $ref: '#/components/schemas/Buildable'
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CityView'
+        draft:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderView'
+        draftCost:
+          $ref: '#/components/schemas/Cost'
+        lap:
+          allOf:
+          - $ref: '#/components/schemas/LapView'
+          nullable: true
+        rivalLaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/RivalLap'
+        threats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Threat'
+        intel:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntelView'
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferView'
+        houses:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseRef'
+        catalog:
+          $ref: '#/components/schemas/Catalog'
+    GameSummary:
+      type: object
+      description: round = eddigi elszámolások, maxRounds = a szezon elszámolásai (napi 2).
+      required:
+      - id
+      - name
+      - season
+      - status
+      - mapId
+      - startsAt
+      - opensAt
+      - days
+      - roundsPerDay
+      - round
+      - maxRounds
+      - players
+      - maxPlayers
+      - cities
+      - npcCount
+      - tags
+      - winner
+      - myPlace
+      - myHouse
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        season:
+          type: string
+        status:
+          type: string
+        mapId:
+          type: string
+        startsAt:
+          type: string
+          format: date-time
+          nullable: true
+        opensAt:
+          type: string
+          format: date-time
+          nullable: true
+        days:
+          type: integer
+          format: int32
+        roundsPerDay:
+          type: integer
+          format: int32
+        round:
+          type: integer
+          format: int32
+        maxRounds:
+          type: integer
+          format: int32
+        players:
+          type: integer
+          format: int32
+        maxPlayers:
+          type: integer
+          format: int32
+        cities:
+          type: integer
+          format: int32
+        npcCount:
+          type: integer
+          format: int32
+        tags:
+          type: array
+          items:
+            type: string
+        winner:
+          type: string
+          nullable: true
+        myPlace:
+          type: integer
+          format: int32
+          nullable: true
+        myHouse:
+          allOf:
+          - $ref: '#/components/schemas/MyHouse'
+          nullable: true
+    GoodDef:
+      type: object
+      description: 'Árucikk: kínálat és kereslet elszámolásonként.'
+      required:
+      - id
+      - name
+      - supply
+      - demand
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        supply:
+          type: integer
+          format: int32
+        demand:
+          type: integer
+          format: int32
+    GoodOption:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    GoodView:
+      type: object
+      description: 'marketValue: egy pont piaci értéke aranyban (az utolsó 3 elszámolás átlagos haszna pontonként × 10).'
+      required:
+      - id
+      - name
+      - supply
+      - demand
+      - cityShares
+      - marketValue
+      - myShares
+      - myMargin
+      - sellers
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        supply:
+          type: integer
+          format: int32
+        demand:
+          type: integer
+          format: int32
+        cityShares:
+          type: integer
+          format: int32
+        marketValue:
+          type: number
+          format: double
+        myShares:
+          type: integer
+          format: int32
+        myMargin:
+          type: string
+          nullable: true
+        sellers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Seller'
+    HouseRef:
+      type: object
+      required:
+      - playerId
+      - name
+      - tincture
+      - npc
+      - self
+      properties:
+        playerId:
+          type: string
+        name:
+          type: string
+        tincture:
+          type: string
+        npc:
+          type: boolean
+        self:
+          type: boolean
+    IntelView:
+      type: object
+      description: 'Kifürkészett parancslap. depth: 1 típus, 2 célpont is, 3 költség is. live: még érlelődik (eladható).'
+      required:
+      - id
+      - of
+      - executeAt
+      - lines
+      - depth
+      - live
+      - offeredTo
+      - bought
+      properties:
+        id:
+          type: string
+        of:
+          $ref: '#/components/schemas/HouseRef'
+        executeAt:
+          type: string
+          format: date-time
+        lines:
+          type: array
+          items:
+            type: string
+        depth:
+          type: integer
+          format: int32
+        live:
+          type: boolean
+        offeredTo:
+          type: array
+          items:
+            type: string
+        bought:
+          type: boolean
+    JoinRequest:
+      type: object
+      description: 'startGood: csak a Kereskedőháznál, a kezdőváros egyik árucikke.'
+      required:
+      - houseName
+      - tincture
+      - background
+      - startSlot
+      properties:
+        houseName:
+          type: string
+        tincture:
+          type: string
+        background:
+          type: string
+        startSlot:
+          type: string
+        startGood:
+          type: string
+          nullable: true
+    LapView:
+      type: object
+      required:
+      - id
+      - sealedAt
+      - executeAt
+      - orders
+      - cost
+      properties:
+        id:
+          type: string
+        sealedAt:
+          type: string
+          format: date-time
+        executeAt:
+          type: string
+          format: date-time
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderView'
+        cost:
+          $ref: '#/components/schemas/Cost'
+    LevelInfo:
+      type: object
+      required:
+      - id
+      - label
+      - percent
+      - pop
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        percent:
+          type: integer
+          format: int32
+        pop:
+          type: integer
+          format: int32
+    MapDef:
+      type: object
+      description: 'Egy régió térképe: városok, utak, kezdőhelyek és domborzat (360×260).'
+      required:
+      - id
+      - name
+      - cities
+      - cityEdges
+      - starts
+      - terrain
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CityDef'
+        cityEdges:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        starts:
+          type: array
+          items:
+            $ref: '#/components/schemas/StartSlot'
+        terrain:
+          $ref: '#/components/schemas/TerrainDef'
+    Me:
+      type: object
+      required:
+      - playerId
+      - houseName
+      - tincture
+      - background
+      - estate
+      - pp
+      - ppMax
+      - gold
+      - legit
+      properties:
+        playerId:
+          type: string
+        houseName:
+          type: string
+        tincture:
+          type: string
+        background:
+          type: string
+          nullable: true
+        estate:
+          type: string
+          nullable: true
+        pp:
+          type: integer
+          format: int32
+        ppMax:
+          type: integer
+          format: int32
+        gold:
+          type: number
+          format: double
+        legit:
+          type: integer
+          format: int32
+    MyHouse:
+      type: object
+      required:
+      - playerId
+      - houseName
+      - tincture
+      - background
+      - backgroundName
+      - startSlot
+      properties:
+        playerId:
+          type: string
+        houseName:
+          type: string
+        tincture:
+          type: string
+        background:
+          type: string
+          nullable: true
+        backgroundName:
+          type: string
+          nullable: true
+        startSlot:
+          type: string
+          nullable: true
+    NewsTemplateInfo:
+      type: object
+      required:
+      - id
+      - label
+      - effect
+      - needsGood
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        effect:
+          type: integer
+          format: int32
+        needsGood:
+          type: boolean
+    NewsView:
+      type: object
+      description: 'verified: a saját ellenőrzésed eredménye (igaz / hamis), vagy null, ha nem ellenőrizted.'
+      required:
+      - id
+      - text
+      - template
+      - effect
+      - author
+      - target
+      - createdAt
+      - debunked
+      - verified
+      - mine
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        template:
+          type: string
+        effect:
+          type: integer
+          format: int32
+        author:
+          $ref: '#/components/schemas/HouseRef'
+        target:
+          $ref: '#/components/schemas/HouseRef'
+        createdAt:
+          type: string
+          format: date-time
+        debunked:
+          type: boolean
+        verified:
+          type: boolean
+          nullable: true
+        mine:
+          type: boolean
+    OfferRequest:
+      type: object
+      required:
+      - buyerId
+      properties:
+        buyerId:
+          type: string
+        price:
+          type: integer
+          format: int32
+          nullable: true
+    OfferView:
+      type: object
+      description: 'Neked felkínált információ (letét: elfogadáskor fizetsz, és azonnal megkapod).'
+      required:
+      - id
+      - seller
+      - of
+      - price
+      - executeAt
+      properties:
+        id:
+          type: string
+        seller:
+          $ref: '#/components/schemas/HouseRef'
+        of:
+          $ref: '#/components/schemas/HouseRef'
+        price:
+          type: integer
+          format: int32
+        executeAt:
+          type: string
+          format: date-time
+    OrderRequest:
+      type: object
+      description: 'Parancs a vázlatra. type szerint: route(from,to) · margin(city,good,level) · buyShares(city,good,pts) · buyout(city,good,target,pts) · defend(city,lapId,orderId) · foundParty(city) · program(city,level) · festival(city) · news(city,template,target,good?) · hireSpy(city) · moveSpy(city,to) · guard(city) · spy(city,target) · verify(city,newsId) · debunk(city,newsId)'
+      required:
+      - type
+      properties:
+        type:
+          type: string
+        city:
+          type: string
+          nullable: true
+        good:
+          type: string
+          nullable: true
+        level:
+          type: string
+          nullable: true
+        pts:
+          type: integer
+          format: int32
+          nullable: true
+        target:
+          type: string
+          nullable: true
+        template:
+          type: string
+          nullable: true
+        newsId:
+          type: string
+          nullable: true
+        lapId:
+          type: string
+          nullable: true
+        orderId:
+          type: string
+          nullable: true
+        from:
+          type: string
+          nullable: true
+        to:
+          type: string
+          nullable: true
+    OrderView:
+      type: object
+      description: 'branch: kozos | keresk | polit | kem. warning: például hamis hírnél „Ez az állítás jelenleg nem igaz.”'
+      required:
+      - id
+      - type
+      - branch
+      - label
+      - cityId
+      - cityName
+      - cost
+      - warning
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        branch:
+          type: string
+        label:
+          type: string
+        cityId:
+          type: string
+          nullable: true
+        cityName:
+          type: string
+          nullable: true
+        cost:
+          $ref: '#/components/schemas/Cost'
+        warning:
+          type: string
+          nullable: true
+    PartyView:
+      type: object
+      required:
+      - house
+      - program
+      - votes
+      - seats
+      properties:
+        house:
+          $ref: '#/components/schemas/HouseRef'
+        program:
+          type: string
+        votes:
+          type: integer
+          format: int32
+        seats:
+          type: integer
+          format: int32
+    PopRow:
+      type: object
+      required:
+      - house
+      - value
+      properties:
+        house:
+          $ref: '#/components/schemas/HouseRef'
+        value:
+          type: number
+          format: double
+    ProblemDetail:
+      type: object
+      description: RFC 9457 hibaválasz; a detail mező magyar, megjeleníthető szöveg.
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+    RankRow:
+      type: object
+      required:
+      - rank
+      - playerId
+      - name
+      - tincture
+      - npc
+      - legit
+      - shares
+      - seats
+      - self
+      properties:
+        rank:
+          type: integer
+          format: int32
+        playerId:
+          type: string
+        name:
+          type: string
+        tincture:
+          type: string
+        npc:
+          type: boolean
+        legit:
+          type: integer
+          format: int32
+        shares:
+          type: integer
+          format: int32
+        seats:
+          type: integer
+          format: int32
+        self:
+          type: boolean
+    ReportView:
+      type: object
+      description: 'round: a jelentés elszámolásának sorszáma. isPublic: mindenki megkapta (választás, hír, leleplezés).'
+      required:
+      - id
+      - round
+      - kind
+      - confidence
+      - title
+      - text
+      - tone
+      - createdAt
+      - isPublic
+      properties:
+        id:
+          type: string
+        round:
+          type: integer
+          format: int32
+        kind:
+          type: string
+        confidence:
+          type: string
+          nullable: true
+        title:
+          type: string
+        text:
+          type: string
+        tone:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        isPublic:
+          type: boolean
+    RivalLap:
+      type: object
+      description: Egy rivális érlelő parancslapja (a kifürkészés célpontja).
+      required:
+      - house
+      - executeAt
+      properties:
+        house:
+          $ref: '#/components/schemas/HouseRef'
+        executeAt:
+          type: string
+          format: date-time
+    RouteView:
+      type: object
+      description: 'state: own | pending'
+      required:
+      - from
+      - to
+      - state
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        state:
+          type: string
+    RulesInfo:
+      type: object
+      required:
+      - basePrice
+      - cityShareCost
+      - maxSharesPerOrder
+      - buyoutPremiumPercent
+      - partyCost
+      - festivalGold
+      - festivalPop
+      - newsGold
+      - spyCost
+      - spyUpkeep
+      - spiesPerCity
+      - guardChancePercent
+      - debunkRewardPop
+      - debunkRewardGold
+      - debunkRewardLegit
+      - routeCost
+      - routeUpkeep
+      - councilSeats
+      - infoPrice
+      - lowPopThreshold
+      properties:
+        basePrice:
+          type: integer
+          format: int32
+        cityShareCost:
+          type: integer
+          format: int32
+        maxSharesPerOrder:
+          type: integer
+          format: int32
+        buyoutPremiumPercent:
+          type: integer
+          format: int32
+        partyCost:
+          type: integer
+          format: int32
+        festivalGold:
+          type: integer
+          format: int32
+        festivalPop:
+          type: integer
+          format: int32
+        newsGold:
+          type: integer
+          format: int32
+        spyCost:
+          type: integer
+          format: int32
+        spyUpkeep:
+          type: integer
+          format: int32
+        spiesPerCity:
+          type: integer
+          format: int32
+        guardChancePercent:
+          type: integer
+          format: int32
+        debunkRewardPop:
+          type: integer
+          format: int32
+        debunkRewardGold:
+          type: integer
+          format: int32
+        debunkRewardLegit:
+          type: integer
+          format: int32
+        routeCost:
+          type: integer
+          format: int32
+        routeUpkeep:
+          type: integer
+          format: int32
+        councilSeats:
+          type: integer
+          format: int32
+        infoPrice:
+          type: integer
+          format: int32
+        lowPopThreshold:
+          type: integer
+          format: int32
+    Seller:
+      type: object
+      description: Egy árucikk eladója. A Város sorában house = null és city = true.
+      required:
+      - house
+      - city
+      - shares
+      - margin
+      - sold
+      - cheapest
+      - protectedNow
+      properties:
+        house:
+          allOf:
+          - $ref: '#/components/schemas/HouseRef'
+          nullable: true
+        city:
+          type: boolean
+        shares:
+          type: integer
+          format: int32
+        margin:
+          type: string
+        sold:
+          type: number
+          format: double
+          nullable: true
+        cheapest:
+          type: boolean
+        protectedNow:
+          type: boolean
+    StartSlot:
+      type: object
+      description: Kezdőhely (birtok); az első szomszéd a kezdőváros.
+      required:
+      - id
+      - name
+      - x
+      - y
+      - neighbors
+      - note
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        x:
+          type: integer
+          format: int32
+        y:
+          type: integer
+          format: int32
+        neighbors:
+          type: array
+          items:
+            type: string
+        note:
+          type: string
+    StartSlotDto:
+      type: object
+      description: 'homeCity: a kezdőváros (itt 20 a népszerűség, ide szól a háttér bónusza); homeGoods: a Kereskedőház választhat belőle.'
+      required:
+      - id
+      - name
+      - x
+      - y
+      - neighbors
+      - neighborNames
+      - note
+      - homeCity
+      - homeCityName
+      - homeGoods
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        x:
+          type: integer
+          format: int32
+        y:
+          type: integer
+          format: int32
+        neighbors:
+          type: array
+          items:
+            type: string
+        neighborNames:
+          type: array
+          items:
+            type: string
+        note:
+          type: string
+        homeCity:
+          type: string
+        homeCityName:
+          type: string
+        homeGoods:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoodOption'
+    TerrainDef:
+      type: object
+      description: 'Dekoratív domborzat. mountains: [x, y, méret], forests: [x, y, darab], fields: [x, y, sz, m, forgatás], marsh: [x, y, darab].'
+      required:
+      - sea
+      - rivers
+      - mountains
+      - forests
+      - fields
+      - marsh
+      properties:
+        sea:
+          type: string
+          nullable: true
+        rivers:
+          type: array
+          items:
+            type: string
+        mountains:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+        forests:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+        fields:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+        marsh:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+    Threat:
+      type: object
+      description: 'Kivásárlási ajánlat ellened. defending: a vázlatodon vagy az érlelő lapodon már van ellene védekező vétel.'
+      required:
+      - lapId
+      - orderId
+      - by
+      - cityId
+      - cityName
+      - goodId
+      - goodName
+      - pts
+      - executeAt
+      - defendCost
+      - defending
+      properties:
+        lapId:
+          type: string
+        orderId:
+          type: string
+        by:
+          $ref: '#/components/schemas/HouseRef'
+        cityId:
+          type: string
+        cityName:
+          type: string
+        goodId:
+          type: string
+        goodName:
+          type: string
+        pts:
+          type: integer
+          format: int32
+        executeAt:
+          type: string
+          format: date-time
+        defendCost:
+          type: integer
+          format: int32
+        defending:
+          type: boolean
+    UserDto:
+      type: object
+      description: A bejelentkezett felhasználó.
+      required:
+      - id
+      - name
+      - role
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        role:
+          type: string

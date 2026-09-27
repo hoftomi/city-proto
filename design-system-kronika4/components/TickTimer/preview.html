@@ -1,0 +1,12 @@
+<!-- @dsCard group="Parancsok" height=64 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>TickTimer</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-row'},h(T.TickTimer,{at:'20:00',remaining:'3 ó 12 p'}),h(T.TickTimer,{at:'20:00',remaining:'38 p',soon:true})));
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<title>Trón nélkül – Krónika IV</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--paper); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; height:288px; width:960px; overflow:hidden; }
+  .art { position:absolute; top:0; left:0; width:960px; height:112px; }
+  .art svg { display:block; width:960px; height:112px; }
+  .wood { fill:var(--wood); }
+  .bronze { fill:var(--frame); }
+  .meadow { fill:var(--map-grass); }
+  .sea { fill:var(--map-sea); }
+  .wax { fill:var(--btn-red); }
+  .rule { fill:none; stroke:var(--frame-hi); stroke-width:1.5; }
+  .edge { fill:none; stroke:var(--outline); stroke-width:1.5; }
+  .words { position:absolute; left:var(--space-6); right:var(--space-6); bottom:var(--space-6); }
+  .name { margin:0; font-family:var(--font-display); font-size:50px; line-height:1; font-weight:700; letter-spacing:.02em; color:var(--ink); }
+  .tag { margin:var(--space-3) 0 0 2px; font-size:14px; line-height:20px; font-weight:700; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 960 112" width="960" height="112">
+<!--
+  blocks      wood band across the full top (the carved frame every screen sits in) · map-grass window set into it (the painted map) · map-sea strip at its right end (the coast) · frame bronze rail under the window · btn-red wax disc, small, on the rail (the seal on the orders)
+  arrangement top-band skeleton (the name in Cinzel is too wide for the 440px zone): a strip of unequal bands, like the frame of a map mounted on the table
+  pattern     hairline rules, from "keretek, belső bronz vonal": three frame-hi rules inset in the wood, the bronze inner line every card and the map carry
+  scales      window inset space-4 / space-6, rules at space-2 steps; corners radius-md 10; seal radius-full; edges outline 1.5
+-->
+<rect class="wood" x="-10" y="-10" width="980" height="122"/>
+<rect class="meadow" x="24" y="14" width="760" height="68" rx="10"/>
+<rect class="sea" x="784" y="14" width="152" height="68" rx="10"/>
+<rect class="sea" x="770" y="14" width="30" height="68"/>
+<rect class="edge" x="24" y="14" width="912" height="68" rx="10"/>
+<rect class="rule" x="16" y="6" width="928" height="84" rx="10"/>
+<path class="rule" d="M24 98H936"/>
+<rect class="bronze" x="24" y="92" width="240" height="12" rx="3"/>
+<rect class="edge" x="24" y="92" width="240" height="12" rx="3"/>
+<circle class="wax" cx="300" cy="98" r="11"/>
+<circle class="edge" cx="300" cy="98" r="11"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Trón nélkül – Krónika IV</h1>
+<p class="tag">Izometrikus, kidolgozott városok és festett világtérkép: valódi tetőformák, kőrakás, tornyok és pártázat.</p>
+</div>
+</div>
+</body>
+</html>

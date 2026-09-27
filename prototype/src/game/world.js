@@ -1,21 +1,21 @@
-// Példavilág a prototípushoz: a „Délkelet” régió. Hamis, de szabálykönyv-konform adatok.
+// Példavilág a v0.2 prototípushoz: a „Délkelet” régió öt városa, árucikkekkel.
 
 export const HOUSES = {
-  te: { id: 'te', name: 'Kékholló', tincture: 'kek', initial: 'K', npc: false, background: 'kereskedok' },
-  ezust: { id: 'ezust', name: 'Ezüstpart-ház', tincture: 'arany', initial: 'E', npc: true, persona: 'kalmar', favorite: 'kereskedok' },
-  tolgy: { id: 'tolgy', name: 'Ősi Tölgy', tincture: 'zold', initial: 'Ö', npc: true, persona: 'nemzetseg', favorite: 'nemesseg' },
-  varju: { id: 'varju', name: 'Varjúvár', tincture: 'fekete', initial: 'V', npc: true, persona: 'zsoldos', favorite: 'katonasag' },
-  arny: { id: 'arny', name: 'Bíbor Kéz', tincture: 'bibor', initial: 'B', npc: true, persona: 'arnyek', favorite: 'kereskedok' },
+  te: { id: 'te', name: 'Kékholló', tincture: 'kek', initial: 'K', npc: false, background: 'kereskedo' },
+  ezust: { id: 'ezust', name: 'Ezüstpart-ház', tincture: 'arany', initial: 'E', npc: true, persona: 'kalmar' },
+  tolgy: { id: 'tolgy', name: 'Ősi Tölgy', tincture: 'zold', initial: 'Ö', npc: true, persona: 'politikus' },
+  arny: { id: 'arny', name: 'Bíbor Kéz', tincture: 'bibor', initial: 'B', npc: true, persona: 'kem' },
+  varju: { id: 'varju', name: 'Varjúvár', tincture: 'fekete', initial: 'V', npc: true, persona: 'felvasarlo' },
 };
 
 export const NODES = {
   birtok: { id: 'birtok', name: 'Birtokod', x: 28, y: 125, estate: 'te' },
   ezustbirtok: { id: 'ezustbirtok', name: 'Ezüstpart', x: 160, y: 238, estate: 'ezust' },
   szelmezo: { id: 'szelmezo', name: 'Szélmező', x: 70, y: 72, city: true, profile: 'Gabonavidék' },
-  vaskapu: { id: 'vaskapu', name: 'Vaskapu', x: 205, y: 56, city: true, profile: 'Erődváros' },
+  vaskapu: { id: 'vaskapu', name: 'Vaskapu', x: 205, y: 56, city: true, profile: 'Bányaváros' },
   feketerev: { id: 'feketerev', name: 'Feketerév', x: 238, y: 122, city: true, profile: 'Kikötőváros', key: true, coast: true },
-  holtag: { id: 'holtag', name: 'Holtág', x: 205, y: 208, city: true, profile: 'Mocsári csempészváros' },
-  delkapu: { id: 'delkapu', name: 'Délkapu', x: 95, y: 190, city: true, profile: 'Határváros', labelSide: 'right' },
+  holtag: { id: 'holtag', name: 'Holtág', x: 205, y: 208, city: true, profile: 'Csempészváros' },
+  delkapu: { id: 'delkapu', name: 'Délkapu', x: 95, y: 190, city: true, profile: 'Határváros' },
 };
 
 export const EDGES = [
@@ -32,32 +32,59 @@ export const TERRAIN = {
   marsh: [[198, 228, 6], [226, 238, 4]],
 };
 
-// share(open, hidden)
-const s = (open, hidden = 0) => ({ open, hidden });
+const good = (name, supply, demand, shares = {}, margins = {}) => ({ name, supply, demand, shares, margins, sold: {}, history: [] });
 
 export function initialState() {
   return {
-    round: 3,
-    sealed: false,
-    resources: { pp: 13, arany: 23, bp: 7, ke: 3, legit: 41 },
+    clock: 9 * 60 + 30, // 1. nap 09:30 (szimulált idő, percben)
+    settlements: 0,
     routes: [['birtok', 'szelmezo'], ['birtok', 'delkapu'], ['szelmezo', 'feketerev']],
-    orders: [],
-    legit: { te: 41, ezust: 52, tolgy: 37, varju: 22, arny: 9 },
-    suspicion: {}, // "city.faction" -> { value, last }
-    stability: { szelmezo: 'ingatag', vaskapu: 'stabil', feketerev: 'stabil', holtag: 'lazongo', delkapu: 'ingatag' },
-    npcCooldown: { ezust: 5, tolgy: 5, varju: 5, arny: 5 }, // az NPC-k az 5. körtől intrikálnak
-    blocked: [], // lezárt élek eseményből: [a, b, untilRound]
-    influence: {
-      szelmezo: { nemesseg: { tolgy: s(30) }, kereskedok: { te: s(22), ezust: s(18) }, katonasag: { varju: s(15) } },
-      vaskapu: { nemesseg: { tolgy: s(12) }, kereskedok: { ezust: s(14) }, katonasag: { varju: s(46), te: s(6) } },
-      feketerev: { nemesseg: { te: s(42), tolgy: s(25), arny: s(0, 8) }, kereskedok: { ezust: s(55), te: s(19.3), varju: s(12) }, katonasag: { varju: s(38), ezust: s(14) } },
-      holtag: { nemesseg: { tolgy: s(9) }, kereskedok: { arny: s(6, 18), ezust: s(20) }, katonasag: { varju: s(24) } },
-      delkapu: { nemesseg: { te: s(14), tolgy: s(20) }, kereskedok: { ezust: s(26) }, katonasag: { varju: s(18), te: s(11) } },
+    players: {
+      te: { gold: 30, pp: 10, legit: 0 },
+      ezust: { gold: 80, pp: 10, legit: 0 },
+      tolgy: { gold: 80, pp: 10, legit: 0 },
+      arny: { gold: 80, pp: 10, legit: 0 },
+      varju: { gold: 80, pp: 10, legit: 0 },
     },
+    cities: {
+      szelmezo: {
+        goods: { gabona: good('Gabona', 150, 120, { te: 20, tolgy: 15 }, { te: 'piaci', tolgy: 'draga' }), bor: good('Bor', 60, 50, { ezust: 25 }, { ezust: 'draga' }) },
+        pop: { te: 20, tolgy: 16, ezust: 12 }, parties: { tolgy: 'kozepes' }, council: {}, spies: {}, guards: {},
+      },
+      vaskapu: {
+        goods: { vas: good('Vas', 80, 60, { varju: 35 }, { varju: 'uzsora' }), ko: good('Kő', 100, 70, { ezust: 15 }, { ezust: 'piaci' }) },
+        pop: { varju: 18, ezust: 12 }, parties: { varju: 'magas' }, council: {}, spies: {}, guards: {},
+      },
+      feketerev: {
+        goods: {
+          so: good('Só', 100, 80, { ezust: 30, te: 10 }, { ezust: 'draga', te: 'piaci' }),
+          hal: good('Hal', 120, 100, { varju: 25, ezust: 15 }, { varju: 'piaci', ezust: 'piaci' }),
+          fuszer: good('Fűszer', 40, 35, { arny: 10 }, { arny: 'uzsora' }),
+        },
+        pop: { te: 14, ezust: 22, tolgy: 25, arny: 12, varju: 15 }, parties: { tolgy: 'alacsony', ezust: 'kozepes' }, council: {},
+        spies: { arny: 2 }, guards: { arny: 0 },
+      },
+      holtag: {
+        goods: { tozeg: good('Tőzeg', 60, 50, { arny: 20 }, { arny: 'piaci' }), csempesz: good('Csempészáru', 30, 30, { arny: 15 }, { arny: 'draga' }) },
+        pop: { arny: 20 }, parties: {}, council: {}, spies: { arny: 1 }, guards: {},
+      },
+      delkapu: {
+        goods: { gyapju: good('Gyapjú', 80, 70, { ezust: 20 }, { ezust: 'olcso' }), lo: good('Ló', 30, 25, {}, {}) },
+        pop: { te: 12, ezust: 14, tolgy: 10 }, parties: {}, council: {}, spies: {}, guards: {},
+      },
+    },
+    news: [], // {id, city, author, target, template, good, effect, trueAtCreation, debunked, createdAt}
+    draft: [], // a játékos lepecsételetlen parancsai
+    laps: [], // érlelő parancslapok: {id, player, orders, sealedAt, executeAt, cost}
+    knowledge: { verified: {}, intel: [] }, // a játékos tudása: ellenőrzött hírek, kifürkészett parancslapok
+    events: [], // {type:'buyout', city, by, at}
+    festivals: {}, // "city|player" -> utolsó elszámolás
+    protection: {}, // "city|good|player" -> eddig védett (elszámolás)
+    lastInfoSale: -99,
     reports: [
-      { id: 'r0', kind: 'kem', confidence: 'gyenge', tick: '2. kör', title: 'Feketerév, Kereskedők', text: 'Feketerévben valószínűleg rivális befolyásépítés zajlik.' },
-      { id: 'r1', kind: 'esemeny', tick: '2. kör', title: 'Lázongás Holtágban', text: 'A mocsári csempészek felgyújtották a vámházat. A város lázong.' },
+      { id: 'r0', at: 9 * 60, kind: 'esemeny', title: 'Elkezdődött a szezon', text: 'A Délkelet városai várják a házakat. Az első elszámolás ma 20:00-kor lesz.', tone: 'info' },
     ],
-    lastSummary: null,
+    lastError: null,
+    seq: 1,
   };
 }

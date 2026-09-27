@@ -1,0 +1,12 @@
+<!-- @dsCard group="Házak" height=64 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>FactionTag</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-row'},h(T.FactionTag,{faction:'nemesseg'}),h(T.FactionTag,{faction:'kereskedok'}),h(T.FactionTag,{faction:'katonasag'})));
+</script>
+</body>
+</html>

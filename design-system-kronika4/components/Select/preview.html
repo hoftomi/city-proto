@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=100 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Select</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{maxWidth:360}},h(T.Select,{label:'Célfrakció',defaultValue:'kereskedok',options:[{value:'nemesseg',label:'Nemesség'},{value:'kereskedok',label:'Kereskedők'},{value:'katonasag',label:'Katonaság'}]})));
+</script>
+</body>
+</html>

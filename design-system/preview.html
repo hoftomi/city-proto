@@ -358,6 +358,14 @@ body { padding: 24px 16px; }
   ReactDOM.createRoot(document.currentScript.previousElementSibling).render(h('div',{className:'tn-row',style:{gap:16}},['nemesseg','kereskedok','katonasag','arany','bp','ke','legit','pp','kem','katonai','diplomacia','esemeny','frakcio','route','lock','warning','clock','check','close','hidden','info'].map(function(n){return h('span',{key:n,title:n},h(T.Icon,{name:n,size:24}));})));
 })();</script>
 </section>
+<section class="card wide"><h2>GameIcon</h2><p class="sum">Teli, illusztratív játékikonok: erőforrás, árucikk, ág és akció. A `tile` az akció ágának színét adja.</p>
+<div class="mount" class="tn-pad"></div>
+<script>(function(){
+  var T = window.TronNelkul, h = React.createElement;
+  var groups = [['Erőforrás',['arany','pp','legit','nep','ado']],['Árucikk',['gabona','bor','vas','ko','so','hal','fuszer','tozeg','csempesz','gyapju','lo']],['Ág',['vasarter','varoshaza','alvilag']],['Akció',['route','margin','buyShares','buyout','defend','foundParty','program','festival','news','hireSpy','guard','spy','verify','debunk']]];
+  ReactDOM.createRoot(document.currentScript.previousElementSibling).render(h('div',{className:'tn-stack',style:{gap:16}},groups.map(function(g){return h('div',{key:g[0],className:'tn-stack',style:{gap:8}},h('span',{className:'tn-eyebrow'},g[0]),h('div',{className:'tn-row',style:{gap:14}},g[1].map(function(n){return h('span',{key:n,title:n,style:{display:'inline-flex',flexDirection:'column',alignItems:'center',gap:4,fontSize:11,color:'var(--ink-muted)',minWidth:48}},g[0]==='Akció'?h(T.GameIcon,{name:n,size:22,tile:true}):h(T.GameIcon,{name:n,size:32}),n);})));}).concat([h('div',{key:'use',className:'tn-row',style:{gap:8}},h(T.ResourceChip,{kind:'arany',value:30}),h(T.ResourceChip,{kind:'pp',value:10}),h(T.ResourceChip,{kind:'legit',value:4}),h(T.ResourceChip,{kind:'nep',value:14}),h(T.Button,{art:'hireSpy'},'Kém felfogadása · 1 PP · 20 A'),h(T.Button,{size:'sm',variant:'danger',art:'buyout'},'Ajánlat · 23 A'))])));
+})();</script>
+</section>
 </div>
 </body>
 </html>

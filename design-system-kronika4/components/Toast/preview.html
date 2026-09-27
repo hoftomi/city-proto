@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=280 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Toast</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack'},h(T.Toast,{tone:'info',title:'Parancsok lepecsételve'},'A 7. kör 20:00-kor zárul.'),h(T.Toast,{tone:'ok',title:'Domináns lettél'},'Fehérkolostor Nemességénél. +3 L körönként.'),h(T.Toast,{tone:'warn',title:'Gyanakvó a Katonaság'},'Vaskapuban. Egy kör kihagyás után csökken.'),h(T.Toast,{tone:'danger',title:'Lebuktál Feketerévben'},'Az Ezüstpart-ház 3 körig casus bellit kapott ellened.')));
+</script>
+</body>
+</html>

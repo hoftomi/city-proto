@@ -1,0 +1,484 @@
+{
+ "version": 1,
+ "maps": {
+  "delkelet": {
+   "name": "Délkelet",
+   "cities": [
+    {
+     "id": "szelmezo",
+     "name": "Szélmező",
+     "x": 70,
+     "y": 72,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "vaskapu",
+     "name": "Vaskapu",
+     "x": 205,
+     "y": 56,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "feketerev",
+     "name": "Feketerév",
+     "x": 238,
+     "y": 122,
+     "key": true,
+     "coast": true
+    },
+    {
+     "id": "holtag",
+     "name": "Holtág",
+     "x": 205,
+     "y": 208,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "delkapu",
+     "name": "Délkapu",
+     "x": 95,
+     "y": 190,
+     "key": false,
+     "coast": false
+    }
+   ],
+   "edges": [
+    [
+     "szelmezo",
+     "feketerev"
+    ],
+    [
+     "szelmezo",
+     "vaskapu"
+    ],
+    [
+     "vaskapu",
+     "feketerev"
+    ],
+    [
+     "feketerev",
+     "holtag"
+    ],
+    [
+     "delkapu",
+     "holtag"
+    ],
+    [
+     "szelmezo",
+     "delkapu"
+    ]
+   ],
+   "starts": [
+    {
+     "id": "nyugat",
+     "name": "Nyugati birtok",
+     "x": 28,
+     "y": 125,
+     "neighbors": [
+      "szelmezo",
+      "delkapu"
+     ]
+    },
+    {
+     "id": "mocsar",
+     "name": "Mocsárszél",
+     "x": 160,
+     "y": 238,
+     "neighbors": [
+      "holtag",
+      "delkapu"
+     ]
+    },
+    {
+     "id": "hegyalja",
+     "name": "Hegyalja",
+     "x": 132,
+     "y": 112,
+     "neighbors": [
+      "szelmezo",
+      "vaskapu"
+     ]
+    }
+   ]
+  },
+  "kodos": {
+   "name": "Ködös Hegyvidék",
+   "cities": [
+    {
+     "id": "kodvar",
+     "name": "Ködvár",
+     "x": 70,
+     "y": 90,
+     "key": true,
+     "coast": false
+    },
+    {
+     "id": "sziklaszirt",
+     "name": "Sziklaszirt",
+     "x": 170,
+     "y": 70,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "farkasrev",
+     "name": "Farkasrév",
+     "x": 290,
+     "y": 100,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "ezustpatak",
+     "name": "Ezüstpatak",
+     "x": 110,
+     "y": 170,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "harmaskut",
+     "name": "Hármaskút",
+     "x": 240,
+     "y": 170,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "melyvolgy",
+     "name": "Mélyvölgy",
+     "x": 180,
+     "y": 230,
+     "key": false,
+     "coast": false
+    }
+   ],
+   "edges": [
+    [
+     "kodvar",
+     "sziklaszirt"
+    ],
+    [
+     "sziklaszirt",
+     "farkasrev"
+    ],
+    [
+     "kodvar",
+     "ezustpatak"
+    ],
+    [
+     "sziklaszirt",
+     "harmaskut"
+    ],
+    [
+     "farkasrev",
+     "harmaskut"
+    ],
+    [
+     "ezustpatak",
+     "harmaskut"
+    ],
+    [
+     "ezustpatak",
+     "melyvolgy"
+    ],
+    [
+     "harmaskut",
+     "melyvolgy"
+    ]
+   ],
+   "starts": [
+    {
+     "id": "nyugat",
+     "name": "Nyugati erdőség",
+     "x": 24,
+     "y": 150,
+     "neighbors": [
+      "kodvar",
+      "ezustpatak"
+     ]
+    },
+    {
+     "id": "hago",
+     "name": "Hágó alatt",
+     "x": 180,
+     "y": 130,
+     "neighbors": [
+      "sziklaszirt",
+      "harmaskut"
+     ]
+    },
+    {
+     "id": "kelet",
+     "name": "Keleti fennsík",
+     "x": 330,
+     "y": 160,
+     "neighbors": [
+      "farkasrev",
+      "harmaskut"
+     ]
+    }
+   ]
+  },
+  "so": {
+   "name": "Sóvidék",
+   "cities": [
+    {
+     "id": "sohegy",
+     "name": "Sóhegy",
+     "x": 60,
+     "y": 50,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "kalmarrev",
+     "name": "Kalmárrév",
+     "x": 170,
+     "y": 110,
+     "key": true,
+     "coast": true
+    },
+    {
+     "id": "tornyos",
+     "name": "Tornyos",
+     "x": 300,
+     "y": 70,
+     "key": false,
+     "coast": false
+    },
+    {
+     "id": "sosviz",
+     "name": "Sósvíz",
+     "x": 90,
+     "y": 150,
+     "key": false,
+     "coast": true
+    },
+    {
+     "id": "delirev",
+     "name": "Délirév",
+     "x": 250,
+     "y": 170,
+     "key": false,
+     "coast": true
+    }
+   ],
+   "edges": [
+    [
+     "sohegy",
+     "kalmarrev"
+    ],
+    [
+     "kalmarrev",
+     "tornyos"
+    ],
+    [
+     "sohegy",
+     "sosviz"
+    ],
+    [
+     "sosviz",
+     "kalmarrev"
+    ],
+    [
+     "kalmarrev",
+     "delirev"
+    ],
+    [
+     "tornyos",
+     "delirev"
+    ]
+   ],
+   "starts": [
+    {
+     "id": "bany",
+     "name": "Bányavidék",
+     "x": 120,
+     "y": 30,
+     "neighbors": [
+      "sohegy",
+      "kalmarrev"
+     ]
+    },
+    {
+     "id": "part",
+     "name": "Nyugati part",
+     "x": 30,
+     "y": 110,
+     "neighbors": [
+      "sohegy",
+      "sosviz"
+     ]
+    },
+    {
+     "id": "torony",
+     "name": "Tornyos-völgy",
+     "x": 330,
+     "y": 130,
+     "neighbors": [
+      "tornyos",
+      "delirev"
+     ]
+    }
+   ]
+  }
+ },
+ "districts": {
+  "polygons": {
+   "Városháza": [
+    [
+     360,
+     153.6
+    ],
+    [
+     485.1,
+     225.8
+    ],
+    [
+     360,
+     298
+    ],
+    [
+     234.9,
+     225.8
+    ]
+   ],
+   "Vásártér": [
+    [
+     485.1,
+     225.8
+    ],
+    [
+     610.1,
+     298
+    ],
+    [
+     360,
+     442.4
+    ],
+    [
+     234.9,
+     370.2
+    ],
+    [
+     360,
+     298
+    ]
+   ],
+   "Alvilág": [
+    [
+     234.9,
+     225.8
+    ],
+    [
+     360,
+     298
+    ],
+    [
+     234.9,
+     370.2
+    ],
+    [
+     109.9,
+     298
+    ]
+   ]
+  },
+  "labels": {
+   "Városháza": [
+    304.1,
+    254.3
+   ],
+   "Vásártér": [
+    468.6,
+    311.3
+   ],
+   "Alvilág": [
+    215.2,
+    301.8
+   ]
+  }
+ },
+ "map": {
+  "width": 360,
+  "height": 260,
+  "scale": 8
+ },
+ "cityBox": [
+  -46,
+  -58,
+  92,
+  90
+ ],
+ "estateBox": [
+  -16,
+  -24,
+  32,
+  34
+ ],
+ "cityView": {
+  "width": 720,
+  "height": 540,
+  "scale": 3
+ },
+ "icons": [
+  "arany",
+  "pp",
+  "legit",
+  "nep",
+  "ado",
+  "navTerkep",
+  "navVaros",
+  "navJel",
+  "navRang",
+  "homokora",
+  "gabona",
+  "bor",
+  "vas",
+  "ko",
+  "so",
+  "hal",
+  "fuszer",
+  "tozeg",
+  "csempesz",
+  "gyapju",
+  "lo",
+  "vasarter",
+  "varoshaza",
+  "alvilag",
+  "route",
+  "margin",
+  "buyShares",
+  "buyout",
+  "defend",
+  "foundParty",
+  "program",
+  "festival",
+  "news",
+  "hireSpy",
+  "guard",
+  "spy",
+  "verify",
+  "debunk"
+ ],
+ "branchOf": {
+  "route": null,
+  "margin": "vasarter",
+  "buyShares": "vasarter",
+  "buyout": "vasarter",
+  "defend": "vasarter",
+  "foundParty": "varoshaza",
+  "program": "varoshaza",
+  "festival": "varoshaza",
+  "news": "varoshaza",
+  "hireSpy": "alvilag",
+  "guard": "alvilag",
+  "spy": "alvilag",
+  "verify": "alvilag",
+  "debunk": "alvilag"
+ }
+}

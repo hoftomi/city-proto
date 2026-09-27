@@ -1,0 +1,33 @@
+<!-- @dsCard group="Nézetek" height=1300 page subtitle="Város nézet, telefon" -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>VarosNezet</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  var HOUSE={tincture:'kek',initial:'K',name:'Kékholló'};
+  var RES=[{kind:'arany',value:117},{kind:'pp',value:19},{kind:'legit',value:4}];
+  var NAV=[{id:'terkep',label:'Térkép',icon:'terkep'},{id:'varos',label:'Város',icon:'varos'},{id:'jel',label:'Jelentések',icon:'kem',badge:3},{id:'par',label:'Parancslap',icon:'pp',badge:1},{id:'rang',label:'Rangsor',icon:'legit'}];
+  var TABS=[{id:'kereskedok',label:'Vásártér',art:'vasarter',tone:'vasarter'},{id:'nemesseg',label:'Városháza',art:'varoshaza',tone:'varoshaza'},{id:'katonasag',label:'Alvilág',art:'alvilag',tone:'alvilag'}];
+  function Screen(){
+    var st=React.useState('kereskedok'), sel=st[0], zm=React.useState(1.8);
+    var body = sel==='kereskedok' ? h('section',{className:'tn-card'},
+        h('span',{className:'tn-row',style:{gap:8}},h(T.GameIcon,{name:'so',size:30}),h('span',{className:'tn-report-title'},'Só')),
+        h(T.InfluenceBar,{segments:[{name:'Ezüstpart-ház',tincture:'arany',value:30},{name:'Te',tincture:'kek',value:10,self:true}],thresholds:false}),
+        h('div',{className:'tn-row'},h(T.Button,{size:'sm',art:'buyShares'},'Vétel · 15 A'),h(T.Button,{size:'sm',variant:'danger',art:'buyout'},'Ajánlat · 23 A')))
+      : sel==='nemesseg' ? h('section',{className:'tn-card'},h('span',{className:'tn-report-title'},'Városi tanács'),h('span',{className:'tn-muted'},'Választás 6 elszámolás múlva.'),h('div',{className:'tn-row'},h(T.Button,{art:'foundParty'},'Pártalapítás · 2 PP · 40 A'),h(T.Button,{art:'festival'},'Fesztivál')))
+      : h('section',{className:'tn-card'},h('span',{className:'tn-report-title'},'Kémeid itt: 1 / 3'),h('div',{className:'tn-row'},h(T.Button,{art:'hireSpy'},'Kém felfogadása · 20 A'),h(T.Button,{art:'spy'},'Kifürkészés · 1 PP')));
+    return h('div',{className:'tn-screen'},
+      h(T.AppBar,{house:HOUSE,timer:{at:'20:00',remaining:'3 ó 12 p'},resources:RES}),
+      h('main',{className:'tn-screen-body'},
+        h('div',{className:'tn-stack',style:{gap:6}},h('span',{className:'tn-eyebrow'},'Kikötőváros · kulcsváros · 2 lépés'),h('h1',{className:'tn-city-title'},'Feketerév')),
+        h(T.MapViewport,{zoom:zm[0],onZoom:zm[1],max:3,focus:[0.6,0.6],aspect:'720 / 540'},h(T.CityView,{name:'Feketerév',coast:true,stability:'ingatag',selected:sel,onSelect:st[1],districts:{nemesseg:{dominant:'zold'},kereskedok:{dominant:'arany',contested:'kek'},katonasag:{dominant:'fekete'}}})),
+        h(T.Tabs,{active:sel,onChange:st[1],tabs:TABS}), body,
+        h(T.ReportCard,{kind:'frakcio',tick:'2. nap 00:22',title:'Varjúvár ki akar vásárolni'},'5 pontot akar a Só részesedésedből. Védekező vétellel kiválthatod.')),
+      h(T.NavBar,{active:'varos',items:NAV}));
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(h(Screen));
+</script>
+</body>
+</html>

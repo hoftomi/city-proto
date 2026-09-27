@@ -17,7 +17,7 @@ A *Trón nélkül* felülete egy politikai térképasztal: papír, tinta, címer
 - A **seal** (pecsétviasz) kizárólag a parancsok lepecsételésére szolgál. Nem jelent hibát, és máshol nem használható.
 - Állapotszínek: `danger` (lebukás, Kiűzetés, elvágott város, Útzár), `warn` (Gyanú 1–2, Ingatag), `ok` (siker, Stabil). Az `ok` kék, így soha nem egy piros–zöld pár különbözteti meg az állapotokat. Minden állapotszín mellé szó vagy ikon is jár.
 - A **házszínek heraldikai tinktúrák**: `house-voros`, `house-kek`, `house-zold`, `house-arany`, `house-bibor`, `house-fekete`, `house-narancs`, `house-szeder`. Egy ház színe mindenhol ugyanaz: címer, befolyássáv, birtok, rivális útvonal. Ezek jelölőszínek (legalább 3:1 a papíron), szövegszínnek nem valók.
-- A frakcióknak **nincs saját színük**. A Nemességet, a Kereskedőket és a Katonaságot ikon (korona, mérleg, kard) és név jelöli, így a szín mindig házat jelent.
+- A **hatalmi ágaknak** (Vásártér, Városháza, Alvilág) van jelölőszínük: `branch-vasarter` (borostyán), `branch-varoshaza` (lazúr), `branch-alvilag` (alkonyibolya), és egy semleges `branch-kozos` a közös akciókhoz (útvonal). Mindegyikhez tartozik egy `-soft` háttérszín. Ezek **csak** az ágak ikonhátterét (`GameIcon` csempe), a kijelölt fül aláhúzását és ágcímkéket színezhetik. Befolyássávon, térképen, címeren soha nem jelennek meg, ott a szín továbbra is mindig házat jelent.
 - A Semleges `share-neutral` alap `line-strong` sraffozással. Az Ismeretlen (rejtett) `share-unknown` alap pontmintával. A két minta miatt ezek fekete-fehérben is megkülönböztethetők a házaktól.
 
 ## Tipográfia
@@ -49,14 +49,14 @@ A térkép rézmetszetű tartománytérkép, nem műholdkép.
 
 ## Városnézet
 
-A városállam madártávlati alaprajz (`CityView`): fal bástyákkal és négy kapuval, háztömbök (`map-block`), és a három frakció negyede a saját épületével.
+A városállam madártávlati alaprajz (`CityView`): fal bástyákkal és négy kapuval, háztömbök (`map-block`), és a három hatalmi ág negyede a saját épületével.
 
-- **Felsőváros (Nemesség):** a palota udvarral és négy saroktoronnyal.
-- **Citadella (Katonaság):** a csillagerőd.
+- **Városháza (Politika):** a palota udvarral és négy saroktoronnyal.
+- **Alvilág (Kémhálózat):** a csillagerőd, a városi alvilág rejtekhelye.
 - **Vásártér (Kereskedők):** a piactér standokkal és kúttal. Kikötővárosban mólók és hajók is vannak.
 - A negyed fölött a Domináns ház zászlaja leng. Szoros versenyben a második ház kisebb zászlaja is ott van.
 - Az Ingatag városban füst, a Lázongóban lángok látszanak.
-- A negyedre koppintva az kijelölődik (verdigris), és alatta megnyílik a frakció kártyája. Ugyanez a fülekkel (`Tabs`) is elérhető, mert az illusztráció nem lehet az egyetlen út.
+- A negyedre koppintva az kijelölődik (verdigris), és alatta megnyílik az ág kártyája. Ugyanez a fülekkel (`Tabs`) is elérhető, mert az illusztráció nem lehet az egyetlen út.
 - A háztömbök a város nevéből generálódnak, így minden városnak saját, állandó rajzolata van.
 
 ## Nézetek
@@ -65,7 +65,16 @@ A **Térkép nézet** és a **Város nézet** oldal a telefonos képernyőket mu
 
 ## Ikonok
 
-Saját vonalikon-készlet a bundle-ben (`Icon`): 24-es rács, 1,75-ös vonal, lekerekített végek, `currentColor`. A frakció-, erőforrás- és jelentéstípus-ikonok itt vannak. Új ikon ugyanebben a stílusban készüljön. Emoji és külső ikonkészlet nem használható.
+Saját vonalikon-készlet a bundle-ben (`Icon`): 24-es rács, 1,75-ös vonal, lekerekített végek, `currentColor`. Ezek a felület vezérlőikonjai (navigáció, állapot, bezárás, óra).
+
+A játék dolgainak saját, **teli, illusztratív** ikonkészlete is van (`GameIcon`): erőforrások, árucikkek, akciók és a három ág. Stílusa: 24-es rács, sötétbarna (`ic-line`) 1,1-es körvonal, teli színfoltok az `ic-*` festékekből, egy-egy fehér csillanás. A festékek témafüggetlenek, sötét témában az ikon vékony világos glóriát kap, hogy a körvonal ne vesszen el.
+
+- Erőforrás: `arany`, `pp`, `legit`, `nep` (népszerűség), `ado`.
+- Árucikk: `gabona`, `bor`, `vas`, `ko`, `so`, `hal`, `fuszer`, `tozeg`, `csempesz`, `gyapju`, `lo`.
+- Ág: `vasarter`, `varoshaza`, `alvilag`.
+- Akció (az akció azonosítójával): `route`, `margin`, `buyShares`, `buyout`, `defend`, `foundParty`, `program`, `festival`, `news`, `hireSpy`, `guard`, `spy`, `verify`, `debunk`.
+
+A `tile` csempét rajzol az ikon mögé. `tile: true` esetén az akció a saját ága színét kapja, így a parancslapon egy pillantásra látszik, melyik ágban mozogsz. Új játékikon ugyanebben a stílusban készüljön. Emoji és külső ikonkészlet továbbra sem használható.
 
 ## Logó
 

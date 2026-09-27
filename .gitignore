@@ -25,8 +25,9 @@ key.properties
 *.p8
 *.p12
 *.mobileprovision
-google-services.json
-GoogleService-Info.plist
+# A Firebase szerveroldali kulcsa (a google-services.json és a GoogleService-Info.plist verziókezelt, nem titok)
+*service-account*.json
+secrets/
 
 # --- Naplók ---
 *.log

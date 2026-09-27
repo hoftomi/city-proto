@@ -1,0 +1,180 @@
+/* Trón nélkül – Krónika design system tokenek (festett stratégiai; egy téma: Nappal) */
+:root, [data-theme="light"] {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --font-display: Cinzel, "Trajan Pro", "Palatino Linotype", Georgia, serif;
+  --font-sans: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+
+  /* Asztal: a képernyő háttere (régi térképlap) */
+  --table: #d9c7a0;
+  --table-hi: #e8dab8;
+  --table-lo: #b89c6c;
+
+  /* Pergamen */
+  --paper: #efe2c3;
+  --paper-raised: #f7eed8;
+  --paper-sunk: #e2d0a8;
+  --line: #cdb68a;
+  --line-strong: #8f7148;
+  --outline: #3a2a1c;
+
+  /* Szöveg */
+  --ink: #2c1f13;
+  --ink-muted: #5f4a33;
+  --on-ink: #f7eed8;
+  --on-btn: #fff9ec;
+
+  /* Fa és bronz keret */
+  --wood: #5a3a22;
+  --wood-hi: #7a5233;
+  --wood-lo: #3a2416;
+  --frame: #b88a3e;
+  --frame-hi: #e3c27a;
+  --frame-lo: #7e5a22;
+
+  /* Kiemelés (a verdigris szerepe): acélkék */
+  --verdigris: #235f7e;
+  --verdigris-soft: #d5e4e6;
+  --on-verdigris: #ffffff;
+
+  /* Matt gombfestékek */
+  --btn-green-hi: #86ad55;
+  --btn-green: #4e7629;
+  --btn-green-lo: #36561b;
+  --btn-blue-hi: #6f98bb;
+  --btn-blue: #3b6a90;
+  --btn-blue-lo: #244763;
+  --btn-gold-hi: #f0cf7c;
+  --btn-gold: #c89232;
+  --btn-gold-lo: #86591a;
+  --btn-red-hi: #d17a5f;
+  --btn-red: #a23b26;
+  --btn-red-lo: #6c2012;
+  --btn-cream-hi: #fbf4e2;
+  --btn-cream: #e8d8b2;
+  --btn-cream-lo: #a98c5c;
+
+  /* Lepecsételés */
+  --seal: #8c2a1c;
+  --seal-soft: #f1ddd2;
+  --on-seal: #ffffff;
+
+  /* Állapot */
+  --danger: #9b2c1c;
+  --danger-soft: #f3dcd3;
+  --warn: #7a4d06;
+  --warn-soft: #f1e2bb;
+  --ok: #235f7e;
+  --ok-soft: #d7e5e8;
+
+  /* Házszínek (festett heraldika) */
+  --house-voros: #b23a2e;
+  --house-kek: #2f5f9e;
+  --house-zold: #3d7b3a;
+  --house-arany: #c99a2a;
+  --house-bibor: #744a9a;
+  --house-fekete: #34313a;
+  --house-narancs: #c46a24;
+  --house-szeder: #973b62;
+  --share-neutral: #e3d3ad;
+  --share-unknown: #7d6f5f;
+
+  /* Térkép */
+  --map-grass: #a3b86e;
+  --map-grass-hi: #bfcd8b;
+  --map-grass-lo: #7d9651;
+  --map-tuft: #6e8844;
+  --map-sea: #5d98ab;
+  --map-sea-deep: #467f94;
+  --map-sea-hi: #9cc4c9;
+  --map-sea-line: #e8f1ec;
+  --map-sand: #e0cb95;
+  --map-relief: #5a4128;
+  --map-rock: #a99579;
+  --map-rock-hi: #cbbb9c;
+  --map-rock-lo: #7c6a53;
+  --map-snow: #f6f3ea;
+  --map-snow-lo: #c9d3d6;
+  --map-forest: #4d7535;
+  --map-forest-hi: #6f9448;
+  --map-forest-lo: #34552a;
+  --map-pine: #3d6634;
+  --map-field: #d8b55c;
+  --map-field-2: #b9a257;
+  --map-field-lo: #a88532;
+  --map-road: #d9c08a;
+  --map-road-lo: #a8895a;
+  --map-block: #ecdfbf;
+  --timber: #5b3d27;
+  --roof-red: #a9503a;
+  --roof-red-lo: #7d3627;
+  --roof-blue: #4d6e8c;
+  --roof-blue-lo: #354f66;
+  --roof-teal: #5c8a80;
+  --roof-purple: #6a5579;
+  --roof-brown: #8a6242;
+  --copper: #6f9e8a;
+  --copper-lo: #4d7a68;
+  --stone: #cbbfa7;
+  --stone-hi: #e1d7c2;
+  --stone-lo: #958770;
+  --window: #f2cf6e;
+  --window-dark: #3b3026;
+
+  --link: var(--verdigris);
+  --shadow-float: 0 4px 0 #0000002e, 0 14px 28px -8px #2c1f1399;
+  --shadow-card: 0 3px 0 #3a2a1c, 0 8px 16px -8px #2c1f1380;
+  --focus-ring: 0 0 0 2px #f7eed8, 0 0 0 5px #235f7e;
+
+  /* Hatalmi ágak */
+  --branch-vasarter: #a86a14;
+  --branch-vasarter-soft: #f2e0bd;
+  --branch-varoshaza: #2f5f9e;
+  --branch-varoshaza-soft: #dbe3ee;
+  --branch-alvilag: #6a4a8a;
+  --branch-alvilag-soft: #e6dcec;
+  --branch-kozos: #4f7a35;
+  --branch-kozos-soft: #e1e9d2;
+
+  /* Ikonfestékek (GameIcon), tompított */
+  --ic-line: #3a2a1c;
+  --ic-white: #fbf6ea;
+  --ic-paper: #f4ead0;
+  --ic-cream: #e9d7ae;
+  --ic-cream-lo: #b89a66;
+  --ic-gold-hi: #f1d27e;
+  --ic-gold: #d3a13c;
+  --ic-gold-lo: #94681c;
+  --ic-red-hi: #d06a57;
+  --ic-red: #a63a2c;
+  --ic-red-lo: #6e2219;
+  --ic-rose: #c4526a;
+  --ic-wine: #7a2442;
+  --ic-orange-hi: #e9a560;
+  --ic-orange: #c96d2a;
+  --ic-green: #5f8f3a;
+  --ic-sky: #9cc3d0;
+  --ic-blue: #3f6c96;
+  --ic-purple: #62497f;
+  --ic-black: #39343e;
+  --ic-brown-hi: #b8834f;
+  --ic-brown: #7d5230;
+  --ic-peat: #4f3322;
+  --ic-steel-hi: #dfe5e7;
+  --ic-steel: #9aa7ae;
+  --ic-steel-lo: #5e6b72;
+  --ic-stone-hi: #e5dbc8;
+  --ic-stone: #bdae94;
+  --ic-stone-lo: #85765f;
+}

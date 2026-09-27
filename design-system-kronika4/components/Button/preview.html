@@ -1,0 +1,12 @@
+<!-- @dsCard group="Alap UI" height=210 -->
+<!doctype html>
+<html lang="hu">
+<head><meta charset="utf-8"><title>Button</title></head>
+<body>
+<div id="root" class="tn-pad"></div>
+<script>
+  var T = window.TronKronika4, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'tn-stack'},h('div',{className:'tn-row'},h(T.Button,{variant:'primary',icon:'varos'},'Város megnyitása'),h(T.Button,{art:'hireSpy'},'Kém felfogadása'),h(T.Button,{variant:'quiet'},'Mégse')),h('div',{className:'tn-row'},h(T.Button,{variant:'seal',icon:'pp'},'Parancsok lepecsételése')),h('div',{className:'tn-row'},h(T.Button,{variant:'danger',art:'buyout'},'Ajánlat · 23 A'),h(T.Button,{size:'sm',art:'route'},'Útvonal'),h(T.Button,{disabled:true,art:'guard'},'Őr beállítása'))));
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Kézzel karbantartott (a .openapi-generator-ignore védi): a generált kód a lib/ mappában van, lásd tools/generate_api.sh.
+name: tron_api
+version: 0.0.2
+description: Trón nélkül API kliens (az api/openapi.yaml-ból generált Dio-kérések és json_serializable modellek).
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  dio: ^5.7.0
+  copy_with_extension: ^7.1.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  build_runner: any
+  copy_with_extension_gen: ^7.1.0
+  json_serializable: ^6.9.3

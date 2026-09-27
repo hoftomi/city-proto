@@ -23,18 +23,11 @@ management:
 
 app:
   zone: Europe/Budapest
-  jwt:
-    # Legalább 32 bájt. Élesben kötelező felülírni a JWT_SECRET környezeti változóval.
-    secret: ${JWT_SECRET:csak-fejleszteshez-hasznald-ezt-a-titkot-0001}
-    ttl-hours: 720
   auth:
-    # Vesszővel elválasztva: az Android, iOS és web OAuth kliensazonosítók, amelyek ID tokenjét elfogadjuk
-    google-client-ids: ${GOOGLE_CLIENT_IDS:}
-    # Az iOS bundle ID (és ha van, a Services ID)
-    apple-audiences: ${APPLE_AUDIENCES:}
+    # A Firebase-projekt azonosítója: ennek az ID tokenjeit fogadjuk el
+    firebase-project-id: ${FIREBASE_PROJECT_ID:city-proto}
+    # A Discord-belépéshez a Firebase custom tokenek aláírására service account is kell (GOOGLE_APPLICATION_CREDENTIALS)
     discord-client-id: ${DISCORD_CLIENT_ID:}
     discord-client-secret: ${DISCORD_CLIENT_SECRET:}
-    # Fejlesztői belépés szolgáltató nélkül, ADMIN szereppel. Élesben kapcsold ki!
-    dev-login: ${DEV_LOGIN:true}
   scheduler:
     enabled: ${SCHEDULER_ENABLED:true}

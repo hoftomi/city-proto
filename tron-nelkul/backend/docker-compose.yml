@@ -17,7 +17,9 @@ services:
       retries: 10
 
   backend:
-    build: ./backend
+    build:
+      context: ../..
+      dockerfile: tron-nelkul/backend/Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -25,12 +27,13 @@ services:
       DB_URL: jdbc:postgresql://db:5432/tron
       DB_USER: tron
       DB_PASSWORD: tron
-      JWT_SECRET: ${JWT_SECRET:-csak-fejleszteshez-hasznald-ezt-a-titkot-0001}
-      DEV_LOGIN: ${DEV_LOGIN:-true}
-      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
-      APPLE_AUDIENCES: ${APPLE_AUDIENCES:-}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-city-proto}
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
+      # Discord-belépéshez: a Firebase service account kulcsa (lásd README, 2. fejezet)
+      # GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase-service-account.json
+    # volumes:
+    #   - ./secrets/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro
     ports:
       - "8080:8080"
 

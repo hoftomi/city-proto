@@ -27,6 +27,7 @@ const Map<String, List<String>> kTnIcons = {
   'terkep': ['M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z', 'M9 4v14', 'M15 6v14'],
   'varos': ['M3 21V10l3-2 3 2v11', 'M9 21V6l3-3 3 3v15', 'M15 21v-9l3-2 3 2v9', 'M2 21h20'],
   'back': ['M15 5l-7 7 7 7'],
+  'chevron': ['M6 9l6 6 6-6'],
 };
 
 final Map<String, Path> _cache = {};
