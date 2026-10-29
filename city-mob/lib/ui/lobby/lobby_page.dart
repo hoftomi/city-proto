@@ -83,7 +83,10 @@ class _LobbyView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  if (s.games.isEmpty) Text(s.emptyText.text, style: TnText.body(c.inkMuted)),
+                  if (s.tab == LobbyTab.finished && s.groups.finished == null)
+                    const Center(child: CircularProgressIndicator())
+                  else if (s.games.isEmpty)
+                    Text(s.emptyText.text, style: TnText.body(c.inkMuted)),
                   for (final g in s.games) ...[_GameCard(g: g, onTap: () => _open(context, g)), const SizedBox(height: 12)],
                 ]),
               );

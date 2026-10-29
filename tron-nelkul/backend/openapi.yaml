@@ -83,12 +83,46 @@ paths:
                 $ref: '#/components/schemas/UserDto'
         default:
           $ref: '#/components/responses/Problem'
-  /api/games:
+  /api/games/joined:
     get:
-      operationId: listGames
+      operationId: listJoinedGames
       tags:
       - lobby
-      summary: List of games, with the own house
+      summary: 'Live games the user joined, with the own house (running, open, announced)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameSummary'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/available:
+    get:
+      operationId: listAvailableGames
+      tags:
+      - lobby
+      summary: Live games the user has not joined (running, open, announced)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameSummary'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/games/archived:
+    get:
+      operationId: listArchivedGames
+      tags:
+      - lobby
+      summary: 'Finished games, newest first, with the winner and the own place'
       responses:
         '200':
           description: OK

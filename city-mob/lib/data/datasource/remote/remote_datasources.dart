@@ -20,7 +20,11 @@ class LobbyRemoteDataSource {
   LobbyRemoteDataSource(this._api);
   final LobbyApi _api;
 
-  Future<List<GameSummary>> games() async => (await _api.listGames()).data!;
+  Future<List<GameSummary>> joinedGames() async => (await _api.listJoinedGames()).data!;
+
+  Future<List<GameSummary>> availableGames() async => (await _api.listAvailableGames()).data!;
+
+  Future<List<GameSummary>> archivedGames() async => (await _api.listArchivedGames()).data!;
 
   Future<GameDetail> game(String id) async => (await _api.getGame(id: id)).data!;
 

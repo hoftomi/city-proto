@@ -77,7 +77,11 @@ class LobbyRepository {
   LobbyRepository(this._remote);
   final LobbyRemoteDataSource _remote;
 
-  Future<Either<Failure, List<GameSummary>>> games() => guard(_remote.games);
+  Future<Either<Failure, List<GameSummary>>> joinedGames() => guard(_remote.joinedGames);
+
+  Future<Either<Failure, List<GameSummary>>> availableGames() => guard(_remote.availableGames);
+
+  Future<Either<Failure, List<GameSummary>>> archivedGames() => guard(_remote.archivedGames);
 
   Future<Either<Failure, GameDetail>> game(String id) => guard(() => _remote.game(id));
 

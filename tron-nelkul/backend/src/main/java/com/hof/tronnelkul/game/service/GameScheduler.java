@@ -19,18 +19,18 @@ import java.time.Instant;
 @Component
 public class GameScheduler {
     private static final Logger log = LoggerFactory.getLogger(GameScheduler.class);
-    private final GameRepository games;
+    private final GameRepository gameRepository;
     private final GameLifecycleService lifecycle;
     private final AppProperties props;
 
-    public GameScheduler(GameRepository games, GameLifecycleService lifecycle, AppProperties props) {
-        this.games = games; this.lifecycle = lifecycle; this.props = props;
+    public GameScheduler(GameRepository gameRepository, GameLifecycleService lifecycle, AppProperties props) {
+        this.gameRepository = gameRepository; this.lifecycle = lifecycle; this.props = props;
     }
 
     @Scheduled(fixedDelay = 30_000, initialDelay = 15_000)
     public void tick() {
         if (!props.scheduler().enabled()) return;
-        for (GameEntity g : games.findByStatus(GameStatus.RUNNING)) {
+        for (GameEntity g : gameRepository.findByStatus(GameStatus.RUNNING)) {
             try { lifecycle.tick(g.id); } catch (RuntimeException e) { log.error("Failed to advance: {}", g.id, e); }
         }
     }
@@ -39,11 +39,11 @@ public class GameScheduler {
     public void lifecycle() {
         if (!props.scheduler().enabled()) return;
         Instant now = Instant.now();
-        for (GameEntity g : games.findByStatusAndOpensAtBefore(GameStatus.ANNOUNCED, now)) {
+        for (GameEntity g : gameRepository.findByStatusAndOpensAtBefore(GameStatus.ANNOUNCED, now)) {
             g.status = GameStatus.OPEN;
-            games.save(g);
+            gameRepository.save(g);
         }
-        for (GameEntity g : games.findByStatusAndClosesAtBefore(GameStatus.OPEN, now)) {
+        for (GameEntity g : gameRepository.findByStatusAndClosesAtBefore(GameStatus.OPEN, now)) {
             try { lifecycle.start(g.id); } catch (RuntimeException e) { log.error("Failed to start: {}", g.id, e); }
         }
     }

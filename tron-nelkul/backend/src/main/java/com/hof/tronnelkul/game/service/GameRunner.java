@@ -23,19 +23,19 @@ import java.util.function.BiFunction;
 public class GameRunner {
     private static final Logger log = LoggerFactory.getLogger(GameRunner.class);
 
-    private final GameRepository games;
-    private final PlayerRepository players;
-    private final ReportRepository reports;
-    private final ArchivedGameRepository archivedGames;
-    private final ArchivedPlayerRepository archivedPlayers;
-    private final ArchivedReportRepository archivedReports;
+    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
+    private final ReportRepository reportRepository;
+    private final ArchivedGameRepository archivedGameRepository;
+    private final ArchivedPlayerRepository archivedPlayerRepository;
+    private final ArchivedReportRepository archivedReportRepository;
     private final JsonMapper json;
     private final Messages messages;
 
-    public GameRunner(GameRepository games, PlayerRepository players, ReportRepository reports, ArchivedGameRepository archivedGames,
-                      ArchivedPlayerRepository archivedPlayers, ArchivedReportRepository archivedReports, JsonMapper json, Messages messages) {
-        this.games = games; this.players = players; this.reports = reports;
-        this.archivedGames = archivedGames; this.archivedPlayers = archivedPlayers; this.archivedReports = archivedReports;
+    public GameRunner(GameRepository gameRepository, PlayerRepository playerRepository, ReportRepository reportRepository, ArchivedGameRepository archivedGameRepository,
+                      ArchivedPlayerRepository archivedPlayerRepository, ArchivedReportRepository archivedReportRepository, JsonMapper json, Messages messages) {
+        this.gameRepository = gameRepository; this.playerRepository = playerRepository; this.reportRepository = reportRepository;
+        this.archivedGameRepository = archivedGameRepository; this.archivedPlayerRepository = archivedPlayerRepository; this.archivedReportRepository = archivedReportRepository;
         this.json = json; this.messages = messages;
     }
 
@@ -55,7 +55,7 @@ public class GameRunner {
      */
     @Transactional
     public <T> T mutate(String gameId, BiFunction<GameEntity, Engine, T> op) {
-        GameEntity g = games.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        GameEntity g = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
         if (g.status != GameStatus.RUNNING) throw ApiException.conflict("server.game_not_running");
         Engine e = engine(g);
         e.advance(Instant.now().toEpochMilli(), GameEntity.MATURATION_MINUTES, GameEntity.maxSettlements());
@@ -77,7 +77,7 @@ public class GameRunner {
         boolean over = g.status == GameStatus.RUNNING && e.s.settlements >= GameEntity.maxSettlements();
         String winner = over ? finish(g, e) : null;
         g.state = json.writeValueAsString(e.s);
-        List<PlayerEntity> all = players.findByGameId(g.id);
+        List<PlayerEntity> all = playerRepository.findByGameId(g.id);
         for (PlayerEntity p : all) {
             EngineState.PlayerSt ps = e.s.players.get(p.id.toString());
             if (ps != null) p.legit = ps.legit;
@@ -93,7 +93,7 @@ public class GameRunner {
                 rep.add(new ReportEntity(g.id, UUID.fromString(r.playerId()), e.s.settlements, r.kind(), r.confidence(), title, text, r.tone(), false, at));
             }
         }
-        reports.saveAll(rep);
+        reportRepository.saveAll(rep);
         e.out.clear();
         if (over) archive(g, winner);
     }
@@ -111,14 +111,14 @@ public class GameRunner {
 
     /** The finished game, its houses and reports move to the archived_* tables. */
     private void archive(GameEntity g, String winner) {
-        archivedGames.save(new ArchivedGameEntity(g, winner));
-        List<PlayerEntity> ps = players.findByGameId(g.id);
-        archivedPlayers.saveAll(ps.stream().map(ArchivedPlayerEntity::new).toList());
-        List<ReportEntity> rs = reports.findByGameId(g.id);
-        archivedReports.saveAll(rs.stream().map(ArchivedReportEntity::new).toList());
-        reports.deleteAll(rs);
-        players.deleteAll(ps);
-        games.delete(g);
+        archivedGameRepository.save(new ArchivedGameEntity(g, winner));
+        List<PlayerEntity> ps = playerRepository.findByGameId(g.id);
+        archivedPlayerRepository.saveAll(ps.stream().map(ArchivedPlayerEntity::new).toList());
+        List<ReportEntity> rs = reportRepository.findByGameId(g.id);
+        archivedReportRepository.saveAll(rs.stream().map(ArchivedReportEntity::new).toList());
+        reportRepository.deleteAll(rs);
+        playerRepository.deleteAll(ps);
+        gameRepository.delete(g);
         log.info("Archived: {}", g.id);
     }
 }

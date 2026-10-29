@@ -18,19 +18,19 @@ import java.time.Instant;
 public class GameLifecycleService {
     private static final Logger log = LoggerFactory.getLogger(GameLifecycleService.class);
 
-    private final GameRepository games;
-    private final PlayerRepository players;
+    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
     private final GameRunner runner;
     private final Messages messages;
 
-    public GameLifecycleService(GameRepository games, PlayerRepository players, GameRunner runner, Messages messages) {
-        this.games = games; this.players = players; this.runner = runner; this.messages = messages;
+    public GameLifecycleService(GameRepository gameRepository, PlayerRepository playerRepository, GameRunner runner, Messages messages) {
+        this.gameRepository = gameRepository; this.playerRepository = playerRepository; this.runner = runner; this.messages = messages;
     }
 
     /** Starts an open game: cities, NPC houses, the starting position of those who joined. */
     @Transactional
     public void start(String gameId) {
-        GameEntity g = games.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        GameEntity g = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
         if (g.status == GameStatus.RUNNING) return;
         if (g.status != GameStatus.OPEN) throw ApiException.conflict("server.only_open_start");
         MapDefinition map = MapRegistry.get(g.mapId);
@@ -40,11 +40,11 @@ public class GameLifecycleService {
             String name = messages.text(t.label());
             PlayerEntity p = new PlayerEntity(g.id, null, name, t.tincture());
             p.npc = true; p.persona = t.persona();
-            p = players.save(p);
+            p = playerRepository.save(p);
             Setup.addNpc(s, map, i, p.id.toString(), name, t.tincture(), t.persona());
         }
         Engine e = new Engine(map, s, g.id.hashCode());
-        for (PlayerEntity p : players.findByGameId(g.id)) {
+        for (PlayerEntity p : playerRepository.findByGameId(g.id)) {
             if (p.npc) continue;
             Setup.addPlayer(s, p.id.toString(), p.houseName, p.tincture, p.background, map.start(p.startSlot).orElseThrow(), p.startGood);
             e.out.add(new ReportOut(p.id.toString(), false, s.clock, "event", null, Msg.of("server.season_start.title"),

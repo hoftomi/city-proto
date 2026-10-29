@@ -23,15 +23,15 @@ import java.util.*;
  */
 @Service
 public class GameViewService {
-    private final GameRepository games;
-    private final PlayerRepository players;
-    private final ReportRepository reports;
+    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
+    private final ReportRepository reportRepository;
     private final GameRunner runner;
     private final Messages messages;
     private final Catalog catalog;
 
-    public GameViewService(GameRepository games, PlayerRepository players, ReportRepository reports, GameRunner runner, Messages messages) {
-        this.games = games; this.players = players; this.reports = reports; this.runner = runner; this.messages = messages;
+    public GameViewService(GameRepository gameRepository, PlayerRepository playerRepository, ReportRepository reportRepository, GameRunner runner, Messages messages) {
+        this.gameRepository = gameRepository; this.playerRepository = playerRepository; this.reportRepository = reportRepository; this.runner = runner; this.messages = messages;
         this.catalog = catalog(messages);
     }
 
@@ -50,8 +50,8 @@ public class GameViewService {
 
     /** Runs the events due by now first. A finished game is already in the archive, hence 404. */
     public GameState state(String gameId, UUID userId) {
-        GameEntity g = games.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        PlayerEntity p = players.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
+        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
         if (g.status == GameStatus.OPEN || g.status == GameStatus.ANNOUNCED) throw ApiException.conflict("server.game_not_started");
         String me = p.id.toString();
         return runner.mutate(gameId, (gg, e) -> build(gg, e, me));
@@ -185,18 +185,18 @@ public class GameViewService {
 
     @Transactional(readOnly = true)
     public List<ReportView> reports(String gameId, UUID userId) {
-        GameEntity g = games.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        PlayerEntity p = players.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
-        return reports.findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(g.id, p.id).stream()
+        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
+        return reportRepository.findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(g.id, p.id).stream()
             .map(r -> new ReportView(r.id.toString(), r.settlement, r.kind, r.confidence, r.title, r.body, r.tone, r.createdAt, r.isPublic)).toList();
     }
 
     @Transactional(readOnly = true)
     public List<RankRow> ranking(String gameId, UUID userId) {
-        GameEntity g = games.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        String me = players.findByGameIdAndUserId(g.id, userId).map(p -> p.id.toString()).orElse(null);
+        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        String me = playerRepository.findByGameIdAndUserId(g.id, userId).map(p -> p.id.toString()).orElse(null);
         if (g.state == null) {
-            List<PlayerEntity> all = new ArrayList<>(players.findByGameId(g.id));
+            List<PlayerEntity> all = new ArrayList<>(playerRepository.findByGameId(g.id));
             all.sort(Comparator.comparing(p -> p.houseName));
             List<RankRow> out = new ArrayList<>();
             for (int i = 0; i < all.size(); i++) {

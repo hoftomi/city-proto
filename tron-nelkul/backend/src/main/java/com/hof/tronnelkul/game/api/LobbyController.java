@@ -21,7 +21,13 @@ public class LobbyController implements LobbyApi {
     public LobbyController(LobbyService lobby, Messages messages) { this.lobby = lobby; this.messages = messages; }
 
     @Override
-    public List<GameSummary> listGames() { return lobby.list(CurrentUser.id()); }
+    public List<GameSummary> listJoinedGames() { return lobby.joined(CurrentUser.id()); }
+
+    @Override
+    public List<GameSummary> listAvailableGames() { return lobby.available(CurrentUser.id()); }
+
+    @Override
+    public List<GameSummary> listArchivedGames() { return lobby.archived(CurrentUser.id()); }
 
     @Override
     public GameDetail getGame(String id) { return lobby.detail(id, CurrentUser.id()); }

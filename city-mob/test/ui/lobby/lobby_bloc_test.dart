@@ -26,7 +26,9 @@ void main() {
   final runningOther = summary(id: 'x', status: 'running', round: 2);
   final soon = summary(id: 's', status: 'announced');
   final done = summary(id: 'd', status: 'finished', myHouse: house());
-  final all = [runningMine, openMine, fresh, runningOther, soon, done];
+  final mine = [runningMine, openMine];
+  final available = [fresh, runningOther, soon];
+  final archived = [done];
 
   setUpAll(loadTestTranslations);
 
@@ -36,13 +38,13 @@ void main() {
   });
 
   group('LobbyGroups', () {
-    test('sorts into tabs', () {
-      final g = LobbyGroups.of(all);
+    test('tabs and the continue list', () {
+      final g = LobbyGroups(mine: mine, fresh: available);
       expect(g.running, [runningMine]);
-      expect(g.mine, [runningMine, openMine]);
-      expect(g.fresh, [fresh, runningOther, soon]);
-      expect(g.finished, [done]);
-      expect(g.tab(LobbyTab.mine), g.mine);
+      expect(g.tab(LobbyTab.mine), mine);
+      expect(g.tab(LobbyTab.fresh), available);
+      expect(g.tab(LobbyTab.finished), isEmpty);
+      expect(g.copyWith(finished: archived).tab(LobbyTab.finished), archived);
     });
 
     test('status badge and joinability', () {
@@ -74,17 +76,45 @@ void main() {
   });
 
   blocTest<LobbyBloc, LobbyState>(
-    'load: grouped',
-    setUp: () => when(() => lobby.games()).thenAnswer((_) async => Right(all)),
+    'load: own and available games, separately; the archive is not requested',
+    setUp: () {
+      when(() => lobby.joinedGames()).thenAnswer((_) async => Right(mine));
+      when(() => lobby.availableGames()).thenAnswer((_) async => Right(available));
+    },
     build: () => LobbyBloc(lobby, auth),
     act: (b) => b.add(const LobbyStarted()),
     expect: () => [
       const LobbyState(loading: true),
-      LobbyState(loaded: true, groups: LobbyGroups.of(all)),
+      LobbyState(loaded: true, groups: LobbyGroups(mine: mine, fresh: available)),
     ],
     verify: (b) {
-      expect(b.state.games, [fresh, runningOther, soon]);
+      expect(b.state.games, available);
       expect(b.state.mineBadge, '2');
+      verifyNever(() => lobby.archivedGames());
+    },
+  );
+
+  blocTest<LobbyBloc, LobbyState>(
+    'the finished tab loads the archive once; a refresh then reloads it too',
+    setUp: () {
+      when(() => lobby.joinedGames()).thenAnswer((_) async => Right(mine));
+      when(() => lobby.availableGames()).thenAnswer((_) async => Right(available));
+      when(() => lobby.archivedGames()).thenAnswer((_) async => Right(archived));
+    },
+    build: () => LobbyBloc(lobby, auth),
+    seed: () => LobbyState(loaded: true, groups: LobbyGroups(mine: mine, fresh: available)),
+    act: (b) async {
+      b.add(const LobbyTabSelected(LobbyTab.finished));
+      await Future<void>.delayed(Duration.zero);
+      b.add(const LobbyTabSelected(LobbyTab.fresh));
+      b.add(const LobbyTabSelected(LobbyTab.finished));
+      await Future<void>.delayed(Duration.zero);
+      b.add(const LobbyRefreshRequested());
+    },
+    verify: (b) {
+      expect(b.state.tab, LobbyTab.finished);
+      expect(b.state.games, archived);
+      verify(() => lobby.archivedGames()).called(2);
     },
   );
 
@@ -92,7 +122,8 @@ void main() {
     'error, then a successful refresh clears it',
     setUp: () {
       var n = 0;
-      when(() => lobby.games()).thenAnswer((_) async => n++ == 0 ? const Left(Failure(Tr.raw('oops'))) : Right(all));
+      when(() => lobby.joinedGames()).thenAnswer((_) async => n++ == 0 ? const Left(Failure(Tr.raw('oops'))) : Right(mine));
+      when(() => lobby.availableGames()).thenAnswer((_) async => Right(available));
     },
     build: () => LobbyBloc(lobby, auth),
     act: (b) async {
@@ -103,7 +134,7 @@ void main() {
     skip: 2,
     expect: () => [
       const LobbyState(loading: true),
-      LobbyState(loaded: true, groups: LobbyGroups.of(all)),
+      LobbyState(loaded: true, groups: LobbyGroups(mine: mine, fresh: available)),
     ],
     verify: (b) => expect(b.state.failure, isNull),
   );

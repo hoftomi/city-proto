@@ -14,13 +14,13 @@ import java.util.UUID;
 /** Player operations: draft, sealing, information market. */
 @Service
 public class PlayService {
-    private final PlayerRepository players;
+    private final PlayerRepository playerRepository;
     private final GameRunner runner;
 
-    public PlayService(PlayerRepository players, GameRunner runner) { this.players = players; this.runner = runner; }
+    public PlayService(PlayerRepository playerRepository, GameRunner runner) { this.playerRepository = playerRepository; this.runner = runner; }
 
     String playerId(String gameId, UUID userId) {
-        return players.findByGameIdAndUserId(gameId, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member")).id.toString();
+        return playerRepository.findByGameIdAndUserId(gameId, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member")).id.toString();
     }
 
     public void addOrder(String gameId, UUID userId, OrderRequest r) {

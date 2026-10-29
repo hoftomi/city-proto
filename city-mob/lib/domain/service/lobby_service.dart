@@ -12,7 +12,14 @@ class LobbyService {
   final LobbyRepository _lobby;
   final MapRepository _maps;
 
-  Future<Either<Failure, List<GameSummary>>> games() => _lobby.games();
+  /// Your own live games (running, open, announced), in lobby order.
+  Future<Either<Failure, List<GameSummary>>> joinedGames() => _lobby.joinedGames();
+
+  /// Live games you haven't joined, in lobby order.
+  Future<Either<Failure, List<GameSummary>>> availableGames() => _lobby.availableGames();
+
+  /// Finished games, newest first.
+  Future<Either<Failure, List<GameSummary>>> archivedGames() => _lobby.archivedGames();
 
   Future<Either<Failure, GameDetail>> game(String id) => _lobby.game(id);
 

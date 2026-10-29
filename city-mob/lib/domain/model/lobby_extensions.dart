@@ -61,33 +61,31 @@ extension GameSummaryLobbyX on GameSummary {
   Tr get resultText => myPlace == null ? winnerText : Tr('lobby.winner_place', {'winner': winner ?? '–', 'place': '$myPlace'});
 }
 
-/// Games sorted into the game picker's groups.
+/// The game picker's lists. Each comes from its own endpoint, already sorted by the server.
 class LobbyGroups extends Equatable {
-  const LobbyGroups({this.running = const [], this.mine = const [], this.fresh = const [], this.finished = const []});
-
-  factory LobbyGroups.of(List<GameSummary> all) => LobbyGroups(
-        running: all.where((g) => g.joined && g.running).toList(),
-        mine: all.where((g) => g.joined && !g.finished).toList(),
-        fresh: all.where((g) => (g.open || g.announced || g.running) && !g.joined).toList(),
-        finished: all.where((g) => g.finished).toList(),
-      );
+  const LobbyGroups({this.mine = const [], this.fresh = const [], this.finished});
 
   /// "Continue where you left off": your own running games.
-  final List<GameSummary> running;
+  List<GameSummary> get running => mine.where((g) => g.running).toList();
 
-  /// Your own unfinished games.
+  /// Your own live games (running, open, announced).
   final List<GameSummary> mine;
 
   /// New games: open, announced or running, that you haven't joined yet.
   final List<GameSummary> fresh;
-  final List<GameSummary> finished;
+
+  /// Finished games; null until the tab is first opened.
+  final List<GameSummary>? finished;
 
   List<GameSummary> tab(LobbyTab t) => switch (t) {
         LobbyTab.fresh => fresh,
         LobbyTab.mine => mine,
-        LobbyTab.finished => finished,
+        LobbyTab.finished => finished ?? const [],
       };
 
+  LobbyGroups copyWith({List<GameSummary>? mine, List<GameSummary>? fresh, List<GameSummary>? finished}) =>
+      LobbyGroups(mine: mine ?? this.mine, fresh: fresh ?? this.fresh, finished: finished ?? this.finished);
+
   @override
-  List<Object?> get props => [running, mine, fresh, finished];
+  List<Object?> get props => [mine, fresh, finished];
 }

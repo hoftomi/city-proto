@@ -23,39 +23,39 @@ import java.util.stream.Collectors;
 @Component
 public class SeedData implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(SeedData.class);
-    private final GameRepository games;
+    private final GameRepository gameRepository;
     private final GameLifecycleService lifecycle;
     private final Messages messages;
 
-    public SeedData(GameRepository games, GameLifecycleService lifecycle, Messages messages) {
-        this.games = games; this.lifecycle = lifecycle; this.messages = messages;
+    public SeedData(GameRepository gameRepository, GameLifecycleService lifecycle, Messages messages) {
+        this.gameRepository = gameRepository; this.lifecycle = lifecycle; this.messages = messages;
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        if (games.count() > 0) return;
+        if (gameRepository.count() > 0) return;
         Instant day = Instant.now().truncatedTo(ChronoUnit.HOURS);
 
         GameEntity delkelet = game("delkelet-1", GameStatus.OPEN, "delkelet", 30, 4, "beginnerFriendly");
         delkelet.closesAt = day;
-        games.save(delkelet);
+        gameRepository.save(delkelet);
 
         GameEntity kodos = game("kodos-autumn", GameStatus.OPEN, "kodos", 30, 3, "beginnerFriendly", "strongNpcs");
         kodos.closesAt = day.plus(Duration.ofDays(2));
-        games.save(kodos);
+        gameRepository.save(kodos);
 
         GameEntity so = game("so-league-1", GameStatus.OPEN, "so", 40, 2, "league", "spies");
         so.closesAt = day.plus(Duration.ofDays(5));
-        games.save(so);
+        gameRepository.save(so);
 
         GameEntity lightning = game("lightning-1", GameStatus.OPEN, "kodos", 30, 1, "veterans");
         lightning.closesAt = day.plus(Duration.ofDays(1));
-        games.save(lightning);
+        gameRepository.save(lightning);
 
         GameEntity spring = game("spring-championship", GameStatus.ANNOUNCED, "so", 60, 2, "ranked");
         spring.opensAt = day.plus(Duration.ofDays(12));
         spring.closesAt = day.plus(Duration.ofDays(20));
-        games.save(spring);
+        gameRepository.save(spring);
 
         lifecycle.start(delkelet.id);
         log.info("Sample games created.");

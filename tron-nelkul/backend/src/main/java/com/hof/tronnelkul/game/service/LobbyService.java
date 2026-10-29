@@ -21,35 +21,37 @@ public class LobbyService {
     /** ProblemDetail `code` when the house name is invalid or taken (the client returns to the name field). */
     static final String HOUSE_NAME = "house_name";
 
-    private final GameRepository games;
-    private final PlayerRepository players;
-    private final ArchivedGameRepository archivedGames;
-    private final ArchivedPlayerRepository archivedPlayers;
+    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
+    private final ArchivedGameRepository archivedGameRepository;
+    private final ArchivedPlayerRepository archivedPlayerRepository;
     private final GameRunner runner;
     private final Messages messages;
 
-    public LobbyService(GameRepository games, PlayerRepository players, ArchivedGameRepository archivedGames,
-                        ArchivedPlayerRepository archivedPlayers, GameRunner runner, Messages messages) {
-        this.games = games; this.players = players; this.archivedGames = archivedGames; this.archivedPlayers = archivedPlayers;
+    public LobbyService(GameRepository gameRepository, PlayerRepository playerRepository, ArchivedGameRepository archivedGameRepository,
+                        ArchivedPlayerRepository archivedPlayerRepository, GameRunner runner, Messages messages) {
+        this.gameRepository = gameRepository; this.playerRepository = playerRepository; this.archivedGameRepository = archivedGameRepository; this.archivedPlayerRepository = archivedPlayerRepository;
         this.runner = runner; this.messages = messages;
     }
 
+    /** Live games the user joined (running, open, announced), in lobby order. */
     @Transactional(readOnly = true)
-    public List<GameSummary> list(UUID userId) {
-        List<GameEntity> all = new ArrayList<>(games.findAll());
-        all.sort(Comparator.comparingInt((GameEntity g) -> switch (g.status) { case RUNNING -> 0; case OPEN -> 1; case ANNOUNCED -> 2; })
-            .thenComparing(g -> g.closesAt == null ? g.createdAt : g.closesAt));
-        List<ArchivedGameEntity> archived = new ArrayList<>(archivedGames.findAll());
-        archived.sort(Comparator.comparing((ArchivedGameEntity a) -> a.createdAt).reversed());
-        List<GameSummary> out = new ArrayList<>(all.stream().map(g -> summary(g, userId)).toList());
-        out.addAll(archived.stream().map(a -> summary(a, userId)).toList());
-        return out;
+    public List<GameSummary> joined(UUID userId) { return gameRepository.findJoined(userId).stream().map(g -> summary(g, userId)).toList(); }
+
+    /** Live games the user has not joined, in lobby order. */
+    @Transactional(readOnly = true)
+    public List<GameSummary> available(UUID userId) { return gameRepository.findNotJoined(userId).stream().map(g -> summary(g, userId)).toList(); }
+
+    /** Finished games, newest first. */
+    @Transactional(readOnly = true)
+    public List<GameSummary> archived(UUID userId) {
+        return archivedGameRepository.findAllByOrderByCreatedAtDesc().stream().map(a -> summary(a, userId)).toList();
     }
 
     @Transactional(readOnly = true)
     public GameDetail detail(String gameId, UUID userId) {
-        Optional<GameEntity> live = games.findById(gameId);
-        GameSummary summary = live.map(g -> summary(g, userId)).orElseGet(() -> summary(archivedGames.findById(gameId)
+        Optional<GameEntity> live = gameRepository.findById(gameId);
+        GameSummary summary = live.map(g -> summary(g, userId)).orElseGet(() -> summary(archivedGameRepository.findById(gameId)
             .orElseThrow(() -> ApiException.notFound("server.game_not_found")), userId));
         MapDefinition map = MapRegistry.get(summary.getMapId());
         List<StartSlotDto> starts = map.starts().stream().map(s -> {
@@ -66,13 +68,13 @@ public class LobbyService {
         GameEntity g = game(gameId);
         boolean late = g.status == GameStatus.RUNNING && runner.read(g).settlements <= LATE_JOIN_SETTLEMENTS;
         if (g.status != GameStatus.OPEN && !late) throw ApiException.conflict("server.join_closed");
-        if (players.findByGameIdAndUserId(g.id, userId).isPresent()) throw ApiException.conflict("server.already_joined");
-        if (players.countByGameIdAndNpcFalse(g.id) >= g.maxPlayers) throw ApiException.conflict("server.game_full");
+        if (playerRepository.findByGameIdAndUserId(g.id, userId).isPresent()) throw ApiException.conflict("server.already_joined");
+        if (playerRepository.countByGameIdAndNpcFalse(g.id) >= g.maxPlayers) throw ApiException.conflict("server.game_full");
 
         String name = r.getHouseName() == null ? "" : r.getHouseName().strip().replaceAll("\\s+", " ");
         if (name.length() < 3) throw ApiException.badRequest("server.house_name_short", "min", 3).withCode(HOUSE_NAME);
         if (name.length() > 24) throw ApiException.badRequest("server.house_name_long", "max", 24).withCode(HOUSE_NAME);
-        if (isNpcName(name) || players.existsByGameIdAndHouseNameIgnoreCase(g.id, name))
+        if (isNpcName(name) || playerRepository.existsByGameIdAndHouseNameIgnoreCase(g.id, name))
             throw ApiException.conflict("server.house_name_taken").withCode(HOUSE_NAME);
         if (r.getTincture() == null || !Backgrounds.TINCTURES.contains(r.getTincture())) throw ApiException.badRequest("server.pick_tincture");
         if (!Backgrounds.exists(r.getBackground())) throw ApiException.badRequest("server.pick_background");
@@ -90,7 +92,7 @@ public class LobbyService {
         p.background = r.getBackground();
         p.startSlot = slot.id();
         p.startGood = startGood;
-        p = players.save(p);
+        p = playerRepository.save(p);
         if (late) {
             // Running game: the house enters the state at once (2.2)
             String pid = p.id.toString(), sg = startGood;
@@ -103,35 +105,35 @@ public class LobbyService {
     public void withdraw(String gameId, UUID userId) {
         GameEntity g = game(gameId);
         if (g.status != GameStatus.OPEN) throw ApiException.conflict("server.withdraw_closed");
-        PlayerEntity p = players.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.notFound("server.not_joined"));
-        players.delete(p);
+        PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.notFound("server.not_joined"));
+        playerRepository.delete(p);
     }
 
-    GameEntity game(String id) { return games.findById(id).orElseThrow(() -> ApiException.notFound("server.game_not_found")); }
+    GameEntity game(String id) { return gameRepository.findById(id).orElseThrow(() -> ApiException.notFound("server.game_not_found")); }
 
     GameSummary summary(GameEntity g, UUID userId) {
         MapDefinition map = MapRegistry.get(g.mapId);
-        MyHouse house = userId == null ? null : players.findByGameIdAndUserId(g.id, userId)
+        MyHouse house = userId == null ? null : playerRepository.findByGameIdAndUserId(g.id, userId)
             .map(p -> myHouse(p.id, p.houseName, p.tincture, p.background, p.startSlot)).orElse(null);
         int round = g.status == GameStatus.RUNNING ? runner.read(g).settlements : 0;
         return new GameSummary(g.id, g.name, g.status.apiId, g.mapId, g.closesAt, g.opensAt, round, GameEntity.maxSettlements(),
-            (int) players.countByGameIdAndNpcFalse(g.id), g.maxPlayers, map.cities().size(), g.npcCount, g.tagList(), null, null, house);
+            (int) playerRepository.countByGameIdAndNpcFalse(g.id), g.maxPlayers, map.cities().size(), g.npcCount, g.tagList(), null, null, house);
     }
 
     /** Finished game: the winner, and your placing by Legitimacy if you played in it. */
     GameSummary summary(ArchivedGameEntity a, UUID userId) {
         MapDefinition map = MapRegistry.get(a.mapId);
-        Optional<ArchivedPlayerEntity> mine = userId == null ? Optional.empty() : archivedPlayers.findByGameIdAndUserId(a.id, userId);
+        Optional<ArchivedPlayerEntity> mine = userId == null ? Optional.empty() : archivedPlayerRepository.findByGameIdAndUserId(a.id, userId);
         MyHouse house = mine.map(p -> myHouse(p.id, p.houseName, p.tincture, p.background, p.startSlot)).orElse(null);
         Integer place = null;
         if (mine.isPresent()) {
-            List<ArchivedPlayerEntity> all = new ArrayList<>(archivedPlayers.findByGameId(a.id));
+            List<ArchivedPlayerEntity> all = new ArrayList<>(archivedPlayerRepository.findByGameId(a.id));
             all.sort(Comparator.comparingInt((ArchivedPlayerEntity p) -> p.legit).reversed());
             for (int i = 0; i < all.size(); i++) if (all.get(i).id.equals(mine.get().id)) place = i + 1;
         }
-        int houses = (int) archivedPlayers.countByGameIdAndNpcFalse(a.id);
+        int houses = (int) archivedPlayerRepository.countByGameIdAndNpcFalse(a.id);
         return new GameSummary(a.id, a.name, GameStatus.FINISHED_API_ID, a.mapId, null, a.opensAt, GameEntity.maxSettlements(),
-            GameEntity.maxSettlements(), houses, houses, map.cities().size(), (int) archivedPlayers.countByGameIdAndNpcTrue(a.id), a.tagList(),
+            GameEntity.maxSettlements(), houses, houses, map.cities().size(), (int) archivedPlayerRepository.countByGameIdAndNpcTrue(a.id), a.tagList(),
             a.winner, place, house);
     }
 
