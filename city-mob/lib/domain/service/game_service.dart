@@ -40,7 +40,6 @@ class GameService {
 
   Future<Either<Failure, List<RankRow>>> ranking(String gameId) => _games.ranking(gameId);
 
-  Future<Either<Failure, GameState>> adminSettle(String gameId) => _games.adminSettle(gameId);
 
   /// The game clock: `clock.now` at the last fetch plus the time elapsed on the device since
   /// (the admin may have fast-forwarded it, so it's not the device clock).

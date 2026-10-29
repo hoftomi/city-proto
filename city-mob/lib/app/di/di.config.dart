@@ -86,15 +86,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i200.GameApi>(
       () => networkModule.gameApi(gh<_i200.TronApi>()),
     );
-    gh.lazySingleton<_i200.AdminApi>(
-      () => networkModule.adminApi(gh<_i200.TronApi>()),
-    );
     gh.lazySingleton<_i200.I18nApi>(
       () => networkModule.i18nApi(gh<_i200.TronApi>()),
-    );
-    gh.lazySingleton<_i931.GameRemoteDataSource>(
-      () =>
-          _i931.GameRemoteDataSource(gh<_i200.GameApi>(), gh<_i200.AdminApi>()),
     );
     gh.lazySingleton<_i931.LobbyRemoteDataSource>(
       () => _i931.LobbyRemoteDataSource(gh<_i200.LobbyApi>()),
@@ -104,6 +97,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i280.MapRepository>(
       () => _i280.MapRepository(gh<_i931.LobbyRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i931.GameRemoteDataSource>(
+      () => _i931.GameRemoteDataSource(gh<_i200.GameApi>()),
     );
     gh.lazySingleton<_i8.TranslationRemoteDataSource>(
       () => _i8.TranslationRemoteDataSource(gh<_i200.I18nApi>()),

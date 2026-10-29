@@ -1,0 +1,7 @@
+node_modules
+dist
+.angular
+tools/api_codegen/.gradle
+tools/api_codegen/build
+coverage
+.vscode

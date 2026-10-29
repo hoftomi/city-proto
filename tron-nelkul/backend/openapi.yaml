@@ -15,7 +15,7 @@ tags:
 - name: game
   description: The game
 - name: admin
-  description: Development endpoints (ADMIN)
+  description: Admin web app (ADMIN role)
 - name: i18n
   description: A mobil kliens feliratai
 security:
@@ -505,6 +505,279 @@ paths:
                 $ref: '#/components/schemas/AdminResult'
         default:
           $ref: '#/components/responses/Problem'
+  /api/admin/overview:
+    get:
+      operationId: adminOverview
+      tags:
+      - admin
+      summary: 'Statistics for the dashboard (ADMIN)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOverview'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/maps:
+    get:
+      operationId: adminMaps
+      tags:
+      - admin
+      summary: 'Maps a game can be created on (ADMIN)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminMap'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games:
+    get:
+      operationId: adminGames
+      tags:
+      - admin
+      summary: 'All games, live and archived (ADMIN)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminGame'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: adminCreateGame
+      tags:
+      - admin
+      summary: 'Create a game (ADMIN)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGameRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminGame'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/seed:
+    post:
+      operationId: adminSeed
+      tags:
+      - admin
+      summary: 'Recreate the missing sample games (ADMIN)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}:
+    get:
+      operationId: adminGame
+      tags:
+      - admin
+      summary: 'A game with its houses (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminGameDetail'
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      operationId: adminDeleteGame
+      tags:
+      - admin
+      summary: 'Delete a live or archived game with its houses and reports (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      responses:
+        '204':
+          description: Deleted
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/reports:
+    get:
+      operationId: adminGameReports
+      tags:
+      - admin
+      summary: 'The latest reports of every house in a game (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+        description: At most this many, newest first (default 100, max 500)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminReport'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/advance:
+    post:
+      operationId: adminAdvance
+      tags:
+      - admin
+      summary: 'Move the game clock forward; minutes = null: to the next event (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvanceRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/finish:
+    post:
+      operationId: adminFinish
+      tags:
+      - admin
+      summary: 'End the season now: coronation, then the game moves to the archive (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminResult'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/games/{id}/players/{playerId}:
+    delete:
+      operationId: adminRemovePlayer
+      tags:
+      - admin
+      summary: 'Remove a house from a game that has not started yet (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Game id
+      - name: playerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: House (player) id
+      responses:
+        '204':
+          description: Removed
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/users:
+    get:
+      operationId: adminUsers
+      tags:
+      - admin
+      summary: 'All users (ADMIN)'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUser'
+        default:
+          $ref: '#/components/responses/Problem'
+  /api/admin/users/{id}/role:
+    put:
+      operationId: adminSetRole
+      tags:
+      - admin
+      summary: 'Grant or revoke the ADMIN role (ADMIN)'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: User id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        default:
+          $ref: '#/components/responses/Problem'
 components:
   securitySchemes:
     bearerAuth:
@@ -557,6 +830,181 @@ components:
           type: integer
           format: int32
           nullable: true
+        advancedMinutes:
+          type: integer
+          format: int32
+          nullable: true
+        created:
+          type: integer
+          format: int32
+          nullable: true
+          description: Sample games created by the seed
+    AdminOverview:
+      type: object
+      description: 'Dashboard figures. registrations and joins: the last 14 days, one entry per day (Europe/Budapest), oldest first; joins counts human houses of live and archived games.'
+      required: [users, admins, newUsers7d, announced, open, running, finished, humanHouses, npcHouses, reports24h, registrations, joins]
+      properties:
+        users: {type: integer, format: int32}
+        admins: {type: integer, format: int32}
+        newUsers7d: {type: integer, format: int32}
+        announced: {type: integer, format: int32}
+        open: {type: integer, format: int32}
+        running: {type: integer, format: int32}
+        finished: {type: integer, format: int32}
+        humanHouses:
+          type: integer
+          format: int32
+          description: Human houses in live games
+        npcHouses:
+          type: integer
+          format: int32
+          description: NPC houses in live games
+        reports24h: {type: integer, format: int32}
+        registrations:
+          type: array
+          items: {$ref: '#/components/schemas/DailyCount'}
+        joins:
+          type: array
+          items: {$ref: '#/components/schemas/DailyCount'}
+    DailyCount:
+      type: object
+      required: [date, count]
+      properties:
+        date: {type: string, format: date}
+        count: {type: integer, format: int32}
+    AdminMap:
+      type: object
+      required: [id, name, cities, starts]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        cities: {type: integer, format: int32}
+        starts: {type: integer, format: int32}
+    AdminGame:
+      type: object
+      description: 'A game for the admin. status: announced / open / running / finished. settlements and clock: null before the start and for archived games. clock = the game clock (real time + timeOffsetMinutes).'
+      required: [id, name, status, mapId, mapName, mode, opensAt, closesAt, createdAt, maxPlayers, npcCount, humans, settlements, maxSettlements, clock, timeOffsetMinutes, winner, tags]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        status: {type: string}
+        mapId: {type: string}
+        mapName: {type: string}
+        mode: {type: string}
+        opensAt: {type: string, format: date-time, nullable: true}
+        closesAt: {type: string, format: date-time, nullable: true}
+        createdAt: {type: string, format: date-time}
+        maxPlayers: {type: integer, format: int32}
+        npcCount: {type: integer, format: int32}
+        humans: {type: integer, format: int32}
+        settlements: {type: integer, format: int32, nullable: true}
+        maxSettlements: {type: integer, format: int32}
+        clock: {type: string, format: date-time, nullable: true}
+        timeOffsetMinutes: {type: integer, format: int32}
+        winner: {type: string, nullable: true}
+        tags:
+          type: array
+          items: {type: string}
+    AdminGameDetail:
+      type: object
+      description: 'nextSettlementAt and maturingSheets: only for a running game. houses: ordered by place (archived) or Legitimacy (live).'
+      required: [game, houses, reportCounts, nextSettlementAt, maturingSheets]
+      properties:
+        game: {$ref: '#/components/schemas/AdminGame'}
+        houses:
+          type: array
+          items: {$ref: '#/components/schemas/AdminHouse'}
+        reportCounts:
+          type: array
+          items: {$ref: '#/components/schemas/KindCount'}
+        nextSettlementAt: {type: string, format: date-time, nullable: true}
+        maturingSheets: {type: integer, format: int32}
+    AdminHouse:
+      type: object
+      description: 'gold and pp: from the game state (null before the start and for archived games). place: archived games only.'
+      required: [playerId, userId, userName, houseName, tincture, background, npc, persona, legit, gold, pp, place, joinedAt]
+      properties:
+        playerId: {type: string}
+        userId: {type: string, format: uuid, nullable: true}
+        userName: {type: string, nullable: true}
+        houseName: {type: string}
+        tincture: {type: string}
+        background: {type: string, nullable: true}
+        npc: {type: boolean}
+        persona: {type: string, nullable: true}
+        legit: {type: integer, format: int32}
+        gold: {type: number, format: double, nullable: true}
+        pp: {type: integer, format: int32, nullable: true}
+        place: {type: integer, format: int32, nullable: true}
+        joinedAt: {type: string, format: date-time}
+    KindCount:
+      type: object
+      required: [kind, count]
+      properties:
+        kind: {type: string}
+        count: {type: integer, format: int32}
+    AdminReport:
+      type: object
+      required: [id, playerId, houseName, settlement, kind, confidence, title, body, tone, isPublic, createdAt]
+      properties:
+        id: {type: string}
+        playerId: {type: string}
+        houseName: {type: string}
+        settlement: {type: integer, format: int32}
+        kind: {type: string}
+        confidence: {type: string, nullable: true}
+        title: {type: string}
+        body: {type: string}
+        tone: {type: string}
+        isPublic: {type: boolean}
+        createdAt: {type: string, format: date-time}
+    CreateGameRequest:
+      type: object
+      description: 'id: lowercase letters, digits and hyphens. The game is announced if opensAt is in the future, otherwise open; it starts at closesAt.'
+      required: [id, name, mapId, opensAt, closesAt, maxPlayers, npcCount, tags]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        mapId: {type: string}
+        opensAt: {type: string, format: date-time, nullable: true}
+        closesAt: {type: string, format: date-time, nullable: true}
+        maxPlayers: {type: integer, format: int32}
+        npcCount: {type: integer, format: int32}
+        tags:
+          type: array
+          items: {type: string}
+    AdvanceRequest:
+      type: object
+      required: [minutes]
+      properties:
+        minutes:
+          type: integer
+          format: int32
+          nullable: true
+          description: 1 minute to 7 days; null = to the next event (maturing sheet or settlement)
+    AdminUser:
+      type: object
+      required: [id, name, role, email, providers, createdAt, games]
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        role: {type: string}
+        email: {type: string, nullable: true}
+        providers:
+          type: array
+          items: {type: string}
+        createdAt: {type: string, format: date-time}
+        games:
+          type: integer
+          format: int32
+          description: Live and archived games the user joined
+    RoleRequest:
+      type: object
+      required: [role]
+      properties:
+        role:
+          type: string
+          description: PLAYER or ADMIN
     BackgroundDto:
       type: object
       required:

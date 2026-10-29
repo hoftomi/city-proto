@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.game.world;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -73,6 +74,11 @@ public final class MapRegistry {
             List.of(p(110, 170, 5))));
 
     private static final Map<String, MapDefinition> ALL = Map.of(DELKELET.id(), DELKELET, KODOS.id(), KODOS, SO.id(), SO);
+
+    /** Every map, by id. */
+    public static List<MapDefinition> all() { return ALL.values().stream().sorted(Comparator.comparing(MapDefinition::id)).toList(); }
+
+    public static boolean exists(String id) { return id != null && ALL.containsKey(id); }
 
     public static MapDefinition get(String id) {
         MapDefinition m = ALL.get(id);

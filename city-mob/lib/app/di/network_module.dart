@@ -32,9 +32,6 @@ abstract class NetworkModule {
   GameApi gameApi(TronApi api) => api.getGameApi();
 
   @lazySingleton
-  AdminApi adminApi(TronApi api) => api.getAdminApi();
-
-  @lazySingleton
   I18nApi i18nApi(TronApi api) => api.getI18nApi();
 
   @lazySingleton

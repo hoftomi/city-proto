@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.game.service;
 
+import com.hof.tronnelkul.game.model.ArchivedGameRepository;
 import com.hof.tronnelkul.game.model.GameEntity;
 import com.hof.tronnelkul.game.model.GameRepository;
 import com.hof.tronnelkul.game.model.GameStatus;
@@ -14,51 +15,67 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Creates the sample games on an empty database. Delkelet starts at once so it can be tried out.
- * Names and tags come from i18n (world.seed.<gameId>.name, world.tag.<tagId>) and are stored as display text.
+ * The sample games. On an empty database they are created at startup; the admin can recreate the missing ones
+ * (POST /api/admin/games/seed). A sample game is missing if its id is neither live nor archived. Delkelet starts at
+ * once so it can be tried out. Names and tags come from i18n (world.seed.<gameId>.name, world.tag.<tagId>) and are
+ * stored as display text.
  */
 @Component
 public class SeedData implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(SeedData.class);
+    /** The sample game that starts at once. */
+    static final String STARTED = "delkelet-1";
+
     private final GameRepository gameRepository;
+    private final ArchivedGameRepository archivedGameRepository;
     private final GameLifecycleService lifecycle;
     private final Messages messages;
 
-    public SeedData(GameRepository gameRepository, GameLifecycleService lifecycle, Messages messages) {
-        this.gameRepository = gameRepository; this.lifecycle = lifecycle; this.messages = messages;
+    public SeedData(GameRepository gameRepository, ArchivedGameRepository archivedGameRepository, GameLifecycleService lifecycle, Messages messages) {
+        this.gameRepository = gameRepository; this.archivedGameRepository = archivedGameRepository; this.lifecycle = lifecycle; this.messages = messages;
     }
 
     @Override
     public void run(ApplicationArguments args) {
         if (gameRepository.count() > 0) return;
-        Instant day = Instant.now().truncatedTo(ChronoUnit.HOURS);
+        int created = seedMissing();
+        if (created > 0) log.info("Sample games created: {}", created);
+    }
 
-        GameEntity delkelet = game("delkelet-1", GameStatus.OPEN, "delkelet", 30, 4, "beginnerFriendly");
+    /** Creates the sample games that are neither live nor archived; returns how many were created. */
+    public int seedMissing() {
+        int created = 0;
+        for (GameEntity g : samples(Instant.now().truncatedTo(ChronoUnit.HOURS))) {
+            if (gameRepository.existsById(g.id) || archivedGameRepository.existsById(g.id)) continue;
+            gameRepository.save(g);
+            if (g.id.equals(STARTED)) lifecycle.start(g.id);
+            created++;
+        }
+        return created;
+    }
+
+    private List<GameEntity> samples(Instant day) {
+        GameEntity delkelet = game(STARTED, GameStatus.OPEN, "delkelet", 30, 4, "beginnerFriendly");
         delkelet.closesAt = day;
-        gameRepository.save(delkelet);
 
         GameEntity kodos = game("kodos-autumn", GameStatus.OPEN, "kodos", 30, 3, "beginnerFriendly", "strongNpcs");
         kodos.closesAt = day.plus(Duration.ofDays(2));
-        gameRepository.save(kodos);
 
         GameEntity so = game("so-league-1", GameStatus.OPEN, "so", 40, 2, "league", "spies");
         so.closesAt = day.plus(Duration.ofDays(5));
-        gameRepository.save(so);
 
         GameEntity lightning = game("lightning-1", GameStatus.OPEN, "kodos", 30, 1, "veterans");
         lightning.closesAt = day.plus(Duration.ofDays(1));
-        gameRepository.save(lightning);
 
         GameEntity spring = game("spring-championship", GameStatus.ANNOUNCED, "so", 60, 2, "ranked");
         spring.opensAt = day.plus(Duration.ofDays(12));
         spring.closesAt = day.plus(Duration.ofDays(20));
-        gameRepository.save(spring);
 
-        lifecycle.start(delkelet.id);
-        log.info("Sample games created.");
+        return List.of(delkelet, kodos, so, lightning, spring);
     }
 
     private GameEntity game(String id, GameStatus status, String mapId, int maxPlayers, int npcCount, String... tags) {

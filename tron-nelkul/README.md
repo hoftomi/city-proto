@@ -6,7 +6,8 @@ An asynchronous strategy game built around the city's three branches of power: M
 |---|---|
 | `backend/` | Spring Boot 4.1.1, Java 25, Spring Security 7 (Firebase ID token), Spring Data JPA, Flyway, PostgreSQL 17 |
 | `mobile/` | Flutter 3.47 (Dart 3.13), Android and iOS, Firebase Auth |
-| `docker-compose.yml` | PostgreSQL, optionally together with the backend |
+| `backend/docker-compose.yml` | PostgreSQL, optionally the backend, the admin app and monitoring (Prometheus, Loki, Grafana) |
+| `monitoring/` | Prometheus, Loki and Grafana configuration, dashboards (see chapter 6) |
 
 > The 0.0.2 backend compiles, the rules engine tests pass (`./gradlew test`), and the mobile `flutter analyze` is clean. The mobile models can parse the state JSON produced by the backend. The full flow has not yet been tried end to end on a real device with a signed-in user.
 
@@ -40,7 +41,7 @@ On first start, `SeedData` creates the sample games:
 | Villámszezon (Lightning Season) | open | starts in +1 day |
 | Tavaszi bajnokság (Spring Championship) | announced | registration opens in +12 days |
 
-Check: `curl localhost:8080/actuator/health`.
+Check: `curl localhost:8091/actuator/health` (actuator runs on the separate management port 8091, see chapter 6).
 
 ### Mobile
 
@@ -184,3 +185,67 @@ Every error comes as an RFC 9457 ProblemDetail. The `detail` field is displayabl
 - **Still missing:** difficulty levels and modules (9.), and push notifications. The NPCs' network is unrestricted (they have no estates and no routes), and they do not yet react to spy reports.
 - **Tincture:** not unique, because 8 colors are not enough for 30 players. House names are unique.
 - **Needs testing:** a passive Shadow Order player runs out of gold in 3 days (maintaining 2 spies and 2 routes costs 6 gold per settlement). The espionage branch needs income early, otherwise this is the rulebook's question 12.3.
+
+---
+
+## 6. Monitoring (Grafana, Prometheus, Loki)
+
+The backend exposes metrics for **Prometheus** and pushes its logs to **Loki**; **Grafana** shows both. Everything starts from `backend/docker-compose.yml`:
+
+```bash
+cd backend
+docker compose up -d --build     # db, backend, admin, prometheus, loki, grafana
+docker compose ps
+```
+
+| Service | URL | Note |
+|---|---|---|
+| API | http://localhost:8080 | public port |
+| Actuator | http://localhost:8091/actuator/health · `/info` · `/prometheus` | management port, bound to 127.0.0.1 only |
+| Admin | http://localhost:8081 | nginx, proxies `/api/` to `backend:8080` |
+| Grafana | http://localhost:3000 | `admin` / `admin` (override: `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`) |
+| Prometheus | http://localhost:9090 | Status → Targets: `tron-backend` must be UP |
+| Loki | http://localhost:3100 | push API only, browse the logs in Grafana |
+
+Grafana is provisioned from `monitoring/grafana/` with the *Prometheus* and *Loki* datasources and two dashboards in the **Tron** folder:
+
+- **Tron server**: up, uptime, request rate, 4xx/5xx share, latency p50/p95/p99 (overall and by uri), JVM heap/non-heap, GC, threads, CPU, open files, Hikari connections, logback events, the Flyway schema version and the game gauges.
+- **Tron logs**: log volume by level, error and warning counts, top loggers, and a logs panel. Filter with the *Level* and *Logger* variables and the *Search* box (case-insensitive) at the top.
+
+Anonymous read-only access is off; turn it on with `GRAFANA_ANONYMOUS=true`. Dashboards edited in the UI are kept in the Grafana volume, but to keep a change for good export the JSON into `monitoring/grafana/dashboards/`.
+
+### Metrics
+
+- Spring Boot Actuator + Micrometer (`micrometer-registry-prometheus`), served on **management port 8091** (`MANAGEMENT_PORT`), so the public API port never exposes metrics. `/actuator/health`, `/info` and `/prometheus` need no token. **Never publish 8091 in production** (the compose file binds it to 127.0.0.1).
+- Built-in: JVM, process, `http_server_requests_seconds` with histogram buckets, HikariCP, `logback_events_total`, application start/ready time. Every series carries `application="tron-backend"`.
+- Game gauges (`config/GameMetrics.java`), one aggregate SQL query every 30 s (`METRICS_REFRESH_SECONDS`), not on every scrape:
+
+| Metric | Meaning |
+|---|---|
+| `tron_games{status="announced\|open\|running"}` | live games by status |
+| `tron_games_archived` | finished games |
+| `tron_users`, `tron_users_admin` | users, admins |
+| `tron_houses{kind="human\|npc"}` | houses in live games |
+| `tron_reports` | reports stored for live games |
+| `tron_schema_version` | latest applied Flyway migration |
+
+Prometheus scrapes `backend:8091/actuator/prometheus` every 15 s (`monitoring/prometheus/prometheus.yml`) and keeps 15 days.
+
+### Logs
+
+The console output is unchanged in every profile. With the Spring profile **`loki`** the loki4j appender (`src/main/resources/logback-spring.xml`) also pushes every line to `LOKI_URL` (default `http://localhost:3100/loki/api/v1/push`) as JSON (`level`, `logger_name`, `thread_name`, `message`, `stack_trace`), with the labels `app=tron-backend`, `level`, `logger`. Loki keeps the logs for 3 days on its local filesystem volume (`monitoring/loki/loki.yml`). Example queries in Grafana → Explore → Loki:
+
+```
+{app="tron-backend", level="ERROR"}
+{app="tron-backend"} |~ "(?i)settlement" | json
+```
+
+### Running the backend locally against the dockerized monitoring
+
+```bash
+cd backend
+docker compose up -d db loki prometheus grafana
+SPRING_PROFILES_ACTIVE=loki LOKI_URL=http://localhost:3100/loki/api/v1/push ./gradlew bootRun
+```
+
+Logs then appear in Grafana right away. Prometheus scrapes `backend:8091`, which is the container, so a locally run backend shows up as DOWN; to scrape it instead, change the target in `monitoring/prometheus/prometheus.yml` to `host.docker.internal:8091` and run `docker compose restart prometheus`.

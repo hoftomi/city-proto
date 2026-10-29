@@ -11,13 +11,22 @@ abstract class _$AdminResultCWProxy {
 
   AdminResult settlements(int? settlements);
 
+  AdminResult advancedMinutes(int? advancedMinutes);
+
+  AdminResult created(int? created);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AdminResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// AdminResult(...).copyWith(id: 12, name: "My name")
   /// ````
-  AdminResult call({String? started, int? settlements});
+  AdminResult call({
+    String? started,
+    int? settlements,
+    int? advancedMinutes,
+    int? created,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAdminResult.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAdminResult.copyWith.fieldName(...)`
@@ -33,6 +42,13 @@ class _$AdminResultCWProxyImpl implements _$AdminResultCWProxy {
   AdminResult settlements(int? settlements) => this(settlements: settlements);
 
   @override
+  AdminResult advancedMinutes(int? advancedMinutes) =>
+      this(advancedMinutes: advancedMinutes);
+
+  @override
+  AdminResult created(int? created) => this(created: created);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AdminResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -42,6 +58,8 @@ class _$AdminResultCWProxyImpl implements _$AdminResultCWProxy {
   AdminResult call({
     Object? started = const $CopyWithPlaceholder(),
     Object? settlements = const $CopyWithPlaceholder(),
+    Object? advancedMinutes = const $CopyWithPlaceholder(),
+    Object? created = const $CopyWithPlaceholder(),
   }) {
     return AdminResult(
       started: started == const $CopyWithPlaceholder()
@@ -52,6 +70,14 @@ class _$AdminResultCWProxyImpl implements _$AdminResultCWProxy {
           ? _value.settlements
           // ignore: cast_nullable_to_non_nullable
           : settlements as int?,
+      advancedMinutes: advancedMinutes == const $CopyWithPlaceholder()
+          ? _value.advancedMinutes
+          // ignore: cast_nullable_to_non_nullable
+          : advancedMinutes as int?,
+      created: created == const $CopyWithPlaceholder()
+          ? _value.created
+          // ignore: cast_nullable_to_non_nullable
+          : created as int?,
     );
   }
 }
@@ -73,6 +99,11 @@ AdminResult _$AdminResultFromJson(Map<String, dynamic> json) => $checkedCreate(
     final val = AdminResult(
       started: $checkedConvert('started', (v) => v as String?),
       settlements: $checkedConvert('settlements', (v) => (v as num?)?.toInt()),
+      advancedMinutes: $checkedConvert(
+        'advancedMinutes',
+        (v) => (v as num?)?.toInt(),
+      ),
+      created: $checkedConvert('created', (v) => (v as num?)?.toInt()),
     );
     return val;
   },
@@ -82,4 +113,6 @@ Map<String, dynamic> _$AdminResultToJson(AdminResult instance) =>
     <String, dynamic>{
       'started': ?instance.started,
       'settlements': ?instance.settlements,
+      'advancedMinutes': ?instance.advancedMinutes,
+      'created': ?instance.created,
     };

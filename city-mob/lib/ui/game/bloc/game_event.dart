@@ -84,7 +84,3 @@ class GameOfferDeclined extends GameEvent {
   @override
   List<Object?> get props => [offerId];
 }
-
-class GameAdminSettleRequested extends GameEvent {
-  const GameAdminSettleRequested();
-}

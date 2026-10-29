@@ -28,6 +28,18 @@ public interface GameRepository extends JpaRepository<GameEntity, String> {
         Integer getSettlements();
     }
 
+    /** Every live game, in lobby order (admin). */
+    @Query("select g from GameEntity g" + LOBBY_ORDER)
+    List<GameEntity> findAllInLobbyOrder();
+
+    @Query("select g.status as status, count(g) as count from GameEntity g group by g.status")
+    List<StatusCount> countByStatus();
+
+    interface StatusCount {
+        GameStatus getStatus();
+        long getCount();
+    }
+
     List<GameEntity> findByStatus(GameStatus status);
     List<GameEntity> findByStatusAndClosesAtBefore(GameStatus status, Instant time);
     List<GameEntity> findByStatusAndOpensAtBefore(GameStatus status, Instant time);

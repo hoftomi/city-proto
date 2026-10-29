@@ -37,9 +37,8 @@ class LobbyRemoteDataSource {
 
 @lazySingleton
 class GameRemoteDataSource {
-  GameRemoteDataSource(this._api, this._admin);
+  GameRemoteDataSource(this._api);
   final GameApi _api;
-  final AdminApi _admin;
 
   Future<GameState> state(String id) async => (await _api.getState(id: id)).data!;
 
@@ -59,6 +58,4 @@ class GameRemoteDataSource {
   Future<List<ReportView>> reports(String id) async => (await _api.getReports(id: id)).data!;
 
   Future<List<RankRow>> ranking(String id) async => (await _api.getRanking(id: id)).data!;
-
-  Future<void> adminSettle(String id) => _admin.adminSettle(id: id);
 }

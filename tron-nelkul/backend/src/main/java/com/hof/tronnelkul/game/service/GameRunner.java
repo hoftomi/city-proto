@@ -55,10 +55,9 @@ public class GameRunner {
      */
     @Transactional
     public <T> T mutate(String gameId, BiFunction<GameEntity, Engine, T> op) {
-        GameEntity g = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        if (g.status != GameStatus.RUNNING) throw ApiException.conflict("server.game_not_running");
+        GameEntity g = lockRunning(gameId);
         Engine e = engine(g);
-        e.advance(Instant.now().toEpochMilli(), GameEntity.MATURATION_MINUTES, GameEntity.maxSettlements());
+        catchUp(g, e);
         T result;
         try {
             result = op.apply(g, e);
@@ -70,11 +69,58 @@ public class GameRunner {
     }
 
     /**
+     * Admin: moves the game clock forward by `minutes` (null: to the next maturing sheet or settlement) and runs
+     * what became due. Returns the minutes actually added.
+     */
+    @Transactional
+    public int advanceClock(String gameId, Integer minutes) {
+        return mutate(gameId, (g, e) -> {
+            int m = minutes != null ? minutes : minutesUntil(g.now().toEpochMilli(), e.nextEventAt());
+            g.timeOffsetMinutes += m;
+            catchUp(g, e);
+            return m;
+        });
+    }
+
+    /** Whole minutes from `now` to `at` (epoch ms), rounded up, at least 1. */
+    static int minutesUntil(long now, long at) {
+        long ms = Math.max(0, at - now);
+        return (int) Math.max(1, Math.min(Integer.MAX_VALUE, (ms + 59_999) / 60_000));
+    }
+
+    /**
+     * Admin: ends the season now. The Coronation Council and the archiving run as at the last settlement.
+     * Returns the settlements the season had.
+     */
+    @Transactional
+    public int endSeason(String gameId) {
+        GameEntity g = lockRunning(gameId);
+        Engine e = engine(g);
+        catchUp(g, e);
+        persist(g, e, true);
+        return e.s.settlements;
+    }
+
+    private GameEntity lockRunning(String gameId) {
+        GameEntity g = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        if (g.status != GameStatus.RUNNING) throw ApiException.conflict("server.game_not_running");
+        return g;
+    }
+
+    /** Runs the sheets and settlements due by the game clock. */
+    private static void catchUp(GameEntity g, Engine e) {
+        e.advance(g.now().toEpochMilli(), GameEntity.MATURATION_MINUTES, GameEntity.maxSettlements());
+    }
+
+    /**
      * Saves the state, the reports (texts resolved here) and the Legitimacy copy. At season end the Coronation
      * Council decides, and the game moves to the archive.
      */
-    void persist(GameEntity g, Engine e) {
-        boolean over = g.status == GameStatus.RUNNING && e.s.settlements >= GameEntity.maxSettlements();
+    void persist(GameEntity g, Engine e) { persist(g, e, false); }
+
+    /** endSeason: the season ends now, even before its last settlement. */
+    private void persist(GameEntity g, Engine e, boolean endSeason) {
+        boolean over = g.status == GameStatus.RUNNING && (endSeason || e.s.settlements >= GameEntity.maxSettlements());
         List<String> ranking = over ? finish(g, e) : List.of();
         g.state = json.writeValueAsString(e.s);
         List<PlayerEntity> all = playerRepository.findByGameId(g.id);

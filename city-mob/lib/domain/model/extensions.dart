@@ -58,7 +58,3 @@ extension GameStateX on GameState {
   /// Buyout threats not defended against yet.
   int get openThreats => threats.where((t) => !t.defending).length;
 }
-
-extension UserDtoX on UserDto {
-  bool get admin => role == 'ADMIN';
-}

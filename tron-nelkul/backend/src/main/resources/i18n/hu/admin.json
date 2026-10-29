@@ -1,0 +1,223 @@
+{
+  "app": {
+    "title": "Trón nélkül – Admin",
+    "admin": "Adminisztráció"
+  },
+  "common": {
+    "ok": "OK",
+    "close": "Bezár",
+    "cancel": "Mégse",
+    "confirm": "Megerősítés",
+    "refresh": "Frissítés",
+    "loading": "Betöltés…",
+    "actions": "Műveletek"
+  },
+  "error": {
+    "network": "A szerver nem érhető el.",
+    "http": "Hiba történt (HTTP {status}).",
+    "auth": "A bejelentkezés nem sikerült ({code}).",
+    "unexpected": "Váratlan hiba történt."
+  },
+  "nav": {
+    "dashboard": "Áttekintés",
+    "games": "Játékok",
+    "users": "Felhasználók",
+    "menu": "Menü",
+    "sign_out": "Kijelentkezés"
+  },
+  "login": {
+    "subtitle": "Adminfelület",
+    "intro": "Jelentkezz be a Google-fiókoddal. Csak ADMIN szerepkörű felhasználók léphetnek be.",
+    "not_configured": "A Firebase webes beállításai hiányoznak (src/environments). Lásd a README-t.",
+    "google": "Belépés Google-fiókkal"
+  },
+  "noAccess": {
+    "title": "Nincs hozzáférésed",
+    "not_admin": "{name}, a fiókodnak nincs ADMIN szerepköre. Kérj jogot egy meglévő admintól.",
+    "unknown": "Nem sikerült ellenőrizni a jogosultságodat. Próbáld újra később.",
+    "retry": "Újra"
+  },
+  "status": {
+    "announced": "Meghirdetett",
+    "open": "Jelentkezés nyitva",
+    "running": "Fut",
+    "finished": "Lezárult"
+  },
+  "role": {
+    "PLAYER": "Játékos",
+    "ADMIN": "Admin"
+  },
+  "reportKind": {
+    "spy": "Kémjelentés",
+    "military": "Katonai",
+    "faction": "Város",
+    "diplomacy": "Diplomácia",
+    "event": "Városi esemény"
+  },
+  "confidence": {
+    "weak": "Gyenge forrás",
+    "medium": "Közepes forrás",
+    "strong": "Erős forrás"
+  },
+  "tincture": {
+    "red": "Vörös",
+    "blue": "Kék",
+    "green": "Zöld",
+    "gold": "Arany",
+    "purple": "Bíbor",
+    "black": "Fekete",
+    "orange": "Narancs",
+    "mulberry": "Szeder"
+  },
+  "duration": {
+    "none": "nincs eltolás",
+    "days": "{n} nap",
+    "hours": "{n} óra",
+    "minutes": "{n} perc"
+  },
+  "dashboard": {
+    "title": "Áttekintés",
+    "users": "Felhasználó",
+    "admins": "Admin",
+    "new_users_7d": "Új felhasználó (7 nap)",
+    "games": "játék",
+    "human_houses": "Játékosház",
+    "npc_houses": "NPC-ház",
+    "live_games": "élő játékokban",
+    "reports_24h": "Jelentés (24 óra)",
+    "registrations": "Regisztrációk naponta",
+    "joins": "Csatlakozások naponta",
+    "last_14_days": "Az elmúlt 14 nap · összesen {total}"
+  },
+  "games": {
+    "title": "Játékok",
+    "new": "Új játék",
+    "filter": "Szűrés állapot szerint",
+    "all": "Mind",
+    "empty": "Nincs megjeleníthető játék.",
+    "open": "Megnyitás",
+    "npc_count": "+ {n} NPC",
+    "col": {
+      "name": "Név",
+      "status": "Állapot",
+      "map": "Térkép",
+      "players": "Játékosok",
+      "settlements": "Elszámolások",
+      "closes_at": "Jelentkezés vége",
+      "clock": "Játékidő",
+      "winner": "Győztes"
+    }
+  },
+  "create": {
+    "title": "Új játék",
+    "id": "Azonosító",
+    "id_hint": "Kisbetűk, számok és kötőjel",
+    "id_invalid": "Csak kisbetű, szám és kötőjel lehet benne.",
+    "name": "Név",
+    "map": "Térkép",
+    "map_option": "{name} ({cities} város, {starts} kezdőhely)",
+    "opens_at": "Jelentkezés kezdete",
+    "opens_at_hint": "Üresen: azonnal nyitott",
+    "closes_at": "Kezdés (jelentkezés vége)",
+    "closes_at_hint": "A böngésző helyi ideje szerint",
+    "max_players": "Játékosok legfeljebb",
+    "npc_count": "NPC-házak",
+    "tags": "Címkék",
+    "tags_hint": "Vesszővel elválasztva",
+    "submit": "Létrehozás",
+    "created": "Létrejött: {name}"
+  },
+  "actions": {
+    "start": "Indítás",
+    "start_confirm": "Elindítod most a(z) „{name}” játékot? A jelentkezés lezárul.",
+    "started": "Elindult: {name}",
+    "settle": "Elszámolás most",
+    "settle_confirm": "Azonnali elszámolást futtatsz a(z) „{name}” játékban. Ez nem vonható vissza.",
+    "settled": "Elszámolás kész ({n}. elszámolás).",
+    "advanced": "Az óra előreállítva: {duration}.",
+    "finish": "Szezon lezárása",
+    "finish_confirm": "Lezárod most a(z) „{name}” szezonját? Megtörténik a koronázás, a játék az archívumba kerül.",
+    "finished": "Lezárva: {name}",
+    "delete": "Törlés",
+    "delete_confirm": "Véglegesen törlöd a(z) „{name}” játékot a házaival és jelentéseivel együtt?",
+    "deleted": "Törölve: {name}",
+    "remove": "Eltávolítás",
+    "remove_house": "Ház eltávolítása",
+    "remove_house_confirm": "Eltávolítod a(z) „{house}” házat a játékból?",
+    "house_removed": "Eltávolítva: {house}",
+    "seed": "Mintajátékok újralétrehozása",
+    "seed_confirm": "Létrehozod a hiányzó mintajátékokat?",
+    "seeded": "Létrehozott mintajátékok: {n}"
+  },
+  "advance": {
+    "title": "Idő előreállítása",
+    "min30": "+30 perc",
+    "h2": "+2 óra",
+    "d1": "+1 nap",
+    "custom": "Egyéni…",
+    "custom_title": "Idő előreállítása",
+    "minutes": "Perc",
+    "minutes_hint": "1 és {max} perc között",
+    "submit": "Előreállítás",
+    "next_event": "A következő eseményig"
+  },
+  "detail": {
+    "back": "Játékok",
+    "players": "Játékosok",
+    "settlements": "Elszámolások",
+    "opens_at": "Jelentkezés kezdete",
+    "closes_at": "Jelentkezés vége",
+    "clock": "Játékidő",
+    "offset": "Óraeltolás",
+    "next_settlement": "Következő elszámolás",
+    "maturing_sheets": "Érlelődő parancslapok",
+    "winner": "Győztes",
+    "created_at": "Létrehozva",
+    "tags": "Címkék",
+    "houses": "Házak ({n})",
+    "no_houses": "Még nincs ház a játékban.",
+    "npc": "NPC",
+    "reports": "Legutóbbi jelentések",
+    "report_counts": "Jelentések típus szerint",
+    "kind": "Típus",
+    "all_kinds": "Minden típus",
+    "limit": "Darabszám",
+    "no_reports": "Nincs jelentés.",
+    "public": "Nyilvános",
+    "settlement_no": "{n}. elszámolás",
+    "col": {
+      "house": "Ház",
+      "user": "Játékos",
+      "background": "Háttér",
+      "legit": "Legitimitás",
+      "gold": "Arany",
+      "pp": "PP",
+      "place": "Helyezés",
+      "joined_at": "Csatlakozott",
+      "created_at": "Időpont",
+      "kind": "Típus",
+      "text": "Jelentés"
+    }
+  },
+  "users": {
+    "title": "Felhasználók",
+    "search": "Keresés névre vagy e-mailre",
+    "empty": "Nincs találat.",
+    "you": "(te)",
+    "col": {
+      "name": "Név",
+      "email": "E-mail",
+      "providers": "Belépés",
+      "role": "Szerepkör",
+      "created_at": "Regisztrált",
+      "games": "Játékok",
+      "admin": "Admin"
+    },
+    "grant_title": "Admin jog megadása",
+    "grant_confirm": "Admin jogot adsz {name} felhasználónak?",
+    "revoke_title": "Admin jog elvétele",
+    "revoke_confirm": "Elveszed {name} admin jogát?",
+    "granted": "{name} mostantól admin.",
+    "revoked": "{name} már nem admin."
+  }
+}

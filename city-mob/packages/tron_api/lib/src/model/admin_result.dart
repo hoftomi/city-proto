@@ -23,6 +23,10 @@ class AdminResult {
      this.started,
 
      this.settlements,
+
+     this.advancedMinutes,
+
+     this.created,
   });
 
   @JsonKey(
@@ -49,17 +53,46 @@ class AdminResult {
 
 
 
+  @JsonKey(
+    
+    name: r'advancedMinutes',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? advancedMinutes;
+
+
+
+      /// Sample games created by the seed
+  @JsonKey(
+    
+    name: r'created',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? created;
+
+
+
 
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is AdminResult &&
       other.started == started &&
-      other.settlements == settlements;
+      other.settlements == settlements &&
+      other.advancedMinutes == advancedMinutes &&
+      other.created == created;
 
     @override
     int get hashCode =>
         (started == null ? 0 : started.hashCode) +
-        (settlements == null ? 0 : settlements.hashCode);
+        (settlements == null ? 0 : settlements.hashCode) +
+        (advancedMinutes == null ? 0 : advancedMinutes.hashCode) +
+        (created == null ? 0 : created.hashCode);
 
   factory AdminResult.fromJson(Map<String, dynamic> json) => _$AdminResultFromJson(json);
 

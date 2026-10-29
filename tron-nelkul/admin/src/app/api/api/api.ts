@@ -1,0 +1,11 @@
+export * from './admin.service';
+import { AdminService } from './admin.service';
+export * from './auth.service';
+import { AuthService } from './auth.service';
+export * from './game.service';
+import { GameService } from './game.service';
+export * from './i18n.service';
+import { I18nService } from './i18n.service';
+export * from './lobby.service';
+import { LobbyService } from './lobby.service';
+export const APIS = [AdminService, AuthService, GameService, I18nService, LobbyService];

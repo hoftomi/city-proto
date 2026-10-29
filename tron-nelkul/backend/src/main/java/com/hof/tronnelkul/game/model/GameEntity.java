@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,8 @@ public class GameEntity {
     /** Rule engine state (engine.EngineState) as JSON; null before start. */
     @JdbcTypeCode(SqlTypes.JSON) @Column(columnDefinition = "jsonb") public String state;
     @Column(name = "created_at", nullable = false) public Instant createdAt = Instant.now();
+    /** The admin moved the game clock forward by this much (game clock = real time + offset). */
+    @Column(name = "time_offset_minutes", nullable = false) public int timeOffsetMinutes;
 
     protected GameEntity() {}
 
@@ -41,6 +44,12 @@ public class GameEntity {
         this.id = id; this.name = name; this.status = status; this.mapId = mapId;
         this.maxPlayers = maxPlayers; this.npcCount = npcCount; this.tags = tags;
     }
+
+    /** The game clock: real time + the admin's time offset. */
+    public Instant now() { return clock(Instant.now()); }
+
+    /** The game clock at the given real time. */
+    public Instant clock(Instant real) { return real.plus(Duration.ofMinutes(timeOffsetMinutes)); }
 
     public List<String> tagList() { return tagList(tags); }
 

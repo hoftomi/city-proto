@@ -1,5 +1,13 @@
 import 'package:tron_api/src/model/action_info.dart';
+import 'package:tron_api/src/model/admin_game.dart';
+import 'package:tron_api/src/model/admin_game_detail.dart';
+import 'package:tron_api/src/model/admin_house.dart';
+import 'package:tron_api/src/model/admin_map.dart';
+import 'package:tron_api/src/model/admin_overview.dart';
+import 'package:tron_api/src/model/admin_report.dart';
 import 'package:tron_api/src/model/admin_result.dart';
+import 'package:tron_api/src/model/admin_user.dart';
+import 'package:tron_api/src/model/advance_request.dart';
 import 'package:tron_api/src/model/background_dto.dart';
 import 'package:tron_api/src/model/buildable.dart';
 import 'package:tron_api/src/model/catalog.dart';
@@ -7,7 +15,9 @@ import 'package:tron_api/src/model/city_def.dart';
 import 'package:tron_api/src/model/city_view.dart';
 import 'package:tron_api/src/model/clock_view.dart';
 import 'package:tron_api/src/model/cost.dart';
+import 'package:tron_api/src/model/create_game_request.dart';
 import 'package:tron_api/src/model/custom_token_response.dart';
+import 'package:tron_api/src/model/daily_count.dart';
 import 'package:tron_api/src/model/discord_request.dart';
 import 'package:tron_api/src/model/game_detail.dart';
 import 'package:tron_api/src/model/game_state.dart';
@@ -18,6 +28,7 @@ import 'package:tron_api/src/model/good_view.dart';
 import 'package:tron_api/src/model/house_ref.dart';
 import 'package:tron_api/src/model/intel_view.dart';
 import 'package:tron_api/src/model/join_request.dart';
+import 'package:tron_api/src/model/kind_count.dart';
 import 'package:tron_api/src/model/level_info.dart';
 import 'package:tron_api/src/model/map_def.dart';
 import 'package:tron_api/src/model/me.dart';
@@ -34,6 +45,7 @@ import 'package:tron_api/src/model/problem_detail.dart';
 import 'package:tron_api/src/model/rank_row.dart';
 import 'package:tron_api/src/model/report_view.dart';
 import 'package:tron_api/src/model/rival_sheet.dart';
+import 'package:tron_api/src/model/role_request.dart';
 import 'package:tron_api/src/model/route_view.dart';
 import 'package:tron_api/src/model/rules_info.dart';
 import 'package:tron_api/src/model/seller.dart';
@@ -64,8 +76,24 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return (value is double ? value : double.parse('$value')) as ReturnType;
         case 'ActionInfo':
           return ActionInfo.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminGame':
+          return AdminGame.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminGameDetail':
+          return AdminGameDetail.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminHouse':
+          return AdminHouse.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminMap':
+          return AdminMap.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminOverview':
+          return AdminOverview.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminReport':
+          return AdminReport.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'AdminResult':
           return AdminResult.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdminUser':
+          return AdminUser.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'AdvanceRequest':
+          return AdvanceRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'BackgroundDto':
           return BackgroundDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Buildable':
@@ -80,8 +108,12 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return ClockView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Cost':
           return Cost.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'CreateGameRequest':
+          return CreateGameRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'CustomTokenResponse':
           return CustomTokenResponse.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'DailyCount':
+          return DailyCount.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DiscordRequest':
           return DiscordRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'GameDetail':
@@ -102,6 +134,8 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return IntelView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'JoinRequest':
           return JoinRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'KindCount':
+          return KindCount.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LevelInfo':
           return LevelInfo.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'MapDef':
@@ -134,6 +168,8 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return ReportView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RivalSheet':
           return RivalSheet.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'RoleRequest':
+          return RoleRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RouteView':
           return RouteView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RulesInfo':

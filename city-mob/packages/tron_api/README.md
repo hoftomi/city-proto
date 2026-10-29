@@ -50,12 +50,13 @@ import 'package:tron_api/tron_api.dart';
 
 final api = TronApi().getAdminApi();
 final String id = id_example; // String | Game id
+final AdvanceRequest advanceRequest = ; // AdvanceRequest | 
 
 try {
-    final response = await api.adminSettle(id);
+    final response = await api.adminAdvance(id, advanceRequest);
     print(response);
 } on DioException catch (e) {
-    print("Exception when calling AdminApi->adminSettle: $e\n");
+    print("Exception when calling AdminApi->adminAdvance: $e\n");
 }
 
 ```
@@ -66,8 +67,21 @@ All URIs are relative to *http://localhost:8080*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+[*AdminApi*](doc/AdminApi.md) | [**adminAdvance**](doc/AdminApi.md#adminadvance) | **POST** /api/admin/games/{id}/advance | Move the game clock forward; minutes &#x3D; null: to the next event (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminCreateGame**](doc/AdminApi.md#admincreategame) | **POST** /api/admin/games | Create a game (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminDeleteGame**](doc/AdminApi.md#admindeletegame) | **DELETE** /api/admin/games/{id} | Delete a live or archived game with its houses and reports (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminFinish**](doc/AdminApi.md#adminfinish) | **POST** /api/admin/games/{id}/finish | End the season now: coronation, then the game moves to the archive (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminGame**](doc/AdminApi.md#admingame) | **GET** /api/admin/games/{id} | A game with its houses (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminGameReports**](doc/AdminApi.md#admingamereports) | **GET** /api/admin/games/{id}/reports | The latest reports of every house in a game (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminGames**](doc/AdminApi.md#admingames) | **GET** /api/admin/games | All games, live and archived (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminMaps**](doc/AdminApi.md#adminmaps) | **GET** /api/admin/maps | Maps a game can be created on (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminOverview**](doc/AdminApi.md#adminoverview) | **GET** /api/admin/overview | Statistics for the dashboard (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminRemovePlayer**](doc/AdminApi.md#adminremoveplayer) | **DELETE** /api/admin/games/{id}/players/{playerId} | Remove a house from a game that has not started yet (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminSeed**](doc/AdminApi.md#adminseed) | **POST** /api/admin/games/seed | Recreate the missing sample games (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminSetRole**](doc/AdminApi.md#adminsetrole) | **PUT** /api/admin/users/{id}/role | Grant or revoke the ADMIN role (ADMIN)
 [*AdminApi*](doc/AdminApi.md) | [**adminSettle**](doc/AdminApi.md#adminsettle) | **POST** /api/admin/games/{id}/settle | Immediate settlement (ADMIN)
 [*AdminApi*](doc/AdminApi.md) | [**adminStart**](doc/AdminApi.md#adminstart) | **POST** /api/admin/games/{id}/start | Start a game (ADMIN)
+[*AdminApi*](doc/AdminApi.md) | [**adminUsers**](doc/AdminApi.md#adminusers) | **GET** /api/admin/users | All users (ADMIN)
 [*AuthApi*](doc/AuthApi.md) | [**discordLogin**](doc/AuthApi.md#discordlogin) | **POST** /api/auth/discord | Exchange a Discord code for a Firebase custom token
 [*AuthApi*](doc/AuthApi.md) | [**getMe**](doc/AuthApi.md#getme) | **GET** /api/me | The signed-in user (the first call creates it)
 [*GameApi*](doc/GameApi.md) | [**acceptOffer**](doc/GameApi.md#acceptoffer) | **POST** /api/games/{id}/offers/{offerId}/accept | Accept an offer (escrow: you pay and receive it at once)
@@ -92,7 +106,15 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [ActionInfo](doc/ActionInfo.md)
+ - [AdminGame](doc/AdminGame.md)
+ - [AdminGameDetail](doc/AdminGameDetail.md)
+ - [AdminHouse](doc/AdminHouse.md)
+ - [AdminMap](doc/AdminMap.md)
+ - [AdminOverview](doc/AdminOverview.md)
+ - [AdminReport](doc/AdminReport.md)
  - [AdminResult](doc/AdminResult.md)
+ - [AdminUser](doc/AdminUser.md)
+ - [AdvanceRequest](doc/AdvanceRequest.md)
  - [BackgroundDto](doc/BackgroundDto.md)
  - [Buildable](doc/Buildable.md)
  - [Catalog](doc/Catalog.md)
@@ -100,7 +122,9 @@ Class | Method | HTTP request | Description
  - [CityView](doc/CityView.md)
  - [ClockView](doc/ClockView.md)
  - [Cost](doc/Cost.md)
+ - [CreateGameRequest](doc/CreateGameRequest.md)
  - [CustomTokenResponse](doc/CustomTokenResponse.md)
+ - [DailyCount](doc/DailyCount.md)
  - [DiscordRequest](doc/DiscordRequest.md)
  - [GameDetail](doc/GameDetail.md)
  - [GameState](doc/GameState.md)
@@ -111,6 +135,7 @@ Class | Method | HTTP request | Description
  - [HouseRef](doc/HouseRef.md)
  - [IntelView](doc/IntelView.md)
  - [JoinRequest](doc/JoinRequest.md)
+ - [KindCount](doc/KindCount.md)
  - [LevelInfo](doc/LevelInfo.md)
  - [MapDef](doc/MapDef.md)
  - [Me](doc/Me.md)
@@ -127,6 +152,7 @@ Class | Method | HTTP request | Description
  - [RankRow](doc/RankRow.md)
  - [ReportView](doc/ReportView.md)
  - [RivalSheet](doc/RivalSheet.md)
+ - [RoleRequest](doc/RoleRequest.md)
  - [RouteView](doc/RouteView.md)
  - [RulesInfo](doc/RulesInfo.md)
  - [Seller](doc/Seller.md)

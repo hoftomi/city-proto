@@ -1,0 +1,39 @@
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideApi } from '../api';
+import { Translator, interpolate } from './translator';
+
+describe('interpolate', () => {
+  it('replaces known placeholders and keeps unknown ones', () => {
+    expect(interpolate('{a} and {b}', { a: 1 })).toBe('1 and {b}');
+    expect(interpolate('plain')).toBe('plain');
+  });
+});
+
+describe('Translator', () => {
+  let translator: Translator;
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideApi('')],
+    });
+    translator = TestBed.inject(Translator);
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  it('loads the admin namespace and resolves nested keys', async () => {
+    const done = translator.load('hu');
+    http.expectOne('/api/i18n/hu').flush({ admin: { games: { npc_count: '+ {n} NPC' } }, lobby: { x: 'y' } });
+    await done;
+    expect(translator.t('games.npc_count', { n: 3 })).toBe('+ 3 NPC');
+  });
+
+  it('falls back to the key when missing or when loading fails', async () => {
+    const done = translator.load('hu');
+    http.expectOne('/api/i18n/hu').flush('down', { status: 502, statusText: 'Bad Gateway' });
+    await done;
+    expect(translator.t('nav.games')).toBe('nav.games');
+  });
+});

@@ -22,6 +22,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    // Logs to Loki (Spring profile `loki`, see logback-spring.xml); 2.0.x is built on logback 1.5 like Boot 4.1
+    implementation("com.github.loki4j:loki-logback-appender:2.0.3")
     implementation("com.google.firebase:firebase-admin:9.9.0")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.mapstruct:mapstruct:1.6.3")

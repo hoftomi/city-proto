@@ -1,6 +1,5 @@
-# A backend képéhez csak az API-szerződés és a backend kell
+# The backend image needs only the backend (the API contract lives in tron-nelkul/backend/openapi.yaml)
 *
-!api/
 !tron-nelkul/backend/
 tron-nelkul/backend/build/
 tron-nelkul/backend/.gradle/

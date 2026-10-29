@@ -12,8 +12,6 @@ import '../../theme/tokens.dart';
 import '../../util/format.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/game_widgets.dart';
-import '../../widgets/tn_icon.dart';
-import '../auth/bloc/auth_bloc.dart';
 import 'bloc/game_bloc.dart';
 
 /// The running game's frame: loading and error, carved header (house, settlement timer, resources), dev clock
@@ -37,10 +35,6 @@ class GameShellPage extends StatelessWidget {
             body: TnScreen(
               child: Column(children: [
                 const _TopBar(),
-                BlocSelector<AuthBloc, AuthState, bool>(
-                  selector: (s) => s.admin,
-                  builder: (context, admin) => admin ? const _AdminBar() : const SizedBox.shrink(),
-                ),
                 Expanded(child: shell),
               ]),
             ),
@@ -126,41 +120,6 @@ class _TopBar extends StatelessWidget {
               ResourceChip(kind: 'pp', value: me.pp, max: me.ppMax),
               ResourceChip(kind: 'legit', value: me.legit),
               if (sheet != null) Text('shell.sheet_live_in'.tr(namedArgs: {'time': durText(v.until(sheet.executeAt))}), style: TnText.caption(const Color(0xFFD9C49A))),
-            ]),
-          ]),
-        );
-      },
-    );
-  }
-}
-
-/// Dev clock (ADMIN only): parchment strip under the header, fast-forward and immediate settlement.
-class _AdminBar extends StatelessWidget {
-  const _AdminBar();
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.tn;
-    return BlocBuilder<GameBloc, GameViewState>(
-      buildWhen: (a, b) => a.now != b.now || a.busy != b.busy,
-      builder: (context, v) {
-        void add(GameEvent e) => context.read<GameBloc>().add(e);
-        Widget btn(String l, GameEvent e, {bool on = false}) => TnMiniButton(on: on, onTap: v.busy ? null : () => add(e), child: Text(l));
-        return Container(
-          padding: const EdgeInsets.fromLTRB(16, 6, 16, 7),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [c.paperRaised, c.paperSunk]),
-            border: Border(bottom: BorderSide(color: c.wood, width: 1.5)),
-            boxShadow: const [BoxShadow(color: Color(0x4D000000), offset: Offset(0, 2), blurRadius: 4, spreadRadius: -1)],
-          ),
-          child: Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, runSpacing: 6, children: [
-            Row(mainAxisSize: MainAxisSize.min, children: [
-              TnIcon('clock', size: 14, color: c.inkMuted),
-              const SizedBox(width: 4),
-              Text(v.now == null ? '' : shortDateTime(v.now!), style: TnText.data(c.ink)),
-            ]),
-            Wrap(spacing: 5, runSpacing: 5, children: [
-              btn('shell.admin.settle_now'.tr(), const GameAdminSettleRequested(), on: true),
             ]),
           ]),
         );

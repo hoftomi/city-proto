@@ -128,9 +128,4 @@ class GameRepository {
 
   Future<Either<Failure, List<RankRow>>> ranking(String id) => guard(() => _remote.ranking(id));
 
-  /// Admin: immediate settlement, then the fresh state.
-  Future<Either<Failure, GameState>> adminSettle(String id) => guard(() async {
-        await _remote.adminSettle(id);
-        return _remote.state(id);
-      });
 }

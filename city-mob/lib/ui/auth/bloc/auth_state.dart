@@ -13,7 +13,6 @@ class AuthState extends Equatable {
   final Tr? error;
 
   bool get busy => busyProvider != null;
-  bool get admin => user?.admin ?? false;
 
   AuthState copyWith({
     AuthStatus? status,

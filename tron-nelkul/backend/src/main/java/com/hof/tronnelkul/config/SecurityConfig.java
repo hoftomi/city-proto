@@ -30,7 +30,9 @@ public class SecurityConfig {
         http.csrf(c -> c.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a
-                .requestMatchers("/api/auth/**", "/api/i18n/**", "/actuator/health", "/error").permitAll()
+                .requestMatchers("/api/auth/**", "/api/i18n/**", "/error").permitAll()
+                // Actuator runs on the management port (8091), which must not be public; Prometheus scrapes it without auth
+                .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .oauth2ResourceServer(o -> o.jwt(j -> j.decoder(decoder).jwtAuthenticationConverter(users)));

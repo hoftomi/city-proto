@@ -5,7 +5,7 @@ import com.hof.tronnelkul.game.engine.Msg;
 import java.util.List;
 
 /** NPC house templates. The persona decides which branch they play (engine.Engine.npcPlanFor). Names: i18n world.npc.<id>. */
-final class Npcs {
+public final class Npcs {
     private Npcs() {}
 
     record Template(String id, String tincture, String persona) {
@@ -17,4 +17,7 @@ final class Npcs {
         new Template("ancientOak", "green", "politician"),
         new Template("crimsonHand", "purple", "spymaster"),
         new Template("ravenhold", "black", "raider"));
+
+    /** Number of NPC templates: the most NPC houses a game can have. */
+    public static int count() { return ALL.size(); }
 }

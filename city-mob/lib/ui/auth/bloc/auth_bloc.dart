@@ -7,7 +7,6 @@ import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
 import '../../../core/tr.dart';
-import '../../../domain/model/extensions.dart';
 import '../../../domain/service/auth_service.dart';
 
 part 'auth_event.dart';

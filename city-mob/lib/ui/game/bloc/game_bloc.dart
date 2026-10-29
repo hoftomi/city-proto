@@ -36,8 +36,6 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
     on<GameOfferAccepted>((e, emit) => _act(emit, () => _service.acceptOffer(_id, e.offerId), success: (_) => e.success ?? const Tr('notice.offer_bought')),
         transformer: sequential());
     on<GameOfferDeclined>((e, emit) => _act(emit, () => _service.declineOffer(_id, e.offerId)), transformer: sequential());
-    on<GameAdminSettleRequested>((e, emit) => _act(emit, () => _service.adminSettle(_id), success: (_) => const Tr('notice.settled')),
-        transformer: droppable());
   }
 
   final GameService _service;

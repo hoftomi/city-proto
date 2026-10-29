@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Console as Spring Boot's default for every profile; with the `loki` profile also pushed to Loki (LOKI_URL). -->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <springProfile name="loki">
+        <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+            <http>
+                <url>${LOKI_URL:-http://localhost:3100/loki/api/v1/push}</url>
+            </http>
+            <!-- Labels are indexed: keep them low cardinality (logger is one value per class) -->
+            <labels>
+                app = tron-backend
+                level = %level
+                logger = %logger
+            </labels>
+            <structuredMetadata>
+                thread = %thread
+            </structuredMetadata>
+            <!-- JSON line: timestamp_ms, level, logger_name, thread_name, message, stack_trace, mdc_*, kvp_* -->
+            <message class="com.github.loki4j.logback.JsonLayout"/>
+            <batch>
+                <timeoutMs>5000</timeoutMs>
+            </batch>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="LOKI"/>
+        </root>
+    </springProfile>
+</configuration>

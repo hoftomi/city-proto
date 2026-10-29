@@ -1,4 +1,227 @@
 {
+ "admin": {
+  "actions": {
+   "advanced": "Az óra előreállítva: {duration}.",
+   "delete": "Törlés",
+   "delete_confirm": "Véglegesen törlöd a(z) „{name}” játékot a házaival és jelentéseivel együtt?",
+   "deleted": "Törölve: {name}",
+   "finish": "Szezon lezárása",
+   "finish_confirm": "Lezárod most a(z) „{name}” szezonját? Megtörténik a koronázás, a játék az archívumba kerül.",
+   "finished": "Lezárva: {name}",
+   "house_removed": "Eltávolítva: {house}",
+   "remove": "Eltávolítás",
+   "remove_house": "Ház eltávolítása",
+   "remove_house_confirm": "Eltávolítod a(z) „{house}” házat a játékból?",
+   "seed": "Mintajátékok újralétrehozása",
+   "seed_confirm": "Létrehozod a hiányzó mintajátékokat?",
+   "seeded": "Létrehozott mintajátékok: {n}",
+   "settle": "Elszámolás most",
+   "settle_confirm": "Azonnali elszámolást futtatsz a(z) „{name}” játékban. Ez nem vonható vissza.",
+   "settled": "Elszámolás kész ({n}. elszámolás).",
+   "start": "Indítás",
+   "start_confirm": "Elindítod most a(z) „{name}” játékot? A jelentkezés lezárul.",
+   "started": "Elindult: {name}"
+  },
+  "advance": {
+   "custom": "Egyéni…",
+   "custom_title": "Idő előreállítása",
+   "d1": "+1 nap",
+   "h2": "+2 óra",
+   "min30": "+30 perc",
+   "minutes": "Perc",
+   "minutes_hint": "1 és {max} perc között",
+   "next_event": "A következő eseményig",
+   "submit": "Előreállítás",
+   "title": "Idő előreállítása"
+  },
+  "app": {
+   "admin": "Adminisztráció",
+   "title": "Trón nélkül – Admin"
+  },
+  "common": {
+   "actions": "Műveletek",
+   "cancel": "Mégse",
+   "close": "Bezár",
+   "confirm": "Megerősítés",
+   "loading": "Betöltés…",
+   "ok": "OK",
+   "refresh": "Frissítés"
+  },
+  "confidence": {
+   "medium": "Közepes forrás",
+   "strong": "Erős forrás",
+   "weak": "Gyenge forrás"
+  },
+  "create": {
+   "closes_at": "Kezdés (jelentkezés vége)",
+   "closes_at_hint": "A böngésző helyi ideje szerint",
+   "created": "Létrejött: {name}",
+   "id": "Azonosító",
+   "id_hint": "Kisbetűk, számok és kötőjel",
+   "id_invalid": "Csak kisbetű, szám és kötőjel lehet benne.",
+   "map": "Térkép",
+   "map_option": "{name} ({cities} város, {starts} kezdőhely)",
+   "max_players": "Játékosok legfeljebb",
+   "name": "Név",
+   "npc_count": "NPC-házak",
+   "opens_at": "Jelentkezés kezdete",
+   "opens_at_hint": "Üresen: azonnal nyitott",
+   "submit": "Létrehozás",
+   "tags": "Címkék",
+   "tags_hint": "Vesszővel elválasztva",
+   "title": "Új játék"
+  },
+  "dashboard": {
+   "admins": "Admin",
+   "games": "játék",
+   "human_houses": "Játékosház",
+   "joins": "Csatlakozások naponta",
+   "last_14_days": "Az elmúlt 14 nap · összesen {total}",
+   "live_games": "élő játékokban",
+   "new_users_7d": "Új felhasználó (7 nap)",
+   "npc_houses": "NPC-ház",
+   "registrations": "Regisztrációk naponta",
+   "reports_24h": "Jelentés (24 óra)",
+   "title": "Áttekintés",
+   "users": "Felhasználó"
+  },
+  "detail": {
+   "all_kinds": "Minden típus",
+   "back": "Játékok",
+   "clock": "Játékidő",
+   "closes_at": "Jelentkezés vége",
+   "col": {
+    "background": "Háttér",
+    "created_at": "Időpont",
+    "gold": "Arany",
+    "house": "Ház",
+    "joined_at": "Csatlakozott",
+    "kind": "Típus",
+    "legit": "Legitimitás",
+    "place": "Helyezés",
+    "pp": "PP",
+    "text": "Jelentés",
+    "user": "Játékos"
+   },
+   "created_at": "Létrehozva",
+   "houses": "Házak ({n})",
+   "kind": "Típus",
+   "limit": "Darabszám",
+   "maturing_sheets": "Érlelődő parancslapok",
+   "next_settlement": "Következő elszámolás",
+   "no_houses": "Még nincs ház a játékban.",
+   "no_reports": "Nincs jelentés.",
+   "npc": "NPC",
+   "offset": "Óraeltolás",
+   "opens_at": "Jelentkezés kezdete",
+   "players": "Játékosok",
+   "public": "Nyilvános",
+   "report_counts": "Jelentések típus szerint",
+   "reports": "Legutóbbi jelentések",
+   "settlement_no": "{n}. elszámolás",
+   "settlements": "Elszámolások",
+   "tags": "Címkék",
+   "winner": "Győztes"
+  },
+  "duration": {
+   "days": "{n} nap",
+   "hours": "{n} óra",
+   "minutes": "{n} perc",
+   "none": "nincs eltolás"
+  },
+  "error": {
+   "auth": "A bejelentkezés nem sikerült ({code}).",
+   "http": "Hiba történt (HTTP {status}).",
+   "network": "A szerver nem érhető el.",
+   "unexpected": "Váratlan hiba történt."
+  },
+  "games": {
+   "all": "Mind",
+   "col": {
+    "clock": "Játékidő",
+    "closes_at": "Jelentkezés vége",
+    "map": "Térkép",
+    "name": "Név",
+    "players": "Játékosok",
+    "settlements": "Elszámolások",
+    "status": "Állapot",
+    "winner": "Győztes"
+   },
+   "empty": "Nincs megjeleníthető játék.",
+   "filter": "Szűrés állapot szerint",
+   "new": "Új játék",
+   "npc_count": "+ {n} NPC",
+   "open": "Megnyitás",
+   "title": "Játékok"
+  },
+  "login": {
+   "google": "Belépés Google-fiókkal",
+   "intro": "Jelentkezz be a Google-fiókoddal. Csak ADMIN szerepkörű felhasználók léphetnek be.",
+   "not_configured": "A Firebase webes beállításai hiányoznak (src/environments). Lásd a README-t.",
+   "subtitle": "Adminfelület"
+  },
+  "nav": {
+   "dashboard": "Áttekintés",
+   "games": "Játékok",
+   "menu": "Menü",
+   "sign_out": "Kijelentkezés",
+   "users": "Felhasználók"
+  },
+  "noAccess": {
+   "not_admin": "{name}, a fiókodnak nincs ADMIN szerepköre. Kérj jogot egy meglévő admintól.",
+   "retry": "Újra",
+   "title": "Nincs hozzáférésed",
+   "unknown": "Nem sikerült ellenőrizni a jogosultságodat. Próbáld újra később."
+  },
+  "reportKind": {
+   "diplomacy": "Diplomácia",
+   "event": "Városi esemény",
+   "faction": "Város",
+   "military": "Katonai",
+   "spy": "Kémjelentés"
+  },
+  "role": {
+   "ADMIN": "Admin",
+   "PLAYER": "Játékos"
+  },
+  "status": {
+   "announced": "Meghirdetett",
+   "finished": "Lezárult",
+   "open": "Jelentkezés nyitva",
+   "running": "Fut"
+  },
+  "tincture": {
+   "black": "Fekete",
+   "blue": "Kék",
+   "gold": "Arany",
+   "green": "Zöld",
+   "mulberry": "Szeder",
+   "orange": "Narancs",
+   "purple": "Bíbor",
+   "red": "Vörös"
+  },
+  "users": {
+   "col": {
+    "admin": "Admin",
+    "created_at": "Regisztrált",
+    "email": "E-mail",
+    "games": "Játékok",
+    "name": "Név",
+    "providers": "Belépés",
+    "role": "Szerepkör"
+   },
+   "empty": "Nincs találat.",
+   "grant_confirm": "Admin jogot adsz {name} felhasználónak?",
+   "grant_title": "Admin jog megadása",
+   "granted": "{name} mostantól admin.",
+   "revoke_confirm": "Elveszed {name} admin jogát?",
+   "revoke_title": "Admin jog elvétele",
+   "revoked": "{name} már nem admin.",
+   "search": "Keresés névre vagy e-mailre",
+   "title": "Felhasználók",
+   "you": "(te)"
+  }
+ },
  "app": {
   "tagline": "Nem városokat foglalsz. Befolyást építesz bennük.",
   "title": "Trón nélkül"
@@ -601,8 +824,7 @@
   "offer_sent": "Ajánlat elküldve",
   "order_added": "Parancslapra került",
   "order_added_named": "Parancslapra került: {label}",
-  "sealed": "Parancslap lepecsételve. {time} múlva lép érvénybe.",
-  "settled": "Elszámolás lefutott."
+  "sealed": "Parancslap lepecsételve. {time} múlva lép érvénybe."
  },
  "orders": {
   "cost_gold": "{gold} A",
@@ -663,6 +885,23 @@
   "load_failed": "Nem sikerült betölteni"
  },
  "server": {
+  "admin": {
+   "advance_range": "Az idő 1 perc és {max} perc (7 nap) között léptethető.",
+   "closes_before_opens": "A jelentkezés zárása a nyitás után legyen.",
+   "game_id_invalid": "A játék azonosítója 3–40 karakter lehet: kisbetű, számjegy és kötőjel.",
+   "game_id_taken": "Ilyen azonosítójú játék már van (élő vagy archivált).",
+   "game_name_long": "A játék neve legfeljebb {max} karakter lehet.",
+   "game_name_required": "Add meg a játék nevét.",
+   "map_unknown": "Nincs ilyen térkép.",
+   "max_players_range": "A játékosok száma {min} és {max} között lehet.",
+   "npc_count_range": "Az NPC-házak száma 0 és {max} között lehet.",
+   "own_admin_role": "A saját ADMIN szerepkörödet nem veheted el.",
+   "player_not_found": "Nincs ilyen ház ebben a játékban.",
+   "remove_player_started": "Házat csak a játék kezdete előtt lehet eltávolítani.",
+   "role_invalid": "A szerepkör PLAYER vagy ADMIN lehet.",
+   "tags_long": "A címkék együtt legfeljebb {max} karakter hosszúak lehetnek.",
+   "user_not_found": "Nincs ilyen felhasználó."
+  },
   "already_joined": "Már jelentkeztél ebbe a játékba.",
   "auth": {
    "default_name": "Vándor",
@@ -710,9 +949,6 @@
   "withdraw_closed": "A jelentkezés a kezdés után már nem vonható vissza."
  },
  "shell": {
-  "admin": {
-   "settle_now": "Elszámolás most"
-  },
   "back_to_lobby": "← Játékok",
   "load_failed": "Nem sikerült betölteni a játékot",
   "nav": {

@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-
 /** Starting a game, advancing the clock (scheduler), and the development immediate settlement. */
 @Service
 public class GameLifecycleService {
@@ -34,7 +32,7 @@ public class GameLifecycleService {
         if (g.status == GameStatus.RUNNING) return;
         if (g.status != GameStatus.OPEN) throw ApiException.conflict("server.only_open_start");
         MapDefinition map = MapRegistry.get(g.mapId);
-        EngineState s = Setup.initial(map, Instant.now().toEpochMilli());
+        EngineState s = Setup.initial(map, g.now().toEpochMilli());
         for (int i = 0; i < Math.min(g.npcCount, Npcs.ALL.size()); i++) {
             Npcs.Template t = Npcs.ALL.get(i);
             String name = messages.text(t.label());
@@ -58,6 +56,19 @@ public class GameLifecycleService {
 
     /** Called by the scheduler: runs the maturing sheets and settlements due by now. */
     public void tick(String gameId) { runner.mutate(gameId, (g, e) -> null); }
+
+    /** Largest admin time advance: 7 days. */
+    public static final int MAX_ADVANCE_MINUTES = 7 * 24 * 60;
+
+    /** Admin: moves the game clock forward (null: to the next event); returns the minutes added. */
+    public int advance(String gameId, Integer minutes) {
+        if (minutes != null && (minutes < 1 || minutes > MAX_ADVANCE_MINUTES))
+            throw ApiException.badRequest("server.admin.advance_range", "max", MAX_ADVANCE_MINUTES);
+        return runner.advanceClock(gameId, minutes);
+    }
+
+    /** Admin: ends the season now (coronation, archive); returns the settlements the season had. */
+    public int finish(String gameId) { return runner.endSeason(gameId); }
 
     /** For development (ADMIN): immediate settlement. */
     public int settleNow(String gameId) {

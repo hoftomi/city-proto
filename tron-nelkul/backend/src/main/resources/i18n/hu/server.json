@@ -43,5 +43,22 @@
     "discord_no_token": "A Discord nem adott hozzáférési tokent.",
     "discord_no_profile": "A Discord-profil nem kérhető le.",
     "discord_failed": "A Discord-belépés nem sikerült. Próbáld újra."
+  },
+  "admin": {
+    "game_id_invalid": "A játék azonosítója 3–40 karakter lehet: kisbetű, számjegy és kötőjel.",
+    "game_id_taken": "Ilyen azonosítójú játék már van (élő vagy archivált).",
+    "game_name_required": "Add meg a játék nevét.",
+    "game_name_long": "A játék neve legfeljebb {max} karakter lehet.",
+    "map_unknown": "Nincs ilyen térkép.",
+    "max_players_range": "A játékosok száma {min} és {max} között lehet.",
+    "npc_count_range": "Az NPC-házak száma 0 és {max} között lehet.",
+    "closes_before_opens": "A jelentkezés zárása a nyitás után legyen.",
+    "tags_long": "A címkék együtt legfeljebb {max} karakter hosszúak lehetnek.",
+    "advance_range": "Az idő 1 perc és {max} perc (7 nap) között léptethető.",
+    "player_not_found": "Nincs ilyen ház ebben a játékban.",
+    "remove_player_started": "Házat csak a játék kezdete előtt lehet eltávolítani.",
+    "user_not_found": "Nincs ilyen felhasználó.",
+    "role_invalid": "A szerepkör PLAYER vagy ADMIN lehet.",
+    "own_admin_role": "A saját ADMIN szerepkörödet nem veheted el."
   }
 }

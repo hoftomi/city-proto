@@ -42,7 +42,7 @@ void main() {
       act: (b) => b.add(const AuthStarted()),
       expect: () => [
             AuthState(status: AuthStatus.signedIn, user: user),
-            isA<AuthState>().having((s) => s.admin, 'admin', true),
+            isA<AuthState>().having((s) => s.user?.role, 'role', 'ADMIN'),
           ]);
 
   blocTest<AuthBloc, AuthState>('successful sign-in: button spins, then signed in',

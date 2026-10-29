@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Spring Boot actuator on the management port (not the public API port)
+  - job_name: tron-backend
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["backend:8091"]
+        labels:
+          app: tron-backend
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

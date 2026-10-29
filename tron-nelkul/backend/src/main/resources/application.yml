@@ -15,11 +15,32 @@ spring:
 server:
   port: ${PORT:8080}
 
+# Actuator on its own port: the public API port (8080) does not expose metrics. Keep 8091 off the internet.
 management:
+  server:
+    port: ${MANAGEMENT_PORT:8091}
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, info, prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: tron-backend
+    distribution:
+      # histogram buckets → p50/p95/p99 by uri in Prometheus (histogram_quantile)
+      percentiles-histogram:
+        http.server.requests: true
+
+info:
+  app:
+    name: tron-backend
 
 app:
   zone: Europe/Budapest
@@ -31,3 +52,5 @@ app:
     discord-client-secret: ${DISCORD_CLIENT_SECRET:}
   scheduler:
     enabled: ${SCHEDULER_ENABLED:true}
+  # tron_* game gauges (GameMetrics): aggregate DB queries, refreshed this often, not on every scrape
+  metrics-refresh-seconds: ${METRICS_REFRESH_SECONDS:30}

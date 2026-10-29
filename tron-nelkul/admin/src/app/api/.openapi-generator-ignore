@@ -1,0 +1,4 @@
+# Kept by the generator (tools/api_codegen): files the admin does not need.
+git_push.sh
+.gitignore
+README.md
