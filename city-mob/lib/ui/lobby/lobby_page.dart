@@ -131,7 +131,7 @@ class _GameCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final when = g.cardWhenText;
+    final when = g.whenText;
     return Semantics(
       button: true,
       label: when == null ? g.name : 'lobby.game_semantics'.tr(namedArgs: {'name': g.name, 'when': when.text}),

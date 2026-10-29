@@ -60,7 +60,8 @@ class _GameDetailView extends StatelessWidget {
                       child: Padding(padding: const EdgeInsets.all(16), child: Notice(tone: 'danger', title: 'lobby.load_failed'.tr(), body: s.failure!.message.text)));
                 }
                 if (!s.ready) return const Center(child: CircularProgressIndicator());
-                final g = s.game!;
+                final d = s.detail!;
+                final g = d.game;
                 final h = g.myHouse;
                 return ListView(padding: const EdgeInsets.all(16), children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -73,10 +74,10 @@ class _GameDetailView extends StatelessWidget {
                   const SizedBox(height: 16),
                   TnCard(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      _fact(c, 'detail.fact.start'.tr(), g.startText.text),
-                      _fact(c, 'detail.fact.length'.tr(), 'detail.length_value'.tr(namedArgs: {'max': '${g.maxRounds}'})),
-                      _fact(c, 'detail.fact.houses'.tr(), 'detail.houses_value'.tr(namedArgs: {'players': '${g.players}', 'max': '${g.maxPlayers}', 'npc': '${g.npcCount}'})),
-                      _fact(c, 'detail.fact.cities'.tr(), 'detail.cities_value'.tr(namedArgs: {'cities': '${g.cities}'})),
+                      _fact(c, 'detail.fact.start'.tr(), d.startText.text),
+                      _fact(c, 'detail.fact.length'.tr(), 'detail.length_value'.tr(namedArgs: {'max': '${d.maxRounds}'})),
+                      _fact(c, 'detail.fact.houses'.tr(), 'detail.houses_value'.tr(namedArgs: {'players': '${d.players}', 'max': '${d.maxPlayers}', 'npc': '${d.npcCount}'})),
+                      _fact(c, 'detail.fact.cities'.tr(), 'detail.cities_value'.tr(namedArgs: {'cities': '${d.cities}'})),
                       _fact(c, 'detail.fact.victory'.tr(), 'detail.victory_value'.tr()),
                       if (g.tags.isNotEmpty) ...[const SizedBox(height: 8), Wrap(spacing: 6, runSpacing: 6, children: [for (final t in g.tags) Tag(t)])],
                     ]),
@@ -91,8 +92,8 @@ class _GameDetailView extends StatelessWidget {
                       kind: TnButtonKind.primary,
                       onPressed: () => _join(context, g.id),
                     ),
-                  if (g.closedFull) Notice(tone: 'warn', title: 'detail.full'.tr()),
-                  if (g.announced) Notice(tone: 'info', title: 'detail.not_yet'.tr(), body: 'detail.not_yet_body'.tr(namedArgs: {'when': g.whenText.text})),
+                  if (d.closedFull) Notice(tone: 'warn', title: 'detail.full'.tr()),
+                  if (g.announced) Notice(tone: 'info', title: 'detail.not_yet'.tr(), body: 'detail.not_yet_body'.tr(namedArgs: {'when': g.whenText!.text})),
                   if (g.finished) Notice(tone: 'info', title: g.winnerText.text, body: g.myPlace == null ? null : 'detail.my_place'.tr(namedArgs: {'place': '${g.myPlace}'})),
                 ]);
               }),

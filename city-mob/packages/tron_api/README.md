@@ -83,7 +83,7 @@ Class | Method | HTTP request | Description
 [*LobbyApi*](doc/LobbyApi.md) | [**getGame**](doc/LobbyApi.md#getgame) | **GET** /api/games/{id} | Game details: start slots, backgrounds, tinctures
 [*LobbyApi*](doc/LobbyApi.md) | [**getMap**](doc/LobbyApi.md#getmap) | **GET** /api/games/maps/{mapId} | Map: cities, roads, start slots, terrain (cacheable)
 [*LobbyApi*](doc/LobbyApi.md) | [**joinGame**](doc/LobbyApi.md#joingame) | **POST** /api/games/{id}/join | Join (a running game until its first 3 settlements)
-[*LobbyApi*](doc/LobbyApi.md) | [**listArchivedGames**](doc/LobbyApi.md#listarchivedgames) | **GET** /api/games/archived | Finished games, newest first, with the winner and the own place
+[*LobbyApi*](doc/LobbyApi.md) | [**listArchivedGames**](doc/LobbyApi.md#listarchivedgames) | **GET** /api/games/archived | Finished games the user played in, newest first, with the winner and the own place
 [*LobbyApi*](doc/LobbyApi.md) | [**listAvailableGames**](doc/LobbyApi.md#listavailablegames) | **GET** /api/games/available | Live games the user has not joined (running, open, announced)
 [*LobbyApi*](doc/LobbyApi.md) | [**listJoinedGames**](doc/LobbyApi.md#listjoinedgames) | **GET** /api/games/joined | Live games the user joined, with the own house (running, open, announced)
 [*LobbyApi*](doc/LobbyApi.md) | [**withdrawGame**](doc/LobbyApi.md#withdrawgame) | **DELETE** /api/games/{id}/join | Withdraw (only before the start)

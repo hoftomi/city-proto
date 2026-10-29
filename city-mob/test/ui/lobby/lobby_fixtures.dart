@@ -4,32 +4,24 @@ import 'package:tron_api/tron_api.dart';
 GameSummary summary({
   String id = 'g1',
   String status = 'open',
-  int round = 0,
-  int players = 3,
-  int maxPlayers = 10,
+  bool canJoin = false,
   MyHouse? myHouse,
   DateTime? closesAt,
 }) =>
     GameSummary(
       id: id,
-      name: 'Játék $id',
+      name: 'Game $id',
       status: status,
-      mapId: 'm1',
       closesAt: closesAt,
       opensAt: null,
-      round: round,
-      maxRounds: 20,
-      players: players,
-      maxPlayers: maxPlayers,
-      cities: 6,
-      npcCount: 2,
       tags: const [],
+      canJoin: canJoin,
       winner: null,
       myPlace: null,
       myHouse: myHouse,
     );
 
-MyHouse house() => MyHouse(playerId: 'p1', houseName: 'Kékholló', tincture: 'azur', background: 'merchant', backgroundName: 'Kereskedőház', startSlot: 's1');
+MyHouse house() => MyHouse(houseName: 'Bluecrow', tincture: 'azur', backgroundName: 'Merchant house');
 
 StartSlotDto slot(String id, {List<GoodOption> goods = const []}) => StartSlotDto(
       id: id,
@@ -44,8 +36,15 @@ StartSlotDto slot(String id, {List<GoodOption> goods = const []}) => StartSlotDt
       homeGoods: goods,
     );
 
-GameDetail detail({GameSummary? game}) => GameDetail(
+GameDetail detail({GameSummary? game, int round = 0, int players = 3, int maxPlayers = 10}) => GameDetail(
       game: game ?? summary(),
+      mapId: 'm1',
+      round: round,
+      maxRounds: 20,
+      players: players,
+      maxPlayers: maxPlayers,
+      cities: 6,
+      npcCount: 2,
       starts: [
         slot('s1', goods: [GoodOption(id: 'wine', name: 'Bor'), GoodOption(id: 'salt', name: 'Só')]),
         slot('s2'),

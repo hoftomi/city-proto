@@ -27,25 +27,13 @@ class GameSummary {
 
     required  this.status,
 
-    required  this.mapId,
-
     required  this.closesAt,
 
     required  this.opensAt,
 
-    required  this.round,
-
-    required  this.maxRounds,
-
-    required  this.players,
-
-    required  this.maxPlayers,
-
-    required  this.cities,
-
-    required  this.npcCount,
-
     required  this.tags,
+
+    required  this.canJoin,
 
     required  this.winner,
 
@@ -92,18 +80,6 @@ class GameSummary {
 
   @JsonKey(
     
-    name: r'mapId',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String mapId;
-
-
-
-  @JsonKey(
-    
     name: r'closesAt',
     required: true,
     includeIfNull: true,
@@ -128,78 +104,6 @@ class GameSummary {
 
   @JsonKey(
     
-    name: r'round',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int round;
-
-
-
-  @JsonKey(
-    
-    name: r'maxRounds',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int maxRounds;
-
-
-
-  @JsonKey(
-    
-    name: r'players',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int players;
-
-
-
-  @JsonKey(
-    
-    name: r'maxPlayers',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int maxPlayers;
-
-
-
-  @JsonKey(
-    
-    name: r'cities',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int cities;
-
-
-
-  @JsonKey(
-    
-    name: r'npcCount',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int npcCount;
-
-
-
-  @JsonKey(
-    
     name: r'tags',
     required: true,
     includeIfNull: false,
@@ -207,6 +111,18 @@ class GameSummary {
 
 
   final List<String> tags;
+
+
+
+  @JsonKey(
+    
+    name: r'canJoin',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final bool canJoin;
 
 
 
@@ -253,16 +169,10 @@ class GameSummary {
       other.id == id &&
       other.name == name &&
       other.status == status &&
-      other.mapId == mapId &&
       other.closesAt == closesAt &&
       other.opensAt == opensAt &&
-      other.round == round &&
-      other.maxRounds == maxRounds &&
-      other.players == players &&
-      other.maxPlayers == maxPlayers &&
-      other.cities == cities &&
-      other.npcCount == npcCount &&
       other.tags == tags &&
+      other.canJoin == canJoin &&
       other.winner == winner &&
       other.myPlace == myPlace &&
       other.myHouse == myHouse;
@@ -272,16 +182,10 @@ class GameSummary {
         id.hashCode +
         name.hashCode +
         status.hashCode +
-        mapId.hashCode +
         (closesAt == null ? 0 : closesAt.hashCode) +
         (opensAt == null ? 0 : opensAt.hashCode) +
-        round.hashCode +
-        maxRounds.hashCode +
-        players.hashCode +
-        maxPlayers.hashCode +
-        cities.hashCode +
-        npcCount.hashCode +
         tags.hashCode +
+        canJoin.hashCode +
         (winner == null ? 0 : winner.hashCode) +
         (myPlace == null ? 0 : myPlace.hashCode) +
         (myHouse == null ? 0 : myHouse.hashCode);

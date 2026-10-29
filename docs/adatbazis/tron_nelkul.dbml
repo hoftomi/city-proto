@@ -70,7 +70,8 @@ Table archived_players {
   npc boolean [not null, default: false, note: 'whether it is a computer house']
   persona varchar(20) [note: 'NPC strategy']
   start_good varchar(40) [note: 'starting good of a Merchant House']
-  legit integer [not null, default: 0, note: 'final Legitimacy (for ranking)']
+  legit integer [not null, default: 0, note: 'final Legitimacy']
+  place integer [not null, note: 'final place (1 = winner), stored when the game is archived']
   created_at timestamptz [not null, note: 'joined at']
 
   indexes {

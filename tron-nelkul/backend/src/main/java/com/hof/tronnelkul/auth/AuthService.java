@@ -17,12 +17,11 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserIdentityRepository userIdentityRepository;
     private final Messages messages;
+    private final UserMapper userMapper;
 
-    public AuthService(UserRepository userRepository, UserIdentityRepository userIdentityRepository, Messages messages) {
-        this.userRepository = userRepository; this.userIdentityRepository = userIdentityRepository; this.messages = messages;
+    public AuthService(UserRepository userRepository, UserIdentityRepository userIdentityRepository, Messages messages, UserMapper userMapper) {
+        this.userRepository = userRepository; this.userIdentityRepository = userIdentityRepository; this.messages = messages; this.userMapper = userMapper;
     }
-
-    static UserDto dto(AppUser u) { return new UserDto(u.id, u.displayName, u.role); }
 
     /** The user of a verified Firebase ID token. */
     public AppUser resolve(Jwt token) {
@@ -40,5 +39,5 @@ public class AuthService {
         return user;
     }
 
-    public UserDto me(UUID id) { return dto(userRepository.findById(id).orElseThrow()); }
+    public UserDto me(UUID id) { return userMapper.dto(userRepository.findById(id).orElseThrow()); }
 }

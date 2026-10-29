@@ -75,7 +75,7 @@ public class GameRunner {
      */
     void persist(GameEntity g, Engine e) {
         boolean over = g.status == GameStatus.RUNNING && e.s.settlements >= GameEntity.maxSettlements();
-        String winner = over ? finish(g, e) : null;
+        List<String> ranking = over ? finish(g, e) : List.of();
         g.state = json.writeValueAsString(e.s);
         List<PlayerEntity> all = playerRepository.findByGameId(g.id);
         for (PlayerEntity p : all) {
@@ -95,30 +95,45 @@ public class GameRunner {
         }
         reportRepository.saveAll(rep);
         e.out.clear();
-        if (over) archive(g, winner);
+        if (over) archive(g, e, ranking);
     }
 
     /** The Coronation Council: the winner's house (or null) and the public closing report. */
-    private String finish(GameEntity g, Engine e) {
+    private List<String> finish(GameEntity g, Engine e) {
         e.coronation();
-        EngineState.PlayerSt top = e.s.players.values().stream().max(Comparator.comparingInt(p -> p.legit)).orElse(null);
-        String winner = top == null ? null : top.name + (top.npc ? " (NPC)" : "");
+        List<String> ranking = ranking(e);
+        EngineState.PlayerSt top = ranking.isEmpty() ? null : e.s.players.get(ranking.getFirst());
+        String winner = winnerName(top);
         e.out.add(new ReportOut(null, true, e.s.clock, "event", null, Msg.of("server.season_end.title"),
             Msg.of("server.season_end.text", "who", winner == null ? Msg.of("server.season_end.nobody") : Msg.of("server.season_end.winner", "house", winner)), "info"));
         log.info("Game finished: {}, winner: {}", g.id, winner);
-        return winner;
+        return ranking;
     }
 
-    /** The finished game, its houses and reports move to the archived_* tables. */
-    private void archive(GameEntity g, String winner) {
-        archivedGameRepository.save(new ArchivedGameEntity(g, winner));
+    /** Final ranking by Legitimacy, highest first; ties keep the state's order, so the winner is always the first. */
+    private static List<String> ranking(Engine e) {
+        return e.s.players.entrySet().stream().sorted(Comparator.comparingInt((Map.Entry<String, EngineState.PlayerSt> x) -> x.getValue().legit).reversed())
+            .map(Map.Entry::getKey).toList();
+    }
+
+    private static String winnerName(EngineState.PlayerSt top) { return top == null ? null : top.name + (top.npc ? " (NPC)" : ""); }
+
+    /** The finished game, its houses (with their final place) and reports move to the archived_* tables. */
+    private void archive(GameEntity g, Engine e, List<String> ranking) {
+        archivedGameRepository.save(new ArchivedGameEntity(g, winnerName(ranking.isEmpty() ? null : e.s.players.get(ranking.getFirst()))));
         List<PlayerEntity> ps = playerRepository.findByGameId(g.id);
-        archivedPlayerRepository.saveAll(ps.stream().map(ArchivedPlayerEntity::new).toList());
+        archivedPlayerRepository.saveAll(ps.stream().map(p -> new ArchivedPlayerEntity(p, place(ranking, p))).toList());
         List<ReportEntity> rs = reportRepository.findByGameId(g.id);
         archivedReportRepository.saveAll(rs.stream().map(ArchivedReportEntity::new).toList());
         reportRepository.deleteAll(rs);
         playerRepository.deleteAll(ps);
         gameRepository.delete(g);
         log.info("Archived: {}", g.id);
+    }
+
+    /** 1-based place in the final ranking; a house missing from the state comes last. */
+    private static int place(List<String> ranking, PlayerEntity p) {
+        int i = ranking.indexOf(p.id.toString());
+        return i < 0 ? ranking.size() + 1 : i + 1;
     }
 }

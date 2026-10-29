@@ -160,7 +160,7 @@ The contract is at the repo root: [`api/openapi.yaml`](../api/openapi.yaml). On 
 | GET | `/api/me` | the signed-in user (created by the first call) |
 | GET | `/api/games/joined` | the user's live games (running, open, announced), with the own house |
 | GET | `/api/games/available` | live games the user has not joined |
-| GET | `/api/games/archived` | finished games, newest first, with the winner and the own place |
+| GET | `/api/games/archived` | finished games the user played in, newest first, with the winner and the own place |
 | GET | `/api/games/{id}` | details, starting positions, backgrounds, tinctures |
 | GET | `/api/games/maps/{mapId}` | map (cities, roads, starting positions, terrain) |
 | POST / DELETE | `/api/games/{id}/join` | joining and withdrawal |

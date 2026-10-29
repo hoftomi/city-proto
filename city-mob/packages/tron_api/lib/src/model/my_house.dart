@@ -20,30 +20,12 @@ class MyHouse {
   /// Returns a new [MyHouse] instance.
   MyHouse({
 
-    required  this.playerId,
-
     required  this.houseName,
 
     required  this.tincture,
 
-    required  this.background,
-
     required  this.backgroundName,
-
-    required  this.startSlot,
   });
-
-  @JsonKey(
-    
-    name: r'playerId',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String playerId;
-
-
 
   @JsonKey(
     
@@ -71,18 +53,6 @@ class MyHouse {
 
   @JsonKey(
     
-    name: r'background',
-    required: true,
-    includeIfNull: true,
-  )
-
-
-  final String? background;
-
-
-
-  @JsonKey(
-    
     name: r'backgroundName',
     required: true,
     includeIfNull: true,
@@ -93,37 +63,19 @@ class MyHouse {
 
 
 
-  @JsonKey(
-    
-    name: r'startSlot',
-    required: true,
-    includeIfNull: true,
-  )
-
-
-  final String? startSlot;
-
-
-
 
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is MyHouse &&
-      other.playerId == playerId &&
       other.houseName == houseName &&
       other.tincture == tincture &&
-      other.background == background &&
-      other.backgroundName == backgroundName &&
-      other.startSlot == startSlot;
+      other.backgroundName == backgroundName;
 
     @override
     int get hashCode =>
-        playerId.hashCode +
         houseName.hashCode +
         tincture.hashCode +
-        (background == null ? 0 : background.hashCode) +
-        (backgroundName == null ? 0 : backgroundName.hashCode) +
-        (startSlot == null ? 0 : startSlot.hashCode);
+        (backgroundName == null ? 0 : backgroundName.hashCode);
 
   factory MyHouse.fromJson(Map<String, dynamic> json) => _$MyHouseFromJson(json);
 

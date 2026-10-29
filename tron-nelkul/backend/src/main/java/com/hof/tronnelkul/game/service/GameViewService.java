@@ -5,6 +5,7 @@ import com.hof.tronnelkul.api.model.*;
 import com.hof.tronnelkul.game.engine.*;
 import com.hof.tronnelkul.game.engine.EngineState.*;
 import com.hof.tronnelkul.game.engine.Rules.*;
+import com.hof.tronnelkul.game.mapper.ReportMapper;
 import com.hof.tronnelkul.game.model.*;
 import com.hof.tronnelkul.game.world.CityDef;
 import com.hof.tronnelkul.game.world.GoodDef;
@@ -28,10 +29,13 @@ public class GameViewService {
     private final ReportRepository reportRepository;
     private final GameRunner runner;
     private final Messages messages;
+    private final ReportMapper reportMapper;
     private final Catalog catalog;
 
-    public GameViewService(GameRepository gameRepository, PlayerRepository playerRepository, ReportRepository reportRepository, GameRunner runner, Messages messages) {
+    public GameViewService(GameRepository gameRepository, PlayerRepository playerRepository, ReportRepository reportRepository, GameRunner runner, Messages messages,
+                           ReportMapper reportMapper) {
         this.gameRepository = gameRepository; this.playerRepository = playerRepository; this.reportRepository = reportRepository; this.runner = runner; this.messages = messages;
+        this.reportMapper = reportMapper;
         this.catalog = catalog(messages);
     }
 
@@ -188,7 +192,7 @@ public class GameViewService {
         GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
         PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
         return reportRepository.findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(g.id, p.id).stream()
-            .map(r -> new ReportView(r.id.toString(), r.settlement, r.kind, r.confidence, r.title, r.body, r.tone, r.createdAt, r.isPublic)).toList();
+            .map(reportMapper::view).toList();
     }
 
     @Transactional(readOnly = true)

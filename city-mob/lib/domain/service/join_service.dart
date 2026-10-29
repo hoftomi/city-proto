@@ -24,7 +24,7 @@ class JoinService {
   Future<Either<Failure, (GameDetail, MapDef)>> detail(String id) async {
     final d = await _lobby.game(id);
     if (d.isLeft) return Left(d.left);
-    final m = await _lobby.map(d.right.game.mapId);
+    final m = await _lobby.map(d.right.mapId);
     if (m.isLeft) return Left(m.left);
     return Right((d.right, m.right));
   }

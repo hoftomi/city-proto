@@ -9,6 +9,20 @@ part of 'game_detail.dart';
 abstract class _$GameDetailCWProxy {
   GameDetail game(GameSummary game);
 
+  GameDetail mapId(String mapId);
+
+  GameDetail round(int round);
+
+  GameDetail maxRounds(int maxRounds);
+
+  GameDetail players(int players);
+
+  GameDetail maxPlayers(int maxPlayers);
+
+  GameDetail cities(int cities);
+
+  GameDetail npcCount(int npcCount);
+
   GameDetail starts(List<StartSlotDto> starts);
 
   GameDetail backgrounds(List<BackgroundDto> backgrounds);
@@ -23,6 +37,13 @@ abstract class _$GameDetailCWProxy {
   /// ````
   GameDetail call({
     GameSummary game,
+    String mapId,
+    int round,
+    int maxRounds,
+    int players,
+    int maxPlayers,
+    int cities,
+    int npcCount,
     List<StartSlotDto> starts,
     List<BackgroundDto> backgrounds,
     List<String> tinctures,
@@ -37,6 +58,27 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
 
   @override
   GameDetail game(GameSummary game) => this(game: game);
+
+  @override
+  GameDetail mapId(String mapId) => this(mapId: mapId);
+
+  @override
+  GameDetail round(int round) => this(round: round);
+
+  @override
+  GameDetail maxRounds(int maxRounds) => this(maxRounds: maxRounds);
+
+  @override
+  GameDetail players(int players) => this(players: players);
+
+  @override
+  GameDetail maxPlayers(int maxPlayers) => this(maxPlayers: maxPlayers);
+
+  @override
+  GameDetail cities(int cities) => this(cities: cities);
+
+  @override
+  GameDetail npcCount(int npcCount) => this(npcCount: npcCount);
 
   @override
   GameDetail starts(List<StartSlotDto> starts) => this(starts: starts);
@@ -57,6 +99,13 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
   /// ````
   GameDetail call({
     Object? game = const $CopyWithPlaceholder(),
+    Object? mapId = const $CopyWithPlaceholder(),
+    Object? round = const $CopyWithPlaceholder(),
+    Object? maxRounds = const $CopyWithPlaceholder(),
+    Object? players = const $CopyWithPlaceholder(),
+    Object? maxPlayers = const $CopyWithPlaceholder(),
+    Object? cities = const $CopyWithPlaceholder(),
+    Object? npcCount = const $CopyWithPlaceholder(),
     Object? starts = const $CopyWithPlaceholder(),
     Object? backgrounds = const $CopyWithPlaceholder(),
     Object? tinctures = const $CopyWithPlaceholder(),
@@ -66,6 +115,34 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
           ? _value.game
           // ignore: cast_nullable_to_non_nullable
           : game as GameSummary,
+      mapId: mapId == const $CopyWithPlaceholder()
+          ? _value.mapId
+          // ignore: cast_nullable_to_non_nullable
+          : mapId as String,
+      round: round == const $CopyWithPlaceholder()
+          ? _value.round
+          // ignore: cast_nullable_to_non_nullable
+          : round as int,
+      maxRounds: maxRounds == const $CopyWithPlaceholder()
+          ? _value.maxRounds
+          // ignore: cast_nullable_to_non_nullable
+          : maxRounds as int,
+      players: players == const $CopyWithPlaceholder()
+          ? _value.players
+          // ignore: cast_nullable_to_non_nullable
+          : players as int,
+      maxPlayers: maxPlayers == const $CopyWithPlaceholder()
+          ? _value.maxPlayers
+          // ignore: cast_nullable_to_non_nullable
+          : maxPlayers as int,
+      cities: cities == const $CopyWithPlaceholder()
+          ? _value.cities
+          // ignore: cast_nullable_to_non_nullable
+          : cities as int,
+      npcCount: npcCount == const $CopyWithPlaceholder()
+          ? _value.npcCount
+          // ignore: cast_nullable_to_non_nullable
+          : npcCount as int,
       starts: starts == const $CopyWithPlaceholder()
           ? _value.starts
           // ignore: cast_nullable_to_non_nullable
@@ -96,13 +173,32 @@ GameDetail _$GameDetailFromJson(Map<String, dynamic> json) =>
     $checkedCreate('GameDetail', json, ($checkedConvert) {
       $checkKeys(
         json,
-        requiredKeys: const ['game', 'starts', 'backgrounds', 'tinctures'],
+        requiredKeys: const [
+          'game',
+          'mapId',
+          'round',
+          'maxRounds',
+          'players',
+          'maxPlayers',
+          'cities',
+          'npcCount',
+          'starts',
+          'backgrounds',
+          'tinctures',
+        ],
       );
       final val = GameDetail(
         game: $checkedConvert(
           'game',
           (v) => GameSummary.fromJson(v as Map<String, dynamic>),
         ),
+        mapId: $checkedConvert('mapId', (v) => v as String),
+        round: $checkedConvert('round', (v) => (v as num).toInt()),
+        maxRounds: $checkedConvert('maxRounds', (v) => (v as num).toInt()),
+        players: $checkedConvert('players', (v) => (v as num).toInt()),
+        maxPlayers: $checkedConvert('maxPlayers', (v) => (v as num).toInt()),
+        cities: $checkedConvert('cities', (v) => (v as num).toInt()),
+        npcCount: $checkedConvert('npcCount', (v) => (v as num).toInt()),
         starts: $checkedConvert(
           'starts',
           (v) => (v as List<dynamic>)
@@ -126,6 +222,13 @@ GameDetail _$GameDetailFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GameDetailToJson(GameDetail instance) =>
     <String, dynamic>{
       'game': instance.game.toJson(),
+      'mapId': instance.mapId,
+      'round': instance.round,
+      'maxRounds': instance.maxRounds,
+      'players': instance.players,
+      'maxPlayers': instance.maxPlayers,
+      'cities': instance.cities,
+      'npcCount': instance.npcCount,
       'starts': instance.starts.map((e) => e.toJson()).toList(),
       'backgrounds': instance.backgrounds.map((e) => e.toJson()).toList(),
       'tinctures': instance.tinctures,

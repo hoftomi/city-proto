@@ -16,7 +16,6 @@ class StatusChip extends StatelessWidget {
     final c = context.tn;
     return switch (g.badge) {
       GameBadge.joined => TnChip(label: 'lobby.badge.joined'.tr(), icon: 'check', fg: c.onBtn, bg: c.btnGreen, border: c.outline),
-      GameBadge.almostFull => TnChip(label: 'lobby.badge.almost_full'.tr(), fg: c.ink, bg: c.btnGold),
       GameBadge.runningJoinable => TnChip(label: 'lobby.badge.running_joinable'.tr(), fg: c.onBtn, bg: c.btnGreen, border: c.outline),
       GameBadge.running => TnChip(label: 'lobby.badge.running'.tr(), fg: c.onBtn, bg: c.btnGreen, border: c.outline),
       GameBadge.open => TnChip(label: 'lobby.badge.open'.tr(), fg: c.onBtn, bg: c.btnBlue, border: c.outline),

@@ -13,25 +13,13 @@ abstract class _$GameSummaryCWProxy {
 
   GameSummary status(String status);
 
-  GameSummary mapId(String mapId);
-
   GameSummary closesAt(DateTime? closesAt);
 
   GameSummary opensAt(DateTime? opensAt);
 
-  GameSummary round(int round);
-
-  GameSummary maxRounds(int maxRounds);
-
-  GameSummary players(int players);
-
-  GameSummary maxPlayers(int maxPlayers);
-
-  GameSummary cities(int cities);
-
-  GameSummary npcCount(int npcCount);
-
   GameSummary tags(List<String> tags);
+
+  GameSummary canJoin(bool canJoin);
 
   GameSummary winner(String? winner);
 
@@ -49,16 +37,10 @@ abstract class _$GameSummaryCWProxy {
     String id,
     String name,
     String status,
-    String mapId,
     DateTime? closesAt,
     DateTime? opensAt,
-    int round,
-    int maxRounds,
-    int players,
-    int maxPlayers,
-    int cities,
-    int npcCount,
     List<String> tags,
+    bool canJoin,
     String? winner,
     int? myPlace,
     MyHouse? myHouse,
@@ -81,34 +63,16 @@ class _$GameSummaryCWProxyImpl implements _$GameSummaryCWProxy {
   GameSummary status(String status) => this(status: status);
 
   @override
-  GameSummary mapId(String mapId) => this(mapId: mapId);
-
-  @override
   GameSummary closesAt(DateTime? closesAt) => this(closesAt: closesAt);
 
   @override
   GameSummary opensAt(DateTime? opensAt) => this(opensAt: opensAt);
 
   @override
-  GameSummary round(int round) => this(round: round);
-
-  @override
-  GameSummary maxRounds(int maxRounds) => this(maxRounds: maxRounds);
-
-  @override
-  GameSummary players(int players) => this(players: players);
-
-  @override
-  GameSummary maxPlayers(int maxPlayers) => this(maxPlayers: maxPlayers);
-
-  @override
-  GameSummary cities(int cities) => this(cities: cities);
-
-  @override
-  GameSummary npcCount(int npcCount) => this(npcCount: npcCount);
-
-  @override
   GameSummary tags(List<String> tags) => this(tags: tags);
+
+  @override
+  GameSummary canJoin(bool canJoin) => this(canJoin: canJoin);
 
   @override
   GameSummary winner(String? winner) => this(winner: winner);
@@ -130,16 +94,10 @@ class _$GameSummaryCWProxyImpl implements _$GameSummaryCWProxy {
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
-    Object? mapId = const $CopyWithPlaceholder(),
     Object? closesAt = const $CopyWithPlaceholder(),
     Object? opensAt = const $CopyWithPlaceholder(),
-    Object? round = const $CopyWithPlaceholder(),
-    Object? maxRounds = const $CopyWithPlaceholder(),
-    Object? players = const $CopyWithPlaceholder(),
-    Object? maxPlayers = const $CopyWithPlaceholder(),
-    Object? cities = const $CopyWithPlaceholder(),
-    Object? npcCount = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),
+    Object? canJoin = const $CopyWithPlaceholder(),
     Object? winner = const $CopyWithPlaceholder(),
     Object? myPlace = const $CopyWithPlaceholder(),
     Object? myHouse = const $CopyWithPlaceholder(),
@@ -157,10 +115,6 @@ class _$GameSummaryCWProxyImpl implements _$GameSummaryCWProxy {
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
           : status as String,
-      mapId: mapId == const $CopyWithPlaceholder()
-          ? _value.mapId
-          // ignore: cast_nullable_to_non_nullable
-          : mapId as String,
       closesAt: closesAt == const $CopyWithPlaceholder()
           ? _value.closesAt
           // ignore: cast_nullable_to_non_nullable
@@ -169,34 +123,14 @@ class _$GameSummaryCWProxyImpl implements _$GameSummaryCWProxy {
           ? _value.opensAt
           // ignore: cast_nullable_to_non_nullable
           : opensAt as DateTime?,
-      round: round == const $CopyWithPlaceholder()
-          ? _value.round
-          // ignore: cast_nullable_to_non_nullable
-          : round as int,
-      maxRounds: maxRounds == const $CopyWithPlaceholder()
-          ? _value.maxRounds
-          // ignore: cast_nullable_to_non_nullable
-          : maxRounds as int,
-      players: players == const $CopyWithPlaceholder()
-          ? _value.players
-          // ignore: cast_nullable_to_non_nullable
-          : players as int,
-      maxPlayers: maxPlayers == const $CopyWithPlaceholder()
-          ? _value.maxPlayers
-          // ignore: cast_nullable_to_non_nullable
-          : maxPlayers as int,
-      cities: cities == const $CopyWithPlaceholder()
-          ? _value.cities
-          // ignore: cast_nullable_to_non_nullable
-          : cities as int,
-      npcCount: npcCount == const $CopyWithPlaceholder()
-          ? _value.npcCount
-          // ignore: cast_nullable_to_non_nullable
-          : npcCount as int,
       tags: tags == const $CopyWithPlaceholder()
           ? _value.tags
           // ignore: cast_nullable_to_non_nullable
           : tags as List<String>,
+      canJoin: canJoin == const $CopyWithPlaceholder()
+          ? _value.canJoin
+          // ignore: cast_nullable_to_non_nullable
+          : canJoin as bool,
       winner: winner == const $CopyWithPlaceholder()
           ? _value.winner
           // ignore: cast_nullable_to_non_nullable
@@ -231,16 +165,10 @@ GameSummary _$GameSummaryFromJson(Map<String, dynamic> json) =>
           'id',
           'name',
           'status',
-          'mapId',
           'closesAt',
           'opensAt',
-          'round',
-          'maxRounds',
-          'players',
-          'maxPlayers',
-          'cities',
-          'npcCount',
           'tags',
+          'canJoin',
           'winner',
           'myPlace',
           'myHouse',
@@ -250,7 +178,6 @@ GameSummary _$GameSummaryFromJson(Map<String, dynamic> json) =>
         id: $checkedConvert('id', (v) => v as String),
         name: $checkedConvert('name', (v) => v as String),
         status: $checkedConvert('status', (v) => v as String),
-        mapId: $checkedConvert('mapId', (v) => v as String),
         closesAt: $checkedConvert(
           'closesAt',
           (v) => v == null ? null : DateTime.parse(v as String),
@@ -259,16 +186,11 @@ GameSummary _$GameSummaryFromJson(Map<String, dynamic> json) =>
           'opensAt',
           (v) => v == null ? null : DateTime.parse(v as String),
         ),
-        round: $checkedConvert('round', (v) => (v as num).toInt()),
-        maxRounds: $checkedConvert('maxRounds', (v) => (v as num).toInt()),
-        players: $checkedConvert('players', (v) => (v as num).toInt()),
-        maxPlayers: $checkedConvert('maxPlayers', (v) => (v as num).toInt()),
-        cities: $checkedConvert('cities', (v) => (v as num).toInt()),
-        npcCount: $checkedConvert('npcCount', (v) => (v as num).toInt()),
         tags: $checkedConvert(
           'tags',
           (v) => (v as List<dynamic>).map((e) => e as String).toList(),
         ),
+        canJoin: $checkedConvert('canJoin', (v) => v as bool),
         winner: $checkedConvert('winner', (v) => v as String?),
         myPlace: $checkedConvert('myPlace', (v) => (v as num?)?.toInt()),
         myHouse: $checkedConvert(
@@ -284,16 +206,10 @@ Map<String, dynamic> _$GameSummaryToJson(GameSummary instance) =>
       'id': instance.id,
       'name': instance.name,
       'status': instance.status,
-      'mapId': instance.mapId,
       'closesAt': instance.closesAt?.toIso8601String(),
       'opensAt': instance.opensAt?.toIso8601String(),
-      'round': instance.round,
-      'maxRounds': instance.maxRounds,
-      'players': instance.players,
-      'maxPlayers': instance.maxPlayers,
-      'cities': instance.cities,
-      'npcCount': instance.npcCount,
       'tags': instance.tags,
+      'canJoin': instance.canJoin,
       'winner': instance.winner,
       'myPlace': instance.myPlace,
       'myHouse': instance.myHouse?.toJson(),

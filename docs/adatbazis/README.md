@@ -63,6 +63,7 @@ erDiagram
     varchar tincture "crest color"
     boolean npc "computer house?"
     int legit "final Legitimacy"
+    int place "final place, 1 = winner"
     varchar etc "other columns: as in players"
   }
   archived_reports {

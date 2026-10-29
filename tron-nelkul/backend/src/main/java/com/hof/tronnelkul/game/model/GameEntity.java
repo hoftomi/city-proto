@@ -17,6 +17,8 @@ public class GameEntity {
     public static final int ROUNDS_PER_DAY = 2;
     /** Maturation time in minutes (3.1; Citizen mode). */
     public static final int MATURATION_MINUTES = 120;
+    /** Late join: a running game can still be joined up to this many settlements. */
+    public static final int LATE_JOIN_SETTLEMENTS = 3;
 
     @Id public String id;
     @Column(nullable = false) public String name;

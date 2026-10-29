@@ -276,7 +276,7 @@ _responseData = rawData == null ? null : deserialize<GameSummary, GameSummary>(r
     );
   }
 
-  /// Finished games, newest first, with the winner and the own place
+  /// Finished games the user played in, newest first, with the winner and the own place
   /// 
   ///
   /// Parameters:

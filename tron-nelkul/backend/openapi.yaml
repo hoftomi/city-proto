@@ -122,7 +122,7 @@ paths:
       operationId: listArchivedGames
       tags:
       - lobby
-      summary: 'Finished games, newest first, with the winner and the own place'
+      summary: 'Finished games the user played in, newest first, with the winner and the own place'
       responses:
         '200':
           description: OK
@@ -806,14 +806,42 @@ components:
           type: string
     GameDetail:
       type: object
+      description: 'The details page: the game card plus what only the details show. round = settlements so far, maxRounds = settlements of the season (1 month, 2 a day). players = joined human houses.'
       required:
       - game
+      - mapId
+      - round
+      - maxRounds
+      - players
+      - maxPlayers
+      - cities
+      - npcCount
       - starts
       - backgrounds
       - tinctures
       properties:
         game:
           $ref: '#/components/schemas/GameSummary'
+        mapId:
+          type: string
+        round:
+          type: integer
+          format: int32
+        maxRounds:
+          type: integer
+          format: int32
+        players:
+          type: integer
+          format: int32
+        maxPlayers:
+          type: integer
+          format: int32
+        cities:
+          type: integer
+          format: int32
+        npcCount:
+          type: integer
+          format: int32
         starts:
           type: array
           items:
@@ -906,21 +934,15 @@ components:
           $ref: '#/components/schemas/Catalog'
     GameSummary:
       type: object
-      description: 'status: announced / open / running / finished (a finished game comes from the archive). closesAt = sign-up closes, the game starts then. round = settlements so far, maxRounds = settlements of the season (1 month, 2 per day).'
+      description: 'A lobby list item: only what the game card shows. status: announced / open / running / finished (finished games come from the archive). closesAt = when sign-up closes, the game starts then. canJoin: you have not joined and may join now (open, or running inside the late-join window, and there is room). Head counts, settlements and the map are in GameDetail.'
       required:
       - id
       - name
       - status
-      - mapId
       - closesAt
       - opensAt
-      - round
-      - maxRounds
-      - players
-      - maxPlayers
-      - cities
-      - npcCount
       - tags
+      - canJoin
       - winner
       - myPlace
       - myHouse
@@ -931,8 +953,6 @@ components:
           type: string
         status:
           type: string
-        mapId:
-          type: string
         closesAt:
           type: string
           format: date-time
@@ -941,28 +961,12 @@ components:
           type: string
           format: date-time
           nullable: true
-        round:
-          type: integer
-          format: int32
-        maxRounds:
-          type: integer
-          format: int32
-        players:
-          type: integer
-          format: int32
-        maxPlayers:
-          type: integer
-          format: int32
-        cities:
-          type: integer
-          format: int32
-        npcCount:
-          type: integer
-          format: int32
         tags:
           type: array
           items:
             type: string
+        canJoin:
+          type: boolean
         winner:
           type: string
           nullable: true
@@ -1228,27 +1232,17 @@ components:
           format: int32
     MyHouse:
       type: object
+      description: The user's own house in a game, as the lobby and the details show it.
       required:
-      - playerId
       - houseName
       - tincture
-      - background
       - backgroundName
-      - startSlot
       properties:
-        playerId:
-          type: string
         houseName:
           type: string
         tincture:
           type: string
-        background:
-          type: string
-          nullable: true
         backgroundName:
-          type: string
-          nullable: true
-        startSlot:
           type: string
           nullable: true
     NewsTemplateInfo:

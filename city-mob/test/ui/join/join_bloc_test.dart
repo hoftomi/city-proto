@@ -135,7 +135,7 @@ void main() {
 
   blocTest<JoinBloc, JoinState>(
     'submit: running game enters the game',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(status: 'running', round: 1, myHouse: house()))),
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(status: 'running', myHouse: house()))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),
     act: (b) => b.add(const JoinNextPressed()),

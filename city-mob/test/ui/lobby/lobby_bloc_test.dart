@@ -20,10 +20,10 @@ void main() {
   late _MockLobby lobby;
   late _MockAuth auth;
 
-  final runningMine = summary(id: 'r', status: 'running', round: 5, myHouse: house());
+  final runningMine = summary(id: 'r', status: 'running', myHouse: house());
   final openMine = summary(id: 'o', myHouse: house());
-  final fresh = summary(id: 'n');
-  final runningOther = summary(id: 'x', status: 'running', round: 2);
+  final fresh = summary(id: 'n', canJoin: true);
+  final runningOther = summary(id: 'x', status: 'running', canJoin: true);
   final soon = summary(id: 's', status: 'announced');
   final done = summary(id: 'd', status: 'finished', myHouse: house());
   final mine = [runningMine, openMine];
@@ -47,29 +47,31 @@ void main() {
       expect(g.copyWith(finished: archived).tab(LobbyTab.finished), archived);
     });
 
-    test('status badge and joinability', () {
+    test('status badge and card timing', () {
       expect(openMine.badge, GameBadge.joined);
-      expect(summary(players: 9).badge, GameBadge.almostFull);
       expect(runningOther.badge, GameBadge.runningJoinable);
       expect(runningMine.badge, GameBadge.running);
       expect(soon.badge, GameBadge.soon);
-      expect(summary(maxPlayers: 0, players: 0).fill, 0);
-      expect(fresh.canJoin, isTrue);
-      expect(runningOther.canJoin, isTrue);
-      expect(summary(status: 'running', round: 4).canJoin, isFalse);
-      expect(summary(players: 10).canJoin, isFalse);
-      expect(summary(players: 10).closedFull, isTrue);
+      expect(done.badge, GameBadge.finished);
       expect(runningMine.enterable, isTrue);
-      expect(runningMine.whenText, const Tr('lobby.round_of', {'round': '5', 'max': '20'}));
+      expect(openMine.withdrawable, isTrue);
+      expect(runningMine.whenText, isNull);
       expect(done.whenText, const Tr('lobby.when.closed'));
-      expect(runningMine.cardWhenText, isNull);
-      expect(done.cardWhenText, done.whenText);
       expect(done.resultText, const Tr('lobby.winner', {'winner': '–'}));
       expect(fresh.startsAtText, const Tr('lobby.when.soon'));
     });
 
+    test('full and start row come from the details', () {
+      expect(summary(status: 'running').badge, GameBadge.running);
+      expect(detail(game: fresh, players: 10).closedFull, isTrue);
+      expect(detail(game: fresh, players: 9).closedFull, isFalse);
+      expect(detail(game: openMine, players: 10).closedFull, isFalse);
+      expect(detail(game: runningMine, round: 5).startText, const Tr('lobby.round_of', {'round': '5', 'max': '20'}));
+      expect(detail(game: done).startText, const Tr('lobby.when.closed'));
+    });
+
     test('labels come from the translations', () {
-      expect(runningMine.whenText.text, '5. elszámolás / 20');
+      expect(detail(game: runningMine, round: 5).startText.text, '5. elszámolás / 20');
       expect(const Tr('lobby.empty_mine').text, startsWith('Még nem jelentkeztél'));
       expect(const Tr('lobby.winner_place', {'winner': 'X', 'place': '2'}).text, 'Győztes: X · a te helyezésed: 2.');
     });
