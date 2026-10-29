@@ -19,7 +19,7 @@ dependencies:
   google_fonts: ^6.3.0
   path_drawing: ^1.0.1
   flutter_svg: ^2.3.0
-  # Architektúra (a ktk mintájára): bloc + go_router + get_it/injectable, rétegek: datasource → repository → service → bloc → widget
+  # Architecture (modelled on ktk): bloc + go_router + get_it/injectable, layers: datasource → repository → service → bloc → widget
   bloc: ^9.2.1
   flutter_bloc: ^9.1.1
   bloc_concurrency: ^0.3.0
@@ -29,10 +29,10 @@ dependencies:
   injectable: ^3.0.0
   either_dart: ^1.0.0
   dio: ^5.11.1
-  # Feliratok: a backend /api/i18n végpontjáról (TranslationRepository), offline a gyorsítótárból
+  # Translations: from the backend /api/i18n endpoint (TranslationRepository), offline from the cache
   easy_localization: ^3.0.8
   shared_preferences: ^2.5.5
-  # Az api/openapi.yaml-ból generált kliens (tools/generate_api.sh)
+  # Client generated from api/openapi.yaml (tools/generate_api.sh)
   tron_api:
     path: packages/tron_api
 
@@ -50,13 +50,13 @@ flutter:
   assets:
     - assets/k4/icons/
     - assets/k4/login.svg
-    # A térkép és a városkép rajzai (tools/k4_export)
+    # Map and city view artwork (tools/k4_export)
     - assets/k4/k4.json
     - assets/k4/map/
     - assets/k4/cities/
     - assets/k4/estates/
     - assets/k4/cityview/
-    # A Cinzel és a Nunito Sans (OFL) offline is betöltődik, a google_fonts innen veszi őket
+    # Cinzel and Nunito Sans (OFL) load offline too; google_fonts takes them from here
     - assets/google_fonts/
-    # Tartalék feliratok első indításhoz hálózat nélkül (tools/sync_translations.py a backend i18n fájljaiból)
+    # Fallback translations for a first launch without network (tools/sync_translations.py, from the backend i18n files)
     - assets/translations/

@@ -7,7 +7,7 @@ sealed class RankingEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Megváltozott a játékállapot (a GameBlocból); a bloc dönti el, kell-e újratölteni a rangsort.
+/// The game state changed (from the GameBloc); the bloc decides whether to reload the ranking.
 class RankingGameUpdated extends RankingEvent {
   const RankingGameUpdated(this.game);
   final GameState? game;
@@ -16,7 +16,7 @@ class RankingGameUpdated extends RankingEvent {
   List<Object?> get props => [game];
 }
 
-/// Kézi frissítés (lehúzás).
+/// Manual refresh (pull-to-refresh).
 class RankingRefreshRequested extends RankingEvent {
   const RankingRefreshRequested();
 }

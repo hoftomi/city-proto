@@ -1,7 +1,7 @@
 # OrderSheet
 
-A parancslap tekercs formában, sötét fa fejléccel és bronz „Parancslap” címmel.
+The order sheet as a scroll, with a dark wooden header and the bronze title „Parancslap” (Order sheet).
 
-**Mit ad a hívó:** `orders` (`[{label, art?, city?, faction?, note?, cost, hidden?}]`), `available`, `sealed`, `onSeal`, `onRemove(i)`.
+**What the caller provides:** `orders` (`[{label, art?, city?, faction?, note?, cost, hidden?}]`), `available`, `sealed`, `onSeal`, `onRemove(i)`.
 
-- Minden sor elején az akció ágszínű csempés ikonja áll. A lepecsételés a bronz `seal` gomb.
+- Every row starts with the action's branch-colored tiled icon. Sealing is the bronze `seal` button.

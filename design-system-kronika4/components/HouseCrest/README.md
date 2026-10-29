@@ -1,5 +1,5 @@
 # HouseCrest
 
-A ház címere: bronz szélű pajzs a ház tinktúrájával, jobb alsó árnyékkal és bal felső fénnyel. A kezdőbetű Cinzel, tintakontúrral.
+The house's crest: a bronze-edged shield with the house's tincture, a shadow at the bottom right and a highlight at the top left. The initial is in Cinzel, with an ink outline.
 
-**Mit ad a hívó:** `tincture`, `initial`, `name`, `npc`, `size`.
+**What the caller provides:** `tincture`, `initial`, `name`, `npc`, `size`.

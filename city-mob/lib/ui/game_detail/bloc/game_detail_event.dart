@@ -7,7 +7,7 @@ sealed class GameDetailEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// A képernyő megnyitásakor: a részletek és a térkép betöltése.
+/// On screen open: load the details and the map.
 class GameDetailStarted extends GameDetailEvent {
   const GameDetailStarted(this.gameId);
   final String gameId;
@@ -24,7 +24,7 @@ class GameDetailWithdrawRequested extends GameDetailEvent {
   const GameDetailWithdrawRequested();
 }
 
-/// Sikeres jelentkezés után visszatért a jelentkezésről: üzenet és újratöltés.
+/// Returned from the join after success: message and reload.
 class GameDetailJoined extends GameDetailEvent {
   const GameDetailJoined();
 }

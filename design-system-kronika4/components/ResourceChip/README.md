@@ -1,5 +1,5 @@
 # ResourceChip
 
-Erőforrás sötét fa kapszulában, bronz szegéllyel és világos, vastag számmal. A játékikon balra kilóg a kapszulából.
+A resource in a dark wooden capsule, with a bronze border and a light, bold number. The game icon sticks out of the capsule on the left.
 
-**Mit ad a hívó:** `kind` (`arany` | `pp` | `legit` | `nep` | `ado`), `value`, `delta`.
+**What the caller provides:** `kind` (`arany` | `pp` | `legit` | `nep` | `ado`), `value`, `delta`.

@@ -11,9 +11,8 @@
   "empty": "Nincs itt játék.",
   "empty_mine": "Még nem jelentkeztél játékra. Válassz egyet az Új játékok közül.",
   "round_of": "{round}. elszámolás / {max}",
-  "schedule": "{days} nap · napi {rounds} elszámolás",
-  "houses": "{players} / {max} ház",
-  "game_semantics": "{name}, {season}. {when}.",
+  "schedule": "1 hónap",
+  "game_semantics": "{name}. {when}.",
   "winner": "Győztes: {winner}",
   "winner_place": "Győztes: {winner} · a te helyezésed: {place}.",
   "when": {

@@ -3,28 +3,28 @@ package com.hof.tronnelkul.game.engine;
 import java.util.*;
 
 /**
- * Egy játék teljes állapota (szabálykönyv v0.2). Nincs benne Spring vagy JPA: a szolgáltatási réteg
- * JSON-dokumentumként menti a `games.state` oszlopba. Az időpontok a játék órája szerinti epoch ms.
+ * The full state of a game (rulebook v0.2). No Spring or JPA: the service layer stores it as a JSON document
+ * in the `games.state` column. Timestamps are epoch ms on the game clock. Holds ids only, no display text.
  */
 public final class EngineState {
-    /** A feldolgozott idő: eddig futottak le az érlelő lapok és az elszámolások. */
+    /** Processed time: maturing sheets and settlements have run up to here. */
     public long clock;
     public int settlements;
     public long seq = 1;
     public Map<String, PlayerSt> players = new LinkedHashMap<>();
     public Map<String, CitySt> cities = new LinkedHashMap<>();
-    /** játékos → saját útvonalai */
+    /** player → own routes */
     public Map<String, List<Edge>> routes = new LinkedHashMap<>();
-    /** játékos → lepecsételetlen vázlat */
+    /** player → unsealed draft */
     public Map<String, List<Order>> drafts = new LinkedHashMap<>();
-    /** Érlelő parancslapok (3.1). */
-    public List<Lap> laps = new ArrayList<>();
+    /** Maturing order sheets (3.1). */
+    public List<Sheet> sheets = new ArrayList<>();
     public List<News> news = new ArrayList<>();
-    /** Kivásárlások és védekező vételek (a hírek igazságához és a védekezéshez). */
+    /** Buyouts and defensive purchases (for news truth and defence). */
     public List<MarketEvent> events = new ArrayList<>();
-    /** "város|játékos" → a legutóbbi fesztivál elszámolása */
+    /** "city|player" → settlement of the latest festival */
     public Map<String, Integer> festivals = new LinkedHashMap<>();
-    /** "város|árucikk|játékos" → eddig az elszámolásig nem vásárolható ki */
+    /** "city|good|player" → cannot be bought out until this settlement */
     public Map<String, Integer> protection = new LinkedHashMap<>();
     public List<Intel> intel = new ArrayList<>();
     public List<Offer> offers = new ArrayList<>();
@@ -35,27 +35,27 @@ public final class EngineState {
 
     public List<Order> draftOf(String player) { return drafts.computeIfAbsent(player, k -> new ArrayList<>()); }
 
-    public Optional<Lap> lapOf(String player) { return laps.stream().filter(l -> l.player.equals(player)).findFirst(); }
+    public Optional<Sheet> sheetOf(String player) { return sheets.stream().filter(l -> l.player.equals(player)).findFirst(); }
 
     public static final class PlayerSt {
         public String id, name, tincture, persona, background;
         public boolean npc;
-        /** "birtok:<id>", vagy null (az NPC-k hálózata nem korlátozott). */
+        /** "estate:<id>", or null (NPC networks are unrestricted). */
         public String estate;
         public double gold;
         public int pp, legit;
         public int lastInfoSale = -99;
-        /** NPC: ekkor pecsétel legközelebb (epoch ms, 0 = nincs betervezve). */
+        /** NPC: next sealing time (epoch ms, 0 = not planned). */
         public long nextPlanAt;
-        /** hír → igaz volt-e a terjesztéskor (a saját ellenőrzéseid) */
+        /** news → whether it was true when spread (own verifications) */
         public Map<String, Boolean> verified = new LinkedHashMap<>();
     }
 
     public static final class CitySt {
         public Map<String, Good> goods = new LinkedHashMap<>();
-        /** Népszerűség 0–100; aki nincs benne, annak 10 (4.5). */
+        /** Popularity 0–100; 10 for anyone missing (4.5). */
         public Map<String, Double> pop = new LinkedHashMap<>();
-        /** játékos → pártprogram */
+        /** player → party program */
         public Map<String, String> parties = new LinkedHashMap<>();
         public Map<String, Integer> council = new LinkedHashMap<>();
         public Map<String, Integer> spies = new LinkedHashMap<>();
@@ -64,23 +64,29 @@ public final class EngineState {
     }
 
     public static final class Good {
-        public String name;
         public int supply, demand;
         public Map<String, Integer> shares = new LinkedHashMap<>();
         public Map<String, String> margins = new LinkedHashMap<>();
-        /** Az utolsó elszámolás eladásai; a Város kulcsa "_varos". */
+        /** Sales of the last settlement; the City's key is "_city". */
         public Map<String, Double> sold = new LinkedHashMap<>();
-        /** Az utolsó 3 elszámolás átlagos haszna pontonként (a piaci értékhez). */
+        /** Average profit per point over the last 3 settlements (for market value). */
         public List<Double> history = new ArrayList<>();
     }
 
-    /** Egy parancs. Csak a típushoz tartozó mezők töltöttek. gold: lepecsételéskor lefoglalt arany. */
+    /** An order. Only the fields of its type are set. gold: gold reserved at sealing. */
     public static final class Order {
-        public String id, type, city, good, level, target, template, newsId, lapId, orderId, from, to;
+        public String id, type, city, good, level, target, template, newsId, sheetId, orderId, from, to;
         public int pts, gold;
+
+        public Order copy() {
+            Order o = new Order();
+            o.id = id; o.type = type; o.city = city; o.good = good; o.level = level; o.target = target; o.template = template;
+            o.newsId = newsId; o.sheetId = sheetId; o.orderId = orderId; o.from = from; o.to = to; o.pts = pts; o.gold = gold;
+            return o;
+        }
     }
 
-    public static final class Lap {
+    public static final class Sheet {
         public String id, player;
         public List<Order> orders = new ArrayList<>();
         public long sealedAt, executeAt;
@@ -88,29 +94,29 @@ public final class EngineState {
     }
 
     public static final class News {
-        public String id, city, author, target, template, good, goodName;
+        public String id, city, author, target, template, good;
         public int effect;
         public boolean trueAtCreation, debunked;
         public long createdAt;
     }
 
-    /** type: buyout | defend | defendUsed (egy még érlelő védekező vétel hiúsította meg az ajánlatot). */
+    /** type: buyout | defend | defendUsed (a still maturing defensive purchase foiled the offer). */
     public static final class MarketEvent {
-        public String type, city, good, by, target, lapId, orderId;
+        public String type, city, good, by, target, sheetId, orderId;
         public int settlement;
     }
 
-    /** Kifürkészett parancslap, a tulajdonos tudása. */
+    /** A scouted order sheet, the owner's knowledge. orders: the visible orders, shown at the given depth (7.2). */
     public static final class Intel {
-        public String id, owner, lapId, of;
+        public String id, owner, sheetId, of;
         public long executeAt;
-        public List<String> lines = new ArrayList<>();
+        public List<Order> orders = new ArrayList<>();
         public int depth;
         public boolean bought;
         public List<String> offeredTo = new ArrayList<>();
     }
 
-    /** Információs piac (7.5): letét, a vevő elfogadáskor fizet. */
+    /** Information market (7.5): escrow, the buyer pays on acceptance. */
     public static final class Offer {
         public String id, intelId, seller, buyer;
         public int price;

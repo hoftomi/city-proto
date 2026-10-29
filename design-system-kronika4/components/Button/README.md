@@ -1,12 +1,12 @@
 # Button
 
-Matt, enyhén domború gomb vékony tintakontúrral, alsó peremmel és lágy vetett árnyékkal. Lenyomáskor 1,5px-et süllyed.
+A matte, slightly convex button with a thin ink outline, a bottom rim and a soft drop shadow. It sinks 1.5px when pressed.
 
-**Mit ad a hívó:** `variant` (`default` | `primary` | `seal` | `quiet` | `danger`), `size` (`md` | `sm`), `icon` (egy `Icon` név; ha van ilyen játékikon, azt kapja), `art` (egy `GameIcon` név), `children`, és a szokásos gombattribútumok.
+**What the caller provides:** `variant` (`default` | `primary` | `seal` | `quiet` | `danger`), `size` (`md` | `sm`), `icon` (an `Icon` name; if a game icon with that name exists, it gets that), `art` (a `GameIcon` name), `children`, and the usual button attributes.
 
-- `default`: acélkék, az alapakció.
-- `primary`: erdőzöld, képernyőnként legfeljebb egy.
-- `seal`: bronz, Cinzel betűvel, sötét felirattal, kizárólag a lepecsételésre.
-- `danger`: téglavörös, kivásárláshoz, leleplezéshez.
-- `quiet`: pergamen, sötét felirattal.
-- A felirat Nunito Sans 800, világos, lágy sötét árnyékkal. Az érintési cél legalább 44px, `sm` méretben 34px.
+- `default`: steel blue, the basic action.
+- `primary`: forest green, at most one per screen.
+- `seal`: bronze, in Cinzel, with a dark label, exclusively for sealing.
+- `danger`: brick red, for buyouts and debunking.
+- `quiet`: parchment, with a dark label.
+- The label is Nunito Sans 800, light, with a soft dark shadow. The touch target is at least 44px, 34px in `sm` size.

@@ -1,5 +1,5 @@
 # MapCompass
 
-Díszes szélrózsa: nyolc kétszínű ág, 32 osztású bronz gyűrű, vörös északi ág, „É” jel.
+An ornate compass rose: eight two-tone points, a bronze ring with 32 divisions, a red north point, an „É” (N) mark.
 
-**Mit ad a hívó:** `x`, `y`, `size`.
+**What the caller provides:** `x`, `y`, `size`.

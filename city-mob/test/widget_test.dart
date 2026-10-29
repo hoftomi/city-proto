@@ -3,13 +3,13 @@ import 'package:tron_nelkul/util/format.dart';
 
 import 'helpers/l10n.dart';
 
-// A régi, alapértelmezett widget-teszt helyett egy egyszerű ellenőrzés.
+// A simple check instead of the old default widget test.
 void main() {
   setUpAll(loadTestTranslations);
 
-  test('ágnevek', () {
-    expect(branchName('keresk'), 'Vásártér');
-    expect(branchName('polit'), 'Városháza');
-    expect(branchName('kem'), 'Alvilág');
+  test('branch names', () {
+    expect(branchName('trade'), 'Vásártér');
+    expect(branchName('politics'), 'Városháza');
+    expect(branchName('espionage'), 'Alvilág');
   });
 }

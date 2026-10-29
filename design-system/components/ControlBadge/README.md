@@ -1,8 +1,8 @@
 # ControlBadge
 
-A szereplő kontrollszintje egy frakcióban vagy városban: öt lépcső a Jelenléttől a Protektorátusig.
+An actor's control level in a faction or city: five steps from Presence to Protectorate.
 
-**Mit ad a hívó:** `level` (`jelenlet` | `partner` | `dominans` | `varoskontroll` | `protektoratus`, vagy üres, ha nincs jelenlét).
+**What the caller provides:** `level` (`jelenlet` | `partner` | `dominans` | `varoskontroll` | `protektoratus`, or empty if there is no presence).
 
-- A lépcsők száma és a szöveg együtt hordozza a jelentést, a szín (verdigris) csak kiemel.
-- A szintet mindig a **nyílt** befolyásból számold. A rejtett befolyás nem ad szintet.
+- The number of steps and the text carry the meaning together; the color (verdigris) only highlights.
+- Always compute the level from **open** influence. Hidden influence does not give a level.

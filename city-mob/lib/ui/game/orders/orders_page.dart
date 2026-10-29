@@ -13,7 +13,7 @@ import '../../../widgets/game_widgets.dart';
 import '../bloc/game_bloc.dart';
 import '../widgets/game_tab_scroll.dart';
 
-/// A Parancslap fül: kivásárlási fenyegetések, az érlelődő lap, és a vázlat (törlés, lepecsételés).
+/// The Order sheet tab: buyout threats, the maturing sheet, and the draft (delete, sealing).
 class OrdersPage extends StatelessWidget {
   const OrdersPage({super.key});
 
@@ -26,7 +26,7 @@ class OrdersPage extends StatelessWidget {
         builder: (context, v) {
           final s = v.game, now = v.now;
           if (s == null || now == null) return const SizedBox.shrink();
-          final lap = s.lap, maturing = s.maturing(now);
+          final sheet = s.sheet, maturing = s.maturing(now);
           return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             CommandPoints(available: s.me.pp, pending: s.draftCost.pp, max: s.me.ppMax),
             const SizedBox(height: 16),
@@ -34,8 +34,8 @@ class OrdersPage extends StatelessWidget {
               _ThreatCard(t: t, left: durText(v.until(t.executeAt)), draftOnly: s.defendOnlyInDraft(t), gameId: s.gameId),
               const SizedBox(height: 12),
             ],
-            if (lap != null) ...[
-              _LapCard(lap: lap, maturing: maturing, left: durText(v.until(lap.executeAt)), progress: s.lapProgress(now)),
+            if (sheet != null) ...[
+              _SheetCard(sheet: sheet, maturing: maturing, left: durText(v.until(sheet.executeAt)), progress: s.sheetProgress(now)),
               const SizedBox(height: 12),
             ],
             if (s.draft.isEmpty)
@@ -80,7 +80,7 @@ class OrdersPage extends StatelessWidget {
   }
 }
 
-/// Kivásárlási ajánlat a saját részesedésem ellen; a védekezés a város Vásárterén indítható.
+/// Buyout offer against my own shares; the defense can be started in the city's Marketplace.
 class _ThreatCard extends StatelessWidget {
   const _ThreatCard({required this.t, required this.left, required this.draftOnly, required this.gameId});
   final Threat t;
@@ -102,9 +102,9 @@ class _ThreatCard extends StatelessWidget {
         Row(children: [
           TnButton(
             label: 'orders.threat.defend'.tr(),
-            icon: 'kereskedok',
+            icon: 'merchants',
             small: true,
-            onPressed: () => context.go(Routes.city(gameId, cityId: t.cityId, district: 'keresk')),
+            onPressed: () => context.go(Routes.city(gameId, cityId: t.cityId, district: 'trade')),
           ),
         ]),
         if (t.defending) ...[
@@ -122,10 +122,10 @@ class _ThreatCard extends StatelessWidget {
   }
 }
 
-/// A lepecsételt, érlelődő (vagy épp végrehajtás alatt álló) lap.
-class _LapCard extends StatelessWidget {
-  const _LapCard({required this.lap, required this.maturing, required this.left, required this.progress});
-  final LapView lap;
+/// The sealed, maturing (or currently executing) sheet.
+class _SheetCard extends StatelessWidget {
+  const _SheetCard({required this.sheet, required this.maturing, required this.left, required this.progress});
+  final SheetView sheet;
   final bool maturing;
   final String left;
   final double progress;
@@ -136,26 +136,26 @@ class _LapCard extends StatelessWidget {
     return TnCard(
       tone: TnCardTone.pending,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Eyebrow('orders.lap.sealed_at'.tr(namedArgs: {'time': hhmm(lap.sealedAt)})),
+        Eyebrow('orders.sheet.sealed_at'.tr(namedArgs: {'time': hhmm(sheet.sealedAt)})),
         const SizedBox(height: 4),
         Text(
-          maturing ? 'orders.lap.maturing'.tr(namedArgs: {'left': left, 'at': hhmm(lap.executeAt)}) : 'orders.lap.executing'.tr(),
+          maturing ? 'orders.sheet.maturing'.tr(namedArgs: {'left': left, 'at': hhmm(sheet.executeAt)}) : 'orders.sheet.executing'.tr(),
           style: TnText.bodyStrong(c.ink),
         ),
         const SizedBox(height: 8),
         TnMeter(value: progress),
         const SizedBox(height: 10),
-        for (final o in lap.orders)
+        for (final o in sheet.orders)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 3.5),
             child: Row(children: [
               GameIcon.tile(o.type, size: 16),
               const SizedBox(width: 8),
-              Expanded(child: Text(o.lapLabel, style: TnText.body(c.ink).copyWith(fontSize: 14))),
+              Expanded(child: Text(o.sheetLabel, style: TnText.body(c.ink).copyWith(fontSize: 14))),
             ]),
           ),
         const SizedBox(height: 8),
-        Text('orders.lap.hint'.tr(), style: TnText.caption(c.inkMuted)),
+        Text('orders.sheet.hint'.tr(), style: TnText.caption(c.inkMuted)),
       ]),
     );
   }

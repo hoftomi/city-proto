@@ -15,14 +15,14 @@ import '../../../core/failure.dart';
 import '../../../core/tr.dart';
 import '../../../firebase_options.dart';
 
-/// A Discord PKCE-folyamatának eredménye: a kód, amelyet a backend vált be.
+/// Result of the Discord PKCE flow: the code the backend exchanges.
 class DiscordCode {
   const DiscordCode(this.code, this.verifier, this.redirectUri);
   final String code, verifier, redirectUri;
 }
 
-/// Az identitásszolgáltatók (Firebase, Google, Apple, Discord) SDK-jai. Hibánál [Failure]-t dob;
-/// a felhasználó által megszakított belépésnél `false`-t ad vissza.
+/// SDKs of the identity providers (Firebase, Google, Apple, Discord). Throws [Failure] on error;
+/// returns `false` when the user cancels sign-in.
 @lazySingleton
 class IdentityDataSource {
   FirebaseAuth get _fb => FirebaseAuth.instance;
@@ -30,7 +30,7 @@ class IdentityDataSource {
 
   bool get signedIn => _fb.currentUser != null;
 
-  /// A Firebase ID tokenje; lejárat előtt magától megújul.
+  /// The Firebase ID token; refreshes itself before expiry.
   Future<String?> idToken() async => _fb.currentUser?.getIdToken();
 
   Future<bool> signInWithGoogle() async {
@@ -60,7 +60,7 @@ class IdentityDataSource {
   }
 
   Future<bool> signInWithApple() async {
-    // A Firebase a nonce eredeti értékét kéri, az Apple a SHA-256 kivonatát.
+    // Firebase wants the raw nonce, Apple its SHA-256 hash.
     final rawNonce = _randomString(32);
     final AuthorizationCredentialAppleID cred;
     try {
@@ -74,7 +74,7 @@ class IdentityDataSource {
     }
     final token = cred.identityToken;
     if (token == null) throw const Failure(Tr('auth.apple_no_token'));
-    // Az Apple a nevet csak az első belépéskor adja át: a Firebase-fiókba mentjük, így az ID tokenben is ott lesz.
+    // Apple only provides the name on first sign-in: we save it to the Firebase account so it's in the ID token too.
     final name = [cred.givenName, cred.familyName].where((e) => e != null && e.isNotEmpty).join(' ');
     await _firebase(() async {
       final result = await _fb.signInWithCredential(
@@ -89,7 +89,7 @@ class IdentityDataSource {
     return true;
   }
 
-  /// Discord: OAuth 2.0 authorization code + PKCE a rendszerböngészőben. null, ha a felhasználó megszakította.
+  /// Discord: OAuth 2.0 authorization code + PKCE in the system browser. null if the user cancelled.
   Future<DiscordCode?> discordCode() async {
     if (!Config.discordConfigured) throw const Failure(Tr('auth.discord_not_configured'));
     final verifier = _randomString(64);

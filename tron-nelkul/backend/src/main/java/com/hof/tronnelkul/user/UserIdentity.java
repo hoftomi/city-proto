@@ -3,7 +3,7 @@ package com.hof.tronnelkul.user;
 import jakarta.persistence.*;
 import java.util.UUID;
 
-/** Egy külső fiók (Google, Apple, Discord) hozzárendelése egy felhasználóhoz. */
+/** Link of an external account (Google, Apple, Discord) to a user. */
 @Entity
 @Table(name = "user_identities")
 public class UserIdentity {

@@ -2,7 +2,7 @@ part of 'game_bloc.dart';
 
 enum GameStatus { initial, loading, ready, failure }
 
-/// A GameBloc állapota. (A név azért nem GameState, mert az a generált API-modell.)
+/// The GameBloc state. (Not named GameState because that is the generated API model.)
 class GameViewState extends Equatable {
   const GameViewState({
     this.gameId,
@@ -23,24 +23,24 @@ class GameViewState extends Equatable {
   final MapDef? map;
   final Failure? failure;
 
-  /// Épp fut egy művelet (a gombok letiltva, a jelzők pörögnek).
+  /// An action is running (buttons disabled, spinners spinning).
   final bool busy;
 
-  /// Mikor jött az utolsó állapot a készülék órája szerint.
+  /// When the last state arrived, per the device clock.
   final DateTime? fetchedAt;
 
-  /// A játék órája most (óraütésenként frissül).
+  /// The game clock now (updated on every tick).
   final DateTime? now;
 
-  /// A térképen kijelölt város.
+  /// The city selected on the map.
   final String? selectedCity;
 
-  /// Egyszeri üzenet (toast); a GameListener mutatja.
+  /// One-off message (toast); shown by the GameListener.
   final Notice? notice;
 
   bool get ready => status == GameStatus.ready && game != null && map != null;
 
-  /// Hátralévő idő a játék órájához mérve.
+  /// Remaining time measured against the game clock.
   Duration until(DateTime? t) => t == null || now == null ? Duration.zero : t.difference(now!);
 
   GameViewState copyWith({

@@ -7,7 +7,7 @@ sealed class JoinEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// A képernyő megnyitásakor: a játék kínálata (tinktúrák, hátterek, kezdőhelyek) és a térkép.
+/// On screen open: the game's options (tinctures, backgrounds, start slots) and the map.
 class JoinStarted extends JoinEvent {
   const JoinStarted(this.gameId);
   final String gameId;
@@ -24,7 +24,7 @@ class JoinNameChanged extends JoinEvent {
   List<Object?> get props => [name];
 }
 
-/// A névmezőben Entert nyomott: a hiba ettől kezdve látszik.
+/// Enter pressed in the name field: the error is shown from now on.
 class JoinNameSubmitted extends JoinEvent {
   const JoinNameSubmitted();
 }
@@ -53,7 +53,7 @@ class JoinStartSelected extends JoinEvent {
   List<Object?> get props => [start];
 }
 
-/// A Kereskedőház induló árucikke.
+/// The Merchant House starting good.
 class JoinStartGoodSelected extends JoinEvent {
   const JoinStartGoodSelected(this.good);
   final String good;
@@ -62,12 +62,12 @@ class JoinStartGoodSelected extends JoinEvent {
   List<Object?> get props => [good];
 }
 
-/// Tovább a következő lépésre; az utolsón a jelentkezés beküldése.
+/// On to the next step; on the last one, submit the join.
 class JoinNextPressed extends JoinEvent {
   const JoinNextPressed();
 }
 
-/// Vissza az előző lépésre.
+/// Back to the previous step.
 class JoinBackPressed extends JoinEvent {
   const JoinBackPressed();
 }

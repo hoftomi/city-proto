@@ -12,8 +12,8 @@ import '../../../../domain/service/game_service.dart';
 part 'ranking_event.dart';
 part 'ranking_state.dart';
 
-/// A Rangsor fül: a legitimitás-rangsor betöltése és a saját népszerűség városonként. A játékállapot minden
-/// változásánál frissül a népszerűségi tábla; a rangsort csak akkor tölti újra, ha változhatott (GameViewX.feedKey).
+/// The Ranking tab: loads the legitimacy ranking and own popularity per city. On every game state
+/// change the popularity table updates; the ranking is reloaded only if it may have changed (GameViewX.feedKey).
 @injectable
 class RankingBloc extends Bloc<RankingEvent, RankingState> {
   RankingBloc(this._service) : super(const RankingState()) {

@@ -1,6 +1,6 @@
 part of 'city_bloc.dart';
 
-/// Egy árucikk kártyájának űrlapja: vétel a Várostól és kivásárlás (a választott, még nem szorított értékek).
+/// A good card's form: buy from the City and buyout (the chosen, not yet clamped values).
 class GoodForm extends Equatable {
   const GoodForm({this.buyPts = 5, this.boPts = 5, this.target});
   final int buyPts, boPts;
@@ -12,7 +12,7 @@ class GoodForm extends Equatable {
   List<Object?> get props => [buyPts, boPts, target];
 }
 
-/// A hírszerkesztő választásai (null: az első lehetőség).
+/// The news editor's choices (null: the first option).
 class NewsForm extends Equatable {
   const NewsForm({this.template, this.target, this.good});
   final String? template, target, good;
@@ -23,7 +23,7 @@ class NewsForm extends Equatable {
   List<Object?> get props => [template, target, good];
 }
 
-/// Az eladás párbeszédének értékei; a beírt ár szövegként (a CityService értelmezi).
+/// The sale dialog's values; the entered price as text (parsed by the CityService).
 class IntelSaleForm extends Equatable {
   const IntelSaleForm({required this.intelId, required this.buyer, required this.price});
   final String intelId, buyer, price;
@@ -34,8 +34,8 @@ class IntelSaleForm extends Equatable {
   List<Object?> get props => [intelId, buyer, price];
 }
 
-/// A városnézet állapota: a GameBloc pillanatképe (játék, óra, busy), a megjelenített város, és a három negyed
-/// űrlapjai. A számolt értékek getterek (lib/domain/model/city_extensions.dart), a widgetek csak ezeket olvassák.
+/// The city view state: the GameBloc snapshot (game, clock, busy), the displayed city, and the three districts'
+/// forms. Computed values are getters (lib/domain/model/city_extensions.dart); widgets only read these.
 class CityState extends Equatable {
   const CityState({
     this.requested,
@@ -52,38 +52,38 @@ class CityState extends Equatable {
     this.notice,
   });
 
-  /// Az URL-ben kért város (null: a kijelölt vagy az első elérhető).
+  /// The city requested in the URL (null: the selected or first reachable).
   final String? requested;
   final String? gameId;
   final GameState? game;
   final DateTime? now;
   final bool busy;
 
-  /// A megjelenített város.
+  /// The displayed city.
   final String? cityId;
 
-  /// Árucikkenként a Vásártér űrlapja.
+  /// The Marketplace form per good.
   final Map<String, GoodForm> goods;
   final NewsForm news;
 
-  /// Nyitott eladási párbeszéd.
+  /// Open sale dialog.
   final IntelSaleForm? sale;
 
-  /// Nyitva van a „Kém áthelyezése” párbeszéd.
+  /// The "Relocate spy" dialog is open.
   final bool moveSpyOpen;
 
-  /// Az utoljára választott célváros a kém áthelyezéséhez.
+  /// The last chosen target city for relocating a spy.
   final String? moveSpyTarget;
 
-  /// Egyszeri üzenet (toast).
+  /// One-off message (toast).
   final Notice? notice;
 
-  // ------------------------------------------------------------ számolt értékek
+  // ------------------------------------------------------------ computed values
 
   CityView? get city => game?.cityOrNull(cityId);
   bool get ready => city != null;
 
-  /// Elérhető-e a város (a hálózatodban van: cselekedni csak itt lehet).
+  /// Whether the city is reachable (in your network: you can only act here).
   bool get can => city?.reachable ?? false;
   RulesInfo get rules => game!.rules;
   Catalog get catalog => game!.catalog;
@@ -103,7 +103,7 @@ class CityState extends Equatable {
 
   NewsPlan get newsPlan => NewsPlan.of(catalog, city!, template: news.template, target: news.target, good: news.good);
 
-  /// Hírszerkesztő: csak elérhető városban, ahol más ház is jelen van.
+  /// News editor: only in a reachable city where another house is present.
   bool get canCompose => can && city!.present.isNotEmpty;
 
   int get freeSpies => city!.freeSpies;
@@ -111,7 +111,7 @@ class CityState extends Equatable {
   List<NewsView> get checkable => city!.checkable;
   NewsCheck newsCheck(NewsView n) => city!.newsCheck(n);
 
-  /// A kém lehetséges célvárosai, és hogy tele van-e már.
+  /// The spy's possible target cities, and whether each is already full.
   List<(CityView, bool full)> get spyDestinations => [for (final x in game!.spyDestinations(cityId!)) (x, x.spiesFull(rules))];
 
   IntelView? get saleIntel => sale == null ? null : game?.intel.where((i) => i.id == sale!.intelId).firstOrNull;
@@ -119,7 +119,7 @@ class CityState extends Equatable {
 
   String houseName(String id) => game!.houseName(id);
 
-  /// Hátralévő idő a játék órájához mérve.
+  /// Remaining time measured against the game clock.
   Duration until(DateTime? t) => t == null || now == null ? Duration.zero : t.difference(now!);
 
   CityState copyWith({

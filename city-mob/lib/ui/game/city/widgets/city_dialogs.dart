@@ -8,7 +8,7 @@ import '../../../../widgets/buttons.dart';
 import '../../../../widgets/game_widgets.dart';
 import '../bloc/city_bloc.dart';
 
-/// Megnyitja a CityBloc állapota szerinti párbeszédet; bezáráskor jelez a blocnak.
+/// Opens the dialog per the CityBloc state; notifies the bloc on close.
 Future<void> showCityDialog(BuildContext context, Widget dialog) {
   final bloc = context.read<CityBloc>();
   return showDialog<void>(
@@ -17,7 +17,7 @@ Future<void> showCityDialog(BuildContext context, Widget dialog) {
   ).then((_) => bloc.isClosed ? null : bloc.add(const CityDialogClosed()));
 }
 
-/// Kém áthelyezése (7.1): egy szabad kém a hálózatod egy másik városába költözik, érlelés után.
+/// Relocate spy (7.1): a free spy moves to another city in your network, after maturation.
 class MoveSpyDialog extends StatelessWidget {
   const MoveSpyDialog({super.key});
 
@@ -52,7 +52,7 @@ class MoveSpyDialog extends StatelessWidget {
       );
 }
 
-/// Információ eladása egy megnevezett háznak (0 PP, letéttel).
+/// Selling information to a named house (0 PP, with deposit).
 class IntelSaleDialog extends StatefulWidget {
   const IntelSaleDialog({super.key});
 
@@ -102,7 +102,7 @@ class _IntelSaleDialogState extends State<IntelSaleDialog> {
               TnButton(label: 'common.cancel'.tr(), kind: TnButtonKind.quiet, small: true, onPressed: () => Navigator.of(context).pop()),
               TnButton(
                 label: 'city.dialog.offer'.tr(),
-                art: 'arany',
+                art: 'gold',
                 kind: TnButtonKind.primary,
                 small: true,
                 onPressed: () {

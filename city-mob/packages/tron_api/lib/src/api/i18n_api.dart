@@ -17,11 +17,11 @@ class I18nApi {
 
   const I18nApi(this._dio);
 
-  /// A kliens összes felirata egy nyelven (easy_localization formátum)
-  /// Névterenként beágyazott kulcs–szöveg párok (például {\&quot;lobby\&quot;:{\&quot;title\&quot;:\&quot;Játékok\&quot;}}). A paraméterek {név} alakúak. Ismeretlen nyelvnél a magyar változat jön. Bejelentkezés nélkül is elérhető, mert a belépőképernyő is ebből dolgozik.
+  /// All client texts in one language (easy_localization format)
+  /// Key–text pairs nested by namespace (for example {\&quot;lobby\&quot;:{\&quot;title\&quot;:\&quot;...\&quot;}}). Parameters look like {name}. An unknown language falls back to Hungarian. Available without sign-in, because the sign-in screen uses it too.
   ///
   /// Parameters:
-  /// * [lang] - Nyelvkód, például hu
+  /// * [lang] - Language code, for example hu
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request

@@ -16,9 +16,9 @@ import '../../common/notice.dart';
 part 'game_event.dart';
 part 'game_state.dart';
 
-/// Egy futó játék: az állapot és a térkép betöltése, a játékos műveletei, a játék órája,
-/// és az automatikus frissítés, amikor lejár a saját lap vagy elszámolás van.
-/// A játék minden képernyője (Térkép, Város, Jelentések, Parancslap, Rangsor) ebből olvas.
+/// A running game: loading the state and map, the player's actions, the game clock,
+/// and auto-refresh when the own sheet expires or a settlement happens.
+/// Every game screen (Map, City, Reports, Order sheet, Ranking) reads from this.
 @injectable
 class GameBloc extends Bloc<GameEvent, GameViewState> {
   GameBloc(this._service) : super(const GameViewState()) {
@@ -37,9 +37,6 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
         transformer: sequential());
     on<GameOfferDeclined>((e, emit) => _act(emit, () => _service.declineOffer(_id, e.offerId)), transformer: sequential());
     on<GameAdminSettleRequested>((e, emit) => _act(emit, () => _service.adminSettle(_id), success: (_) => const Tr('notice.settled')),
-        transformer: droppable());
-    on<GameAdminAdvanceRequested>(
-        (e, emit) => _act(emit, () => _service.adminAdvance(_id, e.minutes), success: (_) => e.minutes == null ? const Tr('notice.advanced_next') : Tr('notice.advanced_minutes', {'minutes': '${e.minutes}'})),
         transformer: droppable());
   }
 
@@ -66,7 +63,7 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
         ));
       },
     );
-    // A betöltés alatt a játékot elhagyhatták: bezárt blocnak nem indítunk órát.
+    // The game may have been left during loading: don't start a clock for a closed bloc.
     if (isClosed) return;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 15), (_) { if (!isClosed) add(const GameTicked()); });
@@ -78,7 +75,7 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
     r.fold((f) => emit(state.copyWith(failure: f, notice: _notice(f.message, tone: 'danger'))), (s) => emit(_withGame(s)));
   }
 
-  /// Óraütés: a visszaszámlálók frissülnek; lejárt saját lap vagy elszámolás után percenként legfeljebb egyszer újratölt.
+  /// Tick: countdowns update; after an expired own sheet or a settlement, reloads at most once per minute.
   void _ticked(GameTicked e, Emitter<GameViewState> emit) {
     final game = state.game, fetchedAt = state.fetchedAt;
     if (game == null || fetchedAt == null) return;
@@ -90,7 +87,7 @@ class GameBloc extends Bloc<GameEvent, GameViewState> {
     }
   }
 
-  /// Parancs a vázlatra; siker után jelzi, mi került fel, és ha a parancsnak figyelmeztetése van (például hamis hír).
+  /// Order onto the draft; on success reports what was added, and any warning the order has (e.g. false news).
   Future<void> _addOrder(GameOrderAdded e, Emitter<GameViewState> emit) async {
     final before = state.game;
     emit(state.copyWith(busy: true));

@@ -7,21 +7,21 @@ import 'k4_assets.dart';
 import 'k4_viewport.dart';
 import 'paint_util.dart';
 
-/// Egy negyed zászlói: a vezető ház (Vásártér: legtöbb részesedés, Városháza: legtöbb tanácshely,
-/// Alvilág: a saját kémhálózatod) és egy esetleges második ház tinktúrája.
+/// A district's flags: the leading house (Marketplace: most shares, Town Hall: most council seats,
+/// Underworld: your own spy network) and the tincture of an optional second house.
 class DistrictFlags {
   const DistrictFlags({this.dominant, this.contested});
   final String? dominant, contested;
 }
 
-/// A heraldikai tinktúrák festett színei (design system: house-*).
+/// Painted colors of the heraldic tinctures (design system: house-*).
 const _houseColors = {
-  'voros': Color(0xFFB23A2E), 'kek': Color(0xFF2F5F9E), 'zold': Color(0xFF3D7B3A), 'arany': Color(0xFFC99A2A),
-  'bibor': Color(0xFF744A9A), 'fekete': Color(0xFF34313A), 'narancs': Color(0xFFC46A24), 'szeder': Color(0xFF973B62),
+  'red': Color(0xFFB23A2E), 'blue': Color(0xFF2F5F9E), 'green': Color(0xFF3D7B3A), 'gold': Color(0xFFC99A2A),
+  'purple': Color(0xFF744A9A), 'black': Color(0xFF34313A), 'orange': Color(0xFFC46A24), 'mulberry': Color(0xFF973B62),
 };
 
-/// Nagyításkor erre a pontra áll a nézet a kijelölt negyednél (a prototípus FOCUS értékei).
-const _focus = {'keresk': Offset(0.6, 0.6), 'polit': Offset(0.5, 0.42), 'kem': Offset(0.42, 0.56)};
+/// When zoomed, the view centers on this point for the selected district (the prototype's FOCUS values).
+const _focus = {'trade': Offset(0.6, 0.6), 'politics': Offset(0.5, 0.42), 'espionage': Offset(0.42, 0.56)};
 
 bool _inPoly(Offset p, List<Offset> poly) {
   var c = false;
@@ -32,10 +32,10 @@ bool _inPoly(Offset p, List<Offset> poly) {
   return c;
 }
 
-/// A városállam izometrikus, festett látképe (Krónika IV, 720 × 540). A kép a design systemből exportált
-/// (assets/k4/cityview), a kijelölés, a zászlók és a koppintható negyedek rajzolt réteg.
-/// Nagyítható és húzható, 1,8× nagyítással indul a kijelölt negyednél.
-/// A negyedek kulcsa megegyezik a hatalmi ág azonosítójával (OrderView.branch): keresk, polit, kem.
+/// Isometric, painted city view of the city-state (Krónika IV, 720 × 540). The image is exported from the
+/// design system (assets/k4/cityview); selection, flags and tappable districts are a drawn layer.
+/// Zoomable and pannable, starts at 1.8× zoom on the selected district.
+/// District keys match the power branch id (OrderView.branch): trade, politics, espionage.
 class CityViewWidget extends StatelessWidget {
   const CityViewWidget({super.key, required this.name, this.coast = false, this.districts = const {}, this.selected, this.onSelect});
   final String name;
@@ -78,7 +78,7 @@ class CityViewWidget extends StatelessWidget {
               child: Stack(children: [
                 if (asset != null) Positioned.fill(child: Image.asset(asset, fit: BoxFit.fill, filterQuality: FilterQuality.medium, gaplessPlayback: true)),
                 Positioned.fill(child: CustomPaint(painter: _Overlay(a, selected, districts, k))),
-                // A negyedek gombjai képernyőolvasóhoz
+                // District buttons for screen readers
                 if (onSelect != null)
                   for (final e in a.labels.entries)
                     Positioned(
@@ -120,7 +120,7 @@ class _Overlay extends CustomPainter {
         dashedLine(canvas, poly[i], poly[(i + 1) % poly.length], stroke, 6, 4);
       }
     }
-    // A vezető ház zászlója a negyed felirata fölött
+    // Leading house's flag above the district label
     for (final e in a.labels.entries) {
       final f = flags[e.key];
       if (f?.dominant != null) _flag(canvas, e.value + const Offset(-4, -34), _houseColors[f!.dominant] ?? K4.ink);

@@ -1,5 +1,5 @@
 # MapCartouche
 
-A térkép címkeretje (kartus) a régió nevével és egy napi járóföld léptékvonallal.
+The map's title frame (cartouche) with the region's name and a scale bar of one day's travel.
 
-**Mit ad a hívó:** `x`, `y`, `width`, `title` (nagybetűvel), `scale` (alapérték: „1 napi járóföld”).
+**What the caller provides:** `x`, `y`, `width`, `title` (uppercase), `scale` (default: „1 napi járóföld”, one day's travel).

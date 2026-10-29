@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:injectable/injectable.dart';
 
-/// A hálózati réteg jelzi, ha a szerver 401-et ad (lejárt vagy visszavont token); az AuthBloc erre kiléptet.
+/// The network layer signals when the server returns 401 (expired or revoked token); AuthBloc then signs out.
 @lazySingleton
 class SessionEvents {
   final _expired = StreamController<void>.broadcast();

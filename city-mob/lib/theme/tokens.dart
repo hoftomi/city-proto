@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// A Krónika IV design system színtokenjei (prototype-kronika4/src/ds/tokens.css).
-/// Egyetlen világos téma van („Nappal”), sötét téma nincs.
+/// Krónika IV design system color tokens (prototype-kronika4/src/ds/tokens.css).
+/// There is a single light theme ("Day"); no dark theme.
 @immutable
 class TnColors extends ThemeExtension<TnColors> {
   const TnColors();
 
-  // Asztal: a képernyő háttere (régi térképlap)
+  // Table: the screen background (old map sheet)
   final Color table = const Color(0xFFD9C7A0);
   final Color tableHi = const Color(0xFFE8DAB8);
   final Color tableLo = const Color(0xFFB89C6C);
 
-  // Pergamen
+  // Parchment
   final Color paper = const Color(0xFFEFE2C3);
   final Color paperRaised = const Color(0xFFF7EED8);
   final Color paperSunk = const Color(0xFFE2D0A8);
@@ -20,19 +20,19 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color lineStrong = const Color(0xFF8F7148);
   final Color outline = const Color(0xFF3A2A1C);
 
-  /// Mezők és chipek világos alapja (#fbf5e6).
+  /// Light base for fields and chips (#fbf5e6).
   final Color field = const Color(0xFFFBF5E6);
 
-  /// Üres pötty, üres tanácshely, sáv alapja (#e3d2ac).
+  /// Empty dot, empty council seat, bar base (#e3d2ac).
   final Color hollow = const Color(0xFFE3D2AC);
 
-  // Szöveg
+  // Text
   final Color ink = const Color(0xFF2C1F13);
   final Color inkMuted = const Color(0xFF5F4A33);
   final Color onInk = const Color(0xFFF7EED8);
   final Color onBtn = const Color(0xFFFFF9EC);
 
-  // Fa és bronz keret
+  // Wood and bronze frame
   final Color wood = const Color(0xFF5A3A22);
   final Color woodHi = const Color(0xFF7A5233);
   final Color woodLo = const Color(0xFF3A2416);
@@ -40,15 +40,15 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color frameHi = const Color(0xFFE3C27A);
   final Color frameLo = const Color(0xFF7E5A22);
 
-  /// Világos felirat sötét fán (másodlagos).
+  /// Light label on dark wood (secondary).
   final Color onWood = const Color(0xFFE8D6AE);
 
-  // Kiemelés (a verdigris szerepe): acélkék
+  // Accent (the verdigris role): steel blue
   final Color verdigris = const Color(0xFF235F7E);
   final Color verdigrisSoft = const Color(0xFFD5E4E6);
   final Color onVerdigris = const Color(0xFFFFFFFF);
 
-  // Matt gombfestékek
+  // Matte button paints
   final Color btnGreenHi = const Color(0xFF86AD55);
   final Color btnGreen = const Color(0xFF4E7629);
   final Color btnGreenLo = const Color(0xFF36561B);
@@ -65,12 +65,12 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color btnCream = const Color(0xFFE8D8B2);
   final Color btnCreamLo = const Color(0xFFA98C5C);
 
-  // Lepecsételés
+  // Sealing
   final Color seal = const Color(0xFF8C2A1C);
   final Color sealSoft = const Color(0xFFF1DDD2);
   final Color onSeal = const Color(0xFFFFFFFF);
 
-  // Állapot
+  // Status
   final Color danger = const Color(0xFF9B2C1C);
   final Color dangerSoft = const Color(0xFFF3DCD3);
   final Color warn = const Color(0xFF7A4D06);
@@ -78,11 +78,11 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color ok = const Color(0xFF235F7E);
   final Color okSoft = const Color(0xFFD7E5E8);
 
-  // Részesedés
+  // Shares
   final Color shareNeutral = const Color(0xFFE3D3AD);
   final Color shareUnknown = const Color(0xFF7D6F5F);
 
-  // Térkép (a térkép- és városrajzoló használja)
+  // Map (used by the map and city painters)
   final Color mapGrass = const Color(0xFFA3B86E);
   final Color mapSea = const Color(0xFF5D98AB);
   final Color mapSeaDeep = const Color(0xFF467F94);
@@ -97,33 +97,33 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color stone = const Color(0xFFCBBFA7);
   final Color stoneLo = const Color(0xFF958770);
 
-  /// Házszínek (festett, tompított heraldikai tinktúrák).
+  /// House colors (painted, muted heraldic tinctures).
   final Map<String, Color> houses = const {
-    'voros': Color(0xFFB23A2E),
-    'kek': Color(0xFF2F5F9E),
-    'zold': Color(0xFF3D7B3A),
-    'arany': Color(0xFFC99A2A),
-    'bibor': Color(0xFF744A9A),
-    'fekete': Color(0xFF34313A),
-    'narancs': Color(0xFFC46A24),
-    'szeder': Color(0xFF973B62),
+    'red': Color(0xFFB23A2E),
+    'blue': Color(0xFF2F5F9E),
+    'green': Color(0xFF3D7B3A),
+    'gold': Color(0xFFC99A2A),
+    'purple': Color(0xFF744A9A),
+    'black': Color(0xFF34313A),
+    'orange': Color(0xFFC46A24),
+    'mulberry': Color(0xFF973B62),
   };
 
-  /// Hatalmi ágak: az ikoncsempe szegélye és a kijelölt bőrfül felső csíkja.
+  /// Power branches: icon tile border and the selected leather tab's top strip.
   final Map<String, (Color, Color)> branches = const {
-    'vasarter': (Color(0xFFA86A14), Color(0xFFF2E0BD)),
-    'varoshaza': (Color(0xFF2F5F9E), Color(0xFFDBE3EE)),
-    'alvilag': (Color(0xFF6A4A8A), Color(0xFFE6DCEC)),
-    'kozos': (Color(0xFF4F7A35), Color(0xFFE1E9D2)),
+    'trade': (Color(0xFFA86A14), Color(0xFFF2E0BD)),
+    'politics': (Color(0xFF2F5F9E), Color(0xFFDBE3EE)),
+    'espionage': (Color(0xFF6A4A8A), Color(0xFFE6DCEC)),
+    'common': (Color(0xFF4F7A35), Color(0xFFE1E9D2)),
   };
 
-  Color house(String? tincture) => houses[tincture] ?? houses['fekete']!;
+  Color house(String? tincture) => houses[tincture] ?? houses['black']!;
 
-  /// Az ág színe; az API ágneveit (keresk, polit, kem) is elfogadja.
+  /// Branch color; also accepts art and faction names (see [branchKey]).
   Color branch(String? id) => branches[branchKey(id)]!.$1;
   Color branchSoft(String? id) => branches[branchKey(id)]!.$2;
 
-  /// Árnyékok (shadow-card, shadow-float).
+  /// Shadows (shadow-card, shadow-float).
   List<BoxShadow> get shadowCard => [
         BoxShadow(color: outline, offset: const Offset(0, 3)),
         const BoxShadow(color: Color(0x802C1F13), offset: Offset(0, 8), blurRadius: 16, spreadRadius: -8),
@@ -133,7 +133,7 @@ class TnColors extends ThemeExtension<TnColors> {
         BoxShadow(color: Color(0x992C1F13), offset: Offset(0, 14), blurRadius: 28, spreadRadius: -8),
       ];
 
-  /// Pergamen kártyaalap: `paper-raised` → `paper`.
+  /// Parchment card base: `paper-raised` → `paper`.
   LinearGradient get paperGradient => LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [paperRaised, paper]);
 
   static const light = TnColors();
@@ -145,15 +145,15 @@ class TnColors extends ThemeExtension<TnColors> {
   TnColors lerp(ThemeExtension<TnColors>? other, double t) => this;
 }
 
-/// Az API ágneveit a design system ágneveire fordítja (vasarter, varoshaza, alvilag, kozos).
+/// Normalizes branch ids, art names and faction names to the branch keys (trade, politics, espionage, common).
 String branchKey(String? id) => switch (id) {
-      'keresk' || 'vasarter' || 'kereskedok' => 'vasarter',
-      'polit' || 'varoshaza' || 'nemesseg' => 'varoshaza',
-      'kem' || 'alvilag' || 'katonasag' => 'alvilag',
-      _ => 'kozos',
+      'trade' || 'market' || 'merchants' => 'trade',
+      'politics' || 'townHall' || 'nobility' => 'politics',
+      'espionage' || 'underworld' || 'soldiers' => 'espionage',
+      _ => 'common',
     };
 
-/// Betűstílusok: Cinzel a címekhez (display), Nunito Sans 600–900 minden más felülethez és számhoz.
+/// Text styles: Cinzel for titles (display), Nunito Sans 600–900 for every other surface and number.
 class TnText {
   static const _emboss = [Shadow(color: Color(0xFFFFF6DC), offset: Offset(0, 1)), Shadow(color: Color(0x1F000000), offset: Offset(0, -1))];
 
@@ -163,43 +163,43 @@ class TnText {
   static TextStyle _sans(Color c, double size, {double? height, FontWeight weight = FontWeight.w600, double spacing = 0}) =>
       GoogleFonts.nunitoSans(fontSize: size, height: height, fontWeight: weight, letterSpacing: size * spacing, color: c);
 
-  /// Vésett képernyőcím (tn-city-title): Cinzel 700, világos domborítással.
+  /// Engraved screen title (tn-city-title): Cinzel 700, with light embossing.
   static TextStyle display(Color c) => _cinzel(c, 30, height: 36 / 30, shadows: _emboss);
 
-  /// Nagy címfelirat (bejelentkezés).
+  /// Large title (sign-in).
   static TextStyle hero(Color c) => _cinzel(c, 46, height: 50 / 46, shadows: _emboss);
 
   static TextStyle mapLabel(Color c, {bool major = false}) => _cinzel(c, major ? 15 : 13, weight: major ? FontWeight.w800 : FontWeight.w700, spacing: major ? 0.06 : 0.04);
 
-  /// Kártya- és jelentéscím (tn-report-title).
+  /// Card and report title (tn-report-title).
   static TextStyle title(Color c) => _cinzel(c, 18, height: 24 / 18, spacing: 0.02);
 
-  /// Lapcím, parancslapcím (tn-sheet-title).
+  /// Sheet title, order sheet title (tn-sheet-title).
   static TextStyle sheetTitle(Color c) => _cinzel(c, 20, height: 26 / 20, spacing: 0.04);
 
-  /// Bőrfül felirata.
+  /// Leather tab label.
   static TextStyle tab(Color c) => _cinzel(c, 14, height: 18 / 14);
 
   static TextStyle heading(Color c) => _sans(c, 16, height: 22 / 16, weight: FontWeight.w800);
   static TextStyle body(Color c) => _sans(c, 15, height: 22 / 15);
   static TextStyle bodyStrong(Color c) => _sans(c, 15, height: 22 / 15, weight: FontWeight.w800);
 
-  /// Mezőcímke (tn-field-label): 12/16, 800, ritkított. A hívó adja a nagybetűs szöveget.
+  /// Field label (tn-field-label): 12/16, 800, letter-spaced. The caller supplies uppercase text.
   static TextStyle label(Color c) => _sans(c, 12, height: 16 / 12, weight: FontWeight.w800, spacing: 0.05);
 
-  /// Szemöldökcím (tn-eyebrow): 11,5/16, 900.
+  /// Eyebrow title (tn-eyebrow): 11.5/16, 900.
   static TextStyle eyebrow(Color c) => _sans(c, 11.5, height: 16 / 11.5, weight: FontWeight.w900, spacing: 0.08);
 
-  /// Súgó (tn-field-hint): 13/18.
+  /// Hint (tn-field-hint): 13/18.
   static TextStyle caption(Color c) => _sans(c, 13, height: 18 / 13);
 
-  /// Jelentés- és hírszöveg (tn-report-text).
+  /// Report and news text (tn-report-text).
   static TextStyle chronicle(Color c) => _sans(c, 15, height: 22 / 15);
 
-  /// Gombfelirat.
+  /// Button label.
   static TextStyle button(Color c, {bool small = false}) => _sans(c, small ? 13.5 : 15, height: 20 / 15, weight: FontWeight.w800, spacing: 0.01);
 
-  /// Számok: egyenletes szélességű számjegyek, vastag.
+  /// Numbers: tabular digits, bold.
   static TextStyle data(Color c, {double size = 13, FontWeight weight = FontWeight.w800}) =>
       GoogleFonts.nunitoSans(fontSize: size, fontWeight: weight, color: c, fontFeatures: const [FontFeature.tabularFigures()]);
 }
@@ -208,12 +208,12 @@ class TnSpace {
   static const s1 = 4.0, s2 = 8.0, s3 = 12.0, s4 = 16.0, s6 = 24.0, s8 = 32.0;
 }
 
-/// Visszafogott sarkok: mező 6, kártya és térképkeret 10, lap 14.
+/// Subtle corners: field 6, card and map frame 10, sheet 14.
 class TnRadius {
   static const xs = 3.0, sm = 6.0, md = 10.0, lg = 14.0;
 }
 
-/// Az alkalmazás témája. Csak világos téma van; a paraméter a régi hívások kedvéért maradt.
+/// The app theme. Light theme only; the parameter is kept for legacy callers.
 ThemeData buildTheme([Brightness _ = Brightness.light]) {
   const c = TnColors.light;
   final base = ThemeData(useMaterial3: true, brightness: Brightness.light);

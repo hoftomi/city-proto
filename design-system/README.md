@@ -1,81 +1,81 @@
-A *Trón nélkül* felülete egy politikai térképasztal: papír, tinta, címerszínek és pecsétviasz. A játékos jelentéseket olvas, döntéseket hoz, és lepecsételi a parancsait. A felület ezt a ritmust szolgálja, nem az akciójátékok villogását. Elsődleges platform a telefon (reszponzív web), a nagyobb képernyő ugyanazt a rendet kapja, több oszlopban.
+The *Trón nélkül* interface is a political map table: paper, ink, heraldic colors and sealing wax. The player reads reports, makes decisions and seals their orders. The interface serves this rhythm, not the flashing of action games. The primary platform is the phone (responsive web); larger screens get the same order, in more columns.
 
-## Hangnem és szöveg
+## Tone and copy
 
-- Magyar nyelv, tegező megszólítás: „Lebuktál Feketerévben”, „Parancsaid lepecsételve”.
-- A gombfelirat ige vagy igei főnév: „Parancsok lepecsételése”, „Útvonal kiépítése”. Soha nem „OK” vagy „Küldés”.
-- A játékfogalmak a szabálykönyv szavai, nagybetűvel, ahol ott is: Parancspont (PP), Legitimitás (L), Semleges, Ismeretlen, Gyanú, Útzár, Kiűzetés. Rövidítések: A, BP, KE, L, PP.
-- Tizedesvessző és valódi mínuszjel: `42,0`, `−2`. Tartomány nagykötőjellel: `20–30`.
-- A jelentések krónikás mondata múlt vagy jelen idejű, és a forrás minőségéhez igazodik. Gyenge forrás: „valószínűleg”. Erős forrás: pontos számok, határozott állítás.
-- Emoji nincs. Felkiáltójel csak a térképi instabilitásjelben szerepel.
+- Hungarian language, informal address: „Lebuktál Feketerévben” (You were exposed in Feketerév), „Parancsaid lepecsételve” (Your orders are sealed).
+- Button labels are verbs or verbal nouns: „Parancsok lepecsételése” (Seal orders), „Útvonal kiépítése” (Build route). Never „OK” or „Küldés” (Send).
+- Game terms are the rulebook's words, capitalized where they are there: Parancspont (PP, command point), Legitimitás (L, Legitimacy), Semleges (Neutral), Ismeretlen (Unknown), Gyanú (Suspicion), Útzár (Roadblock), Kiűzetés (Banishment). Abbreviations: A, BP, KE, L, PP.
+- Decimal comma and a real minus sign: `42,0`, `−2`. Ranges with an en dash: `20–30`.
+- The chronicle sentence of a report is in past or present tense and matches the quality of the source. Weak source: „valószínűleg” (probably). Strong source: exact numbers, firm statements.
+- No emoji. An exclamation mark appears only in the instability marker on the map.
 
-## Szín
+## Color
 
-- A lap `paper`, a kártyák és lapok `paper-raised`, a beviteli mezők és a táblafejek `paper-sunk`. Elválasztásra `line` hajszálvonal szolgál, árnyék nem.
-- A szöveg `ink`, a másodlagos szöveg `ink-muted`. Mindkettő legalább 4.5:1 kontrasztot ad mindhárom papíron, mindkét témában.
-- A **verdigris** az egyetlen interakciós kiemelőszín: linkek, kijelölt fül, a játékos saját útvonalai és elérhető városai, fókuszgyűrű.
-- A **seal** (pecsétviasz) kizárólag a parancsok lepecsételésére szolgál. Nem jelent hibát, és máshol nem használható.
-- Állapotszínek: `danger` (lebukás, Kiűzetés, elvágott város, Útzár), `warn` (Gyanú 1–2, Ingatag), `ok` (siker, Stabil). Az `ok` kék, így soha nem egy piros–zöld pár különbözteti meg az állapotokat. Minden állapotszín mellé szó vagy ikon is jár.
-- A **házszínek heraldikai tinktúrák**: `house-voros`, `house-kek`, `house-zold`, `house-arany`, `house-bibor`, `house-fekete`, `house-narancs`, `house-szeder`. Egy ház színe mindenhol ugyanaz: címer, befolyássáv, birtok, rivális útvonal. Ezek jelölőszínek (legalább 3:1 a papíron), szövegszínnek nem valók.
-- A **hatalmi ágaknak** (Vásártér, Városháza, Alvilág) van jelölőszínük: `branch-vasarter` (borostyán), `branch-varoshaza` (lazúr), `branch-alvilag` (alkonyibolya), és egy semleges `branch-kozos` a közös akciókhoz (útvonal). Mindegyikhez tartozik egy `-soft` háttérszín. Ezek **csak** az ágak ikonhátterét (`GameIcon` csempe), a kijelölt fül aláhúzását és ágcímkéket színezhetik. Befolyássávon, térképen, címeren soha nem jelennek meg, ott a szín továbbra is mindig házat jelent.
-- A Semleges `share-neutral` alap `line-strong` sraffozással. Az Ismeretlen (rejtett) `share-unknown` alap pontmintával. A két minta miatt ezek fekete-fehérben is megkülönböztethetők a házaktól.
+- The page is `paper`, cards and sheets are `paper-raised`, input fields and table headers are `paper-sunk`. Separation uses a `line` hairline, not shadows.
+- Text is `ink`, secondary text `ink-muted`. Both give at least 4.5:1 contrast on all three papers, in both themes.
+- **Verdigris** is the only interaction accent color: links, the selected tab, the player's own routes and reachable cities, the focus ring.
+- **Seal** (sealing wax) is used exclusively for sealing orders. It does not mean error and must not be used elsewhere.
+- Status colors: `danger` (exposure, Banishment, cut-off city, Roadblock), `warn` (Suspicion 1–2, Unsettled), `ok` (success, Stable). `ok` is blue, so states are never distinguished by a red–green pair alone. Every status color comes with a word or an icon.
+- **House colors are heraldic tinctures**: `house-voros` (red), `house-kek` (blue), `house-zold` (green), `house-arany` (gold), `house-bibor` (purple), `house-fekete` (black), `house-narancs` (orange), `house-szeder` (mulberry). A house's color is the same everywhere: crest, influence bar, estate, rival route. These are marker colors (at least 3:1 on paper), not meant for text.
+- The **branches of power** (Marketplace, Town Hall, Underworld) have marker colors: `branch-vasarter` (amber), `branch-varoshaza` (azure), `branch-alvilag` (dusk violet), plus a neutral `branch-kozos` for common actions (route). Each has a `-soft` background color. These may **only** color the branch icon backgrounds (`GameIcon` tile), the underline of the selected tab and branch labels. They never appear on the influence bar, the map or crests; there, color always means a house.
+- Neutral is a `share-neutral` base with `line-strong` hatching. Unknown (hidden) is a `share-unknown` base with a dot pattern. Thanks to the two patterns these can be told apart from houses in black and white too.
 
-## Tipográfia
+## Typography
 
-- **Alegreya SC** (`display`, `map-label`, `map-label-major`): a régi térképek felirata. Városnevekhez, házneveken és képernyőcímeken használd, folyó szöveghez soha.
-- **Alegreya Sans** (`title`, `heading`, `body`, `body-strong`, `label`, `caption`): minden felületi szöveg. A `label` nagybetűs, ritkított szemöldökcímke.
-- **Alegreya dőlt** (`chronicle`): a jelentések krónikás mondata, a világ hangja.
-- **IBM Plex Mono** (`data`, `data-lg`): minden összehasonlított szám, vagyis befolyás, költség, PP, időzítő. Egyenletes szélességű számjegyekkel.
-- Mind a négy család teljes magyar ékezetkészlettel rendelkezik (ő, ű). A betűtípusok a Google Fontsról töltődnek, a `components/bundle.css` elején.
+- **Alegreya SC** (`display`, `map-label`, `map-label-major`): the lettering of old maps. Use it for city names, house names and screen titles, never for running text.
+- **Alegreya Sans** (`title`, `heading`, `body`, `body-strong`, `label`, `caption`): all interface text. `label` is an uppercase, letter-spaced eyebrow label.
+- **Alegreya italic** (`chronicle`): the chronicle sentence of reports, the voice of the world.
+- **IBM Plex Mono** (`data`, `data-lg`): every compared number, i.e. influence, cost, PP, timer. With tabular figures.
+- All four families have the full Hungarian accent set (ő, ű). The fonts load from Google Fonts, at the top of `components/bundle.css`.
 
-## Térköz, sarkok, elrendezés
+## Spacing, corners, layout
 
-- 4px-es alap: `space-1` … `space-8`. A telefonos oldalmargó `space-4`, a kártyák belső térköze is `space-4`.
-- A térképek szögletesek: `radius-xs` a chipeknek, `radius-sm` a gomboknak, mezőknek, kártyáknak, `radius-md` a lapoknak. Kerek csak a pecsét és a pötty: `radius-full` (pecsét gomb, PP-pötty, városjelölő).
-- Az érintési célok legalább 44px magasak.
-- Telefonon egy oszlop és alul nyíló lap (`Sheet`). 720px felett a lap középre kerül, a nézetek két oszlopra bonthatók (például térkép és jelentések).
-- Egy képernyőn egy `primary` gomb legyen. A lepecsételés a `seal` gomb.
-- Fókusz: `focus-ring`, azaz 2px papírrés, majd 2px tömör verdigris. Minden felületen legalább 3:1 kontrasztú.
+- 4px base: `space-1` … `space-8`. The phone side margin is `space-4`, and so is the card padding.
+- Maps are angular: `radius-xs` for chips, `radius-sm` for buttons, fields and cards, `radius-md` for sheets. Only the seal and dots are round: `radius-full` (seal button, PP dot, city marker).
+- Touch targets are at least 44px tall.
+- On the phone: one column and a bottom sheet (`Sheet`). Above 720px the sheet is centered, and views can be split into two columns (for example map and reports).
+- One `primary` button per screen. Sealing is the `seal` button.
+- Focus: `focus-ring`, i.e. a 2px paper gap, then 2px solid verdigris. At least 3:1 contrast on every surface.
 
-## Térkép
+## Map
 
-A térkép rézmetszetű tartománytérkép, nem műholdkép.
+The map is a copper-engraved regional map, not a satellite image.
 
-- **Rétegek alulról felfelé:** papír és fokhálózat (`MapCanvas`), domborzat (`MapTerrain`), útvonalak (`MapRoute`), birtokok (`MapEstate`), városok (`MapCity`), végül a szélrózsa (`MapCompass`) és a címkeret (`MapCartouche`).
-- **Domborzat:** tenger partvonal-hullámokkal (`map-sea`, `map-sea-line`), folyók, csíkozott hegyek, erdőfoltok (`map-forest`), szántók és mocsár szántóbarázdaszerű vonalakkal (`map-relief`). A domborzat mindig halkabb, mint a játékinformáció: vékony vonalak, tompa színek.
-- **Útvonalállapotok:** kiépítetlen (pontozott), saját (vastag verdigris), épülő (szaggatott verdigris), rivális (a ház tinktúrája), Útzár (`danger`, tiltójel), eseményből adódó lezárás (szürke, szaggatott).
-- **Városállapotok:** elérhető (verdigris udvar), elérhetetlen (szaggatott, halvány), elvágott (`danger`). A kulcsváros nagyobb, telt maggal. Instabil városnál „!”, lázongónál „!!” jel áll a pont fölött.
-- A léptéket a kartus napi járóföldben adja meg, mert a játékban a távolság lépés, nem kilométer.
+- **Layers from bottom to top:** paper and graticule (`MapCanvas`), terrain (`MapTerrain`), routes (`MapRoute`), estates (`MapEstate`), cities (`MapCity`), and finally the compass rose (`MapCompass`) and the cartouche (`MapCartouche`).
+- **Terrain:** sea with coastline ripples (`map-sea`, `map-sea-line`), rivers, hatched mountains, forest patches (`map-forest`), fields and marsh with furrow-like lines (`map-relief`). Terrain is always quieter than game information: thin lines, muted colors.
+- **Route states:** unbuilt (dotted), own (thick verdigris), under construction (dashed verdigris), rival (the house's tincture), Roadblock (`danger`, prohibition sign), closure caused by an event (grey, dashed).
+- **City states:** reachable (verdigris halo), unreachable (dashed, faint), cut off (`danger`). A key city is larger, with a filled core. An unstable city has a „!” mark above the dot, a rioting one „!!”.
+- The cartouche gives the scale in days of travel, because in the game distance is measured in steps, not kilometers.
 
-## Városnézet
+## City view
 
-A városállam madártávlati alaprajz (`CityView`): fal bástyákkal és négy kapuval, háztömbök (`map-block`), és a három hatalmi ág negyede a saját épületével.
+The city-state is a bird's-eye ground plan (`CityView`): a wall with bastions and four gates, building blocks (`map-block`), and the district of each of the three branches of power with its own building.
 
-- **Városháza (Politika):** a palota udvarral és négy saroktoronnyal.
-- **Alvilág (Kémhálózat):** a csillagerőd, a városi alvilág rejtekhelye.
-- **Vásártér (Kereskedők):** a piactér standokkal és kúttal. Kikötővárosban mólók és hajók is vannak.
-- A negyed fölött a Domináns ház zászlaja leng. Szoros versenyben a második ház kisebb zászlaja is ott van.
-- Az Ingatag városban füst, a Lázongóban lángok látszanak.
-- A negyedre koppintva az kijelölődik (verdigris), és alatta megnyílik az ág kártyája. Ugyanez a fülekkel (`Tabs`) is elérhető, mert az illusztráció nem lehet az egyetlen út.
-- A háztömbök a város nevéből generálódnak, így minden városnak saját, állandó rajzolata van.
+- **Town Hall (Politics):** the palace with a courtyard and four corner towers.
+- **Underworld (Spy Network):** the star fort, the hideout of the city's underworld.
+- **Marketplace (Merchants):** the market square with stalls and a well. Port cities also have piers and ships.
+- The Dominant house's flag flies above the district. In a close race the second house's smaller flag is there too.
+- An Unsettled city shows smoke, a Rioting one shows flames.
+- Tapping a district selects it (verdigris) and opens the branch's card below. The same is reachable through the tabs (`Tabs`), because the illustration must not be the only path.
+- The building blocks are generated from the city's name, so every city has its own, stable layout.
 
-## Nézetek
+## Views
 
-A **Térkép nézet** és a **Város nézet** oldal a telefonos képernyőket mutatja összerakva: `AppBar` felül, `NavBar` alul, közöttük a nézet tartalma `space-4` térközzel.
+The **Map view** and **City view** pages show the phone screens assembled: `AppBar` on top, `NavBar` at the bottom, and the view content in between with `space-4` spacing.
 
-## Ikonok
+## Icons
 
-Saját vonalikon-készlet a bundle-ben (`Icon`): 24-es rács, 1,75-ös vonal, lekerekített végek, `currentColor`. Ezek a felület vezérlőikonjai (navigáció, állapot, bezárás, óra).
+Own line icon set in the bundle (`Icon`): 24 grid, 1.75 stroke, rounded caps, `currentColor`. These are the interface's control icons (navigation, status, close, clock).
 
-A játék dolgainak saját, **teli, illusztratív** ikonkészlete is van (`GameIcon`): erőforrások, árucikkek, akciók és a három ág. Stílusa: 24-es rács, sötétbarna (`ic-line`) 1,1-es körvonal, teli színfoltok az `ic-*` festékekből, egy-egy fehér csillanás. A festékek témafüggetlenek, sötét témában az ikon vékony világos glóriát kap, hogy a körvonal ne vesszen el.
+The game's things have their own **filled, illustrative** icon set too (`GameIcon`): resources, goods, actions and the three branches. Style: 24 grid, dark brown (`ic-line`) 1.1 outline, filled color areas from the `ic-*` paints, a single white highlight. The paints are theme-independent; in dark theme the icon gets a thin light halo so the outline does not get lost.
 
-- Erőforrás: `arany`, `pp`, `legit`, `nep` (népszerűség), `ado`.
-- Árucikk: `gabona`, `bor`, `vas`, `ko`, `so`, `hal`, `fuszer`, `tozeg`, `csempesz`, `gyapju`, `lo`.
-- Ág: `vasarter`, `varoshaza`, `alvilag`.
-- Akció (az akció azonosítójával): `route`, `margin`, `buyShares`, `buyout`, `defend`, `foundParty`, `program`, `festival`, `news`, `hireSpy`, `guard`, `spy`, `verify`, `debunk`.
+- Resource: `arany` (gold), `pp`, `legit`, `nep` (popularity), `ado` (tax).
+- Good: `gabona`, `bor`, `vas`, `ko`, `so`, `hal`, `fuszer`, `tozeg`, `csempesz`, `gyapju`, `lo`.
+- Branch: `vasarter`, `varoshaza`, `alvilag`.
+- Action (by the action id): `route`, `margin`, `buyShares`, `buyout`, `defend`, `foundParty`, `program`, `festival`, `news`, `hireSpy`, `guard`, `spy`, `verify`, `debunk`.
 
-A `tile` csempét rajzol az ikon mögé. `tile: true` esetén az akció a saját ága színét kapja, így a parancslapon egy pillantásra látszik, melyik ágban mozogsz. Új játékikon ugyanebben a stílusban készüljön. Emoji és külső ikonkészlet továbbra sem használható.
+`tile` draws a tile behind the icon. With `tile: true` the action gets its own branch's color, so on the order sheet you can see at a glance which branch you are acting in. New game icons should be made in the same style. Emoji and external icon sets are still not allowed.
 
-## Logó
+## Logo
 
-Még nincs logó. A játék neve Alegreya SC betűvel, szövegként jelenik meg.
+There is no logo yet. The game's name appears as text in Alegreya SC.

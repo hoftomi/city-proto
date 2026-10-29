@@ -1,25 +1,22 @@
 import 'package:tron_api/tron_api.dart';
 
-/// Tesztadatok a játékválasztóhoz, a részletekhez és a jelentkezéshez.
+/// Test data for the lobby, the details and the join flow.
 GameSummary summary({
   String id = 'g1',
-  String status = 'nyitott',
+  String status = 'open',
   int round = 0,
   int players = 3,
   int maxPlayers = 10,
   MyHouse? myHouse,
-  DateTime? startsAt,
+  DateTime? closesAt,
 }) =>
     GameSummary(
       id: id,
       name: 'Játék $id',
-      season: 'Tavasz',
       status: status,
       mapId: 'm1',
-      startsAt: startsAt,
+      closesAt: closesAt,
       opensAt: null,
-      days: 5,
-      roundsPerDay: 4,
       round: round,
       maxRounds: 20,
       players: players,
@@ -32,7 +29,7 @@ GameSummary summary({
       myHouse: myHouse,
     );
 
-MyHouse house() => MyHouse(playerId: 'p1', houseName: 'Kékholló', tincture: 'azur', background: 'kereskedo', backgroundName: 'Kereskedőház', startSlot: 's1');
+MyHouse house() => MyHouse(playerId: 'p1', houseName: 'Kékholló', tincture: 'azur', background: 'merchant', backgroundName: 'Kereskedőház', startSlot: 's1');
 
 StartSlotDto slot(String id, {List<GoodOption> goods = const []}) => StartSlotDto(
       id: id,
@@ -50,12 +47,12 @@ StartSlotDto slot(String id, {List<GoodOption> goods = const []}) => StartSlotDt
 GameDetail detail({GameSummary? game}) => GameDetail(
       game: game ?? summary(),
       starts: [
-        slot('s1', goods: [GoodOption(id: 'bor', name: 'Bor'), GoodOption(id: 'so', name: 'Só')]),
+        slot('s1', goods: [GoodOption(id: 'wine', name: 'Bor'), GoodOption(id: 'salt', name: 'Só')]),
         slot('s2'),
       ],
       backgrounds: [
-        BackgroundDto(id: 'nemes', name: 'Nemesház', icon: 'korona', perks: const []),
-        BackgroundDto(id: 'kereskedo', name: 'Kereskedőház', icon: 'kereskedok', perks: const []),
+        BackgroundDto(id: 'noble', name: 'Nemesház', icon: 'nobility', perks: const []),
+        BackgroundDto(id: 'merchant', name: 'Kereskedőház', icon: 'merchants', perks: const []),
       ],
       tinctures: const ['azur', 'gules'],
     );

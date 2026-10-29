@@ -23,7 +23,7 @@ abstract class _$OrderRequestCWProxy {
 
   OrderRequest newsId(String? newsId);
 
-  OrderRequest lapId(String? lapId);
+  OrderRequest sheetId(String? sheetId);
 
   OrderRequest orderId(String? orderId);
 
@@ -46,7 +46,7 @@ abstract class _$OrderRequestCWProxy {
     String? target,
     String? template,
     String? newsId,
-    String? lapId,
+    String? sheetId,
     String? orderId,
     String? from,
     String? to,
@@ -84,7 +84,7 @@ class _$OrderRequestCWProxyImpl implements _$OrderRequestCWProxy {
   OrderRequest newsId(String? newsId) => this(newsId: newsId);
 
   @override
-  OrderRequest lapId(String? lapId) => this(lapId: lapId);
+  OrderRequest sheetId(String? sheetId) => this(sheetId: sheetId);
 
   @override
   OrderRequest orderId(String? orderId) => this(orderId: orderId);
@@ -111,7 +111,7 @@ class _$OrderRequestCWProxyImpl implements _$OrderRequestCWProxy {
     Object? target = const $CopyWithPlaceholder(),
     Object? template = const $CopyWithPlaceholder(),
     Object? newsId = const $CopyWithPlaceholder(),
-    Object? lapId = const $CopyWithPlaceholder(),
+    Object? sheetId = const $CopyWithPlaceholder(),
     Object? orderId = const $CopyWithPlaceholder(),
     Object? from = const $CopyWithPlaceholder(),
     Object? to = const $CopyWithPlaceholder(),
@@ -149,10 +149,10 @@ class _$OrderRequestCWProxyImpl implements _$OrderRequestCWProxy {
           ? _value.newsId
           // ignore: cast_nullable_to_non_nullable
           : newsId as String?,
-      lapId: lapId == const $CopyWithPlaceholder()
-          ? _value.lapId
+      sheetId: sheetId == const $CopyWithPlaceholder()
+          ? _value.sheetId
           // ignore: cast_nullable_to_non_nullable
-          : lapId as String?,
+          : sheetId as String?,
       orderId: orderId == const $CopyWithPlaceholder()
           ? _value.orderId
           // ignore: cast_nullable_to_non_nullable
@@ -191,7 +191,7 @@ OrderRequest _$OrderRequestFromJson(Map<String, dynamic> json) =>
         target: $checkedConvert('target', (v) => v as String?),
         template: $checkedConvert('template', (v) => v as String?),
         newsId: $checkedConvert('newsId', (v) => v as String?),
-        lapId: $checkedConvert('lapId', (v) => v as String?),
+        sheetId: $checkedConvert('sheetId', (v) => v as String?),
         orderId: $checkedConvert('orderId', (v) => v as String?),
         from: $checkedConvert('from', (v) => v as String?),
         to: $checkedConvert('to', (v) => v as String?),
@@ -209,7 +209,7 @@ Map<String, dynamic> _$OrderRequestToJson(OrderRequest instance) =>
       'target': ?instance.target,
       'template': ?instance.template,
       'newsId': ?instance.newsId,
-      'lapId': ?instance.lapId,
+      'sheetId': ?instance.sheetId,
       'orderId': ?instance.orderId,
       'from': ?instance.from,
       'to': ?instance.to,

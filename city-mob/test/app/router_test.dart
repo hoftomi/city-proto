@@ -13,7 +13,7 @@ import 'package:tron_nelkul/ui/auth/bloc/auth_bloc.dart';
 
 class _Auth extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 
-/// A route-fa felépíthető (a go_router a konfigurációt induláskor ellenőrzi), és minden útvonal a várt helyre visz.
+/// The route tree builds (go_router validates the configuration at startup), and every path leads to the expected place.
 void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
   setUpAll(configureDependencies);
@@ -29,24 +29,24 @@ void main() {
 
   String at(GoRouter r) => r.routerDelegate.currentConfiguration.uri.toString();
 
-  testWidgets('kilépve a belépésre irányít', (t) async {
+  testWidgets('signed out redirects to login', (t) async {
     final r = await app(t, const AuthState(status: AuthStatus.signedOut));
     r.go(Routes.map('g'));
     await t.pump();
     expect(at(r), Routes.login);
   });
 
-  testWidgets('belépve a játék fülei és a városnézet paraméterei', (t) async {
+  testWidgets('signed in: game tabs and city view parameters', (t) async {
     final r = await app(t, AuthState(status: AuthStatus.signedIn, user: UserDto(id: '00000000-0000-0000-0000-000000000001', name: 'V', role: 'PLAYER')));
     expect(at(r), Routes.lobby);
-    for (final path in [Routes.map('g'), Routes.city('g', cityId: 'szelmezo', district: 'kem'), Routes.reports('g'), Routes.orders('g'), Routes.ranking('g')]) {
+    for (final path in [Routes.map('g'), Routes.city('g', cityId: 'szelmezo', district: 'espionage'), Routes.reports('g'), Routes.orders('g'), Routes.ranking('g')]) {
       r.go(path);
       await t.pump();
       expect(at(r), path);
     }
     r.go('/games/g/play');
     await t.pump();
-    expect(at(r), Routes.map('g'), reason: 'a szülő a Térképre irányít');
+    expect(at(r), Routes.map('g'), reason: 'parent redirects to the Map');
     await t.pumpWidget(const SizedBox());
     await t.pump(const Duration(seconds: 30));
   });

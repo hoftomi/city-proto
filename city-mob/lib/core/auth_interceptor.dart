@@ -4,8 +4,8 @@ import 'package:injectable/injectable.dart';
 import '../data/datasource/auth/identity_datasource.dart';
 import 'session_events.dart';
 
-/// Minden kérésre ráteszi a Firebase ID tokent (Authorization: Bearer); a token lejárat előtt magától megújul.
-/// 401-es válasznál jelez a SessionEvents-en, és az AuthBloc kiléptet.
+/// Attaches the Firebase ID token to every request (Authorization: Bearer); the token refreshes itself before expiry.
+/// On a 401 response it signals on SessionEvents, and AuthBloc signs out.
 @lazySingleton
 class AuthInterceptor extends QueuedInterceptor {
   AuthInterceptor(this._identity, this._events);
@@ -18,7 +18,7 @@ class AuthInterceptor extends QueuedInterceptor {
       final token = await _identity.idToken();
       if (token != null) options.headers['Authorization'] = 'Bearer $token';
     } catch (_) {
-      // Token nélkül megy tovább; a szerver 401-et ad, ha kellett volna.
+      // Proceeds without a token; the server returns 401 if one was needed.
     }
     handler.next(options);
   }

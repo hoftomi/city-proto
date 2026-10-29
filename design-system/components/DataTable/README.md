@@ -1,7 +1,7 @@
 # DataTable
 
-Adattábla ranglistához és városáttekintéshez. A számoszlopok jobbra igazítva, egyenletes szélességű számjegyekkel.
+A data table for the ranking and the city overview. Number columns are right-aligned, with tabular figures.
 
-**Mit ad a hívó:** `columns` (`[{key, label, align?, render?}]`), `rows` (a saját sor `self: true`), `caption`.
+**What the caller provides:** `columns` (`[{key, label, align?, render?}]`), `rows` (the player's own row has `self: true`), `caption`.
 
-- Keskeny képernyőn a tábla a saját konténerében görgethető, az oldal nem.
+- On narrow screens the table scrolls inside its own container, not the page.

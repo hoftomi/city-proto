@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Minden felirat a backendről jön: a kódban használt összes fordítási kulcs szerepel a backend feliratai között
-/// (assets/translations/hu.json = a backend resources/i18n/hu fájljai, tools/sync_translations.py).
+/// Every label comes from the backend: every translation key used in the code exists among the backend's labels
+/// (assets/translations/hu.json = the backend's resources/i18n/hu files, tools/sync_translations.py).
 void main() {
   final translations = jsonDecode(File('assets/translations/hu.json').readAsStringSync()) as Map<String, dynamic>;
 
@@ -17,17 +17,17 @@ void main() {
     return node is String;
   }
 
-  test('a tartalék naprakész a backend fájljaihoz képest', () {
+  test('fallback is up to date with the backend files', () {
     final dir = Directory('../tron-nelkul/backend/src/main/resources/i18n/hu');
     final files = dir.listSync().whereType<File>().where((f) => f.path.endsWith('.json'));
     for (final f in files) {
       final ns = f.uri.pathSegments.last.replaceAll('.json', '');
-      expect(translations[ns], jsonDecode(f.readAsStringSync()), reason: 'futtasd: python3 tools/sync_translations.py ($ns)');
+      expect(translations[ns], jsonDecode(f.readAsStringSync()), reason: 'run: python3 tools/sync_translations.py ($ns)');
     }
   });
 
-  test('a kódban használt kulcsok mind léteznek', () {
-    // Két alak: 'ns.key'.tr(…)  és  Tr('ns.key'…); a $-t tartalmazó, dinamikus kulcsokat kihagyjuk
+  test('all keys used in the code exist', () {
+    // Two forms: 'ns.key'.tr(…)  and  Tr('ns.key'…); dynamic keys containing $ are skipped
     final patterns = [RegExp(r"'([a-z_]+(?:\.[a-z0-9_]+)+)'\s*\.tr\("), RegExp(r"\bTr\(\s*'([a-z_]+(?:\.[a-z0-9_]+)+)'")];
     final missing = <String>{};
     var used = 0;
@@ -41,6 +41,6 @@ void main() {
       }
     }
     expect(used, greaterThan(0));
-    expect(missing, isEmpty, reason: 'hiányzó feliratok a backend resources/i18n/hu fájljaiban');
+    expect(missing, isEmpty, reason: 'missing labels in the backend resources/i18n/hu files');
   });
 }

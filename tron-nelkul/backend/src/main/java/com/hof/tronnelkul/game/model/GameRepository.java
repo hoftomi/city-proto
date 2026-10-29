@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface GameRepository extends JpaRepository<GameEntity, String> {
     List<GameEntity> findByStatus(GameStatus status);
-    List<GameEntity> findByStatusAndStartsAtBefore(GameStatus status, Instant time);
+    List<GameEntity> findByStatusAndClosesAtBefore(GameStatus status, Instant time);
     List<GameEntity> findByStatusAndOpensAtBefore(GameStatus status, Instant time);
 
-    /** Írás előtt: az ütemező és a játékosok parancsai így nem írják felül egymás állapotát. */
+    /** Before writing: so the scheduler and player orders do not overwrite each other's state. */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select g from GameEntity g where g.id = :id")
     Optional<GameEntity> lockById(String id);

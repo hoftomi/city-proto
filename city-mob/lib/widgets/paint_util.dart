@@ -3,8 +3,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-/// Determinisztikus véletlen, bitre azonos a web prototípus `rng(seed)` függvényével,
-/// így az erdők, mocsarak és háztömbök ugyanúgy néznek ki minden eszközön.
+/// Deterministic random, bit-identical to the web prototype's `rng(seed)` function,
+/// so forests, marshes and building blocks look the same on every device.
 class SeededRng {
   SeededRng(String seed) {
     var s = 0;
@@ -41,7 +41,7 @@ void dashedCircle(Canvas canvas, Offset c, double r, Paint paint, double dash, d
   }
 }
 
-/// Felirat papírszínű „glóriával”, hogy vonalak fölött is olvasható legyen.
+/// Label with a paper-colored "halo" so it stays readable over lines.
 void haloText(Canvas canvas, String text, Offset at, TextStyle style, Color halo, {TextAlign align = TextAlign.left, double haloWidth = 4}) {
   TextPainter tp(Paint? fg) => TextPainter(
         text: TextSpan(text: text, style: fg == null ? style : _withForeground(style, fg)),
@@ -74,7 +74,7 @@ ui.Path starPolygon(Offset c, int points, double outer, double inner, {double ro
   return p..close();
 }
 
-/// A TextStyle `color` és `foreground` mezője nem lehet egyszerre kitöltve, ezért új stílust építünk.
+/// TextStyle `color` and `foreground` cannot both be set, so we build a new style.
 TextStyle _withForeground(TextStyle s, Paint fg) => TextStyle(
       fontFamily: s.fontFamily,
       fontFamilyFallback: s.fontFamilyFallback,

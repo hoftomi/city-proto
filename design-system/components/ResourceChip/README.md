@@ -1,9 +1,9 @@
 # ResourceChip
 
-Egy erőforrás értéke, opcionálisan a kör végi változással.
+The value of a resource, optionally with its end-of-round change.
 
-**Mit ad a hívó:** `kind` (`arany` | `pp` | `legit` | `nep` | `ado`, régiek: `bp` | `ke`), `value`, `delta` (előjeles szám).
+**What the caller provides:** `kind` (`arany` | `pp` | `legit` | `nep` | `ado`, legacy: `bp` | `ke`), `value`, `delta` (signed number).
 
-- A negatív változás `danger` színű, és valódi mínuszjellel (−) jelenik meg.
-- A fejlécben egy sorban, tördelhetően legyenek.
-- Az `arany`, `pp`, `legit`, `nep` és `ado` fajta teli játékikont kap (`GameIcon`), a többi vonalikont.
+- A negative change is `danger` colored and shown with a real minus sign (−).
+- In the header they sit in one row, wrapping as needed.
+- The `arany`, `pp`, `legit`, `nep` and `ado` kinds get a filled game icon (`GameIcon`), the rest a line icon.

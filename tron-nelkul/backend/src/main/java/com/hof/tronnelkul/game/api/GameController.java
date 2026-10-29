@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-/** A játék végpontjai (api/openapi.yaml, `game` tag). Minden módosítás a frissített játékállapotot adja vissza. */
+/** Game endpoints (api/openapi.yaml, `game` tag). Every change returns the updated game state. */
 @RestController
 public class GameController implements GameApi {
     private final GameViewService view;

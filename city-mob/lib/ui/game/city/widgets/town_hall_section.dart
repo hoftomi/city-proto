@@ -11,7 +11,7 @@ import '../../../../widgets/game_widgets.dart';
 import '../bloc/city_bloc.dart';
 import 'city_common.dart';
 
-/// Városháza: a tanács, a saját párt (alapítás, program, fesztivál), hírterjesztés és a terjedő hírek.
+/// Town Hall: the council, own party (founding, program, festival), spreading news and the spreading news items.
 class TownHallSection extends StatelessWidget {
   const TownHallSection({super.key, required this.s});
   final CityState s;
@@ -29,7 +29,7 @@ class TownHallSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              cardTitle(context, 'city.town_hall.council'.tr(), null, 'varoshaza'),
+              cardTitle(context, 'city.town_hall.council'.tr(), null, 'townHall'),
               gap(4),
               Text(
                 [
@@ -105,7 +105,7 @@ class TownHallSection extends StatelessWidget {
                     selected: cv.myProgram,
                     onPick: s.busy ? null : (id) => bloc.add(CityProgramPicked(id)),
                   ),
-                  // A fesztivált a párt rendezi (a prototípus és a backend szerint is párt kell hozzá)
+                  // The festival is held by the party (both the prototype and the backend require a party)
                   gap(),
                   Align(
                     alignment: Alignment.centerLeft,

@@ -2,7 +2,10 @@ package com.hof.tronnelkul.game.engine;
 
 import com.hof.tronnelkul.game.engine.EngineState.*;
 import com.hof.tronnelkul.game.world.MapDefinition;
+import com.hof.tronnelkul.game.world.GoodDef;
 import com.hof.tronnelkul.game.world.MapRegistry;
+import com.hof.tronnelkul.i18n.Messages;
+import com.hof.tronnelkul.i18n.TranslationService;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -13,33 +16,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EngineTest {
     static final MapDefinition MAP = MapRegistry.DELKELET;
-    /** 09:30 egy napon: a következő elszámolás 20:00-kor. */
+    /** 09:30 on a day: the next settlement is at 20:00. */
     static final long START = LocalDate.of(2026, 9, 1).atTime(9, 30).atZone(Time.ZONE).toInstant().toEpochMilli();
     static final long MIN = 60_000L;
+    static final Messages MESSAGES = new Messages(new TranslationService(JsonMapper.builder().build()));
 
     static Engine game() { return new Engine(MAP, Setup.initial(MAP, START), 42); }
 
     static Order order(String type, String city) { Order o = new Order(); o.type = type; o.city = city; return o; }
 
     static void join(Engine e, String id, String background, String startGood) {
-        Setup.addPlayer(e.s, id, id.toUpperCase(), "kek", background, MAP.start("nyugat").orElseThrow(), startGood);
+        Setup.addPlayer(e.s, id, id.toUpperCase(), "blue", background, MAP.start("west").orElseThrow(), startGood);
     }
 
     @Test
     void demandSplitsByWeightLikeTheRulebookExample() {
-        // 5.3 példa: Feketerév, Só. A 50 pont Drága N30, B 30 pont Olcsó N50, a Város 20 pontja Piaci N20.
+        // 5.3 example: Feketerev, salt. A 50 points Expensive P30, B 30 points Cheap P50, the City's 20 points Market P20.
         Engine e = game();
         for (String p : new String[] { "a", "b" }) { PlayerSt ps = new PlayerSt(); ps.id = p; ps.name = p; ps.npc = true; e.s.players.put(p, ps); }
         CitySt c = e.s.cities.get("feketerev");
-        Good so = c.goods.get("so");
-        so.shares.put("a", 50); so.margins.put("a", "draga");
-        so.shares.put("b", 30); so.margins.put("b", "olcso");
+        Good salt = c.goods.get("salt");
+        salt.shares.put("a", 50); salt.margins.put("a", "expensive");
+        salt.shares.put("b", 30); salt.margins.put("b", "cheap");
         c.pop.put("a", 30.0); c.pop.put("b", 50.0);
         e.settle();
-        assertEquals(35.1, so.sold.get("a"), 0.05);
-        assertEquals(30.0, so.sold.get("b"), 0.05);
-        assertEquals(14.9, so.sold.get(Engine.CITY), 0.05);
-        // B a legolcsóbb: +1 (Olcsó) +1 (legolcsóbb), majd a visszahúzás −2
+        assertEquals(35.1, salt.sold.get("a"), 0.05);
+        assertEquals(30.0, salt.sold.get("b"), 0.05);
+        assertEquals(14.9, salt.sold.get(Engine.CITY), 0.05);
+        // B is the cheapest: +1 (Cheap) +1 (cheapest), then the drift −2
         assertEquals(50.0, c.pop.get("b"), 0.001);
     }
 
@@ -52,11 +56,11 @@ class EngineTest {
     @Test
     void sealedSheetRunsAfterMaturation() {
         Engine e = game();
-        join(e, "te", "kereskedo", "gabona");
+        join(e, "te", "merchant", "grain");
         Order r = order("route", null); r.from = "szelmezo"; r.to = "feketerev";
         e.addDraft("te", r);
         e.seal("te", START, 120);
-        assertEquals(2, e.s.routesOf("te").size(), "a birtokból két ingyenes útvonal indul");
+        assertEquals(2, e.s.routesOf("te").size(), "two free routes start from the estate");
         e.advance(START + 119 * MIN, 120, 28);
         assertFalse(e.hasRoute("te", "szelmezo", "feketerev"));
         e.advance(START + 121 * MIN, 120, 28);
@@ -74,56 +78,56 @@ class EngineTest {
         e.seal("te", START, 120);
         e.addDraft("te", order("hireSpy", "szelmezo"));
         EngineException ex = assertThrows(EngineException.class, () -> e.seal("te", START + MIN, 120));
-        assertTrue(ex.getMessage().contains("érlelő parancslapod"));
+        assertEquals("engine.error.sheet_maturing", ex.msg().key());
     }
 
     @Test
     void sealedDefenceBlocksBuyout() {
         Engine e = game();
-        join(e, "a", "kereskedo", "gabona");
-        join(e, "b", "kereskedo", "gabona");
+        join(e, "a", "merchant", "grain");
+        join(e, "b", "merchant", "grain");
         e.s.players.get("a").gold = 200;
-        Order bo = order("buyout", "szelmezo"); bo.good = "gabona"; bo.target = "b"; bo.pts = 5;
+        Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
         e.addDraft("a", bo);
-        Lap attack = e.seal("a", START, 120);
-        // B egy órával később pecsétel: az ő lapja az ajánlat után futna le, de érlelés közben már véd
-        Order d = order("defend", "szelmezo"); d.lapId = attack.id; d.orderId = attack.orders.get(0).id;
+        Sheet attack = e.seal("a", START, 120);
+        // B seals an hour later: its sheet would run after the offer, but it defends while maturing
+        Order d = order("defend", "szelmezo"); d.sheetId = attack.id; d.orderId = attack.orders.get(0).id;
         e.s.players.get("b").gold = 200;
         e.addDraft("b", d);
         e.seal("b", START + 60 * MIN, 120);
         e.advance(START + 200 * MIN, 120, 28);
-        Good g = e.s.cities.get("szelmezo").goods.get("gabona");
+        Good g = e.s.cities.get("szelmezo").goods.get("grain");
         assertEquals(20, g.shares.get("b"));
         assertEquals(20, g.shares.get("a"));
-        assertEquals(200, e.s.players.get("a").gold, 0.001, "a meghiúsult ajánlat ára visszajár");
+        assertEquals(200, e.s.players.get("a").gold, 0.001, "the price of the foiled offer is refunded");
     }
 
     @Test
     void buyoutTransfersSharesAndPaysTheRival() {
         Engine e = game();
-        join(e, "a", "kereskedo", "gabona");
-        join(e, "b", "kereskedo", "gabona");
+        join(e, "a", "merchant", "grain");
+        join(e, "b", "merchant", "grain");
         e.s.players.get("a").gold = 200;
-        Order bo = order("buyout", "szelmezo"); bo.good = "gabona"; bo.target = "b"; bo.pts = 5;
+        Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
         Order added = e.addDraft("a", bo);
         e.seal("a", START, 120);
         e.advance(START + 121 * MIN, 120, 28);
-        Good g = e.s.cities.get("szelmezo").goods.get("gabona");
+        Good g = e.s.cities.get("szelmezo").goods.get("grain");
         assertEquals(25, g.shares.get("a"));
         assertEquals(15, g.shares.get("b"));
         assertEquals(30 + added.gold, e.s.players.get("b").gold, 0.001);
-        assertTrue(e.isProtected("szelmezo", "gabona", "b"));
-        assertTrue(e.newsTruth("szelmezo", "kivasarolt", "a", null));
+        assertTrue(e.isProtected("szelmezo", "grain", "b"));
+        assertTrue(e.newsTruth("szelmezo", "boughtOut", "a", null));
     }
 
     @Test
     void falseNewsCanBeVerifiedAndDebunked() {
         Engine e = game();
         join(e, "liar", null, null);
-        join(e, "victim", "kereskedo", "gabona");
-        join(e, "spy", "arnyek", null);
-        Order n = order("news", "szelmezo"); n.template = "uzsora"; n.target = "victim"; n.good = "gabona"; // Piaci: hamis
-        assertFalse(e.newsTruth("szelmezo", "uzsora", "victim", "gabona"));
+        join(e, "victim", "merchant", "grain");
+        join(e, "spy", "shadow", null);
+        Order n = order("news", "szelmezo"); n.template = "usury"; n.target = "victim"; n.good = "grain"; // Market: false
+        assertFalse(e.newsTruth("szelmezo", "usury", "victim", "grain"));
         e.addDraft("liar", n);
         e.seal("liar", START, 120);
         e.advance(START + 121 * MIN, 120, 28);
@@ -143,27 +147,27 @@ class EngineTest {
         e.advance(START + 400 * MIN, 120, 28);
         assertTrue(news.debunked);
         assertEquals(20.0, e.popOf("szelmezo", "victim"), 0.001);
-        assertEquals(10.0, e.popOf("szelmezo", "liar"), 0.001, "20 − 10 büntetés");
+        assertEquals(10.0, e.popOf("szelmezo", "liar"), 0.001, "20 − 10 penalty");
         assertEquals(Rules.DEBUNK_REWARD_LEGIT, e.s.players.get("spy").legit);
     }
 
     @Test
     void settlementRunsAtEightPmAndElectionEverySixth() {
         Engine e = game();
-        join(e, "te", "nemesi", null);
+        join(e, "te", "noble", null);
         e.advance(START + 11 * 60 * MIN, 120, 28); // 20:30
         assertEquals(1, e.s.settlements);
         assertEquals(20, e.s.players.get("te").pp);
         e.advance(START + 3 * 24 * 60 * MIN, 120, 28);
         assertEquals(6, e.s.settlements);
-        assertTrue(e.s.cities.get("szelmezo").council.getOrDefault("te", 0) > 0, "a nemesi ház pártja bejutott a tanácsba");
+        assertTrue(e.s.cities.get("szelmezo").council.getOrDefault("te", 0) > 0, "the noble house's party got into the council");
     }
 
     @Test
     void stateSurvivesJsonRoundTrip() {
         Engine e = game();
-        join(e, "te", "kereskedo", "gabona");
-        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "arany", "kalmar");
+        join(e, "te", "merchant", "grain");
+        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "gold", "trader");
         e.advance(START + 2 * 24 * 60 * MIN, 120, 28);
         JsonMapper json = JsonMapper.builder().build();
         String a = json.writeValueAsString(e.s);
@@ -174,41 +178,50 @@ class EngineTest {
     @Test
     void fullSeasonWithNpcsRunsToTheEnd() {
         Engine e = game();
-        join(e, "te", "kereskedo", "gabona");
-        String[][] npcs = { { "kalmar", "arany" }, { "politikus", "zold" }, { "kem", "bibor" }, { "felvasarlo", "fekete" } };
+        join(e, "te", "merchant", "grain");
+        String[][] npcs = { { "trader", "gold" }, { "politician", "green" }, { "spymaster", "purple" }, { "raider", "black" } };
         for (int i = 0; i < npcs.length; i++) Setup.addNpc(e.s, MAP, i, "npc" + i, "NPC" + i, npcs[i][1], npcs[i][0]);
         e.advance(START + 15L * 24 * 60 * MIN, 120, 28);
         assertEquals(28, e.s.settlements);
         e.coronation();
         assertTrue(e.s.players.values().stream().anyMatch(p -> p.legit > 0));
-        assertTrue(e.s.cities.values().stream().anyMatch(c -> !c.council.isEmpty()), "volt választás");
-        assertTrue(e.out.stream().anyMatch(r -> r.title().contains("ki akar vásárolni") || r.title().contains("tervei")), "az NPC-k a játékos ellen is lépnek");
+        assertTrue(e.s.cities.values().stream().anyMatch(c -> !c.council.isEmpty()), "there was an election");
+        assertTrue(e.out.stream().anyMatch(r -> r.title().key().equals("engine.report.buyout_threat.title") || r.title().key().equals("engine.report.plans.title")),
+            "NPCs act against the player too");
+        // Every report text resolves fully: no missing key, no unfilled placeholder
+        for (ReportOut r : e.out) for (Msg m : new Msg[] { r.title(), r.text() }) {
+            String t = MESSAGES.text(m);
+            assertFalse(t.contains("{") || t.startsWith("engine.") || t.contains(" engine.") || t.contains("world.") || t.contains("catalog."), m.key() + ": " + t);
+        }
         e.s.players.values().forEach(p -> assertTrue(p.gold >= 0 && p.pp <= Rules.PP_MAX));
     }
 
     @Test
     void scoutingRevealsOnlyOrdersOfThatCity() {
         Engine e = game();
-        join(e, "target", "kereskedo", "gabona");
-        join(e, "spy", "arnyek", null);
+        join(e, "target", "merchant", "grain");
+        join(e, "spy", "shadow", null);
         e.s.players.get("target").gold = 100;
         e.addDraft("target", order("hireSpy", "delkapu"));
-        Order m = order("margin", "szelmezo"); m.good = "gabona"; m.level = "draga";
+        Order m = order("margin", "szelmezo"); m.good = "grain"; m.level = "expensive";
         e.addDraft("target", m);
         e.seal("target", START, 120);
         Order sp = order("spy", "szelmezo"); sp.target = "target";
         e.addDraft("spy", sp);
-        e.seal("spy", START + 10 * MIN, 100); // a kémé előbb fut le
+        e.seal("spy", START + 10 * MIN, 100); // the spy's runs first
         e.advance(START + 115 * MIN, 120, 28);
         Intel it = e.s.intel.get(0);
-        assertEquals(1, it.lines.size());
-        assertTrue(it.lines.get(0).contains("Gabona ára"), it.lines.toString());
+        assertEquals(1, it.orders.size());
+        Msg line = e.intelLines(it).get(0);
+        assertEquals("engine.order.margin", line.key());
+        String text = MESSAGES.text(line);
+        assertTrue(text.startsWith(MESSAGES.text(GoodDef.label("grain"))) && text.contains(MESSAGES.text(Rules.Margin.EXPENSIVE.label())), text);
     }
 
     @Test
     void spyCanBeMovedToAnotherCityInTheNetwork() {
         Engine e = game();
-        join(e, "te", "arnyek", null);
+        join(e, "te", "shadow", null);
         Order mv = order("moveSpy", "szelmezo"); mv.to = "delkapu";
         e.addDraft("te", mv);
         e.seal("te", START, 120);
@@ -216,20 +229,20 @@ class EngineTest {
         assertEquals(1, e.s.cities.get("szelmezo").spies.get("te"));
         assertEquals(1, e.s.cities.get("delkapu").spies.get("te"));
         Order far = order("moveSpy", "szelmezo"); far.to = "holtag";
-        assertThrows(EngineException.class, () -> e.addDraft("te", far), "Holtág nincs a hálózatban");
+        assertThrows(EngineException.class, () -> e.addDraft("te", far), "holtag is not in the network");
     }
 
     @Test
     void npcsSealWithTheSameMaturationAtAnyTime() {
         Engine e = game();
         join(e, "te", null, null);
-        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "arany", "kalmar");
+        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "gold", "trader");
         e.scheduleNpcs();
         long planAt = e.s.players.get("npc").nextPlanAt;
         assertTrue(planAt >= START && planAt < START + 6 * 60 * MIN);
         e.advance(planAt, 120, 28);
-        Lap lap = e.s.lapOf("npc").orElseThrow();
-        assertEquals(planAt, lap.sealedAt);
-        assertEquals(120 * MIN, lap.executeAt - lap.sealedAt);
+        Sheet sheet = e.s.sheetOf("npc").orElseThrow();
+        assertEquals(planAt, sheet.sealedAt);
+        assertEquals(120 * MIN, sheet.executeAt - sheet.sealedAt);
     }
 }

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * Firebase custom token a beépítetten nem támogatott szolgáltatókhoz (Discord). A kliens ezzel lép be a Firebase-be.
- * Service account kell hozzá (GOOGLE_APPLICATION_CREDENTIALS); csak az első használatkor töltjük be.
+ * Firebase custom token for providers without built-in support (Discord). The client signs in to Firebase with it.
+ * Needs a service account (GOOGLE_APPLICATION_CREDENTIALS); loaded on first use only.
  */
 @Component
 public class FirebaseCustomTokens {
@@ -26,7 +26,7 @@ public class FirebaseCustomTokens {
         try {
             return auth().createCustomToken(uid);
         } catch (FirebaseAuthException e) {
-            throw ApiException.unauthorized("A belépés nem sikerült. Próbáld újra.");
+            throw ApiException.unauthorized("server.auth.login_failed");
         }
     }
 
@@ -38,7 +38,7 @@ public class FirebaseCustomTokens {
                     try {
                         cred = GoogleCredentials.getApplicationDefault();
                     } catch (IOException e) {
-                        throw ApiException.badRequest("A Discord-belépés nincs beállítva a szerveren (GOOGLE_APPLICATION_CREDENTIALS).");
+                        throw ApiException.badRequest("server.auth.discord_no_credentials");
                     }
                     FirebaseApp app = FirebaseApp.initializeApp(FirebaseOptions.builder()
                         .setCredentials(cred).setProjectId(props.auth().firebaseProjectId()).build());

@@ -1,10 +1,10 @@
-// A mobil kliens kódgenerálása az API-szerződésből (../../../api/openapi.yaml → ../../packages/tron_api).
-// Ugyanaz az openapi-generator (7.25.0), mint a backendben. Futtatás: tools/generate_api.sh
+// Code generation for the mobile client from the API contract (../../../tron-nelkul/backend/openapi.yaml → ../../packages/tron_api).
+// Same openapi-generator (7.25.0) as the backend. Run: tools/generate_api.sh
 plugins {
     id("org.openapi.generator") version "7.25.0"
 }
 
-val apiSpec = file("../../../api/openapi.yaml")
+val apiSpec = file("../../../tron-nelkul/backend/openapi.yaml")
 
 openApiGenerate {
     generatorName.set("dart-dio")

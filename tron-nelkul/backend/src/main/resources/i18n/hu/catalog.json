@@ -1,0 +1,38 @@
+{
+  "action": {
+    "route": "Útvonal kiépítése",
+    "margin": "Fokozatváltás",
+    "buyShares": "Részesedés vásárlása",
+    "buyout": "Kivásárlási ajánlat",
+    "defend": "Védekező vétel",
+    "foundParty": "Pártalapítás",
+    "program": "Programváltás",
+    "festival": "Fesztivál",
+    "news": "Hír terjesztése",
+    "hireSpy": "Kém felfogadása",
+    "moveSpy": "Kém áthelyezése",
+    "guard": "Őr beállítása",
+    "spy": "Kifürkészés",
+    "verify": "Hír ellenőrzése",
+    "debunk": "Leleplezés"
+  },
+  "margin": {
+    "veryCheap": "Nagyon olcsó",
+    "cheap": "Olcsó",
+    "market": "Piaci",
+    "expensive": "Drága",
+    "usury": "Uzsora"
+  },
+  "program": {
+    "low": "Alacsony adó",
+    "medium": "Közepes adó",
+    "high": "Magas adó"
+  },
+  "news": {
+    "usury": "„{t} uzsoraáron árulja: {g}.”",
+    "boughtOut": "„{t} kivásárolt egy rivális kereskedőt.”",
+    "taxHike": "„{t} pártja adóemelést akar.”",
+    "spies": "„{t} kémeket tart a városban.”",
+    "friend": "„{t} a városlakók barátja.”"
+  }
+}

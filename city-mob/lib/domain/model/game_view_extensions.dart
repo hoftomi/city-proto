@@ -6,10 +6,10 @@ import '../../core/tr.dart';
 import '../../util/format.dart';
 import 'extensions.dart';
 
-/// A játék füleinek (keret, Térkép, Parancslap, Jelentések, Rangsor) számolt értékei. A widgetek ezeket
-/// jelenítik meg; a `now` mindig a játék órája (GameViewState.now).
+/// Computed values of the game tabs (frame, Map, Order sheet, Reports, Ranking). Widgets
+/// display these; `now` is always the game clock (GameViewState.now).
 
-/// Egy sor a Rangsor „Népszerűséged” táblájában.
+/// A row in the Ranking's "Your popularity" table.
 class PopularityRow extends Equatable {
   const PopularityRow({required this.name, required this.pop, required this.seats});
   final String name;
@@ -19,90 +19,90 @@ class PopularityRow extends Equatable {
   List<Object?> get props => [name, pop, seats];
 }
 
-/// A jelentéskártyák szűrője.
+/// Filter of the report cards.
 enum ReportFilter {
-  mind,
-  sajat,
-  nyilvanos;
+  all,
+  own,
+  public;
 
-  /// A szűrő gombjának felirata.
+  /// Label of the filter button.
   String get label => 'reports.filter.$name'.tr();
 
   bool accepts(ReportView r) => switch (this) {
-        ReportFilter.mind => true,
-        ReportFilter.sajat => !r.isPublic,
-        ReportFilter.nyilvanos => r.isPublic,
+        ReportFilter.all => true,
+        ReportFilter.own => !r.isPublic,
+        ReportFilter.public => r.isPublic,
       };
 }
 
-/// A Parancslap jelvénye: „9+” fölött, 0-nál nincs.
+/// Order sheet badge: „9+” above 9, none at 0.
 String? badgeText(int n) => n <= 0 ? null : (n > 9 ? '9+' : '$n');
 
 extension GameViewX on GameState {
-  /// Az érlelési idő szövegesen („1 ó 30 p”).
+  /// Maturation time as text („1 ó 30 p”).
   String get maturationText => durText(Duration(minutes: clock.maturationMinutes));
 
-  /// Érlelődik-e még a lepecsételt lap.
-  bool maturing(DateTime now) => lap != null && now.isBefore(lap!.executeAt);
+  /// Whether the sealed sheet is still maturing.
+  bool maturing(DateTime now) => sheet != null && now.isBefore(sheet!.executeAt);
 
-  /// A lepecsételt lap érlelésének készültsége 0..1 között.
-  double lapProgress(DateTime now) {
-    final l = lap;
+  /// Maturation progress of the sealed sheet, 0..1.
+  double sheetProgress(DateTime now) {
+    final l = sheet;
     if (l == null) return 1;
     final a = l.sealedAt, b = l.executeAt;
     if (!b.isAfter(a)) return 1;
     return (now.difference(a).inSeconds / b.difference(a).inSeconds).clamp(0.0, 1.0);
   }
 
-  /// A vázlat PP-igénye több a rendelkezésre állónál.
+  /// The draft needs more PP than available.
   bool get overBudget => draftCost.pp > me.pp;
 
-  /// A vázlat aranyigénye több a kasszánál.
+  /// The draft needs more gold than the treasury holds.
   bool get overGold => draftCost.gold > me.gold;
 
-  /// Lepecsételhető-e a vázlat: belefér a PP-be, és nem érlelődik előző lap.
+  /// Whether the draft can be sealed: fits the PP, and no previous sheet is maturing.
   bool canSeal(DateTime now) => draft.isNotEmpty && !overBudget && !maturing(now);
 
-  /// Egy órán belül jön-e az elszámolás (a fejléc időzítője kiemelt).
+  /// Whether the settlement is within an hour (the header timer is highlighted).
   bool settlementSoon(DateTime now) => clock.nextSettlementAt.difference(now).inMinutes <= 60;
 
-  /// A fenyegetés elleni védekező vétel csak a vázlaton van (még nincs lepecsételve).
-  /// Az OrderView nem hivatkozik az ajánlatra, ezért városra szűrünk.
+  /// The defensive buy against the threat is only in the draft (not sealed yet).
+  /// OrderView doesn't reference the offer, so we filter by city.
   bool defendOnlyInDraft(Threat t) =>
-      draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(lap?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
+      draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(sheet?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
 
-  /// A kijelölt városba építhető útvonalak.
+  /// Routes buildable to the selected city.
   List<Buildable> buildableTo(String cityId) => buildable.where((b) => b.to == cityId).toList();
 
-  /// A Rangsor fejléce: „3. elszámolás után · választás 2 elszámolás múlva”.
+  /// Ranking header: "after settlement 3 · election in 2 settlements".
   Tr get rankingCaption => clock.nextElectionIn <= 1
       ? Tr('ranking.caption_next', {'n': '${clock.settlements}'})
       : Tr('ranking.caption', {'n': '${clock.settlements}', 'm': '${clock.nextElectionIn}'});
 
-  /// A „Népszerűséged” tábla sorai városonként.
+  /// Rows of the "Your popularity" table, per city.
   List<PopularityRow> get popularityRows => [for (final c in cities) PopularityRow(name: c.name, pop: c.myPop.round(), seats: c.mySeats)];
 
-  /// Amikor ez változik, új jelentések és új rangsor lehet (elszámolás, lefutott lap, új hírszerzés vagy ajánlat);
-  /// a Jelentések és a Rangsor ekkor tölt újra.
-  String get feedKey => '$gameId|${clock.settlements}|${lap?.id}|${intel.length}|${offers.length}';
+  /// When this changes, there may be new reports and a new ranking (settlement, executed sheet, new intel or offer);
+  /// Reports and Ranking reload then.
+  String get feedKey => '$gameId|${clock.settlements}|${sheet?.id}|${intel.length}|${offers.length}';
 }
 
 extension CityCardX on CityView {
-  /// A térkép városkártyájának felirata: profil, kulcsváros, távolság.
+  /// Label of the map's city card: profile, key city, distance.
   String get cardEyebrow => [profile, if (key) 'map.key_city'.tr(), if (reachable && distance != null) 'map.distance'.tr(namedArgs: {'n': '$distance'})].join(' · ');
 }
 
 extension BuildableX on Buildable {
-  /// Útvonalépítés parancsa.
+  /// Route-building order.
   OrderRequest get order => OrderRequest(type: 'route', from: from, to: to);
 }
 
 extension OrderViewX on OrderView {
-  /// A parancslap sorának alsó sora: város · ág.
+  /// Bottom line of an order sheet row: city · branch.
   String get meta => [?cityName, branchName(branch)].join(' · ');
 
-  /// A lap sorának felirata: címke · város.
-  String get lapLabel => '$label${cityName != null ? ' · $cityName' : ''}';
+  /// Label of a sheet row: label · city.
+  String get sheetLabel => '$label${cityName != null ? ' · $cityName' : ''}';
 }
 
 extension CostX on Cost {
@@ -110,5 +110,5 @@ extension CostX on Cost {
   String get text => [if (pp > 0) 'orders.cost_pp'.tr(namedArgs: {'pp': '$pp'}), if (gold > 0) 'orders.cost_gold'.tr(namedArgs: {'gold': '$gold'})].join(' · ');
 }
 
-/// „N elszámolás múlva” vagy „a következő elszámoláskor”.
+/// "In N settlements" or "at the next settlement".
 String electionText(int n) => n <= 1 ? 'ranking.election_next'.tr() : 'ranking.election_in'.tr(namedArgs: {'n': '$n'});

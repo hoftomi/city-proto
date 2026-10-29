@@ -1,19 +1,19 @@
 import 'package:tron_api/tron_api.dart';
 
-/// Segédek a jelentkezéshez (a GameDetail kínálatából).
+/// Helpers for joining (from the GameDetail offering).
 extension GameDetailJoinX on GameDetail {
   StartSlotDto? slot(String? id) => starts.where((s) => s.id == id).firstOrNull;
   BackgroundDto? background(String? id) => backgrounds.where((b) => b.id == id).firstOrNull;
 
-  /// Alapértelmezések: az első tinktúra, a Kereskedőház (ha van), az első kezdőhely.
+  /// Defaults: the first tincture, the Merchant House (if any), the first start slot.
   String get defaultTincture => tinctures.firstOrNull ?? '';
-  String get defaultBackground => background('kereskedo')?.id ?? backgrounds.firstOrNull?.id ?? '';
+  String get defaultBackground => background('merchant')?.id ?? backgrounds.firstOrNull?.id ?? '';
   String get defaultStart => starts.firstOrNull?.id ?? '';
 
-  /// Kell-e induló árucikket választani: csak a Kereskedőháznak, ha a kezdővárosnak van árucikke.
-  bool needsGood(String background, String start) => background == 'kereskedo' && (slot(start)?.homeGoods.isNotEmpty ?? false);
+  /// Whether a starting good must be chosen: only for the Merchant House, if the home city has goods.
+  bool needsGood(String background, String start) => background == 'merchant' && (slot(start)?.homeGoods.isNotEmpty ?? false);
 
-  /// A választott induló árucikk; ha a választás nem a kezdőváros árucikke, az első.
+  /// The chosen starting good; if the choice isn't a good of the home city, the first one.
   GoodOption? good(String background, String start, String? chosen) {
     if (!needsGood(background, start)) return null;
     final goods = slot(start)!.homeGoods;

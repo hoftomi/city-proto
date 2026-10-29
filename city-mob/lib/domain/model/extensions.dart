@@ -1,23 +1,23 @@
 import 'package:tron_api/tron_api.dart';
 
-/// Segédek a generált API-modellekhez (packages/tron_api). A widgetek ezeket használják, hogy ne kelljen
-/// bennük keresgélni és számolni.
+/// Helpers for the generated API models (packages/tron_api). Widgets use these so they don't have to
+/// search and compute themselves.
 
 extension GameSummaryX on GameSummary {
-  bool get running => status == 'fut';
-  bool get open => status == 'nyitott';
-  bool get finished => status == 'lezarult';
-  bool get announced => status == 'hamarosan';
+  bool get running => status == 'running';
+  bool get open => status == 'open';
+  bool get finished => status == 'finished';
+  bool get announced => status == 'announced';
   bool get joined => myHouse != null;
 }
 
 extension MapDefX on MapDef {
   CityDef? city(String id) => cities.where((c) => c.id == id).firstOrNull;
 
-  /// Kezdőhely a csomópont-azonosítója alapján (`birtok:<id>`).
-  StartSlot? start(String nodeId) => starts.where((s) => 'birtok:${s.id}' == nodeId).firstOrNull;
+  /// Start slot by node id (`estate:<id>`).
+  StartSlot? start(String nodeId) => starts.where((s) => 'estate:${s.id}' == nodeId).firstOrNull;
 
-  /// Egy csomópont (város vagy birtok) helye a 360×260-as térképen.
+  /// Position of a node (city or estate) on the 360×260 map.
   (double, double)? pos(String node) {
     final c = city(node);
     if (c != null) return (c.x.toDouble(), c.y.toDouble());
@@ -33,7 +33,7 @@ extension CityViewX on CityView {
   bool get reachable => reach == 'reachable';
   int get mySeats => parties.where((p) => p.house.self).fold(0, (a, p) => a + p.seats);
 
-  /// A városi adókulcs százalékban (a szerver törtként adja).
+  /// City tax rate in percent (the server sends a fraction).
   int get taxPercent => (taxRate <= 1 ? taxRate * 100 : taxRate).round();
 }
 
@@ -45,7 +45,7 @@ extension CatalogX on Catalog {
   String marginLabel(String? id) => margin(id)?.label ?? id ?? '–';
   String programLabel(String? id) => program(id)?.label ?? id ?? '–';
 
-  /// Egy akció PP-ára.
+  /// PP cost of an action.
   int pp(String id, [int fallback = 1]) => action(id)?.pp ?? fallback;
 }
 
@@ -55,7 +55,7 @@ extension GameStateX on GameState {
   String houseName(String idOrName) => houses.where((h) => h.playerId == idOrName).firstOrNull?.name ?? idOrName;
   RulesInfo get rules => catalog.rules;
 
-  /// A kivásárlási fenyegetések, amelyek ellen még nincs védekezés.
+  /// Buyout threats not defended against yet.
   int get openThreats => threats.where((t) => !t.defending).length;
 }
 

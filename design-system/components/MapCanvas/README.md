@@ -1,7 +1,7 @@
 # MapCanvas
 
-A térképlap: papír alap, fokhálózat és egy SVG-vászon, amelybe a `MapRoute`, `MapEstate` és `MapCity` elemek kerülnek (ebben a sorrendben, hogy a városok legyenek felül).
+The map sheet: a paper base, a graticule and an SVG canvas that holds the `MapRoute`, `MapEstate` and `MapCity` elements (in this order, so cities are on top).
 
-**Mit ad a hívó:** `width`, `height` (a viewBox mérete), `grid` (a fokhálózat lépésköze, alapérték 40), `title`, `children`.
+**What the caller provides:** `width`, `height` (the viewBox size), `grid` (graticule spacing, default 40), `title`, `children`.
 
-- A vászon kitölti a szélességet, és arányosan skálázódik. Telefonon a teljes szélességet kapja, 16px margóval.
+- The canvas fills the width and scales proportionally. On the phone it gets the full width, with a 16px margin.

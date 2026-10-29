@@ -1,6 +1,5 @@
 import 'package:tron_api/src/model/action_info.dart';
 import 'package:tron_api/src/model/admin_result.dart';
-import 'package:tron_api/src/model/advance_request.dart';
 import 'package:tron_api/src/model/background_dto.dart';
 import 'package:tron_api/src/model/buildable.dart';
 import 'package:tron_api/src/model/catalog.dart';
@@ -19,7 +18,6 @@ import 'package:tron_api/src/model/good_view.dart';
 import 'package:tron_api/src/model/house_ref.dart';
 import 'package:tron_api/src/model/intel_view.dart';
 import 'package:tron_api/src/model/join_request.dart';
-import 'package:tron_api/src/model/lap_view.dart';
 import 'package:tron_api/src/model/level_info.dart';
 import 'package:tron_api/src/model/map_def.dart';
 import 'package:tron_api/src/model/me.dart';
@@ -35,10 +33,11 @@ import 'package:tron_api/src/model/pop_row.dart';
 import 'package:tron_api/src/model/problem_detail.dart';
 import 'package:tron_api/src/model/rank_row.dart';
 import 'package:tron_api/src/model/report_view.dart';
-import 'package:tron_api/src/model/rival_lap.dart';
+import 'package:tron_api/src/model/rival_sheet.dart';
 import 'package:tron_api/src/model/route_view.dart';
 import 'package:tron_api/src/model/rules_info.dart';
 import 'package:tron_api/src/model/seller.dart';
+import 'package:tron_api/src/model/sheet_view.dart';
 import 'package:tron_api/src/model/start_slot.dart';
 import 'package:tron_api/src/model/start_slot_dto.dart';
 import 'package:tron_api/src/model/terrain_def.dart';
@@ -67,8 +66,6 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return ActionInfo.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'AdminResult':
           return AdminResult.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'AdvanceRequest':
-          return AdvanceRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'BackgroundDto':
           return BackgroundDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Buildable':
@@ -105,8 +102,6 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return IntelView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'JoinRequest':
           return JoinRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'LapView':
-          return LapView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LevelInfo':
           return LevelInfo.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'MapDef':
@@ -137,14 +132,16 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return RankRow.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ReportView':
           return ReportView.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'RivalLap':
-          return RivalLap.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'RivalSheet':
+          return RivalSheet.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RouteView':
           return RouteView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RulesInfo':
           return RulesInfo.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Seller':
           return Seller.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'SheetView':
+          return SheetView.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'StartSlot':
           return StartSlot.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'StartSlotDto':

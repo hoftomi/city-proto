@@ -8,9 +8,9 @@ import 'k4_assets.dart';
 import 'k4_viewport.dart';
 import 'paint_util.dart';
 
-/// A régió festett térképe (Krónika IV): a domborzat, a várak és a birtokok a design systemből exportált képek
-/// (assets/k4), az utak és a kijelölés rajzolt réteg. 360×260-as koordinátarendszer.
-/// Játék közben (state + onSelect) nagyítható és húzható, 2× nagyítással indul; előnézetben teljes nézet.
+/// Painted map of the region (Krónika IV): terrain, castles and estates are images exported from the design system
+/// (assets/k4); routes and selection are a drawn layer. 360×260 coordinate system.
+/// In game (state + onSelect) it is zoomable and pannable, starting at 2× zoom; full view in preview.
 class MapView extends StatelessWidget {
   const MapView({
     super.key,
@@ -72,7 +72,7 @@ class MapView extends StatelessWidget {
         Positioned.fill(child: Image.asset('assets/k4/map/${map.id}.webp', fit: BoxFit.fill, filterQuality: FilterQuality.medium, gaplessPlayback: true)),
         Positioned.fill(child: IgnorePointer(child: CustomPaint(painter: _RoutePainter(map, state, showStarts ? selectedStart : null, selected, k)))),
         if (showStarts)
-          for (final s in map.starts) sprite('assets/k4/estates/${s.id == selectedStart ? 'kek' : 'fekete_npc'}.webp', s.x, s.y, a.estateBox),
+          for (final s in map.starts) sprite('assets/k4/estates/${s.id == selectedStart ? 'blue' : 'black_npc'}.webp', s.x, s.y, a.estateBox),
         if (estatePos != null) ...[
           sprite('assets/k4/estates/${state!.me.tincture}.webp', estatePos.$1, estatePos.$2, a.estateBox),
           Positioned(
@@ -93,7 +93,7 @@ class MapView extends StatelessWidget {
     );
   }
 
-  /// Elérhető-e a város: játékban a hálózatod szerint, jelentkezéskor a kiválasztott kezdőhely szomszédjai. Előnézetben mind.
+  /// Whether the city is reachable: in game per your network, when joining the neighbors of the chosen start slot. All in preview.
   bool _reachable(String id, List<String> nearStart) {
     if (showStarts) return nearStart.contains(id);
     final cv = state?.cities.where((x) => x.id == id).firstOrNull;
@@ -118,8 +118,8 @@ class MapView extends StatelessWidget {
   }
 }
 
-/// Utak a design system MapRoute stílusában: alap (földút), saját (bronz), tervezett (szaggatott bronz),
-/// valamint a kijelölt város gyűrűje.
+/// Routes in the design system's MapRoute style: base (dirt road), own (bronze), planned (dashed bronze),
+/// plus the selected city's ring.
 class _RoutePainter extends CustomPainter {
   _RoutePainter(this.map, this.state, this.start, this.selected, this.k);
   final MapDef map;
@@ -148,8 +148,8 @@ class _RoutePainter extends CustomPainter {
     }
     if (startSlot != null) {
       for (final n in startSlot.neighbors) {
-        edges.add(('birtok:${startSlot.id}', n));
-        pending.add(_key('birtok:${startSlot.id}', n));
+        edges.add(('estate:${startSlot.id}', n));
+        pending.add(_key('estate:${startSlot.id}', n));
       }
     }
     for (final e in edges) {
@@ -158,7 +158,7 @@ class _RoutePainter extends CustomPainter {
       final key = _key(e.$1, e.$2);
       _route(canvas, a, b, own.contains(key) ? 'own' : pending.contains(key) ? 'pending' : 'base');
     }
-    // A kijelölt vár talapzata: izometrikus, szaggatott bronz ellipszis a vár alatt
+    // Selected castle's base: isometric, dashed bronze ellipse under the castle
     final sel = selected == null ? null : map.city(selected!);
     if (sel != null) {
       final r = sel.key ? 40.0 : 34.0;
@@ -202,7 +202,7 @@ class _RoutePainter extends CustomPainter {
   bool shouldRepaint(_RoutePainter o) => o.state != state || o.start != start || o.selected != selected || o.k != k || o.map != map;
 }
 
-/// Szaggatott ellipszis útvonala.
+/// Path of a dashed ellipse.
 Path dashPathOval(Rect oval, double dash, double gap) {
   final src = Path()..addOval(oval);
   final out = Path();

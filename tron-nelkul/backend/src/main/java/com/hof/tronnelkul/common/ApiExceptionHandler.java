@@ -1,6 +1,7 @@
 package com.hof.tronnelkul.common;
 
 import com.hof.tronnelkul.game.engine.EngineException;
+import com.hof.tronnelkul.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,43 +15,46 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.NoSuchElementException;
 
-/** Minden hiba RFC 9457 ProblemDetail formában megy ki; a `detail` mező magyar, megjeleníthető szöveg. */
+/** Every error goes out as an RFC 9457 ProblemDetail; `detail` is displayable text (i18n, server.* / engine.*). */
 @RestControllerAdvice
 public class ApiExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
+    private final Messages messages;
+
+    public ApiExceptionHandler(Messages messages) { this.messages = messages; }
 
     @ExceptionHandler(ApiException.class)
     ProblemDetail api(ApiException e) {
-        ProblemDetail p = ProblemDetail.forStatusAndDetail(e.status, e.getMessage());
+        ProblemDetail p = ProblemDetail.forStatusAndDetail(e.status, messages.text(e.msg));
         if (e.code != null) p.setProperty("code", e.code);
         return p;
     }
 
-    /** Szabálysértés a motorban, ha nem a GameRunner fordította le. */
+    /** Rule violation in the engine, if GameRunner did not translate it. */
     @ExceptionHandler(EngineException.class)
-    ProblemDetail rule(EngineException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage()); }
+    ProblemDetail rule(EngineException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text(e.msg())); }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ProblemDetail invalid(MethodArgumentNotValidException e) {
         String msg = e.getBindingResult().getFieldErrors().stream().findFirst()
-            .map(f -> f.getDefaultMessage()).orElse("Hibás kérés.");
+            .map(f -> f.getDefaultMessage()).orElseGet(() -> messages.text("server.bad_request"));
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, msg);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
-    ProblemDetail unreadable(Exception e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Hibás kérés."); }
+    ProblemDetail unreadable(Exception e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text("server.bad_request")); }
 
     @ExceptionHandler(IllegalArgumentException.class)
     ProblemDetail illegal(IllegalArgumentException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage()); }
 
     @ExceptionHandler(NoSuchElementException.class)
-    ProblemDetail missing(NoSuchElementException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Nincs ilyen elem."); }
+    ProblemDetail missing(NoSuchElementException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, messages.text("server.not_found")); }
 
     @ExceptionHandler(Exception.class)
     ProblemDetail other(Exception e) {
-        // A Spring MVC saját hibái (404 ismeretlen útvonal, 405, 415 ...) megtartják a státuszukat.
+        // Spring MVC's own errors (404 unknown path, 405, 415 ...) keep their status.
         if (e instanceof ErrorResponse er) return er.getBody();
-        log.error("Váratlan hiba", e);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Váratlan hiba történt. Próbáld újra kicsit később.");
+        log.error("Unexpected error", e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, messages.text("server.unexpected"));
     }
 }

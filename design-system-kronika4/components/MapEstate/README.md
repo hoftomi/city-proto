@@ -1,5 +1,5 @@
 # MapEstate
 
-Egy ház birtoka: két sátor bejárattal és árnyékkal, rúdon lobogó zászló a ház színével. Az NPC-ház zászlaja szaggatott szélű.
+A house's estate: two tents with entrances and shadows, and a flag in the house's color flying on a pole. An NPC house's flag has a dashed edge.
 
-**Mit ad a hívó:** `x`, `y`, `tincture`, `name`, `npc`.
+**What the caller provides:** `x`, `y`, `tincture`, `name`, `npc`.

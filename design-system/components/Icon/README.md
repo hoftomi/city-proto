@@ -1,9 +1,9 @@
 # Icon
 
-A rendszer saját vonalikonjai: 24-es rács, 1,75-ös vonal, `currentColor`.
+The system's own line icons: 24 grid, 1.75 stroke, `currentColor`.
 
-**Mit ad a hívó:** `name`, `size` (alapérték 18), `label` (ha az ikon önállóan hordoz jelentést).
+**What the caller provides:** `name`, `size` (default 18), `label` (if the icon carries meaning on its own).
 
-Nevek: `nemesseg`, `kereskedok`, `katonasag`, `arany`, `bp`, `ke`, `legit`, `pp`, `kem`, `katonai`, `diplomacia`, `esemeny`, `frakcio`, `route`, `lock`, `warning`, `clock`, `check`, `close`, `hidden`, `info`.
+Names: `nemesseg`, `kereskedok`, `katonasag`, `arany`, `bp`, `ke`, `legit`, `pp`, `kem`, `katonai`, `diplomacia`, `esemeny`, `frakcio`, `route`, `lock`, `warning`, `clock`, `check`, `close`, `hidden`, `info`.
 
-A játék dolgaihoz (erőforrás, árucikk, akció, ág) a teli, illusztratív `GameIcon` való. Az `Icon` a felület vezérlőikonjaira marad.
+For the game's things (resource, good, action, branch) use the filled, illustrative `GameIcon`. `Icon` stays for the interface's control icons.

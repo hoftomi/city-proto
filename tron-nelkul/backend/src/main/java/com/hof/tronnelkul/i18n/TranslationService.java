@@ -11,9 +11,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A mobil kliens feliratai. Forrás: resources/i18n/{nyelv}/{névtér}.json – minden fájl egy névtér
- * (a fájlnév a kulcs gyökere), így a képernyők feliratai külön fájlokban szerkeszthetők.
- * Ismeretlen nyelvnél a magyar (alap) változat jön. Az első kérés után a memóriában marad.
+ * Texts of the mobile client and the server (i18n.Messages). Source: resources/i18n/{lang}/{namespace}.json – each file
+ * is one namespace (the file name is the key root), so texts can be edited in separate files.
+ * An unknown language falls back to Hungarian (default). Cached in memory after the first request.
  */
 @Service
 public class TranslationService {
@@ -44,7 +44,7 @@ public class TranslationService {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("A feliratok nem olvashatók: " + lang, e);
+            throw new IllegalStateException("Cannot read translations: " + lang, e);
         }
         return Collections.unmodifiableMap(out);
     }

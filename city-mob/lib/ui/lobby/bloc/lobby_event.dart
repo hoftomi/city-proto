@@ -7,12 +7,12 @@ sealed class LobbyEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// A képernyő megnyitásakor: a játékok betöltése.
+/// On screen open: load the games.
 class LobbyStarted extends LobbyEvent {
   const LobbyStarted();
 }
 
-/// Lehúzás vagy visszatérés a részletekről: újratöltés.
+/// Pull-to-refresh or return from the details: reload.
 class LobbyRefreshRequested extends LobbyEvent {
   const LobbyRefreshRequested();
 }
@@ -25,7 +25,7 @@ class LobbyTabSelected extends LobbyEvent {
   List<Object?> get props => [tab];
 }
 
-/// Kilépés (az AuthBloc végzi, a router a belépésre visz).
+/// Logout (done by the AuthBloc; the router goes to login).
 class LobbySignOutRequested extends LobbyEvent {
   const LobbySignOutRequested();
 }

@@ -25,19 +25,13 @@ class GameSummary {
 
     required  this.name,
 
-    required  this.season,
-
     required  this.status,
 
     required  this.mapId,
 
-    required  this.startsAt,
+    required  this.closesAt,
 
     required  this.opensAt,
-
-    required  this.days,
-
-    required  this.roundsPerDay,
 
     required  this.round,
 
@@ -86,18 +80,6 @@ class GameSummary {
 
   @JsonKey(
     
-    name: r'season',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String season;
-
-
-
-  @JsonKey(
-    
     name: r'status',
     required: true,
     includeIfNull: false,
@@ -122,13 +104,13 @@ class GameSummary {
 
   @JsonKey(
     
-    name: r'startsAt',
+    name: r'closesAt',
     required: true,
     includeIfNull: true,
   )
 
 
-  final DateTime? startsAt;
+  final DateTime? closesAt;
 
 
 
@@ -141,30 +123,6 @@ class GameSummary {
 
 
   final DateTime? opensAt;
-
-
-
-  @JsonKey(
-    
-    name: r'days',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int days;
-
-
-
-  @JsonKey(
-    
-    name: r'roundsPerDay',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int roundsPerDay;
 
 
 
@@ -294,13 +252,10 @@ class GameSummary {
     bool operator ==(Object other) => identical(this, other) || other is GameSummary &&
       other.id == id &&
       other.name == name &&
-      other.season == season &&
       other.status == status &&
       other.mapId == mapId &&
-      other.startsAt == startsAt &&
+      other.closesAt == closesAt &&
       other.opensAt == opensAt &&
-      other.days == days &&
-      other.roundsPerDay == roundsPerDay &&
       other.round == round &&
       other.maxRounds == maxRounds &&
       other.players == players &&
@@ -316,13 +271,10 @@ class GameSummary {
     int get hashCode =>
         id.hashCode +
         name.hashCode +
-        season.hashCode +
         status.hashCode +
         mapId.hashCode +
-        (startsAt == null ? 0 : startsAt.hashCode) +
+        (closesAt == null ? 0 : closesAt.hashCode) +
         (opensAt == null ? 0 : opensAt.hashCode) +
-        days.hashCode +
-        roundsPerDay.hashCode +
         round.hashCode +
         maxRounds.hashCode +
         players.hashCode +

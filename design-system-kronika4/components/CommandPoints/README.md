@@ -1,7 +1,7 @@
 # CommandPoints
 
-A Parancspont-számláló pergamenlapon, fa- és bronzkeretben: 20 viaszpecsét-korong egy sorban.
+The Command Point counter on a parchment sheet in a wood and bronze frame: 20 wax seal discs in a row.
 
-**Mit ad a hívó:** `available`, `pending`, opcionálisan `daily` (10) és `max` (20).
+**What the caller provides:** `available`, `pending`, optionally `daily` (10) and `max` (20).
 
-- A vörös viaszkorong az elkölthető, a szaggatott szélű bronz a lefoglalt, az üres mélyedés a hiányzó pont.
+- A red wax disc is a spendable point, a bronze one with a dashed edge is reserved, an empty hollow is a missing point.

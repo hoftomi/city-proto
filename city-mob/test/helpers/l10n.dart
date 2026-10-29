@@ -6,8 +6,8 @@ import 'package:easy_localization/src/localization.dart';
 import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/widgets.dart';
 
-/// A tesztekben is a valódi feliratok szólnak: az app tartaléka (assets/translations/hu.json), amelyet a
-/// tools/sync_translations.py a backend i18n fájljaiból állít elő. Hívd a setUpAll-ban; a `tr()` innentől működik.
+/// Tests use the real labels too: the app fallback (assets/translations/hu.json), which
+/// tools/sync_translations.py generates from the backend i18n files. Call it in setUpAll; `tr()` works from then on.
 void loadTestTranslations() {
   final map = jsonDecode(File('assets/translations/hu.json').readAsStringSync()) as Map<String, dynamic>;
   Localization.load(const Locale('hu'), translations: Translations(map));

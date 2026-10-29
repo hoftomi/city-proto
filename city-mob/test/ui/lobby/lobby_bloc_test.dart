@@ -20,12 +20,12 @@ void main() {
   late _MockLobby lobby;
   late _MockAuth auth;
 
-  final runningMine = summary(id: 'r', status: 'fut', round: 5, myHouse: house());
+  final runningMine = summary(id: 'r', status: 'running', round: 5, myHouse: house());
   final openMine = summary(id: 'o', myHouse: house());
   final fresh = summary(id: 'n');
-  final runningOther = summary(id: 'x', status: 'fut', round: 2);
-  final soon = summary(id: 's', status: 'hamarosan');
-  final done = summary(id: 'd', status: 'lezarult', myHouse: house());
+  final runningOther = summary(id: 'x', status: 'running', round: 2);
+  final soon = summary(id: 's', status: 'announced');
+  final done = summary(id: 'd', status: 'finished', myHouse: house());
   final all = [runningMine, openMine, fresh, runningOther, soon, done];
 
   setUpAll(loadTestTranslations);
@@ -36,7 +36,7 @@ void main() {
   });
 
   group('LobbyGroups', () {
-    test('a fülekre sorol', () {
+    test('sorts into tabs', () {
       final g = LobbyGroups.of(all);
       expect(g.running, [runningMine]);
       expect(g.mine, [runningMine, openMine]);
@@ -45,7 +45,7 @@ void main() {
       expect(g.tab(LobbyTab.mine), g.mine);
     });
 
-    test('állapotcímke és jelentkezhetőség', () {
+    test('status badge and joinability', () {
       expect(openMine.badge, GameBadge.joined);
       expect(summary(players: 9).badge, GameBadge.almostFull);
       expect(runningOther.badge, GameBadge.runningJoinable);
@@ -54,17 +54,19 @@ void main() {
       expect(summary(maxPlayers: 0, players: 0).fill, 0);
       expect(fresh.canJoin, isTrue);
       expect(runningOther.canJoin, isTrue);
-      expect(summary(status: 'fut', round: 4).canJoin, isFalse);
+      expect(summary(status: 'running', round: 4).canJoin, isFalse);
       expect(summary(players: 10).canJoin, isFalse);
       expect(summary(players: 10).closedFull, isTrue);
       expect(runningMine.enterable, isTrue);
       expect(runningMine.whenText, const Tr('lobby.round_of', {'round': '5', 'max': '20'}));
       expect(done.whenText, const Tr('lobby.when.closed'));
+      expect(runningMine.cardWhenText, isNull);
+      expect(done.cardWhenText, done.whenText);
       expect(done.resultText, const Tr('lobby.winner', {'winner': '–'}));
       expect(fresh.startsAtText, const Tr('lobby.when.soon'));
     });
 
-    test('a feliratok a fordításból jönnek', () {
+    test('labels come from the translations', () {
       expect(runningMine.whenText.text, '5. elszámolás / 20');
       expect(const Tr('lobby.empty_mine').text, startsWith('Még nem jelentkeztél'));
       expect(const Tr('lobby.winner_place', {'winner': 'X', 'place': '2'}).text, 'Győztes: X · a te helyezésed: 2.');
@@ -72,7 +74,7 @@ void main() {
   });
 
   blocTest<LobbyBloc, LobbyState>(
-    'betöltés: csoportosítva',
+    'load: grouped',
     setUp: () => when(() => lobby.games()).thenAnswer((_) async => Right(all)),
     build: () => LobbyBloc(lobby, auth),
     act: (b) => b.add(const LobbyStarted()),
@@ -87,10 +89,10 @@ void main() {
   );
 
   blocTest<LobbyBloc, LobbyState>(
-    'hiba, majd sikeres frissítés törli',
+    'error, then a successful refresh clears it',
     setUp: () {
       var n = 0;
-      when(() => lobby.games()).thenAnswer((_) async => n++ == 0 ? const Left(Failure(Tr.raw('baj'))) : Right(all));
+      when(() => lobby.games()).thenAnswer((_) async => n++ == 0 ? const Left(Failure(Tr.raw('oops'))) : Right(all));
     },
     build: () => LobbyBloc(lobby, auth),
     act: (b) async {
@@ -107,7 +109,7 @@ void main() {
   );
 
   blocTest<LobbyBloc, LobbyState>(
-    'fülváltás',
+    'tab switch',
     build: () => LobbyBloc(lobby, auth),
     act: (b) => b.add(const LobbyTabSelected(LobbyTab.mine)),
     expect: () => [const LobbyState(tab: LobbyTab.mine)],
@@ -115,7 +117,7 @@ void main() {
   );
 
   blocTest<LobbyBloc, LobbyState>(
-    'kilépés az AuthBlocon át',
+    'sign-out via AuthBloc',
     build: () => LobbyBloc(lobby, auth),
     act: (b) => b.add(const LobbySignOutRequested()),
     expect: () => <LobbyState>[],

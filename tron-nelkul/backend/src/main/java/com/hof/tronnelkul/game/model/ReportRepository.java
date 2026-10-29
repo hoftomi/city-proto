@@ -5,5 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReportRepository extends JpaRepository<ReportEntity, UUID> {
+    List<ReportEntity> findByGameId(String gameId);
     List<ReportEntity> findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(String gameId, UUID playerId);
 }

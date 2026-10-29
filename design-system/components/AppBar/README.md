@@ -1,5 +1,5 @@
 # AppBar
 
-A képernyők felső sávja: a játékos háza, a következő feldolgozás időpontja és az erőforrások.
+The top bar of the screens: the player's house, the time of the next processing and the resources.
 
-**Mit ad a hívó:** `house` (`{tincture, initial, name}`), `timer` (a `TickTimer` propjai), `resources` (`ResourceChip` propok listája).
+**What the caller provides:** `house` (`{tincture, initial, name}`), `timer` (the `TickTimer` props), `resources` (a list of `ResourceChip` props).

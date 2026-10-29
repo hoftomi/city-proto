@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Egy ellenőrzött Firebase ID tokenhez megkeresi (első kéréskor létrehozza) a saját felhasználónkat.
- * A végpontok a {@code jwt.getSubject()} értékét a saját felhasználói azonosítónkként olvassák, ezért a
- * továbbadott tokenben az alany a mi UUID-nk, a Firebase uid pedig a {@code uid} claimbe kerül.
+ * Finds (on the first request creates) our own user for a verified Firebase ID token.
+ * Endpoints read {@code jwt.getSubject()} as our own user id, so in the passed-on token the subject is
+ * our UUID and the Firebase uid goes into the {@code uid} claim.
  */
 @Component
 public class FirebaseUserConverter implements Converter<Jwt, AbstractAuthenticationToken> {
@@ -28,7 +28,7 @@ public class FirebaseUserConverter implements Converter<Jwt, AbstractAuthenticat
         try {
             user = auth.resolve(token);
         } catch (DataIntegrityViolationException e) {
-            // Két egyidejű első kérés: a másik már létrehozta a felhasználót.
+            // Two concurrent first requests: the other one already created the user.
             user = auth.resolve(token);
         }
         Jwt jwt = Jwt.withTokenValue(token.getTokenValue())

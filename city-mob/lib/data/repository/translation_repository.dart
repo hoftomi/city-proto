@@ -7,9 +7,9 @@ import 'package:injectable/injectable.dart';
 import '../datasource/local/translation_local_datasource.dart';
 import '../datasource/remote/translation_remote_datasource.dart';
 
-/// Az easy_localization betöltője (a ktk TranslationRepository mintájára): minden felirat a backendről jön.
-/// Sorrend: a szerver friss változata (és elmentjük), ha nem érhető el, a legutóbbi mentett, végül az app tartaléka.
-/// A mélyen összefésült eredményben a frissebb forrás felülírja a régebbit, így a hiányzó kulcsok sem üresek.
+/// The easy_localization loader (modelled on ktk's TranslationRepository): every label comes from the backend.
+/// Order: the server's fresh version (and we save it); if unreachable, the last saved one; finally the app fallback.
+/// In the deep-merged result the fresher source overrides the older, so missing keys aren't empty either.
 @lazySingleton
 class TranslationRepository extends AssetLoader {
   TranslationRepository(this._remote, this._local);

@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/game_bloc.dart';
 
-/// Egy játékfül görgethető tartalma (16 px margó) lehúzásos frissítéssel: a GameBlocot frissíti,
-/// és megvárja az új állapotot. Az `onRefresh` a fül saját adatait is újratöltheti (jelentések, rangsor).
+/// A game tab's scrollable content (16 px margin) with pull-to-refresh: refreshes the GameBloc
+/// and waits for the new state. `onRefresh` can also reload the tab's own data (reports, ranking).
 class GameTabScroll extends StatelessWidget {
   const GameTabScroll({super.key, required this.child, this.onRefresh});
   final Widget child;

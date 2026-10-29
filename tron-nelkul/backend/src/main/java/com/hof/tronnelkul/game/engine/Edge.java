@@ -1,6 +1,6 @@
 package com.hof.tronnelkul.game.engine;
 
-/** Irányítatlan él a térképen. */
+/** Undirected edge on the map. */
 public record Edge(String a, String b) {
     public boolean touches(String n) { return a.equals(n) || b.equals(n); }
     public String other(String n) { return a.equals(n) ? b : a; }

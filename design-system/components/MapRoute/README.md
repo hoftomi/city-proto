@@ -1,7 +1,7 @@
 # MapRoute
 
-Egy él a térképen, a rajta lévő útvonal állapotával.
+An edge on the map, with the state of the route on it.
 
-**Mit ad a hívó:** `from`, `to` (`[x, y]`), `state` (`base` | `own` | `pending` | `rival` | `blocked` | `closed`), `tincture` (a `rival` állapotnál).
+**What the caller provides:** `from`, `to` (`[x, y]`), `state` (`base` | `own` | `pending` | `rival` | `blocked` | `closed`), `tincture` (for the `rival` state).
 
-- `base`: pontozott, kiépítetlen út. `own`: vastag verdigris. `pending`: szaggatott verdigris, a következő körtől él. `rival`: a rivális ház tinktúrája. `blocked`: Útzár, `danger` színű, középen tiltójellel. `closed`: eseményből adódó lezárás, szürke és szaggatott.
+- `base`: dotted, unbuilt road. `own`: thick verdigris. `pending`: dashed verdigris, active from the next round. `rival`: the rival house's tincture. `blocked`: Roadblock, `danger` colored, with a prohibition sign in the middle. `closed`: closure caused by an event, grey and dashed.

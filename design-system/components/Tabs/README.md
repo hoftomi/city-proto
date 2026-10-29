@@ -1,8 +1,8 @@
 # Tabs
 
-Lapfülek egy nézeten belül. Telefonon vízszintesen görgethetők.
+Tabs within a view. On the phone they scroll horizontally.
 
-**Mit ad a hívó:** `tabs` (`[{id, label, badge?}]`), `active`, `onChange` (ha nincs megadva, a komponens maga kezeli az állapotot).
+**What the caller provides:** `tabs` (`[{id, label, badge?}]`), `active`, `onChange` (if not provided, the component manages the state itself).
 
-- A `badge` csak az olvasatlan jelentések számára szolgál.
-- Fülenként `art` (játékikon) és `tone` (`vasarter` | `varoshaza` | `alvilag`): az ág színével húzza alá a kijelölt fület.
+- `badge` is only for the number of unread reports.
+- Per tab `art` (game icon) and `tone` (`vasarter` | `varoshaza` | `alvilag`): underlines the selected tab with the branch's color.

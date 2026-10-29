@@ -46,8 +46,8 @@ void main() {
 
   CityBloc build() => CityBloc(game, service);
 
-  group('indulás', () {
-    blocTest<CityBloc, CityState>('a kért várost mutatja, és a térképen is kijelöli',
+  group('startup', () {
+    blocTest<CityBloc, CityState>('shows the requested city and selects it on the map too',
         build: build,
         act: (b) => b.add(const CityStarted('delkapu')),
         verify: (b) {
@@ -57,7 +57,7 @@ void main() {
           verify(() => game.add(const GameMapCitySelected('delkapu'))).called(1);
         });
 
-    blocTest<CityBloc, CityState>('URL-város nélkül a service választ; ha már ki van jelölve, nem jelöl újra',
+    blocTest<CityBloc, CityState>('without a URL city the service picks; if already selected, does not reselect',
         build: build,
         act: (b) => b.add(const CityStarted(null)),
         verify: (b) {
@@ -66,7 +66,7 @@ void main() {
           verifyNever(() => game.add(any()));
         });
 
-    blocTest<CityBloc, CityState>('követi a GameBloc új állapotát (busy, játék)',
+    blocTest<CityBloc, CityState>('follows the GameBloc new state (busy, game)',
         build: build,
         act: (b) async {
           b.add(const CityStarted('szelmezo'));
@@ -77,37 +77,37 @@ void main() {
         verify: (b) => expect(b.state.busy, isTrue));
   });
 
-  group('Vásártér', () {
-    blocTest<CityBloc, CityState>('a választott pontokkal épít parancsot, és a GameBlocnak adja',
+  group('Marketplace', () {
+    blocTest<CityBloc, CityState>('builds an order with the chosen points and passes it to the GameBloc',
         setUp: () => when(() => service.buyShares(any(), any())).thenReturn(order),
         build: build,
         act: (b) => b
           ..add(const CityStarted('szelmezo'))
-          ..add(const CityBuyPointsChanged('bor', 7))
-          ..add(const CityBuySubmitted('bor')),
+          ..add(const CityBuyPointsChanged('wine', 7))
+          ..add(const CityBuySubmitted('wine')),
         verify: (b) {
-          expect(b.state.goods['bor'], const GoodForm(buyPts: 7));
+          expect(b.state.goods['wine'], const GoodForm(buyPts: 7));
           final p = verify(() => service.buyShares(any(), captureAny())).captured.single as GoodPlan;
           expect(p.buyPts, 7);
           verify(() => game.add(GameOrderAdded(order))).called(1);
         });
 
-    blocTest<CityBloc, CityState>('kivásárlás: célpont és pont az árucikk űrlapján',
+    blocTest<CityBloc, CityState>('buyout: target and points on the good form',
         setUp: () => when(() => service.buyout(any(), any())).thenReturn(order),
         build: build,
         act: (b) => b
           ..add(const CityStarted('szelmezo'))
-          ..add(const CityBuyoutTargetChanged('gabona', 'npc2'))
-          ..add(const CityBuyoutPointsChanged('gabona', 3))
-          ..add(const CityBuyoutSubmitted('gabona')),
+          ..add(const CityBuyoutTargetChanged('grain', 'npc2'))
+          ..add(const CityBuyoutPointsChanged('grain', 3))
+          ..add(const CityBuyoutSubmitted('grain')),
         verify: (b) {
-          expect(b.state.goods['gabona'], const GoodForm(boPts: 3, target: 'npc2'));
+          expect(b.state.goods['grain'], const GoodForm(boPts: 3, target: 'npc2'));
           final p = verify(() => service.buyout(any(), captureAny())).captured.single as GoodPlan;
           expect((p.targetId, p.boPts), ('npc2', 3));
           verify(() => game.add(GameOrderAdded(order))).called(1);
         });
 
-    blocTest<CityBloc, CityState>('érvénytelen parancs (null) nem megy a GameBlocnak',
+    blocTest<CityBloc, CityState>('invalid order (null) does not go to the GameBloc',
         setUp: () => when(() => service.defend(any(), any(), any())).thenReturn(null),
         build: build,
         act: (b) => b
@@ -116,25 +116,25 @@ void main() {
         verify: (_) => verifyNever(() => game.add(any(that: isA<GameOrderAdded>()))));
   });
 
-  group('Városháza', () {
-    blocTest<CityBloc, CityState>('hírszerkesztő: a választások a tervbe kerülnek',
+  group('Town Hall', () {
+    blocTest<CityBloc, CityState>('news editor: selections go into the plan',
         setUp: () => when(() => service.news(any(), any())).thenReturn(order),
         build: build,
         act: (b) => b
           ..add(const CityStarted('szelmezo'))
-          ..add(const CityNewsTemplateChanged('barat'))
+          ..add(const CityNewsTemplateChanged('friend'))
           ..add(const CityNewsTargetChanged('npc1'))
           ..add(const CityNewsSubmitted()),
         verify: (b) {
-          expect(b.state.news, const NewsForm(template: 'barat', target: 'npc1'));
+          expect(b.state.news, const NewsForm(template: 'friend', target: 'npc1'));
           final p = verify(() => service.news(any(), captureAny())).captured.single as NewsPlan;
-          expect((p.template!.id, p.target!.playerId), ('barat', 'npc1'));
+          expect((p.template!.id, p.target!.playerId), ('friend', 'npc1'));
           verify(() => game.add(GameOrderAdded(order))).called(1);
         });
   });
 
-  group('Alvilág', () {
-    blocTest<CityBloc, CityState>('kém áthelyezése: párbeszéd, célváros, parancs',
+  group('Underworld', () {
+    blocTest<CityBloc, CityState>('moving a spy: dialog, destination city, order',
         setUp: () => when(() => service.moveSpy(any(), any(), 'delkapu')).thenReturn(OrderRequest(type: 'moveSpy', city: 'szelmezo', to: 'delkapu')),
         build: build,
         act: (b) async {
@@ -151,14 +151,14 @@ void main() {
           verify(() => game.add(GameOrderAdded(OrderRequest(type: 'moveSpy', city: 'szelmezo', to: 'delkapu')))).called(1);
         });
 
-    blocTest<CityBloc, CityState>('szabad kém nélkül nem nyílik meg az áthelyezés',
+    blocTest<CityBloc, CityState>('move does not open without a free spy',
         build: build,
         act: (b) => b
           ..add(const CityStarted('delkapu'))
           ..add(const CityMoveSpyOpened()),
         verify: (b) => expect(b.state.moveSpyOpen, isFalse));
 
-    blocTest<CityBloc, CityState>('eladás: ha nincs kinek, értesítés',
+    blocTest<CityBloc, CityState>('sale: notice if there is no buyer',
         setUp: () => when(() => service.saleDefaults(any(), 'i1')).thenReturn(null),
         build: build,
         act: (b) => b
@@ -169,7 +169,7 @@ void main() {
           expect((b.state.notice?.title, b.state.notice?.body, b.state.notice?.tone), (const Tr('city.sale.failed'), const Tr('city.sale.no_buyer'), 'danger'));
         });
 
-    blocTest<CityBloc, CityState>('eladás: vevő és ár a párbeszédből, felkínálás a GameBlocon át',
+    blocTest<CityBloc, CityState>('sale: buyer and price from the dialog, offer via the GameBloc',
         setUp: () {
           when(() => service.saleDefaults(any(), 'i1')).thenReturn(('npc1', '10'));
           when(() => service.validBuyer(any(), 'i1', 'npc2')).thenReturn(true);
@@ -190,11 +190,11 @@ void main() {
         verify: (b) {
           expect(b.state.sale, isNull);
           verify(() => game.add(any(that: isA<GameIntelOffered>()
-              .having((e) => [e.intelId, e.buyerId, e.price], 'ajánlat', ['i1', 'npc2', 25])
-              .having((e) => e.success, 'üzenet', Tr('city.sale.offered', {'house': s.houseName('npc2'), 'price': '25'}))))).called(1);
+              .having((e) => [e.intelId, e.buyerId, e.price], 'offerId', ['i1', 'npc2', 25])
+              .having((e) => e.success, 'message', Tr('city.sale.offered', {'house': s.houseName('npc2'), 'price': '25'}))))).called(1);
         });
 
-    blocTest<CityBloc, CityState>('felkínált információ elfogadása és elutasítása',
+    blocTest<CityBloc, CityState>('accepting and declining offered intel',
         build: () {
           final o = OfferView(id: 'of1', seller: s.houses[0], of_: s.houses[1], price: 12, executeAt: s.clock.now);
           whenListen(game, games.stream, initialState: view(s.copyWith(offers: [o])));
@@ -204,19 +204,19 @@ void main() {
           ..add(const CityStarted('szelmezo'))
           ..add(const CityOfferAccepted('of1'))
           ..add(const CityOfferDeclined('of1'))
-          ..add(const CityOfferAccepted('nincs')),
+          ..add(const CityOfferAccepted('missing')),
         verify: (_) {
-          verify(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'ajánlat', 'of1').having((e) => e.success, 'üzenet', Tr('city.sale.accepted', {'house': s.houses[1].name}))))).called(1);
+          verify(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'offerId', 'of1').having((e) => e.success, 'message', Tr('city.sale.accepted', {'house': s.houses[1].name}))))).called(1);
           verify(() => game.add(const GameOfferDeclined('of1'))).called(1);
-          verifyNever(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'ajánlat', 'nincs'))));
+          verifyNever(() => game.add(any(that: isA<GameOfferAccepted>().having((e) => e.offerId, 'offerId', 'missing'))));
         });
   });
 
-  test('a számolt értékek a CityState getterein', () async {
+  test('computed values on the CityState getters', () async {
     final b = build()..add(const CityStarted('szelmezo'));
     await Future<void>.delayed(Duration.zero);
     final st = b.state;
-    expect(st.dominants['keresk'], 'arany');
+    expect(st.dominants['trade'], 'gold');
     expect(st.threats.single.orderId, 'o100');
     expect(st.lowPop, isTrue);
     expect(st.freeSpies, 2);

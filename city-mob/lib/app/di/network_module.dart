@@ -6,7 +6,7 @@ import 'package:tron_api/tron_api.dart';
 import '../../core/auth_interceptor.dart';
 import '../../core/config.dart';
 
-/// A Dio és a generált API-kliensek (packages/tron_api). A Firebase ID tokent az AuthInterceptor teszi rá.
+/// Dio and the generated API clients (packages/tron_api). The Firebase ID token is attached by AuthInterceptor.
 @module
 abstract class NetworkModule {
   @lazySingleton
@@ -18,7 +18,7 @@ abstract class NetworkModule {
       ))
         ..interceptors.add(auth);
 
-  /// Üres interceptorlista: a generált kliens saját hitelesítő interceptorai helyett a miénk fut.
+  /// Empty interceptor list: ours runs instead of the generated client's own auth interceptors.
   @lazySingleton
   TronApi tronApi(Dio dio) => TronApi(dio: dio, interceptors: const []);
 

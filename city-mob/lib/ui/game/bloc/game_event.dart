@@ -19,12 +19,12 @@ class GameRefreshRequested extends GameEvent {
   const GameRefreshRequested();
 }
 
-/// Az óra 15 másodpercenként üt (a visszaszámlálókhoz és az automatikus frissítéshez).
+/// The clock ticks every 15 seconds (for countdowns and auto-refresh).
 class GameTicked extends GameEvent {
   const GameTicked();
 }
 
-/// A térképen kijelölt város.
+/// The city selected on the map.
 class GameMapCitySelected extends GameEvent {
   const GameMapCitySelected(this.cityId);
   final String cityId;
@@ -53,13 +53,13 @@ class GameSealRequested extends GameEvent {
   const GameSealRequested();
 }
 
-/// Kifürkészett terv felkínálása egy megnevezett háznak (7.5).
+/// Offering an intel to a named house (7.5).
 class GameIntelOffered extends GameEvent {
   const GameIntelOffered(this.intelId, this.buyerId, this.price, {this.success});
   final String intelId, buyerId;
   final int price;
 
-  /// A sikerüzenet (például „Felkínálva: Varjúvár, 12 A.”); alapból „Ajánlat elküldve”.
+  /// The success message (e.g. "Offered: Crowcastle, 12 G."); defaults to "Offer sent".
   final Tr? success;
 
   @override
@@ -70,7 +70,7 @@ class GameOfferAccepted extends GameEvent {
   const GameOfferAccepted(this.offerId, {this.success});
   final String offerId;
 
-  /// A sikerüzenet (például „Megvetted: Varjúvár tervei.”); alapból „Megvetted az információt”.
+  /// The success message (e.g. "Bought: Crowcastle's plans."); defaults to "Information bought".
   final Tr? success;
 
   @override
@@ -87,13 +87,4 @@ class GameOfferDeclined extends GameEvent {
 
 class GameAdminSettleRequested extends GameEvent {
   const GameAdminSettleRequested();
-}
-
-/// minutes = null: a következő eseményig.
-class GameAdminAdvanceRequested extends GameEvent {
-  const GameAdminAdvanceRequested(this.minutes);
-  final int? minutes;
-
-  @override
-  List<Object?> get props => [minutes];
 }

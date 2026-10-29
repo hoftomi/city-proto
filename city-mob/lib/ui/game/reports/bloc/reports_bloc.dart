@@ -11,8 +11,8 @@ import '../../../../domain/service/game_service.dart';
 part 'reports_event.dart';
 part 'reports_state.dart';
 
-/// A Jelentések fül: a jelentések betöltése és szűrése. A játékállapot minden változásáról értesül
-/// (ReportsGameUpdated), de csak akkor tölt újra, ha új jelentés lehet (GameViewX.feedKey).
+/// The Reports tab: loading and filtering reports. Notified of every game state change
+/// (ReportsGameUpdated), but reloads only if there may be a new report (GameViewX.feedKey).
 @injectable
 class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
   ReportsBloc(this._service) : super(const ReportsState()) {

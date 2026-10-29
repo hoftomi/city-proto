@@ -18,7 +18,7 @@
     "draft_only": "A védekező vétel még csak a vázlaton van: pecsételd le, mielőtt az ajánlat lefut.",
     "hint": "A védekező vétel akkor hat, ha lepecsételed, mielőtt az ajánlat lefut (lefut: {at})."
   },
-  "lap": {
+  "sheet": {
     "sealed_at": "Lepecsételve {time}",
     "maturing": "Érlelődik: {left} múlva lép érvénybe ({at})",
     "executing": "Végrehajtás folyamatban…",

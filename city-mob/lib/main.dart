@@ -19,7 +19,7 @@ Future<void> main() async {
     fallbackLocale: L10n.hu,
     startLocale: L10n.hu,
     useOnlyLangCode: true,
-    // Minden felirat a backendről jön (offline: gyorsítótár, végül az app tartaléka).
+    // Every label comes from the backend (offline: cache, finally the app fallback).
     assetLoader: getIt<TranslationRepository>(),
     child: const TronApp(),
   ));

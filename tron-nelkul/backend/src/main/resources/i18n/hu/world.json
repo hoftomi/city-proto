@@ -1,0 +1,184 @@
+{
+  "map": {
+    "delkelet": "Délkelet",
+    "kodos": "Ködös Hegyvidék",
+    "so": "Sóvidék"
+  },
+  "city": {
+    "szelmezo": {
+      "name": "Szélmező",
+      "desc": "Gabonavidék"
+    },
+    "vaskapu": {
+      "name": "Vaskapu",
+      "desc": "Bányaváros"
+    },
+    "feketerev": {
+      "name": "Feketerév",
+      "desc": "Kikötőváros"
+    },
+    "holtag": {
+      "name": "Holtág",
+      "desc": "Csempészváros"
+    },
+    "delkapu": {
+      "name": "Délkapu",
+      "desc": "Határváros"
+    },
+    "kodvar": {
+      "name": "Ködvár",
+      "desc": "Hegyi nemesi fészek"
+    },
+    "sziklaszirt": {
+      "name": "Sziklaszirt",
+      "desc": "Bányaváros"
+    },
+    "farkasrev": {
+      "name": "Farkasrév",
+      "desc": "Folyami rév"
+    },
+    "ezustpatak": {
+      "name": "Ezüstpatak",
+      "desc": "Kereskedőváros"
+    },
+    "harmaskut": {
+      "name": "Hármaskút",
+      "desc": "Vásárváros"
+    },
+    "melyvolgy": {
+      "name": "Mélyvölgy",
+      "desc": "Völgyi szénégetők"
+    },
+    "sohegy": {
+      "name": "Sóhegy",
+      "desc": "Sóbánya"
+    },
+    "kalmarrev": {
+      "name": "Kalmárrév",
+      "desc": "Kikötőváros"
+    },
+    "tornyos": {
+      "name": "Tornyos",
+      "desc": "Hegyi város"
+    },
+    "sosviz": {
+      "name": "Sósvíz",
+      "desc": "Halászváros"
+    },
+    "delirev": {
+      "name": "Délirév",
+      "desc": "Csempészkikötő"
+    }
+  },
+  "good": {
+    "grain": "Gabona",
+    "wine": "Bor",
+    "iron": "Vas",
+    "stone": "Kő",
+    "salt": "Só",
+    "fish": "Hal",
+    "spice": "Fűszer",
+    "peat": "Tőzeg",
+    "contraband": "Csempészáru",
+    "wool": "Gyapjú",
+    "horse": "Ló",
+    "timber": "Fa",
+    "silver": "Ezüst",
+    "cloth": "Posztó",
+    "beer": "Sör",
+    "charcoal": "Faszén",
+    "honey": "Méz"
+  },
+  "start": {
+    "delkelet": {
+      "west": {
+        "name": "Nyugati birtok",
+        "note": "Kezdőváros Szélmező: bő gabonapiac, kevés rivális."
+      },
+      "marsh": {
+        "name": "Mocsárszél",
+        "note": "Kezdőváros Holtág: csempészek és kémek fészke."
+      },
+      "foothills": {
+        "name": "Hegyalja",
+        "note": "Kezdőváros Szélmező, egy lépésre a vaskapui bányáktól."
+      }
+    },
+    "kodos": {
+      "west": {
+        "name": "Nyugati erdőség",
+        "note": "Kezdőváros Ködvár: nemesi fészek, erős politika."
+      },
+      "pass": {
+        "name": "Hágó alatt",
+        "note": "A térkép közepe: sok lehetőség, sok rivális."
+      },
+      "east": {
+        "name": "Keleti fennsík",
+        "note": "Kezdőváros Farkasrév: halászat és faúsztatás."
+      }
+    },
+    "so": {
+      "mines": {
+        "name": "Bányavidék",
+        "note": "Kezdőváros Sóhegy, közel a kulcsvároshoz."
+      },
+      "coast": {
+        "name": "Nyugati part",
+        "note": "Két kisváros, nyugodt partvidék."
+      },
+      "tower": {
+        "name": "Tornyos-völgy",
+        "note": "Távol a központtól, de csendes."
+      }
+    }
+  },
+  "background": {
+    "merchant": {
+      "name": "Kereskedőház",
+      "perk1": "20 részesedés a kezdőváros egyik árucikkéből",
+      "perk2": "Azonnal van eladható árud"
+    },
+    "noble": {
+      "name": "Nemesi ház",
+      "perk1": "Megalapított párt a kezdővárosban",
+      "perk2": "+10 népszerűség a kezdővárosban"
+    },
+    "shadow": {
+      "name": "Árnyékrend",
+      "perk1": "2 felfogadott kém a kezdővárosban",
+      "perk2": "Az első naptól látsz a rivális parancslapokba"
+    }
+  },
+  "npc": {
+    "silvershore": "Ezüstpart-ház",
+    "ancientOak": "Ősi Tölgy",
+    "crimsonHand": "Bíbor Kéz",
+    "ravenhold": "Varjúvár"
+  },
+  "seed": {
+    "delkelet-1": {
+      "name": "Délkelet"
+    },
+    "kodos-autumn": {
+      "name": "Ködös Hegyvidék"
+    },
+    "so-league-1": {
+      "name": "Sóvidék ligája"
+    },
+    "lightning-1": {
+      "name": "Villámszezon"
+    },
+    "spring-championship": {
+      "name": "Tavaszi bajnokság"
+    }
+  },
+  "tag": {
+    "beginnerFriendly": "Kezdőbarát",
+    "strongNpcs": "Erős NPC-k",
+    "league": "Liga",
+    "spies": "Kémek",
+    "veterans": "Tapasztaltaknak",
+    "ranked": "Rangsorolt"
+  }
+}

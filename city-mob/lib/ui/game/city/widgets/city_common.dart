@@ -6,13 +6,13 @@ import '../../../../theme/tokens.dart';
 import '../../../../util/format.dart';
 import '../../../../widgets/game_widgets.dart';
 
-/// A városnézet közös, tisztán megjelenítő darabjai.
+/// Shared, purely presentational pieces of the city view.
 
 Widget gap([double h = 12]) => SizedBox(height: h);
 
 Widget hint(BuildContext context, String t) => Text(t, style: TnText.caption(context.tn.inkMuted));
 
-/// Időpont „óó:pp” alakban, helyi időben.
+/// Time as "hh:mm", in local time.
 String at(DateTime t) => hhmm(t);
 
 Widget cardTitle(BuildContext context, String title, [String? aside, String? art]) {
@@ -30,7 +30,7 @@ Widget cardTitle(BuildContext context, String title, [String? aside, String? art
   );
 }
 
-/// Egy sor alsó vonallal: törzs és egy opcionális gomb jobbra.
+/// A row with a bottom line: body and an optional button on the right.
 class CityLine extends StatelessWidget {
   const CityLine({super.key, required this.body, this.action});
   final Widget body;
@@ -51,7 +51,7 @@ class CityLine extends StatelessWidget {
       );
 }
 
-/// Egy terjedő hír: szöveg, szerző, idő, és az ellenőrzés állapota.
+/// A spreading news item: text, author, time, and verify status.
 class NewsRow extends StatelessWidget {
   const NewsRow({super.key, required this.n, this.action});
   final NewsView n;

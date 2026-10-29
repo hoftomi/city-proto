@@ -8,10 +8,10 @@ class GameDetailState extends Equatable {
   final MapDef? map;
   final Failure? failure;
 
-  /// Épp visszavonja a jelentkezést.
+  /// Withdrawing the join.
   final bool busy;
 
-  /// Egyszeri üzenet (toast).
+  /// One-off message (toast).
   final Notice? notice;
 
   bool get ready => detail != null && map != null;

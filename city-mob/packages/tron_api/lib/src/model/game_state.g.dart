@@ -29,9 +29,9 @@ abstract class _$GameStateCWProxy {
 
   GameState draftCost(Cost draftCost);
 
-  GameState lap(LapView? lap);
+  GameState sheet(SheetView? sheet);
 
-  GameState rivalLaps(List<RivalLap> rivalLaps);
+  GameState rivalSheets(List<RivalSheet> rivalSheets);
 
   GameState threats(List<Threat> threats);
 
@@ -61,8 +61,8 @@ abstract class _$GameStateCWProxy {
     List<CityView> cities,
     List<OrderView> draft,
     Cost draftCost,
-    LapView? lap,
-    List<RivalLap> rivalLaps,
+    SheetView? sheet,
+    List<RivalSheet> rivalSheets,
     List<Threat> threats,
     List<IntelView> intel,
     List<OfferView> offers,
@@ -111,10 +111,11 @@ class _$GameStateCWProxyImpl implements _$GameStateCWProxy {
   GameState draftCost(Cost draftCost) => this(draftCost: draftCost);
 
   @override
-  GameState lap(LapView? lap) => this(lap: lap);
+  GameState sheet(SheetView? sheet) => this(sheet: sheet);
 
   @override
-  GameState rivalLaps(List<RivalLap> rivalLaps) => this(rivalLaps: rivalLaps);
+  GameState rivalSheets(List<RivalSheet> rivalSheets) =>
+      this(rivalSheets: rivalSheets);
 
   @override
   GameState threats(List<Threat> threats) => this(threats: threats);
@@ -150,8 +151,8 @@ class _$GameStateCWProxyImpl implements _$GameStateCWProxy {
     Object? cities = const $CopyWithPlaceholder(),
     Object? draft = const $CopyWithPlaceholder(),
     Object? draftCost = const $CopyWithPlaceholder(),
-    Object? lap = const $CopyWithPlaceholder(),
-    Object? rivalLaps = const $CopyWithPlaceholder(),
+    Object? sheet = const $CopyWithPlaceholder(),
+    Object? rivalSheets = const $CopyWithPlaceholder(),
     Object? threats = const $CopyWithPlaceholder(),
     Object? intel = const $CopyWithPlaceholder(),
     Object? offers = const $CopyWithPlaceholder(),
@@ -203,14 +204,14 @@ class _$GameStateCWProxyImpl implements _$GameStateCWProxy {
           ? _value.draftCost
           // ignore: cast_nullable_to_non_nullable
           : draftCost as Cost,
-      lap: lap == const $CopyWithPlaceholder()
-          ? _value.lap
+      sheet: sheet == const $CopyWithPlaceholder()
+          ? _value.sheet
           // ignore: cast_nullable_to_non_nullable
-          : lap as LapView?,
-      rivalLaps: rivalLaps == const $CopyWithPlaceholder()
-          ? _value.rivalLaps
+          : sheet as SheetView?,
+      rivalSheets: rivalSheets == const $CopyWithPlaceholder()
+          ? _value.rivalSheets
           // ignore: cast_nullable_to_non_nullable
-          : rivalLaps as List<RivalLap>,
+          : rivalSheets as List<RivalSheet>,
       threats: threats == const $CopyWithPlaceholder()
           ? _value.threats
           // ignore: cast_nullable_to_non_nullable
@@ -263,8 +264,8 @@ GameState _$GameStateFromJson(Map<String, dynamic> json) => $checkedCreate(
         'cities',
         'draft',
         'draftCost',
-        'lap',
-        'rivalLaps',
+        'sheet',
+        'rivalSheets',
         'threats',
         'intel',
         'offers',
@@ -310,14 +311,14 @@ GameState _$GameStateFromJson(Map<String, dynamic> json) => $checkedCreate(
         'draftCost',
         (v) => Cost.fromJson(v as Map<String, dynamic>),
       ),
-      lap: $checkedConvert(
-        'lap',
-        (v) => v == null ? null : LapView.fromJson(v as Map<String, dynamic>),
+      sheet: $checkedConvert(
+        'sheet',
+        (v) => v == null ? null : SheetView.fromJson(v as Map<String, dynamic>),
       ),
-      rivalLaps: $checkedConvert(
-        'rivalLaps',
+      rivalSheets: $checkedConvert(
+        'rivalSheets',
         (v) => (v as List<dynamic>)
-            .map((e) => RivalLap.fromJson(e as Map<String, dynamic>))
+            .map((e) => RivalSheet.fromJson(e as Map<String, dynamic>))
             .toList(),
       ),
       threats: $checkedConvert(
@@ -365,8 +366,8 @@ Map<String, dynamic> _$GameStateToJson(GameState instance) => <String, dynamic>{
   'cities': instance.cities.map((e) => e.toJson()).toList(),
   'draft': instance.draft.map((e) => e.toJson()).toList(),
   'draftCost': instance.draftCost.toJson(),
-  'lap': instance.lap?.toJson(),
-  'rivalLaps': instance.rivalLaps.map((e) => e.toJson()).toList(),
+  'sheet': instance.sheet?.toJson(),
+  'rivalSheets': instance.rivalSheets.map((e) => e.toJson()).toList(),
   'threats': instance.threats.map((e) => e.toJson()).toList(),
   'intel': instance.intel.map((e) => e.toJson()).toList(),
   'offers': instance.offers.map((e) => e.toJson()).toList(),

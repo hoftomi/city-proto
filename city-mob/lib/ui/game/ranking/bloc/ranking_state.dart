@@ -15,20 +15,20 @@ class RankingState extends Equatable {
 
   final String? gameId;
 
-  /// A játékállapot kulcsa az utolsó betöltéskor (GameViewX.feedKey).
+  /// The game state key at the last load (GameViewX.feedKey).
   final String? key;
   final RankingStatus status;
   final List<RankRow> rows;
 
-  /// A fejléc: hányadik elszámolás után, mikor a választás.
+  /// The header: after which settlement, when the election is.
   final Tr caption;
   final List<PopularityRow> popularity;
   final Failure? failure;
 
-  /// Még nincs mit mutatni (az első betöltés fut).
+  /// Nothing to show yet (the first load is running).
   bool get loading => status == RankingStatus.loading && rows.isEmpty || status == RankingStatus.initial;
 
-  /// A saját ház sorainak indexe a táblában.
+  /// Indexes of the own house's rows in the table.
   Set<int> get selfRows => {for (var i = 0; i < rows.length; i++) if (rows[i].self) i};
 
   RankingState copyWith({

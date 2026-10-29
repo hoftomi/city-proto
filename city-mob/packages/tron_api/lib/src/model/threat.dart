@@ -21,7 +21,7 @@ class Threat {
   /// Returns a new [Threat] instance.
   Threat({
 
-    required  this.lapId,
+    required  this.sheetId,
 
     required  this.orderId,
 
@@ -46,13 +46,13 @@ class Threat {
 
   @JsonKey(
     
-    name: r'lapId',
+    name: r'sheetId',
     required: true,
     includeIfNull: false,
   )
 
 
-  final String lapId;
+  final String sheetId;
 
 
 
@@ -180,7 +180,7 @@ class Threat {
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is Threat &&
-      other.lapId == lapId &&
+      other.sheetId == sheetId &&
       other.orderId == orderId &&
       other.by == by &&
       other.cityId == cityId &&
@@ -194,7 +194,7 @@ class Threat {
 
     @override
     int get hashCode =>
-        lapId.hashCode +
+        sheetId.hashCode +
         orderId.hashCode +
         by.hashCode +
         cityId.hashCode +

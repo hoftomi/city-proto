@@ -22,12 +22,12 @@ class GameApi {
 
   const GameApi(this._dio);
 
-  /// Ajánlat elfogadása (letét: fizetés, és azonnal megkapod)
+  /// Accept an offer (escrow: you pay and receive it at once)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
-  /// * [offerId] - Az ajánlat azonosítója
+  /// * [id] - Game id
+  /// * [offerId] - Offer id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -102,11 +102,11 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Parancs a vázlatra
+  /// Add an order to the draft
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [orderRequest] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -201,12 +201,12 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Ajánlat elutasítása
+  /// Decline an offer
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
-  /// * [offerId] - Az ajánlat azonosítója
+  /// * [id] - Game id
+  /// * [offerId] - Offer id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -281,11 +281,11 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Rangsor Legitimitás szerint
+  /// Ranking by Legitimacy
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -359,11 +359,11 @@ _responseData = rawData == null ? null : deserialize<List<RankRow>, RankRow>(raw
     );
   }
 
-  /// Jelentések (a legutóbbi 100)
+  /// Reports (the latest 100)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -437,11 +437,11 @@ _responseData = rawData == null ? null : deserialize<List<ReportView>, ReportVie
     );
   }
 
-  /// A játékos nézete (előtte a szerver lefuttatja az esedékes eseményeket)
+  /// The player&#39;s view (the server runs the due events first)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -515,12 +515,12 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Kifürkészett parancslap felkínálása egy megnevezett háznak (7.5)
+  /// Offer a scouted order sheet to a named house (7.5)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
-  /// * [intelId] - A kifürkészett terv azonosítója
+  /// * [id] - Game id
+  /// * [intelId] - Id of the scouted plan
   /// * [offerRequest] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -616,12 +616,12 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Parancs törlése a vázlatról
+  /// Remove an order from the draft
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
-  /// * [orderId] - A parancs azonosítója
+  /// * [id] - Game id
+  /// * [orderId] - Order id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -696,11 +696,11 @@ _responseData = rawData == null ? null : deserialize<GameState, GameState>(rawDa
     );
   }
 
-  /// Lepecsételés: a vázlatból érlelő parancslap lesz (visszavonni nem lehet)
+  /// Seal: the draft becomes a maturing order sheet (cannot be undone)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request

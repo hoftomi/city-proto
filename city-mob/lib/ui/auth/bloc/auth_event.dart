@@ -7,12 +7,12 @@ sealed class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Induláskor: a mentett munkamenet visszaállítása.
+/// On startup: restore the saved session.
 class AuthStarted extends AuthEvent {
   const AuthStarted();
 }
 
-/// Belépés egy szolgáltatóval: google | apple | discord.
+/// Login with a provider: google | apple | discord.
 class AuthSignInRequested extends AuthEvent {
   const AuthSignInRequested(this.provider);
   final String provider;
@@ -25,7 +25,7 @@ class AuthSignOutRequested extends AuthEvent {
   const AuthSignOutRequested();
 }
 
-/// A szerver 401-et adott.
+/// The server returned 401.
 class _AuthSessionExpired extends AuthEvent {
   const _AuthSessionExpired();
 }

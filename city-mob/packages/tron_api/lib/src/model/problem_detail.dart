@@ -93,7 +93,7 @@ class ProblemDetail {
 
 
 
-      /// Opcionális gépi kód, amely alapján a kliens dönthet (például house_name: a ház neve hibás vagy foglalt).
+      /// Optional machine code the client can act on (for example house_name: the house name is invalid or taken).
   @JsonKey(
     
     name: r'code',

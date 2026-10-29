@@ -13,7 +13,7 @@ import '../../common/notice.dart';
 part 'game_detail_event.dart';
 part 'game_detail_state.dart';
 
-/// Egy játék részletei a térképpel; a jelentkezés visszavonása.
+/// A game's details with the map; withdrawing the join.
 @injectable
 class GameDetailBloc extends Bloc<GameDetailEvent, GameDetailState> {
   GameDetailBloc(this._lobby, this._join) : super(const GameDetailState()) {

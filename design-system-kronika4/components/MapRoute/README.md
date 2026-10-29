@@ -1,12 +1,12 @@
 # MapRoute
 
-Útvonal földútként, tintakontúrral és kavicsszaggatással.
+A route drawn as a dirt road, with an ink outline and gravel dashes.
 
-**Mit ad a hívó:** `from`, `to`, `state`, `tincture`.
+**What the caller provides:** `from`, `to`, `state`, `tincture`.
 
-- `base`: halvány földút.
-- `own`: széles bronz út.
-- `pending`: szaggatott bronz út.
-- `rival`: a ház színe.
-- `blocked`: vörös, tiltójellel.
-- `closed`: szürke szaggatott.
+- `base`: faint dirt road.
+- `own`: wide bronze road.
+- `pending`: dashed bronze road.
+- `rival`: the house's color.
+- `blocked`: red, with a prohibition sign.
+- `closed`: grey, dashed.

@@ -21,11 +21,11 @@ class LobbyApi {
 
   const LobbyApi(this._dio);
 
-  /// Játék részletei: kezdőhelyek, hátterek, tinktúrák
+  /// Game details: start slots, backgrounds, tinctures
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -99,11 +99,11 @@ _responseData = rawData == null ? null : deserialize<GameDetail, GameDetail>(raw
     );
   }
 
-  /// Térkép: városok, utak, kezdőhelyek, domborzat (gyorsítótárazható)
+  /// Map: cities, roads, start slots, terrain (cacheable)
   /// 
   ///
   /// Parameters:
-  /// * [mapId] - A térkép azonosítója
+  /// * [mapId] - Map id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -177,11 +177,11 @@ _responseData = rawData == null ? null : deserialize<MapDef, MapDef>(rawData, 'M
     );
   }
 
-  /// Jelentkezés (futó játékba az első 3 elszámolásig)
+  /// Join (a running game until its first 3 settlements)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [joinRequest] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -276,7 +276,7 @@ _responseData = rawData == null ? null : deserialize<GameSummary, GameSummary>(r
     );
   }
 
-  /// Játékok listája, saját házzal
+  /// List of games, with the own house
   /// 
   ///
   /// Parameters:
@@ -352,11 +352,11 @@ _responseData = rawData == null ? null : deserialize<List<GameSummary>, GameSumm
     );
   }
 
-  /// Jelentkezés visszavonása (csak a kezdés előtt)
+  /// Withdraw (only before the start)
   /// 
   ///
   /// Parameters:
-  /// * [id] - A játék azonosítója
+  /// * [id] - Game id
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request

@@ -17,8 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.util.List;
 
 /**
- * Állapotmentes API. A kliens a Firebase ID tokenjével azonosít (Authorization: Bearer).
- * A token alanyát (Firebase uid) a {@link FirebaseUserConverter} képezi le a saját felhasználónkra.
+ * Stateless API. The client authenticates with its Firebase ID token (Authorization: Bearer).
+ * {@link FirebaseUserConverter} maps the token subject (Firebase uid) to our own user.
  */
 @Configuration
 @EnableWebSecurity
@@ -37,12 +37,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /** Firebase ID token: a Google kulcsaival aláírva, kiadó és célközönség a Firebase-projekt. */
+    /** Firebase ID token: signed with Google's keys, issuer and audience are the Firebase project. */
     @Bean
     JwtDecoder jwtDecoder(AppProperties props) {
         String project = props.auth().firebaseProjectId();
         if (project == null || project.isBlank())
-            throw new IllegalStateException("Hiányzik a Firebase-projekt azonosítója (FIREBASE_PROJECT_ID).");
+            throw new IllegalStateException("Missing Firebase project id (FIREBASE_PROJECT_ID).");
         NimbusJwtDecoder d = NimbusJwtDecoder.withJwkSetUri(FIREBASE_JWKS).build();
         d.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
             JwtValidators.createDefaultWithIssuer("https://securetoken.google.com/" + project),

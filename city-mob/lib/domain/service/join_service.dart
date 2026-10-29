@@ -7,20 +7,20 @@ import '../../core/tr.dart';
 import '../model/join_extensions.dart';
 import 'lobby_service.dart';
 
-/// A jelentkezés űrlapjának adatai.
+/// Data of the join form.
 typedef JoinForm = ({String name, String tincture, String background, String start, String? startGood});
 
-/// Játékrészletek a térképpel, a jelentkezés ellenőrzése és a kérés összeállítása.
+/// Game details with the map, join validation and request assembly.
 @lazySingleton
 class JoinService {
   JoinService(this._lobby);
   final LobbyService _lobby;
 
-  /// A jelentkezés lépései.
+  /// Steps of joining.
   static const steps = [Tr('join.step.house'), Tr('join.step.background'), Tr('join.step.start'), Tr('join.step.summary')];
   static const minName = 3, maxName = 24;
 
-  /// A játék részletei és a térképe egyben.
+  /// The game's details and its map together.
   Future<Either<Failure, (GameDetail, MapDef)>> detail(String id) async {
     final d = await _lobby.game(id);
     if (d.isLeft) return Left(d.left);
@@ -29,7 +29,7 @@ class JoinService {
     return Right((d.right, m.right));
   }
 
-  /// A ház nevének hibája, vagy null, ha jó.
+  /// Error for the house name, or null if valid.
   Tr? nameError(String name) {
     final v = name.trim();
     if (v.length < minName) return Tr('join.name_too_short', {'min': '$minName'});
@@ -47,7 +47,7 @@ class JoinService {
 
   Future<Either<Failure, GameSummary>> join(GameDetail d, JoinForm f) => _lobby.join(d.game.id, request(d, f));
 
-  /// A szerver foglalt vagy hibás névre panaszkodik: vissza az első lépésre. A szerver szövegét (ProblemDetail
-  /// `detail`) vizsgálja, ez nem megjelenített felirat.
+  /// The server complains about a taken or invalid name: back to the first step. Inspects the server text (ProblemDetail
+  /// `detail`), not a displayed label.
   bool nameRejected(Failure f) => f.code == 'house_name';
 }

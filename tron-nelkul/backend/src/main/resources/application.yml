@@ -8,7 +8,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none   # a sémát a Flyway kezeli (db/migration)
+      ddl-auto: none   # the schema is managed by Flyway (db/migration)
   flyway:
     enabled: true
 
@@ -24,9 +24,9 @@ management:
 app:
   zone: Europe/Budapest
   auth:
-    # A Firebase-projekt azonosítója: ennek az ID tokenjeit fogadjuk el
+    # Firebase project id: its ID tokens are accepted
     firebase-project-id: ${FIREBASE_PROJECT_ID:city-proto}
-    # A Discord-belépéshez a Firebase custom tokenek aláírására service account is kell (GOOGLE_APPLICATION_CREDENTIALS)
+    # Discord sign-in also needs a service account to sign Firebase custom tokens (GOOGLE_APPLICATION_CREDENTIALS)
     discord-client-id: ${DISCORD_CLIENT_ID:}
     discord-client-secret: ${DISCORD_CLIENT_SECRET:}
   scheduler:

@@ -8,7 +8,7 @@ import '../ui/auth/bloc/auth_bloc.dart';
 import 'di/di.dart';
 import 'router/app_router.dart';
 
-/// Az app gyökere: a munkamenet (AuthBloc) és a router.
+/// The app root: the session (AuthBloc) and the router.
 class TronApp extends StatefulWidget {
   const TronApp({super.key});
 
@@ -30,7 +30,7 @@ class _TronAppState extends State<TronApp> {
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         debugShowCheckedModeBanner: false,
-        // Krónika IV: egyetlen világos téma („Nappal”).
+        // Chronicle IV: a single light theme ("Day").
         theme: buildTheme(),
         themeMode: ThemeMode.light,
         routerConfig: _router,

@@ -13,7 +13,7 @@ import '../../auth/bloc/auth_bloc.dart';
 part 'lobby_event.dart';
 part 'lobby_state.dart';
 
-/// Játékválasztó: a játékok betöltése és frissítése, csoportosítás a fülekre, fülváltás, kilépés.
+/// Lobby: loading and refreshing games, grouping into tabs, tab switching, logout.
 @injectable
 class LobbyBloc extends Bloc<LobbyEvent, LobbyState> {
   LobbyBloc(this._service, this._auth) : super(const LobbyState()) {

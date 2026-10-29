@@ -1,4 +1,4 @@
-# A build-kontextus a repó gyökere (az API-szerződés az api/ mappában van), lásd docker-compose.yml és /.dockerignore
+# The build context is the repo root (the API contract is in the api/ folder), see docker-compose.yml and /.dockerignore
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /work
 COPY api api

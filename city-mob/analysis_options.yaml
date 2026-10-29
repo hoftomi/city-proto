@@ -3,7 +3,7 @@ analyzer:
     - build/**
     - android/**
     - ios/**
-    # A generált API-kliens (tools/generate_api.sh) figyelmeztetései nem a mieink
+    # Warnings in the generated API client (tools/generate_api.sh) are not ours
     - packages/**
 include: package:flutter_lints/flutter.yaml
 linter:

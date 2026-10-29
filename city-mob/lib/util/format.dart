@@ -1,24 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
 
-/// Magyar formázás: tizedesvessző, valódi mínuszjel, nagykötőjel.
+/// Hungarian formatting: decimal comma, real minus sign, en dash.
 String num1(double v) => v.toStringAsFixed(1).replaceAll('.', ',');
 
 String signed(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '±0');
 
-/// Egész szám tizedes nélkül, különben egy tizedesjeggyel.
+/// Integer without decimals, otherwise with one decimal place.
 String numText(double v) => v == v.roundToDouble() ? v.round().toString() : num1(v);
 
-/// Hatalmi ág (OrderView.branch) és városnegyed neve.
-String branchName(String b) => const {'keresk', 'polit', 'kem', 'kozos'}.contains(b) ? 'format.branch.$b'.tr() : b;
+/// Name of a power branch (OrderView.branch) and city district.
+String branchName(String b) => const {'trade', 'politics', 'espionage', 'common'}.contains(b) ? 'format.branch.$b'.tr() : b;
 
-/// A városnézet negyedei: Vásártér (Üzletek), Városháza (Parlament), Alvilág (kémhálózat).
+/// The city view's districts: Marketplace (shops), Town Hall (parliament), Underworld (spy network).
 String districtName(String d) => branchName(d);
 
-const _tinctures = {'voros', 'kek', 'zold', 'arany', 'bibor', 'fekete', 'narancs', 'szeder'};
+const _tinctures = {'red', 'blue', 'green', 'gold', 'purple', 'black', 'orange', 'mulberry'};
 
 String tinctureName(String t) => _tinctures.contains(t) ? 'format.tincture.$t'.tr() : t;
 
-/// Helyi idő szerint (a szerver UTC-ben küldi az időpontokat).
+/// In local time (the server sends timestamps in UTC).
 String hhmm(DateTime t) {
   final d = t.toLocal();
   return '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
@@ -38,7 +38,7 @@ String relativeDays(DateTime t) {
   return 'format.in_days'.tr(namedArgs: {'days': '$days'});
 }
 
-/// Időtartam „1 ó 20 p” alakban (negatív időnél 0 p).
+/// Duration as „1 ó 20 p” (0 p for negative time).
 String durText(Duration d) {
   final m = (d.inSeconds / 60).ceil().clamp(0, 1000000);
   final h = m ~/ 60, mm = m % 60;
@@ -46,7 +46,7 @@ String durText(Duration d) {
   return mm == 0 ? 'format.dur_h'.tr(namedArgs: {'h': '$h'}) : 'format.dur_hm'.tr(namedArgs: {'h': '$h', 'm': '$mm'});
 }
 
-/// Rövid dátum és idő: „09.27. 14:05”.
+/// Short date and time: „09.27. 14:05”.
 String shortDateTime(DateTime t) {
   final d = t.toLocal();
   return '${d.month.toString().padLeft(2, '0')}.${d.day.toString().padLeft(2, '0')}. ${hhmm(d)}';

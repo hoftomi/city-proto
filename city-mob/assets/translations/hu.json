@@ -17,6 +17,44 @@
   "network": "Nincs internetkapcsolat. Próbáld újra.",
   "unknown_provider": "Ismeretlen szolgáltató."
  },
+ "catalog": {
+  "action": {
+   "buyShares": "Részesedés vásárlása",
+   "buyout": "Kivásárlási ajánlat",
+   "debunk": "Leleplezés",
+   "defend": "Védekező vétel",
+   "festival": "Fesztivál",
+   "foundParty": "Pártalapítás",
+   "guard": "Őr beállítása",
+   "hireSpy": "Kém felfogadása",
+   "margin": "Fokozatváltás",
+   "moveSpy": "Kém áthelyezése",
+   "news": "Hír terjesztése",
+   "program": "Programváltás",
+   "route": "Útvonal kiépítése",
+   "spy": "Kifürkészés",
+   "verify": "Hír ellenőrzése"
+  },
+  "margin": {
+   "cheap": "Olcsó",
+   "expensive": "Drága",
+   "market": "Piaci",
+   "usury": "Uzsora",
+   "veryCheap": "Nagyon olcsó"
+  },
+  "news": {
+   "boughtOut": "„{t} kivásárolt egy rivális kereskedőt.”",
+   "friend": "„{t} a városlakók barátja.”",
+   "spies": "„{t} kémeket tart a városban.”",
+   "taxHike": "„{t} pártja adóemelést akar.”",
+   "usury": "„{t} uzsoraáron árulja: {g}.”"
+  },
+  "program": {
+   "high": "Magas adó",
+   "low": "Alacsony adó",
+   "medium": "Közepes adó"
+  }
+ },
  "city": {
   "back_to_map": "← Térkép",
   "dialog": {
@@ -130,19 +168,19 @@
    "hire": "Kém felfogadása · {pp} PP · {gold} A",
    "intel": "Kifürkészett tervek",
    "intel_hint": "Az információ romlandó: az érlelő parancs végrehajtásával értéktelenné válik. Eladásonként +1 Legitimitás (legfeljebb 3 elszámolásonként egyszer).",
-   "laps": "Érlelő parancslapok",
-   "laps_hint": "A jelentés a saját parancslapod lefutásakor érkezik ({maturation} érlelés). Csak akkor ér valamit, ha a célpont később fut le, mint a tiéd.",
    "left": "({left} múlva)",
    "move": "Kém áthelyezése · {pp} PP",
    "no_checkable": "Nincs ellenőrizhető hír a városban.",
    "no_details": "Nincs részlet.",
-   "no_laps": "Most senkinek sincs érlelő parancslapja.",
+   "no_sheets": "Most senkinek sincs érlelő parancslapja.",
    "offer_text": "eladná {house} terveit · {price} A · lefut {time} ({left} múlva)",
    "offered_to": "Felkínálva: {names}",
    "offers": "Neked felkínált információ",
    "offers_hint": "Letét: elfogadáskor fizetsz, és azonnal megkapod a jelentést.",
    "runs": "lefut {time}",
    "sell": "Eladás",
+   "sheets": "Érlelő parancslapok",
+   "sheets_hint": "A jelentés a saját parancslapod lefutásakor érkezik ({maturation} érlelés). Csak akkor ér valamit, ha a célpont később fut le, mint a tiéd.",
    "spies": "Kémeid itt",
    "spies_status": "{free} szabad ügynök, {guards} őr · fenntartás {upkeep} A kémenként elszámolásonként",
    "spy": "Kifürkészés · {pp} PP",
@@ -181,13 +219,223 @@
   "joined": "Jelentkeztél",
   "joined_body": "Értesítünk, amikor a játék indul.",
   "joined_info": "Jelentkeztél. A játék {start} indul, addig a jelentkezésed visszavonható.",
-  "length_value": "{days} nap · napi {rounds} elszámolás ({max} elszámolás)",
+  "length_value": "1 hónap · napi 2 elszámolás ({max} elszámolás)",
   "my_place": "A te helyezésed: {place}.",
   "not_yet": "Még nem lehet jelentkezni",
   "not_yet_body": "{when}.",
   "victory_value": "A legtöbb Legitimitás a Koronázási Tanácson",
   "withdraw": "Jelentkezés visszavonása",
   "withdrawn": "Jelentkezés visszavonva."
+ },
+ "engine": {
+  "error": {
+   "already_offered": "Ennek a háznak már felkínáltad.",
+   "buyout_already_ran": "Ez a kivásárlási ajánlat már lefutott.",
+   "buyout_per_order": "Egy ajánlatban 1–{max} pont vásárolható ki.",
+   "city_not_in_network": "Akciót csak a hálózatodban lévő városban indíthatsz. Építs előbb útvonalat.",
+   "city_shares_left": "A Várostól már csak {pts} pont vehető.",
+   "defend_on_draft": "Ez a védekező vétel már a vázlatodon van.",
+   "defend_wrong_city": "A védekező vételt abban a városban kell indítanod, ahol a kivásárlás fenyeget.",
+   "empty_sheet": "Üres parancslapot nem lehet lepecsételni.",
+   "intel_expired": "Ez a parancslap már lefutott, az információ értéktelen.",
+   "needs_free_spy": "Ehhez legalább egy szabad kém kell a városban.",
+   "needs_party": "Ehhez párt kell ebben a városban.",
+   "needs_shares": "Ehhez részesedés kell ebből az árucikkből.",
+   "needs_spy": "Ehhez kém kell a városban.",
+   "no_free_spy": "Nincs szabad kémed ebben a városban.",
+   "no_road": "Ezen a két helyen között nincs út.",
+   "no_such_draft_order": "Nincs ilyen parancs a vázlaton.",
+   "no_such_intel": "Nincs ilyen kifürkészett parancslap.",
+   "no_such_news": "Nincs ilyen hír.",
+   "no_such_offer": "Nincs ilyen ajánlat.",
+   "not_enough_gold": "Nincs elég arany: {need} kellene, {have} van.",
+   "not_enough_gold_offer": "Nincs elég aranyad: {need} kellene.",
+   "not_enough_pp": "Nincs elég parancspont: {need} kellene, {have} van.",
+   "offer_expired": "A parancslap már lefutott, az ajánlat lejárt.",
+   "own_news": "A saját híredet nem ellenőrizheted.",
+   "own_plans": "A saját terveit nem adhatod el neki.",
+   "party_exists": "Ebben a városban már van pártod.",
+   "pick_buyer": "Válassz vevőt.",
+   "pick_good": "Válassz árucikket.",
+   "pick_rival": "Válassz rivális kereskedőt.",
+   "pick_target": "Válassz célpontot.",
+   "pick_target_city": "Válassz célvárost.",
+   "price_range": "Az ár {min} és {max} arany között lehet.",
+   "route_city_only": "Útvonal csak városállamba vezethet.",
+   "route_from_network": "Útvonalat csak a hálózatodból indíthatsz.",
+   "route_owned": "Ez az útvonal már a tiéd.",
+   "shares_per_order": "Egy parancsban 1–{max} pont vehető.",
+   "sheet_maturing": "Már van érlelő parancslapod. A következőt a végrehajtás után pecsételheted le.",
+   "spy_limit": "Városonként legfeljebb {max} kémed lehet.",
+   "spy_limit_there": "Ott már {max} kémed van.",
+   "spy_move_network": "Kémet csak a hálózatodban lévő városba helyezhetsz át.",
+   "target_lacks_shares": "A célpontnak nincs ennyi részesedése.",
+   "target_protected": "Ezt a kereskedőt nemrég kivásárolták, most védett.",
+   "unknown_action": "Ismeretlen akció.",
+   "unknown_city": "Ismeretlen város.",
+   "unknown_good": "Ismeretlen árucikk.",
+   "unknown_margin": "Ismeretlen fokozat.",
+   "unknown_news_template": "Ismeretlen hírsablon.",
+   "unknown_program": "Ismeretlen program.",
+   "verify_first": "Előbb ellenőrizd, hogy hamis-e."
+  },
+  "order": {
+   "buyShares": "{pts} részesedés ({good}) a Várostól · {city}",
+   "buyout": "Kivásárlás: {pts} pont {target} részéből ({good}) · {city}",
+   "defend": "Védekező vétel ({good}) · {city}",
+   "margin": "{good} ára: {level} · {city}",
+   "moveSpy": "Kém áthelyezése: {from} → {to}",
+   "news": "Hír: {news} · {city}",
+   "other": "{action} · {city}",
+   "program": "Program: {program} · {city}",
+   "route": "{action}: {from} → {to}",
+   "spy": "Kifürkészés: {target} parancslapja · {city}",
+   "with_cost": "{order} ({gold} A)"
+  },
+  "report": {
+   "bought_out": {
+    "text": "{pts} pontot veszítettél a(z) {good} árucikkből ({city}), {gold} aranyat kaptál érte.",
+    "title": "{house} kivásárolt"
+   },
+   "buyShares": {
+    "text": "A városi tanács jóváhagyta az adásvételt. {city} {good}kínálatának {share}%-a a tiéd.",
+    "title": "+{pts} részesedés: {good}"
+   },
+   "buyout_defended": {
+    "text": "{house} kivásárlási ajánlata elbukott.",
+    "title": "Megvédted a részesedésedet"
+   },
+   "buyout_done": {
+    "text": "{pts} pont {good} {gold} aranyért. {target} {turns} elszámolásig védett.",
+    "title": "Kivásároltad: {target}"
+   },
+   "buyout_failed": {
+    "text": "{target} kiváltotta a részesedését. Az ajánlat árát visszakaptad.",
+    "title": "Kivásárlás meghiúsult"
+   },
+   "buyout_threat": {
+    "text": "{pts} pontot akar a(z) {good} részesedésedből ({city}). Az ajánlat {time}-kor fut le. Védekező vétellel kiválthatod a Vásártéren.",
+    "title": "{house} ki akar vásárolni"
+   },
+   "coronation": {
+    "text": "A városi tanácsok szavazatai (+{legit} L): {votes}.",
+    "text_none": "Egyik városi tanácsban sem volt egyértelmű többség.",
+    "title": "Koronázási Tanács"
+   },
+   "debunk": {
+    "text": "{news} A hír hamis volt. {author} −{penalty} népszerűség, {house} jutalma +{gold} arany és +{legit} Legitimitás.",
+    "title": "Leleplezve: {author} hazudott"
+   },
+   "defend": {
+    "text": "Kifizetted a Városnak a részesedésed árát. A kivásárlási ajánlat meghiúsul.",
+    "title": "Védekező vétel: {good}"
+   },
+   "defend_used": {
+    "text": "A Városnak kifizetett ár már megvédte a részesedésedet.",
+    "title": "Védekező vétel"
+   },
+   "election": {
+    "nobody": "senki sem jutott be",
+    "text": "Az új tanács: {council}.",
+    "title": "Választás: {city}"
+   },
+   "festival": {
+    "text": "Zászlók, zene, sült ökör a főtéren. A városlakók a nevedet éltetik.",
+    "text_recent": "A nép mulatott, de a legutóbbi ünnep még túl friss az emlékezetében.",
+    "title": "Fesztivál: +{gain} népszerűség"
+   },
+   "foundParty": {
+    "text": "A párt a következő választáson indul. Programja: közepes adó.",
+    "title": "Pártot alapítottál: {city}"
+   },
+   "guard": {
+    "text": "{city} városában {guards} kémed figyeli az idegen ügynököket.",
+    "title": "Őr beállítva"
+   },
+   "hireSpy": {
+    "text": "Egy megbízható ember az alvilágban. Kémeid itt: {spies}.",
+    "title": "Új kém: {city}"
+   },
+   "intel_bought": {
+    "text": "{lines} ({price} aranyért vetted {seller} házától)"
+   },
+   "intel_declined": {
+    "text": "Az információt más háznak még eladhatod.",
+    "title": "{house} elutasította az ajánlatodat"
+   },
+   "intel_offer": {
+    "text": "{of} érlelő parancslapjáról, {price} aranyért. Az Alvilágban fogadhatod el; letét: fizetéskor azonnal megkapod.",
+    "title": "{house} információt kínál"
+   },
+   "intel_rejected": {
+    "text": "Túl drágának tartotta az ajánlatot ({price} A).",
+    "title": "{house} nem vette meg"
+   },
+   "intel_sold": {
+    "bonus": " +{legit} Legitimitás.",
+    "text": "{buyer} {price} aranyat fizetett {of} terveiért. A letét lezárult.{bonus}",
+    "title": "Információ eladva: {house}"
+   },
+   "margin": {
+    "text": "{city} üzleteiben az új árak kikerültek a pultra.",
+    "title": "{good} ára: {level}"
+   },
+   "moveSpy": {
+    "text": "Az ügynököd {from} városából átköltözött {to} alvilágába.",
+    "title": "Kém áthelyezve: {to}"
+   },
+   "news": {
+    "title": "Hír terjed: {city}"
+   },
+   "order_failed": {
+    "text": "{reason} Az aranyat visszakaptad.",
+    "title": "Elmaradt: {action}"
+   },
+   "plans": {
+    "text": "{lines}",
+    "title": "{house} tervei (lejár: {time})"
+   },
+   "program": {
+    "text": "A pártod {city} városában meghirdette az új adóprogramot.",
+    "title": "Új program: {program}"
+   },
+   "route": {
+    "text": "A karavánút megnyílt. {city} mostantól a hálózatod része.",
+    "title": "Új útvonal: {city}"
+   },
+   "seats": {
+    "text": "A pártodnak {seats} helye van a tanácsban.",
+    "text_lost": "A pártod kiesett a tanácsból.",
+    "title": "{delta} mandátum: {city}"
+   },
+   "settlement": {
+    "text": "Bevétel: {income} arany (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} PP.",
+    "title": "Elszámolás · {time}"
+   },
+   "spy_captured": {
+    "text": "Az őreid {city} városában lefülelték az ügynököt.",
+    "title": "Elfogtuk {house} kémjét"
+   },
+   "spy_caught": {
+    "text": "{house} őrei elfogták az ügynöködet {city} városában. A kém elveszett, és −{pop} népszerűséget kaptál.",
+    "title": "Lebukott a kémed"
+   },
+   "spy_nothing": {
+    "text": "{target} parancslapja már lefutott, vagy nincs érlelő parancslapja.",
+    "title": "Nincs mit kifürkészni"
+   },
+   "spy_nothing_here": {
+    "text": "Érlelő parancslapján nincs {city} városára vonatkozó parancs. A lap {time}-kor fut le.",
+    "title": "{target} itt nem tervez semmit"
+   },
+   "verify": {
+    "text_false": "{news} {author} tudatosan hazudott. Leleplezheted.",
+    "text_true": "{news} A terjesztő nem hazudott.",
+    "title_false": "A hír hamis!",
+    "title_true": "A hír igaz volt"
+   }
+  },
+  "unknown_house": "Ismeretlen"
  },
  "error": {
   "offline": "Nem érem el a szervert. Ellenőrizd a kapcsolatot.",
@@ -197,10 +445,10 @@
  },
  "format": {
   "branch": {
-   "kem": "Alvilág",
-   "keresk": "Vásártér",
-   "kozos": "Közös",
-   "polit": "Városháza"
+   "common": "Közös",
+   "espionage": "Alvilág",
+   "politics": "Városháza",
+   "trade": "Vásártér"
   },
   "date_long": "{month} {day}., {weekday}, {time}",
   "dur_h": "{h} ó",
@@ -222,14 +470,14 @@
    "9": "szeptember"
   },
   "tincture": {
-   "arany": "Arany",
-   "bibor": "Bíbor",
-   "fekete": "Fekete",
-   "kek": "Kék",
-   "narancs": "Narancs",
-   "szeder": "Szeder",
-   "voros": "Vörös",
-   "zold": "Zöld"
+   "black": "Fekete",
+   "blue": "Kék",
+   "gold": "Arany",
+   "green": "Zöld",
+   "mulberry": "Szeder",
+   "orange": "Narancs",
+   "purple": "Bíbor",
+   "red": "Vörös"
   },
   "today_at": "ma {time}",
   "tomorrow": "holnap",
@@ -311,11 +559,10 @@
   "empty": "Nincs itt játék.",
   "empty_mine": "Még nem jelentkeztél játékra. Válassz egyet az Új játékok közül.",
   "enter_game": "Belépés a játékba",
-  "game_semantics": "{name}, {season}. {when}.",
-  "houses": "{players} / {max} ház",
+  "game_semantics": "{name}. {when}.",
   "load_failed": "Nem sikerült betölteni",
   "round_of": "{round}. elszámolás / {max}",
-  "schedule": "{days} nap · napi {rounds} elszámolás",
+  "schedule": "1 hónap",
   "sign_out": "Kilépés",
   "tab": {
    "finished": "Lezárult",
@@ -351,8 +598,6 @@
   "your_shares": "Részesedésed"
  },
  "notice": {
-  "advanced_minutes": "Előre {minutes} percet.",
-  "advanced_next": "Előre a következő eseményig.",
   "offer_bought": "Megvetted az információt",
   "offer_sent": "Ajánlat elküldve",
   "order_added": "Parancslapra került",
@@ -366,15 +611,15 @@
   "empty_body": "Nyiss meg egy várost, és a Vásártéren, a Városházán vagy az Alvilágban adj hozzá parancsot. A lepecsételt lap {time} érlelés után lép érvénybe.",
   "empty_title": "Üres a parancslap",
   "gold_of": "/ {total} A",
-  "lap": {
+  "maturation": "Érlelés: {time}",
+  "reserved_gold": "Lefoglalt arany:",
+  "seal_hint": "A lepecsételt parancslap nem módosítható és nem vonható vissza. A költségek (PP, arany) lepecsételéskor lefoglalódnak.",
+  "sheet": {
    "executing": "Végrehajtás folyamatban…",
    "hint": "Ez idő alatt a rivális kémek kifürkészhetik. Őrökkel védekezhetsz az Alvilágban. Új lapot a végrehajtás után pecsételhetsz.",
    "maturing": "Érlelődik: {left} múlva lép érvénybe ({at})",
    "sealed_at": "Lepecsételve {time}"
   },
-  "maturation": "Érlelés: {time}",
-  "reserved_gold": "Lefoglalt arany:",
-  "seal_hint": "A lepecsételt parancslap nem módosítható és nem vonható vissza. A költségek (PP, arany) lepecsételéskor lefoglalódnak.",
   "still_maturing_body": "A vázlatot megtarthatod, és lepecsételheted, amint az előző lap lefutott.",
   "still_maturing_title": "Még érlelődik az előző lapod",
   "threat": {
@@ -412,21 +657,64 @@
  "reports": {
   "empty": "Még nincs jelentés. Az első az elszámolás vagy a parancslapod lefutása után érkezik.",
   "filter": {
-   "mind": "Mind",
-   "nyilvanos": "Nyilvános",
-   "sajat": "Saját"
+   "all": "Mind",
+   "own": "Saját",
+   "public": "Nyilvános"
   },
   "load_failed": "Nem sikerült betölteni"
  },
+ "server": {
+  "already_joined": "Már jelentkeztél ebbe a játékba.",
+  "auth": {
+   "default_name": "Vándor",
+   "discord_code_missing": "Hiányzik a Discord-kód.",
+   "discord_failed": "A Discord-belépés nem sikerült. Próbáld újra.",
+   "discord_no_client_id": "A Discord-belépés nincs beállítva a szerveren (DISCORD_CLIENT_ID).",
+   "discord_no_credentials": "A Discord-belépés nincs beállítva a szerveren (GOOGLE_APPLICATION_CREDENTIALS).",
+   "discord_no_profile": "A Discord-profil nem kérhető le.",
+   "discord_no_token": "A Discord nem adott hozzáférési tokent.",
+   "login_failed": "A belépés nem sikerült. Próbáld újra.",
+   "pkce_missing": "Hiányzik a PKCE-ellenőrző.",
+   "redirect_missing": "Hiányzik az átirányítási cím.",
+   "sign_in": "Jelentkezz be."
+  },
+  "bad_request": "Hibás kérés.",
+  "game_full": "A játék betelt.",
+  "game_not_found": "Nincs ilyen játék.",
+  "game_not_running": "A játék nem fut.",
+  "game_not_started": "A játék még nem kezdődött el.",
+  "house_name_long": "A ház neve legfeljebb {max} betű lehet.",
+  "house_name_short": "A ház neve legalább {min} betű legyen.",
+  "house_name_taken": "Ez a név ebben a játékban már foglalt.",
+  "house_not_in_game": "A házad még nincs a játékban.",
+  "join_closed": "Ebbe a játékba most nem lehet jelentkezni.",
+  "news_untrue": "Ez az állítás jelenleg nem igaz.",
+  "not_a_member": "Nem vagy tagja ennek a játéknak.",
+  "not_found": "Nincs ilyen elem.",
+  "not_joined": "Nem jelentkeztél ebbe a játékba.",
+  "only_open_start": "Csak nyitott játék indítható.",
+  "pick_background": "Válassz hátteret.",
+  "pick_start_good": "Válaszd ki, melyik árucikkből kapsz részesedést ({city}).",
+  "pick_start_slot": "Válassz kezdőhelyet.",
+  "pick_tincture": "Válassz tinktúrát.",
+  "season_end": {
+   "nobody": "senkit sem",
+   "text": "A Koronázási Tanács {who} ismerte el a legtöbb Legitimitással.",
+   "title": "A szezon véget ért",
+   "winner": "{house} házát"
+  },
+  "season_start": {
+   "text": "A {map} városai várják a házakat. Az első elszámolás {time}-kor lesz.",
+   "title": "Elkezdődött a szezon"
+  },
+  "unexpected": "Váratlan hiba történt. Próbáld újra kicsit később.",
+  "withdraw_closed": "A jelentkezés a kezdés után már nem vonható vissza."
+ },
  "shell": {
   "admin": {
-   "advance_2h": "+2 ó",
-   "advance_30m": "+30 p",
-   "next_event": "Következő esemény ›",
    "settle_now": "Elszámolás most"
   },
   "back_to_lobby": "← Játékok",
-  "lap_live_in": "lapod {time} múlva él",
   "load_failed": "Nem sikerült betölteni a játékot",
   "nav": {
    "city": "Város",
@@ -434,7 +722,8 @@
    "orders": "Parancslap",
    "ranking": "Rangsor",
    "reports": "Jelentések"
-  }
+  },
+  "sheet_live_in": "lapod {time} múlva él"
  },
  "ui": {
   "city_view": {
@@ -472,26 +761,26 @@
   },
   "report": {
    "confidence": {
-    "eros": "Megbízható forrás",
-    "gyenge": "Gyenge forrás",
-    "kozepes": "Közepes forrás"
+    "medium": "Közepes forrás",
+    "strong": "Megbízható forrás",
+    "weak": "Gyenge forrás"
    },
    "kind": {
-    "diplomacia": "Diplomácia",
-    "esemeny": "Városi esemény",
-    "frakcio": "Város",
-    "katonai": "Katonai",
-    "kem": "Kémjelentés"
+    "diplomacy": "Diplomácia",
+    "event": "Városi esemény",
+    "faction": "Város",
+    "military": "Katonai",
+    "spy": "Kémjelentés"
    },
    "public": "nyilvános",
    "round": "{round}. elszámolás"
   },
   "resource": {
-   "ado": "Adó",
-   "arany": "Arany",
+   "gold": "Arany",
    "legit": "Legitimitás",
-   "nep": "Népszerűség",
-   "pp": "Parancspont"
+   "popularity": "Népszerűség",
+   "pp": "Parancspont",
+   "tax": "Adó"
   },
   "self": "{name} (te)",
   "shares": {
@@ -507,6 +796,190 @@
    "reset": "Teljes nézet",
    "zoom_in": "Nagyítás",
    "zoom_out": "Kicsinyítés"
+  }
+ },
+ "world": {
+  "background": {
+   "merchant": {
+    "name": "Kereskedőház",
+    "perk1": "20 részesedés a kezdőváros egyik árucikkéből",
+    "perk2": "Azonnal van eladható árud"
+   },
+   "noble": {
+    "name": "Nemesi ház",
+    "perk1": "Megalapított párt a kezdővárosban",
+    "perk2": "+10 népszerűség a kezdővárosban"
+   },
+   "shadow": {
+    "name": "Árnyékrend",
+    "perk1": "2 felfogadott kém a kezdővárosban",
+    "perk2": "Az első naptól látsz a rivális parancslapokba"
+   }
+  },
+  "city": {
+   "delirev": {
+    "desc": "Csempészkikötő",
+    "name": "Délirév"
+   },
+   "delkapu": {
+    "desc": "Határváros",
+    "name": "Délkapu"
+   },
+   "ezustpatak": {
+    "desc": "Kereskedőváros",
+    "name": "Ezüstpatak"
+   },
+   "farkasrev": {
+    "desc": "Folyami rév",
+    "name": "Farkasrév"
+   },
+   "feketerev": {
+    "desc": "Kikötőváros",
+    "name": "Feketerév"
+   },
+   "harmaskut": {
+    "desc": "Vásárváros",
+    "name": "Hármaskút"
+   },
+   "holtag": {
+    "desc": "Csempészváros",
+    "name": "Holtág"
+   },
+   "kalmarrev": {
+    "desc": "Kikötőváros",
+    "name": "Kalmárrév"
+   },
+   "kodvar": {
+    "desc": "Hegyi nemesi fészek",
+    "name": "Ködvár"
+   },
+   "melyvolgy": {
+    "desc": "Völgyi szénégetők",
+    "name": "Mélyvölgy"
+   },
+   "sohegy": {
+    "desc": "Sóbánya",
+    "name": "Sóhegy"
+   },
+   "sosviz": {
+    "desc": "Halászváros",
+    "name": "Sósvíz"
+   },
+   "szelmezo": {
+    "desc": "Gabonavidék",
+    "name": "Szélmező"
+   },
+   "sziklaszirt": {
+    "desc": "Bányaváros",
+    "name": "Sziklaszirt"
+   },
+   "tornyos": {
+    "desc": "Hegyi város",
+    "name": "Tornyos"
+   },
+   "vaskapu": {
+    "desc": "Bányaváros",
+    "name": "Vaskapu"
+   }
+  },
+  "good": {
+   "beer": "Sör",
+   "charcoal": "Faszén",
+   "cloth": "Posztó",
+   "contraband": "Csempészáru",
+   "fish": "Hal",
+   "grain": "Gabona",
+   "honey": "Méz",
+   "horse": "Ló",
+   "iron": "Vas",
+   "peat": "Tőzeg",
+   "salt": "Só",
+   "silver": "Ezüst",
+   "spice": "Fűszer",
+   "stone": "Kő",
+   "timber": "Fa",
+   "wine": "Bor",
+   "wool": "Gyapjú"
+  },
+  "map": {
+   "delkelet": "Délkelet",
+   "kodos": "Ködös Hegyvidék",
+   "so": "Sóvidék"
+  },
+  "npc": {
+   "ancientOak": "Ősi Tölgy",
+   "crimsonHand": "Bíbor Kéz",
+   "ravenhold": "Varjúvár",
+   "silvershore": "Ezüstpart-ház"
+  },
+  "seed": {
+   "delkelet-1": {
+    "name": "Délkelet"
+   },
+   "kodos-autumn": {
+    "name": "Ködös Hegyvidék"
+   },
+   "lightning-1": {
+    "name": "Villámszezon"
+   },
+   "so-league-1": {
+    "name": "Sóvidék ligája"
+   },
+   "spring-championship": {
+    "name": "Tavaszi bajnokság"
+   }
+  },
+  "start": {
+   "delkelet": {
+    "foothills": {
+     "name": "Hegyalja",
+     "note": "Kezdőváros Szélmező, egy lépésre a vaskapui bányáktól."
+    },
+    "marsh": {
+     "name": "Mocsárszél",
+     "note": "Kezdőváros Holtág: csempészek és kémek fészke."
+    },
+    "west": {
+     "name": "Nyugati birtok",
+     "note": "Kezdőváros Szélmező: bő gabonapiac, kevés rivális."
+    }
+   },
+   "kodos": {
+    "east": {
+     "name": "Keleti fennsík",
+     "note": "Kezdőváros Farkasrév: halászat és faúsztatás."
+    },
+    "pass": {
+     "name": "Hágó alatt",
+     "note": "A térkép közepe: sok lehetőség, sok rivális."
+    },
+    "west": {
+     "name": "Nyugati erdőség",
+     "note": "Kezdőváros Ködvár: nemesi fészek, erős politika."
+    }
+   },
+   "so": {
+    "coast": {
+     "name": "Nyugati part",
+     "note": "Két kisváros, nyugodt partvidék."
+    },
+    "mines": {
+     "name": "Bányavidék",
+     "note": "Kezdőváros Sóhegy, közel a kulcsvároshoz."
+    },
+    "tower": {
+     "name": "Tornyos-völgy",
+     "note": "Távol a központtól, de csendes."
+    }
+   }
+  },
+  "tag": {
+   "beginnerFriendly": "Kezdőbarát",
+   "league": "Liga",
+   "ranked": "Rangsorolt",
+   "spies": "Kémek",
+   "strongNpcs": "Erős NPC-k",
+   "veterans": "Tapasztaltaknak"
   }
  }
 }

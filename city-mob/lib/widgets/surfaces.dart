@@ -8,11 +8,11 @@ import '../theme/tokens.dart';
 import 'game_icon.dart';
 
 // ---------------------------------------------------------------------------
-// Asztal: a képernyő háttere
+// Table: the screen background
 // ---------------------------------------------------------------------------
 
-/// A képernyő háttere (tn-screen): régi térképlap `table-hi` → `table` átmenettel,
-/// halvány 48 px-es rácsvonalakkal és a széleken sötétedő vignettával. Nem görög a tartalommal.
+/// Screen background (tn-screen): old map sheet with a `table-hi` → `table` gradient,
+/// faint 48 px grid lines and a vignette darkening at the edges. Does not scroll with the content.
 class TnScreen extends StatelessWidget {
   const TnScreen({super.key, required this.child});
   final Widget child;
@@ -54,19 +54,19 @@ class _TablePainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// Faragott fa fejléc
+// Carved wood header
 // ---------------------------------------------------------------------------
 
-/// Bronz Cinzel felirat sötét fán (tn-appbar-name).
+/// Bronze Cinzel label on dark wood (tn-appbar-name).
 TextStyle woodTitle(TnColors c, {double size = 17}) =>
     TnText.title(c.frameHi).copyWith(fontSize: size, height: 22 / 17, letterSpacing: size * 0.04, shadows: const [Shadow(color: Color(0x80000000), offset: Offset(0, 1.5))]);
 
-/// Faragott fa fejléc bronz alsó szegéllyel (tn-appbar). A felső rendszersávot is kitölti.
+/// Carved wood header with bronze bottom border (tn-appbar). Also fills the top system bar.
 class TnHeader extends StatelessWidget {
   const TnHeader({super.key, this.leading, this.title, this.actions = const [], this.bottom, this.top, this.padding = const EdgeInsets.fromLTRB(16, 8, 16, 12)});
   final Widget? leading, title, bottom;
 
-  /// Keskeny sötét sáv a fejléc tetején (app-exit: „← Játékok” és a játék neve).
+  /// Narrow dark strip at the top of the header (app-exit: "← Games" and the game name).
   final Widget? top;
   final List<Widget> actions;
   final EdgeInsets padding;
@@ -105,7 +105,7 @@ class TnHeader extends StatelessWidget {
   }
 }
 
-/// Az elszámolás időzítője sötét fa kapszulában, homokórával (TickTimer).
+/// Settlement timer in a dark wood capsule, with hourglass (TickTimer).
 class TickTimer extends StatelessWidget {
   const TickTimer({super.key, required this.at, this.remaining, this.soon = false});
   final String at;
@@ -127,7 +127,7 @@ class TickTimer extends StatelessWidget {
             gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2B1C11), Color(0xFF3F2918)]),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const GameIcon('homokora', size: 18),
+            const GameIcon('hourglass', size: 18),
             const SizedBox(width: 6),
             Text.rich(TextSpan(style: base, children: [
               TextSpan(text: '${'ui.tick_timer.label'.tr()} '),
@@ -142,7 +142,7 @@ class TickTimer extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Bőrfülek
+// Leather tabs
 // ---------------------------------------------------------------------------
 
 class TnTabItem {
@@ -150,22 +150,22 @@ class TnTabItem {
   final String id, label;
   final String? badge;
 
-  /// Játékikon a felirat előtt.
+  /// Game icon before the label.
   final String? art;
 
-  /// Ágszín a kijelölt fül felső csíkján (`vasarter` | `varoshaza` | `alvilag`, vagy `keresk` | `polit` | `kem`).
+  /// Branch color on the selected tab's top strip (`trade` | `politics` | `espionage`, or `market` | `townHall` | `underworld`).
   final String? tone;
 }
 
-/// Bőrfülek (tn-tabs): a fülsor a fa alapvonalra ül; a kijelölt fül világos pergamen,
-/// felül bronz vagy ágszínű csíkkal, és 2 px-lel rálóg a tartalomra.
+/// Leather tabs (tn-tabs): the tab row sits on the wood baseline; the selected tab is light parchment,
+/// with a bronze or branch-colored strip on top, and overlaps the content by 2 px.
 class TnTabs extends StatelessWidget {
   const TnTabs({super.key, required this.tabs, required this.active, required this.onChange, this.expand = false});
   final List<TnTabItem> tabs;
   final String active;
   final ValueChanged<String> onChange;
 
-  /// Igaz: a fülek kitöltik a szélességet (városnegyedek); hamis: természetes szélesség, vízszintesen görgethető.
+  /// True: tabs fill the width (city districts); false: natural width, horizontally scrollable.
   final bool expand;
 
   @override
@@ -271,7 +271,7 @@ class _TabPainter extends CustomPainter {
   bool shouldRepaint(_TabPainter o) => o.top != top || o.bottom != bottom || o.border != border || o.strip != strip;
 }
 
-/// Kerek, téglavörös számjelvény (fül, navigáció).
+/// Round, brick red count badge (tab, navigation).
 class TnBadge extends StatelessWidget {
   const TnBadge(this.text, {super.key, this.size = 10.5});
   final String text;
@@ -289,20 +289,20 @@ class TnBadge extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Alsó navigáció
+// Bottom navigation
 // ---------------------------------------------------------------------------
 
 class TnNavItem {
   const TnNavItem(this.label, {required this.icon, this.art, this.badge});
   final String label;
 
-  /// Vonalikon neve; a játékikon automatikusan ebből jön (terkep, varos, kem, pp, legit), ha nincs [art].
+  /// Line icon name; the game icon is derived from it automatically (map, city, spy, pp, legit) if there is no [art].
   final String icon;
   final String? art, badge;
 }
 
-/// Alsó navigáció sötét fán, bronz felső szegéllyel (tn-nav). A kijelölt fül ikonja
-/// bronz keretes, izzó mezőbe kerül, a felirata bronz lesz.
+/// Bottom navigation on dark wood with a bronze top border (tn-nav). The selected tab's icon
+/// goes into a glowing bronze-framed field, and its label turns bronze.
 class TnNavBar extends StatelessWidget {
   const TnNavBar({super.key, required this.items, required this.active, required this.onChange});
   final List<TnNavItem> items;

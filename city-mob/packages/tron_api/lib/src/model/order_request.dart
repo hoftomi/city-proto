@@ -36,7 +36,7 @@ class OrderRequest {
 
      this.newsId,
 
-     this.lapId,
+     this.sheetId,
 
      this.orderId,
 
@@ -143,13 +143,13 @@ class OrderRequest {
 
   @JsonKey(
     
-    name: r'lapId',
+    name: r'sheetId',
     required: false,
     includeIfNull: false,
   )
 
 
-  final String? lapId;
+  final String? sheetId;
 
 
 
@@ -201,7 +201,7 @@ class OrderRequest {
       other.target == target &&
       other.template == template &&
       other.newsId == newsId &&
-      other.lapId == lapId &&
+      other.sheetId == sheetId &&
       other.orderId == orderId &&
       other.from == from &&
       other.to == to;
@@ -216,7 +216,7 @@ class OrderRequest {
         (target == null ? 0 : target.hashCode) +
         (template == null ? 0 : template.hashCode) +
         (newsId == null ? 0 : newsId.hashCode) +
-        (lapId == null ? 0 : lapId.hashCode) +
+        (sheetId == null ? 0 : sheetId.hashCode) +
         (orderId == null ? 0 : orderId.hashCode) +
         (from == null ? 0 : from.hashCode) +
         (to == null ? 0 : to.hashCode);

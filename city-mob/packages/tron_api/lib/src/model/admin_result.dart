@@ -23,8 +23,6 @@ class AdminResult {
      this.started,
 
      this.settlements,
-
-     this.advancedMinutes,
   });
 
   @JsonKey(
@@ -51,31 +49,17 @@ class AdminResult {
 
 
 
-  @JsonKey(
-    
-    name: r'advancedMinutes',
-    required: false,
-    includeIfNull: false,
-  )
-
-
-  final int? advancedMinutes;
-
-
-
 
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is AdminResult &&
       other.started == started &&
-      other.settlements == settlements &&
-      other.advancedMinutes == advancedMinutes;
+      other.settlements == settlements;
 
     @override
     int get hashCode =>
         (started == null ? 0 : started.hashCode) +
-        (settlements == null ? 0 : settlements.hashCode) +
-        (advancedMinutes == null ? 0 : advancedMinutes.hashCode);
+        (settlements == null ? 0 : settlements.hashCode);
 
   factory AdminResult.fromJson(Map<String, dynamic> json) => _$AdminResultFromJson(json);
 

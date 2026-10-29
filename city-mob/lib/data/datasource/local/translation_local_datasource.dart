@@ -4,8 +4,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// A feliratok helyi példányai: a legutóbb a szervertől kapott változat (gyorsítótár), és az app tartaléka
-/// (assets/translations, tools/sync_translations.py készíti a backend fájljaiból) az első, hálózat nélküli indításhoz.
+/// Local copies of the labels: the version last received from the server (cache), and the app fallback
+/// (assets/translations, built by tools/sync_translations.py from the backend files) for the first offline launch.
 @lazySingleton
 class TranslationLocalDataSource {
   TranslationLocalDataSource(this._prefs);

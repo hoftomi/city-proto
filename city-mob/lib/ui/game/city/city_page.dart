@@ -22,9 +22,9 @@ import 'widgets/market_section.dart';
 import 'widgets/town_hall_section.dart';
 import 'widgets/underworld_section.dart';
 
-/// A városnézet: fejléc, látkép, és a három negyed (Vásártér, Városháza, Alvilág).
-/// A város ([cityId]) és a negyed ([district]) az URL lekérdezési paramétere; a negyedváltás és a „← Térkép”
-/// navigáció. A CityBloc városonként új (a kulcs a város), a negyed minden buildnél a paraméterből jön.
+/// The city view: header, skyline, and the three districts (Marketplace, Town Hall, Underworld).
+/// The city ([cityId]) and the district ([district]) are URL query parameters; district switching and "← Map"
+/// navigation. The CityBloc is new per city (the key is the city); the district comes from the parameter on every build.
 class CityPage extends StatelessWidget {
   const CityPage({super.key, this.cityId, this.district});
   final String? cityId, district;
@@ -75,7 +75,7 @@ class _CityBody extends StatelessWidget {
   final CityState s;
   final String district;
 
-  static const _art = {'keresk': 'vasarter', 'polit': 'varoshaza', 'kem': 'alvilag'};
+  static const _art = {'trade': 'market', 'politics': 'townHall', 'espionage': 'underworld'};
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +123,8 @@ class _CityBody extends StatelessWidget {
         const SizedBox(height: 16),
         if (!s.can) ...[_Unreachable(s: s), gap()],
         switch (district) {
-          'polit' => TownHallSection(s: s),
-          'kem' => UnderworldSection(s: s),
+          'politics' => TownHallSection(s: s),
+          'espionage' => UnderworldSection(s: s),
           _ => MarketSection(s: s),
         },
       ],
@@ -132,7 +132,7 @@ class _CityBody extends StatelessWidget {
   }
 }
 
-/// Nem elérhető város: nézni lehet, cselekedni nem; útvonal építhető ide.
+/// Unreachable city: can be viewed, not acted in; a route can be built here.
 class _Unreachable extends StatelessWidget {
   const _Unreachable({required this.s});
   final CityState s;

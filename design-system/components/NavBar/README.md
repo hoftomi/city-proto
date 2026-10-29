@@ -1,7 +1,7 @@
 # NavBar
 
-Alsó navigációs sáv telefonon: Térkép, Város, Jelentések, Parancslap, Diplomácia.
+The bottom navigation bar on the phone: Map, City, Reports, Order sheet, Diplomacy.
 
-**Mit ad a hívó:** `items` (`[{id, label, icon, badge?}]`), `active`, `onChange`.
+**What the caller provides:** `items` (`[{id, label, icon, badge?}]`), `active`, `onChange`.
 
-- Legfeljebb öt elem. A jelvény pecsétszínű: olvasatlan jelentések vagy lezáratlan parancsok száma.
+- At most five items. The badge is seal-colored: the number of unread reports or unsealed orders.

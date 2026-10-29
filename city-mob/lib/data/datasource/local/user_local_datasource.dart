@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
-/// A bejelentkezett felhasználó (név, szerep) a készülék biztonságos tárolójában, hogy újraindításkor
-/// hálózat nélkül is azonnal belépett állapotban induljon az app.
+/// The signed-in user (name, role) in the device's secure storage, so on restart the app
+/// starts signed in immediately, even offline.
 @lazySingleton
 class UserLocalDataSource {
   static const _storage = FlutterSecureStorage();

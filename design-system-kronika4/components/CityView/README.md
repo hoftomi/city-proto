@@ -1,22 +1,22 @@
 # CityView
 
-Egy városállam izometrikus, kézzel komponált, festett látképe (720 × 540). Kevesebb, de kidolgozott épületből áll: minden épület valódi 3D-s tömeg két látható fallal és tetővel, a fényt balról felülről kapja.
+An isometric, hand-composed, painted view of a city-state (720 × 540). It consists of fewer but detailed buildings: every building is a real 3D mass with two visible walls and a roof, lit from the top left.
 
-**Épületrészletek:**
+**Building details:**
 
-- Tetők: nyereg-, konty- és gúlatető, cserép-, pala- és nádfedés sorokkal, gerinccel és oromdeszkával, tetőablakok.
-- Falak: kőrakás, favázas és kiugró emeletek, vakolat, deszka.
-- Nyílászárók: zsalus, íves és ólomüveg ablakok, virágládák, deszkás ajtók kilincsel, boltponyvák, cégérek, erkélyek.
-- Kémények füsttel, vetett árnyékok.
+- Roofs: gable, hip and pyramid roofs, tile, slate and thatch covering in rows, with ridges and bargeboards, dormer windows.
+- Walls: stonework, half-timbered and jettied upper floors, plaster, planks.
+- Openings: shuttered, arched and leaded-glass windows, flower boxes, plank doors with handles, shop awnings, signs, balconies.
+- Chimneys with smoke, cast shadows.
 
-**Kerületek:**
+**Districts:**
 
-- **Városháza:** kupolás parlament oszlopcsarnokkal és timpanonnal, két szárny, óratorony, díszkert szökőkúttal.
-- **Vásártér:** vásárcsarnok, standok, céhház, kút, szekerek, kápolna harangtoronnyal, kovácsműhely.
-- **Alvilág:** éjszakai tónus, düledező házak, fogadó lámpásokkal, romos torony, köd.
+- **Town Hall:** a domed parliament with a colonnade and pediment, two wings, a clock tower, a formal garden with a fountain.
+- **Marketplace:** market hall, stalls, guild hall, well, carts, a chapel with a bell tower, a smithy.
+- **Underworld:** night tone, ramshackle houses, an inn with lanterns, a ruined tower, fog.
 
-**Falak és környék:** pártázatos várfal kerek tornyokkal, kaputornyok csapóráccsal, vizesárok hidakkal; szántók, legelő, pajta, szélmalom, kőbánya, folyó kőhíddal vagy kikötő.
+**Walls and surroundings:** a crenellated city wall with round towers, gate towers with portcullises, a moat with bridges; fields, pasture, barn, windmill, quarry, a river with a stone bridge, or a port.
 
-**Mit ad a hívó:** `name`, `coast`, `stability`, `districts`, `selected`, `onSelect(kulcs)`.
+**What the caller provides:** `name`, `coast`, `stability`, `districts`, `selected`, `onSelect(key)`.
 
-- Használd `MapViewport`-ban, `aspect="720 / 540"` és 1,8× nagyítás mellett.
+- Use it in a `MapViewport`, with `aspect="720 / 540"` and 1.8× zoom.

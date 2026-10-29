@@ -6,14 +6,14 @@ import '../../core/failure.dart';
 import '../../data/repository/repositories.dart';
 import '../model/extensions.dart';
 
-/// A játék műveletei és a játékállapotból számolt értékek (óra, esedékes frissítés, felvett parancs).
+/// Game operations and values computed from game state (clock, due refresh, added order).
 @lazySingleton
 class GameService {
   GameService(this._games, this._maps);
   final GameRepository _games;
   final MapRepository _maps;
 
-  /// Az állapot és a hozzá tartozó térkép.
+  /// The state and its map.
   Future<Either<Failure, (GameState, MapDef)>> load(String gameId) async {
     final s = await _games.state(gameId);
     if (s.isLeft) return Left(s.left);
@@ -42,27 +42,25 @@ class GameService {
 
   Future<Either<Failure, GameState>> adminSettle(String gameId) => _games.adminSettle(gameId);
 
-  Future<Either<Failure, GameState>> adminAdvance(String gameId, int? minutes) => _games.adminAdvance(gameId, minutes);
-
-  /// A játék órája: az utolsó lekéréskori `clock.now` plusz azóta a készüléken eltelt idő
-  /// (az admin előretekerhette, ezért nem a készülék órája).
+  /// The game clock: `clock.now` at the last fetch plus the time elapsed on the device since
+  /// (the admin may have fast-forwarded it, so it's not the device clock).
   DateTime gameNow(GameState s, DateTime fetchedAt, DateTime deviceNow) => s.clock.now.add(deviceNow.difference(fetchedAt));
 
-  /// Lefutott-e azóta a saját lapom vagy egy elszámolás, vagyis frissíteni kell-e az állapotot.
+  /// Whether my sheet or a settlement has run since, i.e. whether the state needs refreshing.
   bool refreshDue(GameState s, DateTime now) {
     bool past(DateTime? t, int sec) => t != null && now.isAfter(t.add(Duration(seconds: sec)));
-    return past(s.lap?.executeAt, 5) || past(s.clock.nextSettlementAt, 10);
+    return past(s.sheet?.executeAt, 5) || past(s.clock.nextSettlementAt, 10);
   }
 
-  /// Az újonnan a vázlatra került parancs (a figyelmeztetésével együtt, például hamis hírnél).
+  /// The order newly added to the draft (with its warning, e.g. for false news).
   OrderView? addedOrder(GameState before, GameState after) {
     final ids = {for (final o in before.draft) o.id};
     return after.draft.where((o) => !ids.contains(o.id)).lastOrNull;
   }
 
-  /// A kiinduló város: az első elérhető, vagy az első.
+  /// The starting city: the first reachable, or the first.
   String? defaultCity(GameState s) => s.cities.where((c) => c.reachable).firstOrNull?.id ?? s.cities.firstOrNull?.id;
 
-  /// A Parancslap jelvénye: vázlatparancsok és védekezés nélküli fenyegetések.
+  /// Order sheet badge: draft orders and undefended threats.
   int ordersBadge(GameState s) => s.draft.length + s.openThreats;
 }

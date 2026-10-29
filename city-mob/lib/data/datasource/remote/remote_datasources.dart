@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
-/// A generált Dio-kliens (packages/tron_api) vékony burka: a válasz adatát adja vissza, hibánál DioExceptiont dob.
-/// A hibák Failure-ré alakítása a repositoryk dolga.
+/// Thin wrapper over the generated Dio client (packages/tron_api): returns the response data, throws DioException on error.
+/// Converting errors to Failure is the repositories' job.
 
 @lazySingleton
 class AuthRemoteDataSource {
@@ -57,7 +57,4 @@ class GameRemoteDataSource {
   Future<List<RankRow>> ranking(String id) async => (await _api.getRanking(id: id)).data!;
 
   Future<void> adminSettle(String id) => _admin.adminSettle(id: id);
-
-  /// minutes = null: a következő eseményig.
-  Future<void> adminAdvance(String id, int? minutes) => _admin.adminAdvance(id: id, advanceRequest: AdvanceRequest(minutes: minutes));
 }

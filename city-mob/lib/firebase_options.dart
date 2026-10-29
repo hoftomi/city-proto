@@ -1,12 +1,12 @@
-// A Firebase-projekt (city-proto) kliensbeállításai. A `flutterfire configure` újragenerálhatja.
-// Ezek nem titkok: a hozzáférést a Firebase biztonsági szabályai és az API-kulcs korlátozásai védik.
+// Client settings of the Firebase project (city-proto). `flutterfire configure` may regenerate this file.
+// These are not secrets: access is protected by the Firebase security rules and the API key restrictions.
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) return android;
-    throw UnsupportedError('Ehhez a platformhoz még nincs Firebase-alkalmazás. iOS-hez: flutterfire configure');
+    throw UnsupportedError('No Firebase app is configured for this platform yet. For iOS: flutterfire configure');
   }
 
   static const android = FirebaseOptions(

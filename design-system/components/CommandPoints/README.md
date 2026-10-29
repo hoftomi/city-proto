@@ -1,8 +1,8 @@
 # CommandPoints
 
-A Parancspont-számláló: a rendelkezésre álló, a parancslapon lefoglalt és az üres helyek, a 20-as tárolási felső korlátig.
+The Command Point counter: the available points, those reserved on the order sheet, and the empty slots, up to the storage cap of 20.
 
-**Mit ad a hívó:** `available` (a meglévő PP), `pending` (a parancslapon lefoglalt PP), opcionálisan `daily` (alapérték 10) és `max` (alapérték 20).
+**What the caller provides:** `available` (the PP you have), `pending` (the PP reserved on the order sheet), optionally `daily` (default 10) and `max` (default 20).
 
-- A teli pötty az elkölthető, a szaggatott pecsétszínű a lefoglalt pont.
-- A képernyő tetején, a fejlécben egyszer jelenjen meg. Máshol a `ResourceChip kind="pp"` a rövid forma.
+- A filled dot is a spendable point, a dashed seal-colored one is reserved.
+- Show it once, in the header at the top of the screen. Elsewhere `ResourceChip kind="pp"` is the short form.

@@ -26,7 +26,7 @@ void main() {
   GameDetailBloc build() => GameDetailBloc(lobby, JoinService(lobby));
 
   blocTest<GameDetailBloc, GameDetailState>(
-    'betölti a részleteket és a térképet',
+    'loads the details and the map',
     build: build,
     act: (b) => b.add(const GameDetailStarted('g1')),
     expect: () => [
@@ -37,7 +37,7 @@ void main() {
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
-    'a térkép hibája hiba',
+    'map error is a failure',
     setUp: () => when(() => lobby.map('m1')).thenAnswer((_) async => const Left(Failure(Tr.raw('nincs térkép')))),
     build: build,
     act: (b) => b.add(const GameDetailStarted('g1')),
@@ -45,7 +45,7 @@ void main() {
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
-    'visszavonás: üzenet és újratöltés',
+    'withdraw: message and reload',
     setUp: () => when(() => lobby.withdraw('g1')).thenAnswer((_) async => const Right(null)),
     build: build,
     seed: () => GameDetailState(gameId: 'g1', detail: d, map: mapDef),
@@ -59,7 +59,7 @@ void main() {
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
-    'sikertelen visszavonás: hibaüzenet',
+    'failed withdraw: error message',
     setUp: () => when(() => lobby.withdraw('g1')).thenAnswer((_) async => const Left(Failure(Tr.raw('már indult')))),
     build: build,
     seed: () => GameDetailState(gameId: 'g1', detail: d, map: mapDef),
@@ -71,7 +71,7 @@ void main() {
   );
 
   blocTest<GameDetailBloc, GameDetailState>(
-    'jelentkezés után üzen és frissít',
+    'after join: notifies and refreshes',
     build: build,
     seed: () => GameDetailState(gameId: 'g1', detail: d, map: mapDef),
     act: (b) => b.add(const GameDetailJoined()),

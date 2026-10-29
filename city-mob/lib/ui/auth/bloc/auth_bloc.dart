@@ -13,8 +13,8 @@ import '../../../domain/service/auth_service.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-/// Az app munkamenete: induláskor visszaállítja a mentett belépést, kezeli a szolgáltatói belépést és a kilépést.
-/// A router ennek az állapota szerint irányít (bejelentkezés vagy játékválasztó).
+/// The app session: restores the saved login on startup, handles provider login and logout.
+/// The router redirects by its state (login or lobby).
 @lazySingleton
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this._service) : super(const AuthState()) {
@@ -32,7 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final user = await _service.restore();
     emit(state.copyWith(status: user == null ? AuthStatus.signedOut : AuthStatus.signedIn, user: user));
     if (user != null) {
-      // A szerep (ADMIN) közben változhatott: háttérben frissítjük.
+      // The role (ADMIN) may have changed meanwhile: refresh it in the background.
       final fresh = await _service.refresh();
       if (fresh.isRight) emit(state.copyWith(user: fresh.right));
     }

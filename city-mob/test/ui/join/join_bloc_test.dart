@@ -29,7 +29,7 @@ void main() {
     when(() => lobby.map('m1')).thenAnswer((_) async => Right(mapDef));
   });
 
-  /// Betöltött űrlap az alapértelmezésekkel.
+  /// Loaded form with the defaults.
   JoinState ready({int step = 0, String name = ''}) => JoinState(
         gameId: 'g1',
         detail: d,
@@ -38,12 +38,12 @@ void main() {
         name: name,
         nameError: service.nameError(name),
         tincture: 'azur',
-        background: 'kereskedo',
+        background: 'merchant',
         start: 's1',
       );
 
   group('JoinService', () {
-    test('névellenőrzés', () {
+    test('name validation', () {
       expect(service.nameError(' ab '), const Tr('join.name_too_short', {'min': '3'}));
       expect(service.nameError('a' * 25), const Tr('join.name_too_long', {'max': '24'}));
       expect(service.nameError(' Kékholló '), isNull);
@@ -52,30 +52,30 @@ void main() {
       expect([for (final s in JoinService.steps) s.text], ['Ház', 'Háttér', 'Kezdőhely', 'Összegzés']);
     });
 
-    test('kérés: induló árucikk csak a Kereskedőháznak', () {
-      final f = (name: ' Kékholló ', tincture: 'azur', background: 'kereskedo', start: 's1', startGood: null);
-      expect(service.request(d, f), JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'kereskedo', startSlot: 's1', startGood: 'bor'));
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'kereskedo', start: 's1', startGood: 'so')).startGood, 'so');
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'nemes', start: 's1', startGood: 'so')).startGood, isNull);
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'kereskedo', start: 's2', startGood: 'so')).startGood, isNull);
+    test('request: starting good only for the merchant house', () {
+      final f = (name: ' Kékholló ', tincture: 'azur', background: 'merchant', start: 's1', startGood: null);
+      expect(service.request(d, f), JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'merchant', startSlot: 's1', startGood: 'wine'));
+      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'merchant', start: 's1', startGood: 'salt')).startGood, 'salt');
+      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'noble', start: 's1', startGood: 'salt')).startGood, isNull);
+      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'merchant', start: 's2', startGood: 'salt')).startGood, isNull);
     });
   });
 
   blocTest<JoinBloc, JoinState>(
-    'betöltés az alapértelmezésekkel',
+    'loads with the defaults',
     build: () => JoinBloc(service),
     act: (b) => b.add(const JoinStarted('g1')),
     expect: () => [JoinState(gameId: 'g1', nameError: service.nameError('')), ready()],
     verify: (b) {
       expect(b.state.needsGood, isTrue);
-      expect(b.state.good?.id, 'bor');
+      expect(b.state.good?.id, 'wine');
       expect(b.state.nextLabel, const Tr('join.next'));
       expect(b.state.canPop, isTrue);
     },
   );
 
   blocTest<JoinBloc, JoinState>(
-    'rövid névvel nem lép tovább, a hiba látszik, a gomb letiltva',
+    'short name does not advance, error shown, button disabled',
     build: () => JoinBloc(service),
     seed: () => ready(),
     act: (b) => b
@@ -89,7 +89,7 @@ void main() {
   );
 
   blocTest<JoinBloc, JoinState>(
-    'lépések előre-hátra, választások',
+    'steps forward and back, selections',
     build: () => JoinBloc(service),
     seed: () => ready(),
     act: (b) async {
@@ -99,7 +99,7 @@ void main() {
         ..add(const JoinNextPressed());
       await Future<void>.delayed(Duration.zero);
       b
-        ..add(const JoinBackgroundSelected('nemes'))
+        ..add(const JoinBackgroundSelected('noble'))
         ..add(const JoinNextPressed());
       await Future<void>.delayed(Duration.zero);
       b
@@ -111,7 +111,7 @@ void main() {
     verify: (b) {
       expect(b.state.step, 2);
       expect(b.state.tincture, 'gules');
-      expect(b.state.background, 'nemes');
+      expect(b.state.background, 'noble');
       expect(b.state.start, 's2');
       expect(b.state.needsGood, isFalse);
       expect(b.state.canPop, isFalse);
@@ -120,22 +120,22 @@ void main() {
   );
 
   blocTest<JoinBloc, JoinState>(
-    'beküldés: nyitott játéknál vissza a részletekre',
+    'submit: open game goes back to the details',
     setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(myHouse: house()))),
     build: () => JoinBloc(service),
-    seed: () => ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'so'),
+    seed: () => ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'salt'),
     act: (b) => b.add(const JoinNextPressed()),
     expect: () => [
-      ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'so', busy: true),
-      ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'so', outcome: JoinOutcome.backToDetail),
+      ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'salt', busy: true),
+      ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'salt', outcome: JoinOutcome.backToDetail),
     ],
     verify: (_) => verify(() => lobby.join('g1',
-        JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'kereskedo', startSlot: 's1', startGood: 'so'))).called(1),
+        JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'merchant', startSlot: 's1', startGood: 'salt'))).called(1),
   );
 
   blocTest<JoinBloc, JoinState>(
-    'beküldés: futó játéknál be a játékba',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(status: 'fut', round: 1, myHouse: house()))),
+    'submit: running game enters the game',
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(status: 'running', round: 1, myHouse: house()))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),
     act: (b) => b.add(const JoinNextPressed()),
@@ -143,7 +143,7 @@ void main() {
   );
 
   blocTest<JoinBloc, JoinState>(
-    'foglalt név: hibaüzenet és vissza az első lépésre',
+    'taken name: error message and back to the first step',
     setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure(Tr.raw('Ez a név ebben a játékban már foglalt.'), status: 409, code: 'house_name'))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),
@@ -159,7 +159,7 @@ void main() {
   );
 
   blocTest<JoinBloc, JoinState>(
-    'egyéb hiba: marad az összegzésen',
+    'other error: stays on the summary',
     setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Left(Failure(Tr.raw('A játék betelt.')))),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló'),

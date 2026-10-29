@@ -1,18 +1,20 @@
 package com.hof.tronnelkul.game.service;
 
+import com.hof.tronnelkul.game.engine.Msg;
+
 import java.util.List;
 
-/** Az NPC-házak sablonjai. A jellem (persona) dönti el, melyik ágban játszanak (engine.Engine.npcPlan). */
+/** NPC house templates. The persona decides which branch they play (engine.Engine.npcPlanFor). Names: i18n world.npc.<id>. */
 final class Npcs {
     private Npcs() {}
 
-    record Template(String name, String tincture, String persona) {}
+    record Template(String id, String tincture, String persona) {
+        Msg label() { return Msg.of("world.npc." + id); }
+    }
 
     static final List<Template> ALL = List.of(
-        new Template("Ezüstpart-ház", "arany", "kalmar"),
-        new Template("Ősi Tölgy", "zold", "politikus"),
-        new Template("Bíbor Kéz", "bibor", "kem"),
-        new Template("Varjúvár", "fekete", "felvasarlo"));
-
-    static boolean isNpcName(String name) { return ALL.stream().anyMatch(t -> t.name().equalsIgnoreCase(name.strip())); }
+        new Template("silvershore", "gold", "trader"),
+        new Template("ancientOak", "green", "politician"),
+        new Template("crimsonHand", "purple", "spymaster"),
+        new Template("ravenhold", "black", "raider"));
 }

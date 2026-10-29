@@ -32,9 +32,9 @@ dependencies {
 
 tasks.withType<Test> { useJUnitPlatform() }
 
-// Az API-szerződés (a repó gyökerében: api/openapi.yaml) → Spring-interfészek és modellek.
-// A vezérlők ezeket az interfészeket valósítják meg; a mobil kliens ugyanebből a fájlból generál.
-val apiSpec = file("../../api/openapi.yaml")
+// The API contract (in the repo root: api/openapi.yaml) → Spring interfaces and models.
+// Controllers implement these interfaces; the mobile client generates from the same file.
+val apiSpec = file("./openapi.yaml")
 val generatedApi = layout.buildDirectory.dir("generated/openapi")
 
 openApiGenerate {

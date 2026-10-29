@@ -1,0 +1,47 @@
+{
+  "game_not_found": "Nincs ilyen játék.",
+  "not_a_member": "Nem vagy tagja ennek a játéknak.",
+  "game_not_started": "A játék még nem kezdődött el.",
+  "game_not_running": "A játék nem fut.",
+  "house_not_in_game": "A házad még nincs a játékban.",
+  "news_untrue": "Ez az állítás jelenleg nem igaz.",
+  "join_closed": "Ebbe a játékba most nem lehet jelentkezni.",
+  "already_joined": "Már jelentkeztél ebbe a játékba.",
+  "game_full": "A játék betelt.",
+  "house_name_short": "A ház neve legalább {min} betű legyen.",
+  "house_name_long": "A ház neve legfeljebb {max} betű lehet.",
+  "house_name_taken": "Ez a név ebben a játékban már foglalt.",
+  "pick_tincture": "Válassz tinktúrát.",
+  "pick_background": "Válassz hátteret.",
+  "pick_start_slot": "Válassz kezdőhelyet.",
+  "pick_start_good": "Válaszd ki, melyik árucikkből kapsz részesedést ({city}).",
+  "withdraw_closed": "A jelentkezés a kezdés után már nem vonható vissza.",
+  "not_joined": "Nem jelentkeztél ebbe a játékba.",
+  "only_open_start": "Csak nyitott játék indítható.",
+  "bad_request": "Hibás kérés.",
+  "not_found": "Nincs ilyen elem.",
+  "unexpected": "Váratlan hiba történt. Próbáld újra kicsit később.",
+  "season_start": {
+    "title": "Elkezdődött a szezon",
+    "text": "A {map} városai várják a házakat. Az első elszámolás {time}-kor lesz."
+  },
+  "season_end": {
+    "title": "A szezon véget ért",
+    "text": "A Koronázási Tanács {who} ismerte el a legtöbb Legitimitással.",
+    "nobody": "senkit sem",
+    "winner": "{house} házát"
+  },
+  "auth": {
+    "sign_in": "Jelentkezz be.",
+    "default_name": "Vándor",
+    "discord_code_missing": "Hiányzik a Discord-kód.",
+    "pkce_missing": "Hiányzik a PKCE-ellenőrző.",
+    "redirect_missing": "Hiányzik az átirányítási cím.",
+    "login_failed": "A belépés nem sikerült. Próbáld újra.",
+    "discord_no_credentials": "A Discord-belépés nincs beállítva a szerveren (GOOGLE_APPLICATION_CREDENTIALS).",
+    "discord_no_client_id": "A Discord-belépés nincs beállítva a szerveren (DISCORD_CLIENT_ID).",
+    "discord_no_token": "A Discord nem adott hozzáférési tokent.",
+    "discord_no_profile": "A Discord-profil nem kérhető le.",
+    "discord_failed": "A Discord-belépés nem sikerült. Próbáld újra."
+  }
+}

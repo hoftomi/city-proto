@@ -1,10 +1,10 @@
 # MapCity
 
-Egy városállam jelölője és felirata a térképen.
+The marker and label of a city-state on the map.
 
-**Mit ad a hívó:** `x`, `y`, `name`, `keyCity`, `state` (`reachable` | `unreachable` | `cut`), `stability`, `labelSide` (`right` | `left`).
+**What the caller provides:** `x`, `y`, `name`, `keyCity`, `state` (`reachable` | `unreachable` | `cut`), `stability`, `labelSide` (`right` | `left`).
 
-- `reachable`: verdigris udvar, vagyis a hálózatod része, akciózhatsz.
-- `unreachable`: szaggatott, halvány. Nem vezet oda útvonalad (4.3).
-- `cut`: `danger` színű. Elvágott város, ahol a befolyásod megmaradt, de új akció nem indítható (4.6).
-- A kulcsváros nagyobb, telt maggal és `map-label-major` felirattal jelenik meg. Instabil városnál „!” vagy „!!” jel áll a pont fölött.
+- `reachable`: verdigris halo, i.e. it is part of your network and you can act there.
+- `unreachable`: dashed, faint. None of your routes lead there (4.3).
+- `cut`: `danger` colored. A cut-off city where your influence remains but no new action can be started (4.6).
+- A key city appears larger, with a filled core and a `map-label-major` label. An unstable city has a „!” or „!!” mark above the dot.

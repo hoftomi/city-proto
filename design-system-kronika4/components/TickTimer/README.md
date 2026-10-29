@@ -1,5 +1,5 @@
 # TickTimer
 
-A következő elszámolás ideje sötét fa kapszulában, bronz szegéllyel és homokóra-ikonnal. Egy órán belül a szegély bronzra vált.
+The time of the next settlement in a dark wooden capsule, with a bronze border and an hourglass icon. Within the last hour the border turns bronze.
 
-**Mit ad a hívó:** `at`, `remaining`, `soon`.
+**What the caller provides:** `at`, `remaining`, `soon`.

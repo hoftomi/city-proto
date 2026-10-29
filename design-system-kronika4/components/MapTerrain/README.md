@@ -1,16 +1,16 @@
 # MapTerrain
 
-A táj részletes, festett rétege: minden elem saját rajz, árnyékkal és fénnyel.
+The detailed, painted landscape layer: every element is its own drawing, with shadow and light.
 
-**Mit ad a hívó** (mind opcionális):
+**What the caller provides** (all optional):
 
-- `sea`: tenger útvonal; a part mentén homok, sekély és mély víz, háromsoros tajték és hullámjelek.
-- `rivers`: útvonal vagy `{d, w}` (szélesség); homokpart, mély meder, sodorvonal.
-- `bridges` (`[x, y, szög]`): kőhíd ívekkel.
-- `lakes` (`[x, y, rx, ry]`), `islands` (`[x, y, méret]`).
-- `mountains` (`[x, y, méret]`): hegy napos és árnyékos oldallal, gerincvonalakkal, sraffozással, hósapkával, lábánál kövekkel.
-- `hills`: dombok.
-- `forests` (`[x, y, méret, fenyőarány]`): sűrű, vegyes erdő erdőtalaj-árnyékkal.
-- `farms` (`[x, y, oszlop, sor, forgatás, tanya]`): mozaikos szántók sövénnyel, bokrokkal, legelő birkákkal és tanyával.
-- `fields`, `villages` (`[x, y, házszám]`), `windmills`, `mines`, `lighthouses`, `ships`, `whales`, `marsh`.
-- `labels` (`[x, y, szöveg, 'sea' | 'region', forgatás]`): tájnév, tengernév.
+- `sea`: sea path; along the coast sand, shallow and deep water, three rows of foam and wave marks.
+- `rivers`: a path or `{d, w}` (width); sandy banks, deep channel, current line.
+- `bridges` (`[x, y, angle]`): stone bridge with arches.
+- `lakes` (`[x, y, rx, ry]`), `islands` (`[x, y, size]`).
+- `mountains` (`[x, y, size]`): a mountain with sunny and shaded sides, ridge lines, hatching, a snowcap and rocks at its foot.
+- `hills`: hills.
+- `forests` (`[x, y, size, pine ratio]`): dense, mixed forest with forest-floor shading.
+- `farms` (`[x, y, columns, rows, rotation, farmstead]`): patchwork fields with hedges, bushes, grazing sheep and a farmstead.
+- `fields`, `villages` (`[x, y, number of houses]`), `windmills`, `mines`, `lighthouses`, `ships`, `whales`, `marsh`.
+- `labels` (`[x, y, text, 'sea' | 'region', rotation]`): region name, sea name.

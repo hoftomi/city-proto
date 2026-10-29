@@ -15,7 +15,7 @@ import '../../widgets/map_view.dart';
 import '../lobby/widgets/game_badges.dart';
 import 'bloc/game_detail_bloc.dart';
 
-/// Egy játék részletei: térkép, adatok, jelentkezés, visszavonás vagy belépés.
+/// A game's details: map, data, join, withdraw or enter.
 class GameDetailPage extends StatelessWidget {
   const GameDetailPage({super.key, required this.gameId});
   final String gameId;
@@ -29,7 +29,7 @@ class GameDetailPage extends StatelessWidget {
 class _GameDetailView extends StatelessWidget {
   const _GameDetailView();
 
-  /// A jelentkezésre; ha onnan sikeresen tér vissza, a bloc frissít és üzen.
+  /// To the join; on successful return, the bloc refreshes and shows a message.
   Future<void> _join(BuildContext context, String id) async {
     final bloc = context.read<GameDetailBloc>();
     final ok = await context.push<bool>(Routes.join(id));
@@ -63,16 +63,18 @@ class _GameDetailView extends StatelessWidget {
                 final g = s.game!;
                 final h = g.myHouse;
                 return ListView(padding: const EdgeInsets.all(16), children: [
-                  Row(children: [Expanded(child: Eyebrow(g.season)), StatusChip(g)]),
-                  const SizedBox(height: 4),
-                  Text(g.name, style: TnText.display(c.ink)),
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(child: Text(g.name, style: TnText.display(c.ink))),
+                    const SizedBox(width: 12),
+                    StatusChip(g),
+                  ]),
                   const SizedBox(height: 16),
                   MapView(map: s.map!),
                   const SizedBox(height: 16),
                   TnCard(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       _fact(c, 'detail.fact.start'.tr(), g.startText.text),
-                      _fact(c, 'detail.fact.length'.tr(), 'detail.length_value'.tr(namedArgs: {'days': '${g.days}', 'rounds': '${g.roundsPerDay}', 'max': '${g.maxRounds}'})),
+                      _fact(c, 'detail.fact.length'.tr(), 'detail.length_value'.tr(namedArgs: {'max': '${g.maxRounds}'})),
                       _fact(c, 'detail.fact.houses'.tr(), 'detail.houses_value'.tr(namedArgs: {'players': '${g.players}', 'max': '${g.maxPlayers}', 'npc': '${g.npcCount}'})),
                       _fact(c, 'detail.fact.cities'.tr(), 'detail.cities_value'.tr(namedArgs: {'cities': '${g.cities}'})),
                       _fact(c, 'detail.fact.victory'.tr(), 'detail.victory_value'.tr()),
@@ -82,7 +84,7 @@ class _GameDetailView extends StatelessWidget {
                   const SizedBox(height: 16),
                   if (g.withdrawable && h != null) _MyHouseCard(g: g, house: h, busy: s.busy),
                   if (g.enterable)
-                    TnButton(label: 'lobby.enter_game'.tr(), icon: 'terkep', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.map(g.id))),
+                    TnButton(label: 'lobby.enter_game'.tr(), icon: 'map', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.map(g.id))),
                   if (g.canJoin)
                     TnButton(
                       label: g.running ? 'detail.join_running'.tr() : 'detail.join'.tr(),
@@ -111,7 +113,7 @@ class _GameDetailView extends StatelessWidget {
       );
 }
 
-/// A saját jelentkezés (a játék még nem indult): ház, háttér, visszavonás.
+/// Own join (the game has not started yet): house, background, withdraw.
 class _MyHouseCard extends StatelessWidget {
   const _MyHouseCard({required this.g, required this.house, required this.busy});
   final GameSummary g;

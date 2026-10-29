@@ -13,8 +13,8 @@ import '../../widgets/map_view.dart';
 import 'bloc/join_bloc.dart';
 import 'widgets/join_widgets.dart';
 
-/// Jelentkezés négy lépésben: ház, háttér, kezdőhely, összegzés. Siker után futó játéknál be a játékba,
-/// különben vissza a részletekre (`true` eredménnyel, azok frissülnek).
+/// Join in four steps: house, background, start slot, summary. On success, into the game if it is running,
+/// otherwise back to the details (with a `true` result, they refresh).
 class JoinPage extends StatelessWidget {
   const JoinPage({super.key, required this.gameId});
   final String gameId;
@@ -110,7 +110,7 @@ Widget _title(TnColors c, String t) =>
 
 String _initial(String name) => name.isEmpty ? '?' : name.characters.first.toUpperCase();
 
-/// 1. lépés: a ház neve és tinktúrája.
+/// Step 1: the house name and tincture.
 class _HouseStep extends StatefulWidget {
   const _HouseStep({required this.s});
   final JoinState s;
@@ -177,7 +177,7 @@ class _HouseStepState extends State<_HouseStep> {
   }
 }
 
-/// 2. lépés: a ház háttere.
+/// Step 2: the house background.
 class _BackgroundStep extends StatelessWidget {
   const _BackgroundStep({required this.s});
   final JoinState s;
@@ -198,7 +198,7 @@ class _BackgroundStep extends StatelessWidget {
   }
 }
 
-/// 3. lépés: a kezdőhely (és a Kereskedőház induló árucikke).
+/// Step 3: the start slot (and the Merchant House starting good).
 class _StartStep extends StatelessWidget {
   const _StartStep({required this.s});
   final JoinState s;
@@ -236,7 +236,7 @@ class _StartStep extends StatelessWidget {
         const SizedBox(height: 8),
         for (final g in slot.homeGoods) ...[
           JoinChoice(
-            icon: 'kereskedok',
+            icon: 'merchants',
             art: g.id,
             title: g.name,
             lines: ['join.start.good_line'.tr()],
@@ -250,7 +250,7 @@ class _StartStep extends StatelessWidget {
   }
 }
 
-/// 4. lépés: összegzés.
+/// Step 4: summary.
 class _SummaryStep extends StatelessWidget {
   const _SummaryStep({required this.s});
   final JoinState s;
@@ -276,7 +276,7 @@ class _SummaryStep extends StatelessWidget {
             ),
           ]),
           const SizedBox(height: 16),
-          JoinKv('join.summary.game'.tr(), '${g.name} · ${g.season}'),
+          JoinKv('join.summary.game'.tr(), g.name),
           JoinKv('join.summary.start'.tr(), s.startText.text),
           if (st != null) ...[
             JoinKv('join.summary.slot'.tr(), 'join.summary.slot_value'.tr(namedArgs: {'name': st.name, 'neighbors': st.neighborNames.join(', ')})),

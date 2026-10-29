@@ -5,7 +5,7 @@ import 'package:tron_api/tron_api.dart';
 import '../../core/failure.dart';
 import '../../data/repository/repositories.dart';
 
-/// Játékválasztó, játékrészletek és jelentkezés.
+/// Game picker, game details and joining.
 @lazySingleton
 class LobbyService {
   LobbyService(this._lobby, this._maps);

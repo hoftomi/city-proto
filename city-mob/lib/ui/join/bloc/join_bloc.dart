@@ -15,8 +15,8 @@ import '../../common/notice.dart';
 part 'join_event.dart';
 part 'join_state.dart';
 
-/// Jelentkezés négy lépésben (ház, háttér, kezdőhely, összegzés): az űrlap állapota, ellenőrzése,
-/// a lépések közti mozgás és a beküldés.
+/// Join in four steps (house, background, start slot, summary): form state, validation,
+/// moving between steps and submission.
 @injectable
 class JoinBloc extends Bloc<JoinEvent, JoinState> {
   JoinBloc(this._service) : super(const JoinState()) {

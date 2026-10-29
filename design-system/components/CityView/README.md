@@ -1,9 +1,9 @@
 # CityView
 
-Egy városállam illusztrált alaprajza: fal bástyákkal és kapukkal, háztömbök, és a három frakció negyede a saját épületével. Felsőváros (Nemesség) a palotával, Citadella (Katonaság) a csillagerőddel, Vásártér (Kereskedők) a piaccal.
+The illustrated ground plan of a city-state: a wall with bastions and gates, building blocks, and the district of each of the three factions with its own building. Upper Town (Nobility) with the palace, Citadel (Military) with the star fort, Marketplace (Merchants) with the market.
 
-**Mit ad a hívó:** `name` (ebből generálódnak a háztömbök, így minden városnak saját, állandó rajzolata van), `coast` (kikötő, mólók, hajók), `stability` (`ingatag`: füst, `lazongo`: lángok), `districts` (`{nemesseg|kereskedok|katonasag: {dominant?: tincture, contested?: tincture}}`), `selected`, `onSelect(faction)`.
+**What the caller provides:** `name` (the building blocks are generated from it, so every city has its own, stable layout), `coast` (port, piers, ships), `stability` (`ingatag`: smoke, `lazongo`: flames), `districts` (`{nemesseg|kereskedok|katonasag: {dominant?: tincture, contested?: tincture}}`), `selected`, `onSelect(faction)`.
 
-- A negyed zászlaja a Domináns ház tinktúrája. Ha egy második ház 5 pontnál közelebb van hozzá, mellette egy kisebb zászló is lóg.
-- `onSelect` esetén a negyedek gombként működnek (kattintás, Enter, szóköz), és a kijelölt negyed verdigris kijelölést kap.
-- A kép alatt mindig legyen szöveges frakciólista (lásd a Városnézet oldalt). Az illusztráció nem helyettesíti a számokat.
+- A district's flag is the Dominant house's tincture. If a second house is within 5 points of it, a smaller flag hangs next to it.
+- With `onSelect` the districts act as buttons (click, Enter, Space), and the selected district gets a verdigris highlight.
+- Always put a textual faction list below the image (see the City view page). The illustration does not replace the numbers.

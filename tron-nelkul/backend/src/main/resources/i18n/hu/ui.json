@@ -4,11 +4,11 @@
   "npc": "{name} (NPC)",
   "self": "{name} (te)",
   "resource": {
-    "arany": "Arany",
+    "gold": "Arany",
     "legit": "Legitimitás",
     "pp": "Parancspont",
-    "nep": "Népszerűség",
-    "ado": "Adó"
+    "popularity": "Népszerűség",
+    "tax": "Adó"
   },
   "command_points": {
     "title": "Parancspont",
@@ -26,16 +26,16 @@
   },
   "report": {
     "kind": {
-      "kem": "Kémjelentés",
-      "katonai": "Katonai",
-      "frakcio": "Város",
-      "diplomacia": "Diplomácia",
-      "esemeny": "Városi esemény"
+      "spy": "Kémjelentés",
+      "military": "Katonai",
+      "faction": "Város",
+      "diplomacy": "Diplomácia",
+      "event": "Városi esemény"
     },
     "confidence": {
-      "gyenge": "Gyenge forrás",
-      "kozepes": "Közepes forrás",
-      "eros": "Megbízható forrás"
+      "weak": "Gyenge forrás",
+      "medium": "Közepes forrás",
+      "strong": "Megbízható forrás"
     },
     "round": "{round}. elszámolás",
     "public": "nyilvános"

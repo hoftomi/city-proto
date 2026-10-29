@@ -8,7 +8,7 @@ class AuthState extends Equatable {
   final AuthStatus status;
   final UserDto? user;
 
-  /// Épp ezzel a szolgáltatóval lép be (a gombján pörög a jelző).
+  /// Currently logging in with this provider (its button shows a spinner).
   final String? busyProvider;
   final Tr? error;
 

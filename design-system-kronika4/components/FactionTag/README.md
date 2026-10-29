@@ -1,7 +1,7 @@
 # FactionTag
 
-A három városi frakció címkéje ikonnal: Nemesség (korona), Kereskedők (mérleg), Katonaság (kard).
+The label of the three city factions with an icon: Nobility (crown), Merchants (scales), Military (sword).
 
-**Mit ad a hívó:** `faction` (`nemesseg` | `kereskedok` | `katonasag`).
+**What the caller provides:** `faction` (`nemesseg` | `kereskedok` | `katonasag`).
 
-- A frakcióknak nincs saját színük, csak ikonjuk. A szín a házaké.
+- Factions have no color of their own, only an icon. Color belongs to the houses.

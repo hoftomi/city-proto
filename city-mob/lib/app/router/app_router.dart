@@ -20,8 +20,8 @@ import '../../ui/splash/splash_page.dart';
 import '../di/di.dart';
 import 'routes.dart';
 
-/// A navigáció (go_router). A bejelentkezés állapota szerint irányít: ismeretlen → betöltő, kilépve → belépés,
-/// belépve → játékválasztó. A játék öt füle egy StatefulShellRoute ága; a GameBloc az egész játékot fogja át.
+/// Navigation (go_router). Routes by sign-in state: unknown → loading, signed out → sign-in,
+/// signed in → game picker. The game's five tabs are branches of a StatefulShellRoute; GameBloc wraps the whole game.
 GoRouter buildRouter(AuthBloc auth) {
   return GoRouter(
     initialLocation: Routes.splash,
@@ -50,8 +50,8 @@ GoRouter buildRouter(AuthBloc auth) {
           ),
         ],
       ),
-      // A játék: a /games/:id/play szülő alatt a fülek relatív (paraméter nélküli) útvonalak, így a go_router
-      // az ágak alapútvonalát a szülő :id paraméterével tölti ki (a shell ága nem lehet paraméteres útvonal).
+      // The game: under the /games/:id/play parent the tabs are relative (parameterless) paths, so go_router
+      // fills the branches' base paths with the parent's :id parameter (a shell branch can't be a parameterized path).
       GoRoute(
         path: '/games/:id/play',
         redirect: (_, s) => s.uri.pathSegments.length <= 3 ? Routes.map(s.pathParameters['id']!) : null,
@@ -81,7 +81,7 @@ GoRouter buildRouter(AuthBloc auth) {
   );
 }
 
-/// A bloc állapotváltozásai a router felé (újraértékeli a redirectet).
+/// Bloc state changes forwarded to the router (re-evaluates the redirect).
 class _StreamListenable extends ChangeNotifier {
   _StreamListenable(Stream<dynamic> stream) {
     _sub = stream.listen((_) => notifyListeners());

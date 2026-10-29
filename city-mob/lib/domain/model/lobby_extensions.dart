@@ -5,28 +5,28 @@ import '../../core/tr.dart';
 import '../../util/format.dart';
 import 'extensions.dart';
 
-/// A játék állapotcímkéje a játékválasztón és a részleteken (a widget ebből választ színt és feliratot).
+/// The game's status tag in the game picker and details (the widget picks color and label from it).
 enum GameBadge { joined, almostFull, runningJoinable, running, open, soon, finished }
 
-/// A játékválasztó fülei.
+/// Tabs of the game picker.
 enum LobbyTab { fresh, mine, finished }
 
 extension GameSummaryLobbyX on GameSummary {
-  /// Saját, futó játék: be lehet lépni.
+  /// Your own running game: can be entered.
   bool get enterable => joined && running;
 
-  /// A telítettség 0..1 között.
+  /// Fill ratio, 0..1.
   double get fill => maxPlayers == 0 ? 0 : players / maxPlayers;
 
   bool get full => players >= maxPlayers;
 
-  /// Jelentkezhet-e még: nyitott, vagy legfeljebb a 3. elszámolásnál tartó futó játék, és van hely.
+  /// Whether you can still join: open, or running and at most at settlement 3, and there's room.
   bool get canJoin => !joined && (open || (running && round <= 3)) && !full;
 
-  /// Betelt a nyitott játék (nem jelentkeztél).
+  /// The open game is full (you haven't joined).
   bool get closedFull => !joined && open && full;
 
-  /// Jelentkeztél, a játék még nem indult: visszavonható.
+  /// You joined and the game hasn't started yet: can be withdrawn.
   bool get withdrawable => joined && open;
 
   GameBadge get badge {
@@ -38,27 +38,30 @@ extension GameSummaryLobbyX on GameSummary {
     return GameBadge.finished;
   }
 
-  /// Rövid időzítés: hol tart, mikor kezdődik, mikor nyílik.
+  /// Short timing: where it's at, when it starts, when it opens.
   Tr get whenText {
     if (running) return Tr('lobby.round_of', {'round': '$round', 'max': '$maxRounds'});
-    if (open && startsAt != null) return Tr('lobby.when.starts', {'when': relativeDays(startsAt!)});
+    if (open && closesAt != null) return Tr('lobby.when.starts', {'when': relativeDays(closesAt!)});
     if (announced && opensAt != null) return Tr('lobby.when.opens', {'when': relativeDays(opensAt!)});
     return const Tr('lobby.when.closed');
   }
 
-  /// A részletek „Kezdés” sora: induló játéknál a pontos dátum.
-  Tr get startText => startsAt != null && !running && !finished ? Tr.raw(dateLong(startsAt!)) : whenText;
+  /// Timing on the lobby card: like [whenText], but a running game shows no settlement count.
+  Tr? get cardWhenText => running ? null : whenText;
 
-  /// A kezdés dátuma, vagy „hamarosan”.
-  Tr get startsAtText => startsAt != null ? Tr.raw(dateLong(startsAt!)) : const Tr('lobby.when.soon');
+  /// The details' "Start" row: the exact date for a starting game.
+  Tr get startText => closesAt != null && !running && !finished ? Tr.raw(dateLong(closesAt!)) : whenText;
+
+  /// Start date (when joining closes), or "soon".
+  Tr get startsAtText => closesAt != null ? Tr.raw(dateLong(closesAt!)) : const Tr('lobby.when.soon');
 
   Tr get winnerText => Tr('lobby.winner', {'winner': winner ?? '–'});
 
-  /// A lezárult játék sora: győztes, és ha játszottál, a helyezésed.
+  /// Row of a finished game: the winner and, if you played, your place.
   Tr get resultText => myPlace == null ? winnerText : Tr('lobby.winner_place', {'winner': winner ?? '–', 'place': '$myPlace'});
 }
 
-/// A játékok a játékválasztó csoportjaiba sorolva.
+/// Games sorted into the game picker's groups.
 class LobbyGroups extends Equatable {
   const LobbyGroups({this.running = const [], this.mine = const [], this.fresh = const [], this.finished = const []});
 
@@ -69,13 +72,13 @@ class LobbyGroups extends Equatable {
         finished: all.where((g) => g.finished).toList(),
       );
 
-  /// „Folytasd, ahol abbahagytad”: saját, futó játékok.
+  /// "Continue where you left off": your own running games.
   final List<GameSummary> running;
 
-  /// Saját, le nem zárult játékok.
+  /// Your own unfinished games.
   final List<GameSummary> mine;
 
-  /// Új játékok: nyitott, hamarosan induló vagy futó, amelyre még nem jelentkeztél.
+  /// New games: open, announced or running, that you haven't joined yet.
   final List<GameSummary> fresh;
   final List<GameSummary> finished;
 

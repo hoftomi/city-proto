@@ -11,8 +11,8 @@ import '../../../../widgets/game_widgets.dart';
 import '../bloc/city_bloc.dart';
 import 'city_common.dart';
 
-/// Alvilág: saját kémek (felfogadás, őr, áthelyezés), érlelő parancslapok kifürkészése, kifürkészett tervek
-/// eladása, felkínált információ, hírek ellenőrzése.
+/// Underworld: own spies (hiring, guard, relocation), spying on maturing order sheets, selling intel,
+/// offered information, verifying news.
 class UnderworldSection extends StatelessWidget {
   const UnderworldSection({super.key, required this.s});
   final CityState s;
@@ -78,13 +78,13 @@ class UnderworldSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Eyebrow('city.underworld.laps'.tr(), art: 'spy'),
-              if (g.rivalLaps.isEmpty)
+              Eyebrow('city.underworld.sheets'.tr(), art: 'spy'),
+              if (g.rivalSheets.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('city.underworld.no_laps'.tr(), style: TnText.body(c.inkMuted)),
+                  child: Text('city.underworld.no_sheets'.tr(), style: TnText.body(c.inkMuted)),
                 ),
-              for (final l in g.rivalLaps)
+              for (final l in g.rivalSheets)
                 CityLine(
                   body: Row(
                     children: [
@@ -118,7 +118,7 @@ class UnderworldSection extends StatelessWidget {
                       : null,
                 ),
               gap(8),
-              hint(context, 'city.underworld.laps_hint'.tr(namedArgs: {'maturation': durText(Duration(minutes: s.clock.maturationMinutes))})),
+              hint(context, 'city.underworld.sheets_hint'.tr(namedArgs: {'maturation': durText(Duration(minutes: s.clock.maturationMinutes))})),
             ],
           ),
         ),
@@ -160,7 +160,7 @@ class UnderworldSection extends StatelessWidget {
                     action: it.live && !it.bought
                         ? TnButton(
                             label: 'city.underworld.sell'.tr(),
-                            art: 'arany',
+                            art: 'gold',
                             small: true,
                             busy: s.busy,
                             onPressed: () => bloc.add(CityIntelSaleOpened(it.id)),
@@ -180,7 +180,7 @@ class UnderworldSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Eyebrow('city.underworld.offers'.tr(), art: 'arany'),
+                Eyebrow('city.underworld.offers'.tr(), art: 'gold'),
                 for (final o in g.offers)
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -208,7 +208,7 @@ class UnderworldSection extends StatelessWidget {
                           children: [
                             TnButton(
                               label: 'city.underworld.accept'.tr(namedArgs: {'price': '${o.price}'}),
-                              art: 'arany',
+                              art: 'gold',
                               small: true,
                               kind: TnButtonKind.primary,
                               busy: s.busy,

@@ -7,7 +7,7 @@ import 'package:tron_api/src/model/house_ref.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'rival_lap.g.dart';
+part 'rival_sheet.g.dart';
 
 
 @CopyWith()
@@ -17,9 +17,9 @@ part 'rival_lap.g.dart';
   disallowUnrecognizedKeys: false,
   explicitToJson: true,
 )
-class RivalLap {
-  /// Returns a new [RivalLap] instance.
-  RivalLap({
+class RivalSheet {
+  /// Returns a new [RivalSheet] instance.
+  RivalSheet({
 
     required  this.house,
 
@@ -53,7 +53,7 @@ class RivalLap {
 
 
     @override
-    bool operator ==(Object other) => identical(this, other) || other is RivalLap &&
+    bool operator ==(Object other) => identical(this, other) || other is RivalSheet &&
       other.house == house &&
       other.executeAt == executeAt;
 
@@ -62,9 +62,9 @@ class RivalLap {
         house.hashCode +
         executeAt.hashCode;
 
-  factory RivalLap.fromJson(Map<String, dynamic> json) => _$RivalLapFromJson(json);
+  factory RivalSheet.fromJson(Map<String, dynamic> json) => _$RivalSheetFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RivalLapToJson(this);
+  Map<String, dynamic> toJson() => _$RivalSheetToJson(this);
 
   @override
   String toString() {

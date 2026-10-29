@@ -1,29 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'lap_view.dart';
+part of 'sheet_view.dart';
 
 // **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
-abstract class _$LapViewCWProxy {
-  LapView id(String id);
+abstract class _$SheetViewCWProxy {
+  SheetView id(String id);
 
-  LapView sealedAt(DateTime sealedAt);
+  SheetView sealedAt(DateTime sealedAt);
 
-  LapView executeAt(DateTime executeAt);
+  SheetView executeAt(DateTime executeAt);
 
-  LapView orders(List<OrderView> orders);
+  SheetView orders(List<OrderView> orders);
 
-  LapView cost(Cost cost);
+  SheetView cost(Cost cost);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LapView(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SheetView(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LapView(...).copyWith(id: 12, name: "My name")
+  /// SheetView(...).copyWith(id: 12, name: "My name")
   /// ````
-  LapView call({
+  SheetView call({
     String id,
     DateTime sealedAt,
     DateTime executeAt,
@@ -32,42 +32,42 @@ abstract class _$LapViewCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfLapView.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfLapView.copyWith.fieldName(...)`
-class _$LapViewCWProxyImpl implements _$LapViewCWProxy {
-  const _$LapViewCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSheetView.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSheetView.copyWith.fieldName(...)`
+class _$SheetViewCWProxyImpl implements _$SheetViewCWProxy {
+  const _$SheetViewCWProxyImpl(this._value);
 
-  final LapView _value;
-
-  @override
-  LapView id(String id) => this(id: id);
+  final SheetView _value;
 
   @override
-  LapView sealedAt(DateTime sealedAt) => this(sealedAt: sealedAt);
+  SheetView id(String id) => this(id: id);
 
   @override
-  LapView executeAt(DateTime executeAt) => this(executeAt: executeAt);
+  SheetView sealedAt(DateTime sealedAt) => this(sealedAt: sealedAt);
 
   @override
-  LapView orders(List<OrderView> orders) => this(orders: orders);
+  SheetView executeAt(DateTime executeAt) => this(executeAt: executeAt);
 
   @override
-  LapView cost(Cost cost) => this(cost: cost);
+  SheetView orders(List<OrderView> orders) => this(orders: orders);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LapView(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  SheetView cost(Cost cost) => this(cost: cost);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SheetView(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LapView(...).copyWith(id: 12, name: "My name")
+  /// SheetView(...).copyWith(id: 12, name: "My name")
   /// ````
-  LapView call({
+  SheetView call({
     Object? id = const $CopyWithPlaceholder(),
     Object? sealedAt = const $CopyWithPlaceholder(),
     Object? executeAt = const $CopyWithPlaceholder(),
     Object? orders = const $CopyWithPlaceholder(),
     Object? cost = const $CopyWithPlaceholder(),
   }) {
-    return LapView(
+    return SheetView(
       id: id == const $CopyWithPlaceholder()
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
@@ -92,24 +92,24 @@ class _$LapViewCWProxyImpl implements _$LapViewCWProxy {
   }
 }
 
-extension $LapViewCopyWith on LapView {
-  /// Returns a callable class that can be used as follows: `instanceOfLapView.copyWith(...)` or like so:`instanceOfLapView.copyWith.fieldName(...)`.
+extension $SheetViewCopyWith on SheetView {
+  /// Returns a callable class that can be used as follows: `instanceOfSheetView.copyWith(...)` or like so:`instanceOfSheetView.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$LapViewCWProxy get copyWith => _$LapViewCWProxyImpl(this);
+  _$SheetViewCWProxy get copyWith => _$SheetViewCWProxyImpl(this);
 }
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LapView _$LapViewFromJson(
+SheetView _$SheetViewFromJson(
   Map<String, dynamic> json,
-) => $checkedCreate('LapView', json, ($checkedConvert) {
+) => $checkedCreate('SheetView', json, ($checkedConvert) {
   $checkKeys(
     json,
     requiredKeys: const ['id', 'sealedAt', 'executeAt', 'orders', 'cost'],
   );
-  final val = LapView(
+  final val = SheetView(
     id: $checkedConvert('id', (v) => v as String),
     sealedAt: $checkedConvert('sealedAt', (v) => DateTime.parse(v as String)),
     executeAt: $checkedConvert('executeAt', (v) => DateTime.parse(v as String)),
@@ -127,7 +127,7 @@ LapView _$LapViewFromJson(
   return val;
 });
 
-Map<String, dynamic> _$LapViewToJson(LapView instance) => <String, dynamic>{
+Map<String, dynamic> _$SheetViewToJson(SheetView instance) => <String, dynamic>{
   'id': instance.id,
   'sealedAt': instance.sealedAt.toIso8601String(),
   'executeAt': instance.executeAt.toIso8601String(),

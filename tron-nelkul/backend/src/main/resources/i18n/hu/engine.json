@@ -1,0 +1,210 @@
+{
+  "unknown_house": "Ismeretlen",
+  "error": {
+    "unknown_city": "Ismeretlen város.",
+    "unknown_news_template": "Ismeretlen hírsablon.",
+    "unknown_action": "Ismeretlen akció.",
+    "no_road": "Ezen a két helyen között nincs út.",
+    "route_city_only": "Útvonal csak városállamba vezethet.",
+    "route_from_network": "Útvonalat csak a hálózatodból indíthatsz.",
+    "route_owned": "Ez az útvonal már a tiéd.",
+    "city_not_in_network": "Akciót csak a hálózatodban lévő városban indíthatsz. Építs előbb útvonalat.",
+    "unknown_good": "Ismeretlen árucikk.",
+    "needs_shares": "Ehhez részesedés kell ebből az árucikkből.",
+    "unknown_margin": "Ismeretlen fokozat.",
+    "shares_per_order": "Egy parancsban 1–{max} pont vehető.",
+    "city_shares_left": "A Várostól már csak {pts} pont vehető.",
+    "pick_rival": "Válassz rivális kereskedőt.",
+    "buyout_per_order": "Egy ajánlatban 1–{max} pont vásárolható ki.",
+    "target_lacks_shares": "A célpontnak nincs ennyi részesedése.",
+    "target_protected": "Ezt a kereskedőt nemrég kivásárolták, most védett.",
+    "buyout_already_ran": "Ez a kivásárlási ajánlat már lefutott.",
+    "defend_wrong_city": "A védekező vételt abban a városban kell indítanod, ahol a kivásárlás fenyeget.",
+    "party_exists": "Ebben a városban már van pártod.",
+    "needs_party": "Ehhez párt kell ebben a városban.",
+    "unknown_program": "Ismeretlen program.",
+    "pick_target": "Válassz célpontot.",
+    "pick_good": "Válassz árucikket.",
+    "spy_limit": "Városonként legfeljebb {max} kémed lehet.",
+    "no_free_spy": "Nincs szabad kémed ebben a városban.",
+    "pick_target_city": "Válassz célvárost.",
+    "spy_move_network": "Kémet csak a hálózatodban lévő városba helyezhetsz át.",
+    "spy_limit_there": "Ott már {max} kémed van.",
+    "needs_free_spy": "Ehhez legalább egy szabad kém kell a városban.",
+    "needs_spy": "Ehhez kém kell a városban.",
+    "no_such_news": "Nincs ilyen hír.",
+    "own_news": "A saját híredet nem ellenőrizheted.",
+    "verify_first": "Előbb ellenőrizd, hogy hamis-e.",
+    "defend_on_draft": "Ez a védekező vétel már a vázlatodon van.",
+    "not_enough_pp": "Nincs elég parancspont: {need} kellene, {have} van.",
+    "not_enough_gold": "Nincs elég arany: {need} kellene, {have} van.",
+    "no_such_draft_order": "Nincs ilyen parancs a vázlaton.",
+    "empty_sheet": "Üres parancslapot nem lehet lepecsételni.",
+    "sheet_maturing": "Már van érlelő parancslapod. A következőt a végrehajtás után pecsételheted le.",
+    "no_such_intel": "Nincs ilyen kifürkészett parancslap.",
+    "intel_expired": "Ez a parancslap már lefutott, az információ értéktelen.",
+    "pick_buyer": "Válassz vevőt.",
+    "own_plans": "A saját terveit nem adhatod el neki.",
+    "already_offered": "Ennek a háznak már felkínáltad.",
+    "price_range": "Az ár {min} és {max} arany között lehet.",
+    "no_such_offer": "Nincs ilyen ajánlat.",
+    "offer_expired": "A parancslap már lefutott, az ajánlat lejárt.",
+    "not_enough_gold_offer": "Nincs elég aranyad: {need} kellene."
+  },
+  "order": {
+    "route": "{action}: {from} → {to}",
+    "margin": "{good} ára: {level} · {city}",
+    "buyShares": "{pts} részesedés ({good}) a Várostól · {city}",
+    "buyout": "Kivásárlás: {pts} pont {target} részéből ({good}) · {city}",
+    "defend": "Védekező vétel ({good}) · {city}",
+    "program": "Program: {program} · {city}",
+    "news": "Hír: {news} · {city}",
+    "spy": "Kifürkészés: {target} parancslapja · {city}",
+    "moveSpy": "Kém áthelyezése: {from} → {to}",
+    "other": "{action} · {city}",
+    "with_cost": "{order} ({gold} A)"
+  },
+  "report": {
+    "buyout_threat": {
+      "title": "{house} ki akar vásárolni",
+      "text": "{pts} pontot akar a(z) {good} részesedésedből ({city}). Az ajánlat {time}-kor fut le. Védekező vétellel kiválthatod a Vásártéren."
+    },
+    "intel_rejected": {
+      "title": "{house} nem vette meg",
+      "text": "Túl drágának tartotta az ajánlatot ({price} A)."
+    },
+    "intel_offer": {
+      "title": "{house} információt kínál",
+      "text": "{of} érlelő parancslapjáról, {price} aranyért. Az Alvilágban fogadhatod el; letét: fizetéskor azonnal megkapod."
+    },
+    "intel_declined": {
+      "title": "{house} elutasította az ajánlatodat",
+      "text": "Az információt más háznak még eladhatod."
+    },
+    "intel_sold": {
+      "title": "Információ eladva: {house}",
+      "text": "{buyer} {price} aranyat fizetett {of} terveiért. A letét lezárult.{bonus}",
+      "bonus": " +{legit} Legitimitás."
+    },
+    "intel_bought": {
+      "text": "{lines} ({price} aranyért vetted {seller} házától)"
+    },
+    "plans": {
+      "title": "{house} tervei (lejár: {time})",
+      "text": "{lines}"
+    },
+    "defend_used": {
+      "title": "Védekező vétel",
+      "text": "A Városnak kifizetett ár már megvédte a részesedésedet."
+    },
+    "order_failed": {
+      "title": "Elmaradt: {action}",
+      "text": "{reason} Az aranyat visszakaptad."
+    },
+    "route": {
+      "title": "Új útvonal: {city}",
+      "text": "A karavánút megnyílt. {city} mostantól a hálózatod része."
+    },
+    "margin": {
+      "title": "{good} ára: {level}",
+      "text": "{city} üzleteiben az új árak kikerültek a pultra."
+    },
+    "buyShares": {
+      "title": "+{pts} részesedés: {good}",
+      "text": "A városi tanács jóváhagyta az adásvételt. {city} {good}kínálatának {share}%-a a tiéd."
+    },
+    "defend": {
+      "title": "Védekező vétel: {good}",
+      "text": "Kifizetted a Városnak a részesedésed árát. A kivásárlási ajánlat meghiúsul."
+    },
+    "foundParty": {
+      "title": "Pártot alapítottál: {city}",
+      "text": "A párt a következő választáson indul. Programja: közepes adó."
+    },
+    "program": {
+      "title": "Új program: {program}",
+      "text": "A pártod {city} városában meghirdette az új adóprogramot."
+    },
+    "festival": {
+      "title": "Fesztivál: +{gain} népszerűség",
+      "text": "Zászlók, zene, sült ökör a főtéren. A városlakók a nevedet éltetik.",
+      "text_recent": "A nép mulatott, de a legutóbbi ünnep még túl friss az emlékezetében."
+    },
+    "news": {
+      "title": "Hír terjed: {city}"
+    },
+    "hireSpy": {
+      "title": "Új kém: {city}",
+      "text": "Egy megbízható ember az alvilágban. Kémeid itt: {spies}."
+    },
+    "guard": {
+      "title": "Őr beállítva",
+      "text": "{city} városában {guards} kémed figyeli az idegen ügynököket."
+    },
+    "moveSpy": {
+      "title": "Kém áthelyezve: {to}",
+      "text": "Az ügynököd {from} városából átköltözött {to} alvilágába."
+    },
+    "verify": {
+      "title_true": "A hír igaz volt",
+      "title_false": "A hír hamis!",
+      "text_true": "{news} A terjesztő nem hazudott.",
+      "text_false": "{news} {author} tudatosan hazudott. Leleplezheted."
+    },
+    "debunk": {
+      "title": "Leleplezve: {author} hazudott",
+      "text": "{news} A hír hamis volt. {author} −{penalty} népszerűség, {house} jutalma +{gold} arany és +{legit} Legitimitás."
+    },
+    "buyout_failed": {
+      "title": "Kivásárlás meghiúsult",
+      "text": "{target} kiváltotta a részesedését. Az ajánlat árát visszakaptad."
+    },
+    "buyout_defended": {
+      "title": "Megvédted a részesedésedet",
+      "text": "{house} kivásárlási ajánlata elbukott."
+    },
+    "buyout_done": {
+      "title": "Kivásároltad: {target}",
+      "text": "{pts} pont {good} {gold} aranyért. {target} {turns} elszámolásig védett."
+    },
+    "bought_out": {
+      "title": "{house} kivásárolt",
+      "text": "{pts} pontot veszítettél a(z) {good} árucikkből ({city}), {gold} aranyat kaptál érte."
+    },
+    "spy_nothing": {
+      "title": "Nincs mit kifürkészni",
+      "text": "{target} parancslapja már lefutott, vagy nincs érlelő parancslapja."
+    },
+    "spy_nothing_here": {
+      "title": "{target} itt nem tervez semmit",
+      "text": "Érlelő parancslapján nincs {city} városára vonatkozó parancs. A lap {time}-kor fut le."
+    },
+    "spy_caught": {
+      "title": "Lebukott a kémed",
+      "text": "{house} őrei elfogták az ügynöködet {city} városában. A kém elveszett, és −{pop} népszerűséget kaptál."
+    },
+    "spy_captured": {
+      "title": "Elfogtuk {house} kémjét",
+      "text": "Az őreid {city} városában lefülelték az ügynököt."
+    },
+    "settlement": {
+      "title": "Elszámolás · {time}",
+      "text": "Bevétel: {income} arany (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} PP."
+    },
+    "election": {
+      "title": "Választás: {city}",
+      "text": "Az új tanács: {council}.",
+      "nobody": "senki sem jutott be"
+    },
+    "seats": {
+      "title": "{delta} mandátum: {city}",
+      "text": "A pártodnak {seats} helye van a tanácsban.",
+      "text_lost": "A pártod kiesett a tanácsból."
+    },
+    "coronation": {
+      "title": "Koronázási Tanács",
+      "text": "A városi tanácsok szavazatai (+{legit} L): {votes}.",
+      "text_none": "Egyik városi tanácsban sem volt egyértelmű többség."
+    }
+  }
+}

@@ -1,8 +1,8 @@
 # TextField
 
-Egysoros beviteli mező címkével, súgóval vagy hibaüzenettel.
+A single-line input field with a label, a hint or an error message.
 
-**Mit ad a hívó:** `label`, `hint`, `error`, `id`, és a szokásos input attribútumok.
+**What the caller provides:** `label`, `hint`, `error`, `id`, and the usual input attributes.
 
-- A mező betűmérete 16px, hogy iOS-en ne nagyítson rá.
-- A hibaüzenet mondja meg, mit kell tenni: „Legfeljebb 8 A adhatsz, 23 van.”
+- The field's font size is 16px so iOS does not zoom in on it.
+- The error message says what to do: „Legfeljebb 8 A adhatsz, 23 van.” (You can give at most 8 gold, you have 23.)

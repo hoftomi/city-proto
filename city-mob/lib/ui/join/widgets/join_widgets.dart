@@ -6,7 +6,7 @@ import '../../../util/format.dart';
 import '../../../widgets/game_widgets.dart';
 import '../../../widgets/tn_icon.dart';
 
-/// A jelentkezés lépései a fa fejlécen: kész lépés zöld, aktuális bronz sáv.
+/// The join steps on the wooden header: done step green, current one a bronze bar.
 class JoinStepper extends StatelessWidget {
   const JoinStepper({super.key, required this.step, required this.steps});
   final int step;
@@ -46,7 +46,7 @@ class JoinStepper extends StatelessWidget {
   }
 }
 
-/// Választható kártya (choice): fa keret, kijelölve bronz gyűrű; a bal oldali ikonmező fa, kijelölve zöld.
+/// Selectable card (choice): wooden frame, bronze ring when selected; the left icon field is wood, green when selected.
 class JoinChoice extends StatelessWidget {
   const JoinChoice({super.key, required this.icon, required this.title, required this.lines, required this.selected, required this.onTap, this.art});
   final String icon, title;
@@ -104,7 +104,7 @@ class JoinChoice extends StatelessWidget {
   }
 }
 
-/// A tinktúra-választó csempéje (tincture): kijelölve bronz gyűrű és meleg pergamen.
+/// Tincture picker tile (tincture): bronze ring and warm parchment when selected.
 class TinctureTile extends StatelessWidget {
   const TinctureTile({super.key, required this.tincture, required this.selected, required this.onTap});
   final String tincture;
@@ -139,7 +139,7 @@ class TinctureTile extends StatelessWidget {
   }
 }
 
-/// Címke–érték sor az összegzésben.
+/// Label–value row in the summary.
 class JoinKv extends StatelessWidget {
   const JoinKv(this.k, this.v, {super.key});
   final String k, v;

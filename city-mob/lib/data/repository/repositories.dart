@@ -8,7 +8,7 @@ import '../datasource/auth/identity_datasource.dart';
 import '../datasource/local/user_local_datasource.dart';
 import '../datasource/remote/remote_datasources.dart';
 
-/// A kivételeket Failure-ré alakítja: a repositoryk mindig Either-t adnak vissza, nem dobnak.
+/// Converts exceptions to Failure: repositories always return Either, never throw.
 Future<Either<Failure, T>> guard<T>(Future<T> Function() call) async {
   try {
     return Right(await call());
@@ -17,7 +17,7 @@ Future<Either<Failure, T>> guard<T>(Future<T> Function() call) async {
   }
 }
 
-/// A belépett felhasználó: a szolgáltatói belépés (Firebase), a backend felhasználója és a helyi másolata.
+/// The signed-in user: provider sign-in (Firebase), the backend user and its local copy.
 @lazySingleton
 class AuthRepository {
   AuthRepository(this._identity, this._remote, this._local);
@@ -25,21 +25,21 @@ class AuthRepository {
   final AuthRemoteDataSource _remote;
   final UserLocalDataSource _local;
 
-  /// Újraindításkor: a mentett felhasználó, ha a Firebase-munkamenet is él.
+  /// On restart: the saved user, if the Firebase session is still alive.
   Future<UserDto?> restore() async {
     if (!_identity.signedIn) return null;
     return _local.read();
   }
 
-  /// A friss felhasználói adat a backendtől (például megváltozott a szerep); a helyi másolatot is frissíti.
+  /// Fresh user data from the backend (e.g. the role changed); also updates the local copy.
   Future<Either<Failure, UserDto>> refresh() => guard(() async {
         final u = await _remote.me();
         await _local.write(u);
         return u;
       });
 
-  /// Szolgáltatói belépés, majd a saját felhasználónk lekérése. null, ha a felhasználó megszakította.
-  /// Ha a backend nem fogad, a Firebase-ből is kilépünk.
+  /// Provider sign-in, then fetching our own user. null if the user cancelled.
+  /// If the backend rejects it, we sign out of Firebase too.
   Future<Either<Failure, UserDto?>> signIn(String provider) => guard(() async {
         final bool done;
         switch (provider) {
@@ -86,7 +86,7 @@ class LobbyRepository {
   Future<Either<Failure, void>> withdraw(String id) => guard(() => _remote.withdraw(id));
 }
 
-/// A térképek nem változnak játék közben, ezért a memóriában gyorsítótárazzuk őket.
+/// Maps don't change during a game, so we cache them in memory.
 @lazySingleton
 class MapRepository {
   MapRepository(this._remote);
@@ -124,15 +124,9 @@ class GameRepository {
 
   Future<Either<Failure, List<RankRow>>> ranking(String id) => guard(() => _remote.ranking(id));
 
-  /// Admin: azonnali elszámolás, utána a friss állapot.
+  /// Admin: immediate settlement, then the fresh state.
   Future<Either<Failure, GameState>> adminSettle(String id) => guard(() async {
         await _remote.adminSettle(id);
-        return _remote.state(id);
-      });
-
-  /// Admin: időtekerés (null: a következő eseményig), utána a friss állapot.
-  Future<Either<Failure, GameState>> adminAdvance(String id, int? minutes) => guard(() async {
-        await _remote.adminAdvance(id, minutes);
         return _remote.state(id);
       });
 }

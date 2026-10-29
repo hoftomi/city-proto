@@ -11,8 +11,8 @@ import '../bloc/game_bloc.dart';
 import '../widgets/game_tab_scroll.dart';
 import 'bloc/reports_bloc.dart';
 
-/// A Jelentések fül: szűrhető jelentéskártyák. A játékállapot változásait továbbadja a ReportsBlocnak,
-/// amely eldönti, kell-e újratölteni.
+/// The Reports tab: filterable report cards. Forwards game state changes to the ReportsBloc,
+/// which decides whether to reload.
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
 

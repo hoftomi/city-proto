@@ -16,7 +16,7 @@ import '../auth/bloc/auth_bloc.dart';
 import 'bloc/lobby_bloc.dart';
 import 'widgets/game_badges.dart';
 
-/// Játékválasztó: folyamatban lévő, új, saját és lezárult játékok.
+/// Lobby: ongoing, new, own and finished games.
 class LobbyPage extends StatelessWidget {
   const LobbyPage({super.key});
 
@@ -29,7 +29,7 @@ class LobbyPage extends StatelessWidget {
 class _LobbyView extends StatelessWidget {
   const _LobbyView();
 
-  /// A részletekre, visszatéréskor frissít.
+  /// To the details; refreshes on return.
   Future<void> _open(BuildContext context, GameSummary g) async {
     final bloc = context.read<LobbyBloc>();
     await context.push(Routes.game(g.id));
@@ -95,7 +95,7 @@ class _LobbyView extends StatelessWidget {
   }
 }
 
-/// Saját, futó játék kiemelt kártyája a belépés gombjával.
+/// Highlighted card of an own running game with its enter button.
 class _ContinueCard extends StatelessWidget {
   const _ContinueCard({required this.g, required this.onEnter});
   final GameSummary g;
@@ -112,10 +112,9 @@ class _ContinueCard extends StatelessWidget {
           HouseCrest(tincture: h.tincture, initial: h.houseName.characters.first, size: 26, name: h.houseName),
           const SizedBox(width: 8),
           Expanded(child: Text(g.name, style: TnText.bodyStrong(c.ink))),
-          Text('lobby.round_of'.tr(namedArgs: {'round': '${g.round}', 'max': '${g.maxRounds}'}), style: TnText.caption(c.inkMuted)),
         ]),
         const SizedBox(height: 12),
-        TnButton(label: 'lobby.enter_game'.tr(), icon: 'terkep', kind: TnButtonKind.primary, onPressed: onEnter),
+        TnButton(label: 'lobby.enter_game'.tr(), icon: 'map', kind: TnButtonKind.primary, onPressed: onEnter),
       ]),
     );
   }
@@ -129,9 +128,10 @@ class _GameCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
+    final when = g.cardWhenText;
     return Semantics(
       button: true,
-      label: 'lobby.game_semantics'.tr(namedArgs: {'name': g.name, 'season': g.season, 'when': g.whenText.text}),
+      label: when == null ? g.name : 'lobby.game_semantics'.tr(namedArgs: {'name': g.name, 'when': when.text}),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -139,29 +139,20 @@ class _GameCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Eyebrow(g.season),
-                  const SizedBox(height: 2),
-                  Text(g.name, style: TnText.title(c.ink).copyWith(fontSize: 21, height: 26 / 21)),
-                ]),
+                child: Text(g.name, style: TnText.title(c.ink).copyWith(fontSize: 21, height: 26 / 21)),
               ),
               const SizedBox(width: 12),
               StatusChip(g),
             ]),
             const SizedBox(height: 12),
             Wrap(spacing: 16, runSpacing: 4, children: [
-              _fact(c, 'clock', g.whenText.text),
-              _fact(c, 'terkep', 'lobby.schedule'.tr(namedArgs: {'days': '${g.days}', 'rounds': '${g.roundsPerDay}'})),
+              if (when != null) _fact(c, 'clock', when.text),
+              _fact(c, 'map', 'lobby.schedule'.tr()),
             ]),
-            const SizedBox(height: 12),
-            if (!g.finished)
-              Row(children: [
-                Expanded(child: TnMeter(value: g.fill, green: true)),
-                const SizedBox(width: 12),
-                Text('lobby.houses'.tr(namedArgs: {'players': '${g.players}', 'max': '${g.maxPlayers}'}), style: TnText.data(c.ink)),
-              ])
-            else
+            if (g.finished) ...[
+              const SizedBox(height: 12),
               Text(g.resultText.text, style: TnText.caption(c.inkMuted)),
+            ],
             if (g.myHouse != null) ...[
               const SizedBox(height: 8),
               Row(children: [

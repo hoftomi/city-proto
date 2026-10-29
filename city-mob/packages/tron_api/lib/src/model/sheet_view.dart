@@ -8,7 +8,7 @@ import 'package:tron_api/src/model/cost.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'lap_view.g.dart';
+part 'sheet_view.g.dart';
 
 
 @CopyWith()
@@ -18,9 +18,9 @@ part 'lap_view.g.dart';
   disallowUnrecognizedKeys: false,
   explicitToJson: true,
 )
-class LapView {
-  /// Returns a new [LapView] instance.
-  LapView({
+class SheetView {
+  /// Returns a new [SheetView] instance.
+  SheetView({
 
     required  this.id,
 
@@ -96,7 +96,7 @@ class LapView {
 
 
     @override
-    bool operator ==(Object other) => identical(this, other) || other is LapView &&
+    bool operator ==(Object other) => identical(this, other) || other is SheetView &&
       other.id == id &&
       other.sealedAt == sealedAt &&
       other.executeAt == executeAt &&
@@ -111,9 +111,9 @@ class LapView {
         orders.hashCode +
         cost.hashCode;
 
-  factory LapView.fromJson(Map<String, dynamic> json) => _$LapViewFromJson(json);
+  factory SheetView.fromJson(Map<String, dynamic> json) => _$SheetViewFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LapViewToJson(this);
+  Map<String, dynamic> toJson() => _$SheetViewToJson(this);
 
   @override
   String toString() {

@@ -3,29 +3,29 @@ import 'package:tron_api/tron_api.dart';
 import '../../core/tr.dart';
 import 'extensions.dart';
 
-/// A városnézet számolt értékei (tiszta függvények a generált modelleken). A CityState getterei és a
-/// CityService ezekből dolgozik, a widgetek csak megjelenítik az eredményt.
+/// Computed values of the city view (pure functions on the generated models). CityState getters and
+/// CityService build on these; widgets only display the result.
 
-/// A városnézet három negyede: Vásártér, Városháza, Alvilág.
-const cityDistricts = ['keresk', 'polit', 'kem'];
+/// The city view's three districts: Marketplace, Town Hall, Underworld.
+const cityDistricts = ['trade', 'politics', 'espionage'];
 
-/// Az URL-ből jött negyed; ismeretlen vagy hiányzó negyed esetén a Vásártér.
-String cityDistrict(String? d) => cityDistricts.contains(d) ? d! : 'keresk';
+/// District from the URL; Marketplace if unknown or missing.
+String cityDistrict(String? d) => cityDistricts.contains(d) ? d! : 'trade';
 
-/// „N elszámolás múlva” vagy „a következő elszámoláskor”.
+/// "In N settlements" or "at the next settlement".
 Tr electionText(int n) => n <= 1 ? const Tr('city.election_next') : Tr('city.election_in', {'n': '$n'});
 
-/// Népszerűségi hatás előjellel: „+3”, „0”, „−1”.
+/// Popularity effect with sign: „+3”, „0”, „−1”.
 String popDelta(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '0');
 
-/// Egy chip a város fejlécében (StatChip).
+/// A chip in the city header (StatChip).
 typedef CityStat = ({Tr label, Tr value, Tr? suffix, String? tone, String art});
 
-/// Mit tehet a kémhálózat egy hírrel: semmit, ellenőrizheti, vagy (ha hamisnak bizonyult) leleplezheti.
+/// What the spy network can do with a news item: nothing, verify it, or (if proven false) debunk it.
 enum NewsCheck { none, verify, debunk }
 
 extension CityGameX on GameState {
-  /// A megjelenítendő város: a kért, ha létezik; különben a térképen kijelölt; különben az első elérhető, vagy az első.
+  /// The city to show: the requested one if it exists; else the one selected on the map; else the first reachable, or the first.
   String? cityFor(String? requested, String? selected) {
     bool has(String? id) => id != null && cities.any((c) => c.id == id);
     if (has(requested)) return requested;
@@ -33,10 +33,10 @@ extension CityGameX on GameState {
     return cities.where((c) => c.reachable).firstOrNull?.id ?? cities.firstOrNull?.id;
   }
 
-  /// A fejléc chipjei: népszerűség, adó, választás, kampányidőszak.
+  /// Header chips: popularity, tax, election, campaign period.
   List<CityStat> cityStats(CityView cv) => [
-        (label: const Tr('city.stat.popularity'), value: Tr.raw('${cv.myPop.round()}'), suffix: null, tone: cv.lowPop(rules) ? 'warn' : null, art: 'nep'),
-        (label: const Tr('city.stat.tax'), value: Tr.raw('${cv.taxPercent}%'), suffix: null, tone: null, art: 'ado'),
+        (label: const Tr('city.stat.popularity'), value: Tr.raw('${cv.myPop.round()}'), suffix: null, tone: cv.lowPop(rules) ? 'warn' : null, art: 'popularity'),
+        (label: const Tr('city.stat.tax'), value: Tr.raw('${cv.taxPercent}%'), suffix: null, tone: null, art: 'tax'),
         clock.nextElectionIn <= 1
             ? (
                 label: const Tr('city.stat.election'),
@@ -55,8 +55,8 @@ extension CityGameX on GameState {
         if (clock.campaign) (label: const Tr('city.stat.campaign'), value: const Tr.raw('×2'), suffix: const Tr('city.stat.campaign_suffix'), tone: 'warn', art: 'festival'),
       ];
 
-  /// A negyedek zászlóinak tinktúrája: Vásártér – legtöbb részesedés, Városháza – legtöbb tanácshely,
-  /// Alvilág – a saját házad, ha vannak itt kémeid.
+  /// Tincture of the district banners: Marketplace – most shares, Town Hall – most council seats,
+  /// Underworld – your own house, if you have spies here.
   Map<String, String?> districtDominants(CityView cv) {
     final shares = <String, (HouseRef, int)>{};
     for (final g in cv.goods) {
@@ -67,42 +67,42 @@ extension CityGameX on GameState {
     }
     final topS = (shares.values.toList()..sort((a, b) => b.$2.compareTo(a.$2))).firstOrNull;
     final topP = (cv.parties.where((p) => p.seats > 0).toList()..sort((a, b) => b.seats.compareTo(a.seats))).firstOrNull;
-    return {'keresk': topS?.$1.tincture, 'polit': topP?.house.tincture, 'kem': cv.mySpies > 0 ? me.tincture : null};
+    return {'trade': topS?.$1.tincture, 'politics': topP?.house.tincture, 'espionage': cv.mySpies > 0 ? me.tincture : null};
   }
 
-  /// Építhető útvonalak ebbe a városba.
+  /// Routes buildable to this city.
   List<Buildable> routesTo(String cityId) => buildable.where((b) => b.to == cityId).toList();
 
-  /// A városban lévő saját árucikkek elleni kivásárlási fenyegetések.
+  /// Buyout threats against your own goods in the city.
   List<Threat> threatsIn(String cityId) => threats.where((t) => t.cityId == cityId).toList();
 
-  /// Igaz, ha a fenyegetés elleni védekező vétel csak a vázlaton van (még nincs lepecsételve).
-  /// Az OrderView nem hivatkozik az ajánlatra, ezért városra szűrünk.
-  bool defendOnlyInDraft(Threat t) => draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(lap?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
+  /// True if the defensive buy against the threat is only in the draft (not sealed yet).
+  /// OrderView doesn't reference the offer, so we filter by city.
+  bool defendOnlyInDraft(Threat t) => draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(sheet?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
 
-  /// Ahová kém költözhet innen (7.1): a hálózatod többi városa.
+  /// Where a spy can move from here (7.1): the other cities of your network.
   List<CityView> spyDestinations(String fromCity) => cities.where((x) => x.reachable && x.id != fromCity).toList();
 
-  /// Akiknek egy kifürkészett terv eladható: nem te, és nem az, akinek a terve.
+  /// Who an intel can be sold to: not you, and not the one whose plan it is.
   List<HouseRef> intelBuyers(IntelView it) => houses.where((h) => !h.self && h.playerId != it.of_.playerId).toList();
 }
 
 extension CityViewCityX on CityView {
-  /// Szabad (nem őrködő) kémek.
+  /// Free (not guarding) spies.
   int get freeSpies => (mySpies - myGuards).clamp(0, 99);
 
   bool lowPop(RulesInfo r) => myPop < r.lowPopThreshold;
 
-  /// Tele van-e a város kémekkel (a saját kémeidre nézve).
+  /// Whether the city is full of spies (with respect to your own spies).
   bool spiesFull(RulesInfo r) => mySpies >= r.spiesPerCity;
 
-  /// A pártok szavazat szerint csökkenő sorrendben.
+  /// Parties in descending order of votes.
   List<PartyView> get partiesByVotes => [...parties]..sort((a, b) => b.votes.compareTo(a.votes));
 
-  /// Ellenőrizhető hírek: nem a sajátod és még nincs leleplezve (legfeljebb 6).
+  /// Verifiable news: not your own and not yet debunked (at most 6).
   List<NewsView> get checkable => news.where((n) => !n.mine && !n.debunked).take(6).toList();
 
-  /// Mit kínál a kémhálózat ehhez a hírhez (elérhető városban, legalább egy kémmel).
+  /// What the spy network offers for this news item (in a reachable city, with at least one spy).
   NewsCheck newsCheck(NewsView n) {
     if (!reachable || mySpies < 1 || n.mine || n.debunked) return NewsCheck.none;
     if (n.verified == false) return NewsCheck.debunk;
@@ -111,14 +111,14 @@ extension CityViewCityX on CityView {
 }
 
 extension GoodViewCityX on GoodView {
-  /// Az eladók: a házak részesedés szerint csökkenő sorrendben, végül a Város (csak akiknek van részesedése).
+  /// Sellers: houses in descending order of shares, then the City (only those with shares).
   List<Seller> get sortedSellers => [
         ...(sellers.where((x) => !x.city && x.shares > 0).toList()..sort((a, b) => b.shares.compareTo(a.shares))),
         ...sellers.where((x) => x.city && x.shares > 0),
       ];
 }
 
-/// Egy árucikk kártyájának számolt állapota: eladók, kivásárolható riválisok, érvényes pontok és költségek.
+/// Computed state of a good's card: sellers, rivals open to buyout, valid points and costs.
 class GoodPlan {
   const GoodPlan._({
     required this.good,
@@ -133,7 +133,7 @@ class GoodPlan {
     required this.boCost,
   });
 
-  /// [buyPts], [boPts], [target]: a felhasználó választása; a terv a megengedett tartományba szorítja őket.
+  /// [buyPts], [boPts], [target]: the user's choice; the plan clamps them to the allowed range.
   factory GoodPlan.of(GoodView g, RulesInfo r, {int buyPts = 5, int boPts = 5, String? target}) {
     final sellers = g.sortedSellers;
     final rivals = sellers.where((x) => x.house != null && !x.house!.self && !x.protectedNow).toList();
@@ -159,7 +159,7 @@ class GoodPlan {
   final GoodView good;
   final List<Seller> sellers;
 
-  /// Kivásárolható riválisok: nem te, és nem védett.
+  /// Rivals open to buyout: not you, and not protected.
   final List<Seller> rivals;
   final Seller? target;
   final int buyMax, buyPts, buyCost, boMax, boPts, boCost;
@@ -167,18 +167,18 @@ class GoodPlan {
   bool get canBuy => buyMax >= 1;
   String? get targetId => target?.house?.playerId;
 
-  /// A pontválasztók lehetőségei (legalább 1).
+  /// Options of the point pickers (at least 1).
   List<int> get buyOptions => [for (var i = 1; i <= (buyMax < 1 ? 1 : buyMax); i++) i];
   List<int> get boOptions => [for (var i = 1; i <= (boMax < 1 ? 1 : boMax); i++) i];
 
-  /// A saját sorok indexei az eladók táblázatában.
+  /// Indexes of your own rows in the sellers table.
   Set<int> get selfRows => {
         for (var i = 0; i < sellers.length; i++)
           if (sellers[i].house?.self == true) i,
       };
 }
 
-/// A hírszerkesztő számolt állapota: sablon, célpont, a célpont árucikkei és hogy beküldhető-e.
+/// Computed state of the news editor: template, target, the target's goods and whether it can be submitted.
 class NewsPlan {
   const NewsPlan._({required this.template, required this.targets, required this.target, required this.goods, required this.good});
 
@@ -193,26 +193,26 @@ class NewsPlan {
 
   final NewsTemplateInfo? template;
 
-  /// Akikről hír terjeszthető: a városban jelen lévő többi ház.
+  /// Who news can be spread about: the other houses present in the city.
   final List<HouseRef> targets;
   final HouseRef? target;
 
-  /// A célpont árucikkei ebben a városban (az árucikkes állításokhoz).
+  /// The target's goods in this city (for good-related claims).
   final List<GoodView> goods;
   final GoodView? good;
 
   bool get needsGood => template?.needsGood ?? false;
   bool get ok => template != null && target != null && (!needsGood || good != null);
 
-  /// Árucikkes állításnál a célpont itt nem árul semmit.
+  /// For a good-related claim, the target sells nothing here.
   bool get targetSellsNothing => !ok && needsGood && target != null;
 
-  /// A beküldendő árucikk (csak ha az állításhoz kell).
+  /// The good to submit (only if the claim needs one).
   String? get goodId => needsGood ? good?.id : null;
 
-  /// Negatív hatású a hír (a gomb vészjelző).
+  /// The news has a negative effect (the button is destructive).
   bool get harmful => (template?.effect ?? 0) < 0;
 
-  /// A sablon felirata a választóban: „{t}” → X, „{g}” → ….
+  /// The template's label in the picker: „{t}” → X, „{g}” → ….
   static String label(String l) => l.replaceAll('{t}', 'X').replaceAll('{g}', '…');
 }

@@ -1,6 +1,6 @@
 part of 'join_bloc.dart';
 
-/// Sikeres jelentkezés után: futó játéknál be a játékba, különben vissza a részletekre.
+/// After a successful join: into the game if it is running, otherwise back to the details.
 enum JoinOutcome { enterGame, backToDetail }
 
 class JoinState extends Equatable {
@@ -27,23 +27,23 @@ class JoinState extends Equatable {
   final MapDef? map;
   final Failure? failure;
 
-  /// Az aktuális lépés (0..3).
+  /// The current step (0..3).
   final int step;
   final String name;
 
-  /// A név hibája (mindig számolva; csak `touched` után látszik).
+  /// The name error (always computed; shown only after `touched`).
   final Tr? nameError;
   final bool touched;
   final String tincture, background, start;
 
-  /// A Kereskedőház választott induló árucikke (ha nem választott, az első).
+  /// The Merchant House chosen starting good (if none chosen, the first).
   final String? startGood;
 
-  /// Épp küldi a jelentkezést.
+  /// Submitting the join.
   final bool busy;
   final Notice? notice;
 
-  /// Sikeres jelentkezés (egyszer áll be; a widget ekkor navigál).
+  /// Successful join (set once; the widget navigates then).
   final JoinOutcome? outcome;
 
   bool get ready => detail != null && map != null;
@@ -51,15 +51,15 @@ class JoinState extends Equatable {
   List<Tr> get steps => JoinService.steps;
   bool get lastStep => step == steps.length - 1;
 
-  /// A rendszer vissza gombja csak az első lépésen hagyja el a képernyőt.
+  /// The system back button leaves the screen only on the first step.
   bool get canPop => step == 0;
 
   String get trimmedName => name.trim();
 
-  /// A névmező alatt látható hiba.
+  /// The error shown under the name field.
   Tr? get shownNameError => touched ? nameError : null;
 
-  /// A Tovább gomb engedélyezett-e.
+  /// Whether the Next button is enabled.
   bool get canContinue => !(step == 0 && touched && nameError != null);
 
   Tr get nextLabel => lastStep ? const Tr('join.confirm') : const Tr('join.next');
@@ -72,7 +72,7 @@ class JoinState extends Equatable {
 
   JoinForm get form => (name: name, tincture: tincture, background: background, start: start, startGood: startGood);
 
-  /// Az összegzés „Kezdés” sora.
+  /// The summary's "Start" row.
   Tr get startText => game == null ? const Tr.raw('') : (game!.running ? const Tr('join.start_now') : game!.startsAtText);
 
   JoinState copyWith({

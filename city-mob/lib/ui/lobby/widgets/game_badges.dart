@@ -6,7 +6,7 @@ import '../../../domain/model/lobby_extensions.dart';
 import '../../../theme/tokens.dart';
 import '../../../widgets/game_widgets.dart';
 
-/// A játék állapotcímkéje (a GameSummaryLobbyX.badge alapján).
+/// The game's status badge (based on GameSummaryLobbyX.badge).
 class StatusChip extends StatelessWidget {
   const StatusChip(this.g, {super.key});
   final GameSummary g;
@@ -26,7 +26,7 @@ class StatusChip extends StatelessWidget {
   }
 }
 
-/// Címke a játék jellemzőihez.
+/// Tag for the game's properties.
 class Tag extends StatelessWidget {
   const Tag(this.text, {super.key});
   final String text;

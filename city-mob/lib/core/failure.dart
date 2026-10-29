@@ -3,17 +3,17 @@ import 'package:equatable/equatable.dart';
 
 import 'tr.dart';
 
-/// Felhasználónak megjeleníthető hiba: a backend ProblemDetail `detail` mezője (a szerver által már lefordított szöveg),
-/// vagy a kapcsolat, illetve a bejelentkezés hibája fordítási kulccsal. A repositoryk ezt adják vissza Either bal oldalán.
+/// User-displayable error: the backend ProblemDetail `detail` field (text already translated by the server),
+/// or a connection or sign-in error with a translation key. Repositories return this on the left of Either.
 class Failure extends Equatable {
   const Failure(this.message, {this.status = 0, this.code});
 
   final Tr message;
 
-  /// HTTP-státusz, vagy 0, ha nem a szervertől jött.
+  /// HTTP status, or 0 if it didn't come from the server.
   final int status;
 
-  /// A ProblemDetail opcionális gépi kódja (például `house_name`), amely alapján a kliens dönthet.
+  /// Optional machine code of the ProblemDetail (e.g. `house_name`) the client can branch on.
   final String? code;
 
   bool get unauthorized => status == 401;

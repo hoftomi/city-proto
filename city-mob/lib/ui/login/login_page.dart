@@ -9,8 +9,8 @@ import '../../widgets/buttons.dart';
 import '../../widgets/game_widgets.dart';
 import '../auth/bloc/auth_bloc.dart';
 
-/// Csak közösségi belépés: Google, Apple (iOS), Discord. A belépést az AuthBloc végzi; siker után a router
-/// a játékválasztóra visz. A widget csak megjelenít és eseményt küld.
+/// Social login only: Google, Apple (iOS), Discord. Login is done by the AuthBloc; on success the router
+/// goes to the lobby. The widget only renders and dispatches events.
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -62,7 +62,7 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-/// Közösségi belépés gombja: pergamen (quiet) gomb, balra igazított felirattal és viaszpecsét betűjellel.
+/// Social login button: parchment (quiet) button with left-aligned label and a wax-seal letter mark.
 class _Social extends StatelessWidget {
   const _Social({required this.mark, required this.label, required this.onTap, required this.busy, required this.enabled});
   final String mark, label;
@@ -72,7 +72,7 @@ class _Social extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    // Élesben a szolgáltatók hivatalos gombjai kellenek; a 0.0.1 semleges betűjelet használ.
+    // Production needs the providers' official buttons; 0.0.1 uses a neutral letter mark.
     final seal = Container(
       width: 30,
       height: 30,

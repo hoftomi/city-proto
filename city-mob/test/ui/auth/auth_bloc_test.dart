@@ -25,7 +25,7 @@ void main() {
   });
   tearDown(() => expired.close());
 
-  blocTest<AuthBloc, AuthState>('mentett munkamenet nélkül kilépett állapotba kerül',
+  blocTest<AuthBloc, AuthState>('without a stored session goes to signed out',
       build: () {
         when(() => service.restore()).thenAnswer((_) async => null);
         return AuthBloc(service);
@@ -33,7 +33,7 @@ void main() {
       act: (b) => b.add(const AuthStarted()),
       expect: () => [const AuthState(status: AuthStatus.signedOut)]);
 
-  blocTest<AuthBloc, AuthState>('a mentett felhasználóval indul, és frissíti a szerepét',
+  blocTest<AuthBloc, AuthState>('starts with the stored user and refreshes its role',
       build: () {
         when(() => service.restore()).thenAnswer((_) async => user);
         when(() => service.refresh()).thenAnswer((_) async => Right(user.copyWith(role: 'ADMIN')));
@@ -45,7 +45,7 @@ void main() {
             isA<AuthState>().having((s) => s.admin, 'admin', true),
           ]);
 
-  blocTest<AuthBloc, AuthState>('sikeres belépés: a gomb pörög, utána belépett',
+  blocTest<AuthBloc, AuthState>('successful sign-in: button spins, then signed in',
       build: () {
         when(() => service.signIn('google')).thenAnswer((_) async => Right(user));
         return AuthBloc(service);
@@ -56,7 +56,7 @@ void main() {
             AuthState(status: AuthStatus.signedIn, user: user),
           ]);
 
-  blocTest<AuthBloc, AuthState>('megszakított belépés: nincs hiba, marad kilépve',
+  blocTest<AuthBloc, AuthState>('cancelled sign-in: no error, stays signed out',
       build: () {
         when(() => service.signIn('apple')).thenAnswer((_) async => const Right(null));
         return AuthBloc(service);
@@ -64,7 +64,7 @@ void main() {
       act: (b) => b.add(const AuthSignInRequested('apple')),
       expect: () => [const AuthState(busyProvider: 'apple'), const AuthState()]);
 
-  blocTest<AuthBloc, AuthState>('sikertelen belépés: a hibaüzenet az állapotban',
+  blocTest<AuthBloc, AuthState>('failed sign-in: error message in the state',
       build: () {
         when(() => service.signIn('discord')).thenAnswer((_) async => const Left(Failure(Tr('auth.failed'))));
         return AuthBloc(service);
@@ -72,7 +72,7 @@ void main() {
       act: (b) => b.add(const AuthSignInRequested('discord')),
       expect: () => [const AuthState(busyProvider: 'discord'), const AuthState(error: Tr('auth.failed'))]);
 
-  blocTest<AuthBloc, AuthState>('401 után kiléptet, és jelzi, hogy lejárt a munkamenet',
+  blocTest<AuthBloc, AuthState>('after 401 signs out and reports the session expired',
       build: () {
         when(() => service.restore()).thenAnswer((_) async => user);
         when(() => service.refresh()).thenAnswer((_) async => Right(user));

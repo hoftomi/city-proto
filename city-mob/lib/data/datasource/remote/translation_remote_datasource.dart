@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:tron_api/tron_api.dart';
 
-/// A feliratok a backendről (GET /api/i18n/{lang}, bejelentkezés nélkül).
+/// Labels from the backend (GET /api/i18n/{lang}, no sign-in needed).
 @lazySingleton
 class TranslationRemoteDataSource {
   TranslationRemoteDataSource(this._api);

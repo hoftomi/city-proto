@@ -1,12 +1,12 @@
 # MapCity
 
-Város a világtérképen: fallal körülvett kisváros. Részei:
+A city on the world map: a small walled town. Its parts:
 
-- ovális várfal lőrésekkel és hat toronnyal;
-- kaputorony;
-- tucatnyi színes tetős ház;
-- a közepén a vár lakótoronnyal és lobogóval.
+- an oval city wall with loopholes and six towers;
+- a gate tower;
+- a dozen houses with colorful roofs;
+- in the middle, the castle with a keep and a banner.
 
-A név pergamenszalagon áll a város alatt.
+The name sits on a parchment ribbon below the city.
 
-**Mit ad a hívó:** `x`, `y`, `name`, `keyCity` (nagyobb város kék palatetőkkel és falon kívüli külvárossal), `state` (`reachable` | `unreachable` | `cut`), `stability`.
+**What the caller provides:** `x`, `y`, `name`, `keyCity` (a larger town with blue slate roofs and a suburb outside the wall), `state` (`reachable` | `unreachable` | `cut`), `stability`.

@@ -73,7 +73,7 @@
    ],
    "starts": [
     {
-     "id": "nyugat",
+     "id": "west",
      "name": "Nyugati birtok",
      "x": 28,
      "y": 125,
@@ -83,7 +83,7 @@
      ]
     },
     {
-     "id": "mocsar",
+     "id": "marsh",
      "name": "Mocsárszél",
      "x": 160,
      "y": 238,
@@ -93,7 +93,7 @@
      ]
     },
     {
-     "id": "hegyalja",
+     "id": "foothills",
      "name": "Hegyalja",
      "x": 132,
      "y": 112,
@@ -192,7 +192,7 @@
    ],
    "starts": [
     {
-     "id": "nyugat",
+     "id": "west",
      "name": "Nyugati erdőség",
      "x": 24,
      "y": 150,
@@ -202,7 +202,7 @@
      ]
     },
     {
-     "id": "hago",
+     "id": "pass",
      "name": "Hágó alatt",
      "x": 180,
      "y": 130,
@@ -212,7 +212,7 @@
      ]
     },
     {
-     "id": "kelet",
+     "id": "east",
      "name": "Keleti fennsík",
      "x": 330,
      "y": 160,
@@ -295,7 +295,7 @@
    ],
    "starts": [
     {
-     "id": "bany",
+     "id": "mines",
      "name": "Bányavidék",
      "x": 120,
      "y": 30,
@@ -305,7 +305,7 @@
      ]
     },
     {
-     "id": "part",
+     "id": "coast",
      "name": "Nyugati part",
      "x": 30,
      "y": 110,
@@ -315,7 +315,7 @@
      ]
     },
     {
-     "id": "torony",
+     "id": "tower",
      "name": "Tornyos-völgy",
      "x": 330,
      "y": 130,
@@ -329,7 +329,7 @@
  },
  "districts": {
   "polygons": {
-   "Városháza": [
+   "politics": [
     [
      360,
      153.6
@@ -347,7 +347,7 @@
      225.8
     ]
    ],
-   "Vásártér": [
+   "trade": [
     [
      485.1,
      225.8
@@ -369,7 +369,7 @@
      298
     ]
    ],
-   "Alvilág": [
+   "espionage": [
     [
      234.9,
      225.8
@@ -389,15 +389,15 @@
    ]
   },
   "labels": {
-   "Városháza": [
+   "politics": [
     304.1,
     254.3
    ],
-   "Vásártér": [
+   "trade": [
     468.6,
     311.3
    ],
-   "Alvilág": [
+   "espionage": [
     215.2,
     301.8
    ]
@@ -426,30 +426,30 @@
   "scale": 3
  },
  "icons": [
-  "arany",
+  "gold",
   "pp",
   "legit",
-  "nep",
-  "ado",
-  "navTerkep",
-  "navVaros",
-  "navJel",
-  "navRang",
-  "homokora",
-  "gabona",
-  "bor",
-  "vas",
-  "ko",
-  "so",
-  "hal",
-  "fuszer",
-  "tozeg",
-  "csempesz",
-  "gyapju",
-  "lo",
-  "vasarter",
-  "varoshaza",
-  "alvilag",
+  "popularity",
+  "tax",
+  "navMap",
+  "navCity",
+  "navReports",
+  "navRanking",
+  "hourglass",
+  "grain",
+  "wine",
+  "iron",
+  "stone",
+  "salt",
+  "fish",
+  "spice",
+  "peat",
+  "contraband",
+  "wool",
+  "horse",
+  "market",
+  "townHall",
+  "underworld",
   "route",
   "margin",
   "buyShares",
@@ -467,18 +467,18 @@
  ],
  "branchOf": {
   "route": null,
-  "margin": "vasarter",
-  "buyShares": "vasarter",
-  "buyout": "vasarter",
-  "defend": "vasarter",
-  "foundParty": "varoshaza",
-  "program": "varoshaza",
-  "festival": "varoshaza",
-  "news": "varoshaza",
-  "hireSpy": "alvilag",
-  "guard": "alvilag",
-  "spy": "alvilag",
-  "verify": "alvilag",
-  "debunk": "alvilag"
+  "margin": "trade",
+  "buyShares": "trade",
+  "buyout": "trade",
+  "defend": "trade",
+  "foundParty": "politics",
+  "program": "politics",
+  "festival": "politics",
+  "news": "politics",
+  "hireSpy": "espionage",
+  "guard": "espionage",
+  "spy": "espionage",
+  "verify": "espionage",
+  "debunk": "espionage"
  }
 }

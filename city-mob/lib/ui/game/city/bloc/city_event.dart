@@ -7,7 +7,7 @@ sealed class CityEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// A városnézet indul; [cityId] az URL-ből jön (null: a kijelölt vagy az első elérhető város).
+/// The city view starts; [cityId] comes from the URL (null: the selected or first reachable city).
 class CityStarted extends CityEvent {
   const CityStarted(this.cityId);
   final String? cityId;
@@ -16,7 +16,7 @@ class CityStarted extends CityEvent {
   List<Object?> get props => [cityId];
 }
 
-/// A GameBloc új állapota (belső esemény).
+/// New GameBloc state (internal event).
 class _CityGameUpdated extends CityEvent {
   const _CityGameUpdated(this.game);
   final GameViewState game;
@@ -25,7 +25,7 @@ class _CityGameUpdated extends CityEvent {
   List<Object?> get props => [game];
 }
 
-/// Útvonalépítés ide a megadott városból.
+/// Build a route here from the given city.
 class CityRouteRequested extends CityEvent {
   const CityRouteRequested(this.from);
   final String from;
@@ -34,9 +34,9 @@ class CityRouteRequested extends CityEvent {
   List<Object?> get props => [from];
 }
 
-// ---------------------------------------------------------------- Vásártér
+// ---------------------------------------------------------------- Marketplace
 
-/// Védekező vétel egy kivásárlási fenyegetés (az ajánlat parancsa) ellen.
+/// Defensive buy against a buyout threat (the offer's order).
 class CityDefendRequested extends CityEvent {
   const CityDefendRequested(this.orderId);
   final String orderId;
@@ -53,7 +53,7 @@ class CityMarginPicked extends CityEvent {
   List<Object?> get props => [goodId, level];
 }
 
-/// Vétel a Várostól: a pontok választása.
+/// Buy from the City: choosing the points.
 class CityBuyPointsChanged extends CityEvent {
   const CityBuyPointsChanged(this.goodId, this.pts);
   final String goodId;
@@ -71,7 +71,7 @@ class CityBuySubmitted extends CityEvent {
   List<Object?> get props => [goodId];
 }
 
-/// Kivásárlás: a célpont (playerId) választása.
+/// Buyout: choosing the target (playerId).
 class CityBuyoutTargetChanged extends CityEvent {
   const CityBuyoutTargetChanged(this.goodId, this.target);
   final String goodId, target;
@@ -97,7 +97,7 @@ class CityBuyoutSubmitted extends CityEvent {
   List<Object?> get props => [goodId];
 }
 
-// ---------------------------------------------------------------- Városháza
+// ---------------------------------------------------------------- Town Hall
 
 class CityPartyFounded extends CityEvent {
   const CityPartyFounded();
@@ -143,7 +143,7 @@ class CityNewsSubmitted extends CityEvent {
   const CityNewsSubmitted();
 }
 
-// ---------------------------------------------------------------- Alvilág
+// ---------------------------------------------------------------- Underworld
 
 class CitySpyHired extends CityEvent {
   const CitySpyHired();
@@ -153,12 +153,12 @@ class CityGuardPosted extends CityEvent {
   const CityGuardPosted();
 }
 
-/// A „Kém áthelyezése” párbeszéd megnyitása.
+/// Open the "Relocate spy" dialog.
 class CityMoveSpyOpened extends CityEvent {
   const CityMoveSpyOpened();
 }
 
-/// A kém célvárosa kiválasztva: a parancs a vázlatra kerül, a párbeszéd bezárul.
+/// The spy's target city is chosen: the order goes onto the draft, the dialog closes.
 class CityMoveSpyPicked extends CityEvent {
   const CityMoveSpyPicked(this.to);
   final String to;
@@ -167,7 +167,7 @@ class CityMoveSpyPicked extends CityEvent {
   List<Object?> get props => [to];
 }
 
-/// Kifürkészés egy rivális érlelő parancslapja ellen.
+/// Spying on a rival's maturing order sheet.
 class CitySpyRequested extends CityEvent {
   const CitySpyRequested(this.target);
   final String target;
@@ -176,7 +176,7 @@ class CitySpyRequested extends CityEvent {
   List<Object?> get props => [target];
 }
 
-/// Hír ellenőrzése vagy (ha hamisnak bizonyult) leleplezése.
+/// Verifying a news item, or (if it proved false) debunking it.
 class CityNewsChecked extends CityEvent {
   const CityNewsChecked(this.newsId);
   final String newsId;
@@ -185,7 +185,7 @@ class CityNewsChecked extends CityEvent {
   List<Object?> get props => [newsId];
 }
 
-/// Egy kifürkészett terv eladásának párbeszéde.
+/// Dialog for selling an intel.
 class CityIntelSaleOpened extends CityEvent {
   const CityIntelSaleOpened(this.intelId);
   final String intelId;
@@ -214,7 +214,7 @@ class CityIntelSaleSubmitted extends CityEvent {
   const CityIntelSaleSubmitted();
 }
 
-/// Egy párbeszéd (kém áthelyezése, eladás) bezárult választás nélkül.
+/// A dialog (relocate spy, sale) closed without a choice.
 class CityDialogClosed extends CityEvent {
   const CityDialogClosed();
 }

@@ -1,11 +1,11 @@
 # InfluenceBar
 
-A frakció 100 támogatáspontjának megoszlása: házak, Ismeretlen (rejtett) és Semleges, a 10 / 25 / 35-ös küszöbökkel.
+The distribution of a faction's 100 support points: houses, Unknown (hidden) and Neutral, with the 10 / 25 / 35 thresholds.
 
-**Mit ad a hívó:** `faction` (`nemesseg` | `kereskedok` | `katonasag`), `segments` (`[{name, tincture, value, self?}]`, nyílt befolyás), `unknown` (az összes rejtett pont), `precision` (`exact` | `band5` | `band10`, a láthatósági szint szerint), opcionálisan `aside` (például egy `ControlBadge`), `thresholds={false}`, `legend={false}`.
+**What the caller provides:** `faction` (`nemesseg` | `kereskedok` | `katonasag`), `segments` (`[{name, tincture, value, self?}]`, open influence), `unknown` (all hidden points), `precision` (`exact` | `band5` | `band10`, according to the visibility level), optionally `aside` (for example a `ControlBadge`), `thresholds={false}`, `legend={false}`.
 
-- A Semleges érték a maradék: a komponens számolja, nem a hívó.
-- A saját szegmens (`self`) verdigris kontúrt kap, és a jelmagyarázatban mindig pontos értékkel jelenik meg.
-- A szegmenseket 2px papírrés választja el, így két hasonló tinktúra is elkülönül, és a jelmagyarázat szövegesen is megadja a neveket.
-- Ne színezd frakció szerint: a sáv színei mindig **házakat** jelentenek.
-- Az `Ismeretlen` sor minden jelenléttel rendelkező játékosnak látszik. Hogy kié, azt a sáv soha nem mondja meg.
+- The Neutral value is the remainder: the component computes it, not the caller.
+- The player's own segment (`self`) gets a verdigris outline and always appears with its exact value in the legend.
+- Segments are separated by a 2px paper gap, so two similar tinctures stay distinct, and the legend also gives the names in text.
+- Do not color by faction: the bar's colors always mean **houses**.
+- The Unknown row is visible to every player with a presence. The bar never says whose it is.

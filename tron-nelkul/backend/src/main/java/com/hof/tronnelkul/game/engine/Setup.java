@@ -8,7 +8,7 @@ import com.hof.tronnelkul.game.world.StartSlot;
 
 import java.util.List;
 
-/** Az induló állapot: városok, NPC-házak, csatlakozó játékos (szabálykönyv v0.2, 2. fejezet). */
+/** Initial state: cities, NPC houses, joining player (rulebook v0.2, chapter 2). */
 public final class Setup {
     private Setup() {}
 
@@ -19,7 +19,7 @@ public final class Setup {
             CitySt cs = new CitySt();
             for (GoodDef gd : c.goods()) {
                 Good g = new Good();
-                g.name = gd.name(); g.supply = gd.supply(); g.demand = gd.demand();
+                g.supply = gd.supply(); g.demand = gd.demand();
                 cs.goods.put(gd.id(), g);
             }
             s.cities.put(c.id(), cs);
@@ -28,8 +28,9 @@ public final class Setup {
     }
 
     /**
-     * Egy NPC-ház a jelleme szerinti kezdőállással, két városban (az i. NPC a 2i. és 2i+1. városban).
-     * persona: kalmar (árazó kereskedő), felvasarlo (kivásárló), politikus (párt, fesztivál, hírek), kem (kémek, álhírek).
+     * An NPC house with a starting position per its persona, in two cities (NPC i in cities 2i and 2i+1).
+     * persona: trader (pricing merchant), raider (buyouts), politician (party, festivals, news), spymaster (spies, fake news).
+     * name: the resolved display name.
      */
     public static void addNpc(EngineState s, MapDefinition map, int index, String id, String name, String tincture, String persona) {
         PlayerSt p = new PlayerSt();
@@ -41,17 +42,17 @@ public final class Setup {
         CitySt ca = s.cities.get(a), cb = s.cities.get(b);
         ca.pop.put(id, 18.0); cb.pop.put(id, 14.0);
         switch (persona) {
-            case "kalmar" -> { take(ca, 0, id, 30, "draga"); take(cb, 0, id, 15, "piaci"); }
-            case "felvasarlo" -> { take(ca, 0, id, 35, "uzsora"); take(cb, 1, id, 25, "piaci"); ca.parties.put(id, "magas"); }
-            case "politikus" -> { ca.parties.put(id, "kozepes"); cb.parties.put(id, "alacsony"); take(ca, 1, id, 15, "draga"); ca.pop.put(id, 22.0); cb.pop.put(id, 20.0); }
-            case "kem" -> { ca.spies.put(id, 2); cb.spies.put(id, 1); take(ca, 1, id, 10, "uzsora"); take(cb, 0, id, 20, "piaci"); }
+            case "trader" -> { take(ca, 0, id, 30, "expensive"); take(cb, 0, id, 15, "market"); }
+            case "raider" -> { take(ca, 0, id, 35, "usury"); take(cb, 1, id, 25, "market"); ca.parties.put(id, "high"); }
+            case "politician" -> { ca.parties.put(id, "medium"); cb.parties.put(id, "low"); take(ca, 1, id, 15, "expensive"); ca.pop.put(id, 22.0); cb.pop.put(id, 20.0); }
+            case "spymaster" -> { ca.spies.put(id, 2); cb.spies.put(id, 1); take(ca, 1, id, 10, "usury"); take(cb, 0, id, 20, "market"); }
             default -> {}
         }
     }
 
     /**
-     * Csatlakozó játékos: 10 PP, 30 A, a kezdővárosban 20 N, két ingyenes útvonal a birtokból (2.2), és a háttér bónusza:
-     * kereskedo: 20 részesedés a választott árucikkből · nemesi: párt és +10 N · arnyek: 2 kém — mind a kezdővárosban.
+     * Joining player: 10 PP, 30 G, 20 P in the home city, two free routes from the estate (2.2), and the background bonus:
+     * merchant: 20 shares of the chosen good · noble: party and +10 P · shadow: 2 spies — all in the home city.
      */
     public static void addPlayer(EngineState s, String id, String name, String tincture, String background, StartSlot slot, String startGood) {
         PlayerSt p = new PlayerSt();
@@ -63,14 +64,14 @@ public final class Setup {
         CitySt cs = s.cities.get(home);
         cs.pop.put(id, Rules.POP_HOME);
         switch (background == null ? "" : background) {
-            case "kereskedo" -> {
+            case "merchant" -> {
                 Good g = startGood == null ? null : cs.goods.get(startGood);
                 if (g == null) g = cs.goods.values().stream().max((x, y) -> Integer.compare(Engine.cityShare(x), Engine.cityShare(y))).orElseThrow();
                 int pts = Math.min(Rules.MERCHANT_START_SHARES, Engine.cityShare(g));
-                if (pts > 0) { g.shares.merge(id, pts, Integer::sum); g.margins.put(id, "piaci"); }
+                if (pts > 0) { g.shares.merge(id, pts, Integer::sum); g.margins.put(id, "market"); }
             }
-            case "nemesi" -> { cs.parties.put(id, "kozepes"); cs.pop.put(id, Rules.POP_HOME + Rules.NOBLE_START_POP); }
-            case "arnyek" -> cs.spies.put(id, Rules.SHADOW_START_SPIES);
+            case "noble" -> { cs.parties.put(id, "medium"); cs.pop.put(id, Rules.POP_HOME + Rules.NOBLE_START_POP); }
+            case "shadow" -> cs.spies.put(id, Rules.SHADOW_START_SPIES);
             default -> {}
         }
     }

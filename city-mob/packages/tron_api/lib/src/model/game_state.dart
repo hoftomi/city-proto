@@ -6,16 +6,16 @@
 import 'package:tron_api/src/model/offer_view.dart';
 import 'package:tron_api/src/model/intel_view.dart';
 import 'package:tron_api/src/model/city_view.dart';
+import 'package:tron_api/src/model/rival_sheet.dart';
 import 'package:tron_api/src/model/house_ref.dart';
 import 'package:tron_api/src/model/me.dart';
 import 'package:tron_api/src/model/buildable.dart';
 import 'package:tron_api/src/model/cost.dart';
 import 'package:tron_api/src/model/clock_view.dart';
 import 'package:tron_api/src/model/order_view.dart';
+import 'package:tron_api/src/model/sheet_view.dart';
 import 'package:tron_api/src/model/catalog.dart';
-import 'package:tron_api/src/model/rival_lap.dart';
 import 'package:tron_api/src/model/route_view.dart';
-import 'package:tron_api/src/model/lap_view.dart';
 import 'package:tron_api/src/model/threat.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -56,9 +56,9 @@ class GameState {
 
     required  this.draftCost,
 
-    required  this.lap,
+    required  this.sheet,
 
-    required  this.rivalLaps,
+    required  this.rivalSheets,
 
     required  this.threats,
 
@@ -205,25 +205,25 @@ class GameState {
 
   @JsonKey(
     
-    name: r'lap',
+    name: r'sheet',
     required: true,
     includeIfNull: true,
   )
 
 
-  final LapView? lap;
+  final SheetView? sheet;
 
 
 
   @JsonKey(
     
-    name: r'rivalLaps',
+    name: r'rivalSheets',
     required: true,
     includeIfNull: false,
   )
 
 
-  final List<RivalLap> rivalLaps;
+  final List<RivalSheet> rivalSheets;
 
 
 
@@ -302,8 +302,8 @@ class GameState {
       other.cities == cities &&
       other.draft == draft &&
       other.draftCost == draftCost &&
-      other.lap == lap &&
-      other.rivalLaps == rivalLaps &&
+      other.sheet == sheet &&
+      other.rivalSheets == rivalSheets &&
       other.threats == threats &&
       other.intel == intel &&
       other.offers == offers &&
@@ -323,8 +323,8 @@ class GameState {
         cities.hashCode +
         draft.hashCode +
         draftCost.hashCode +
-        (lap == null ? 0 : lap.hashCode) +
-        rivalLaps.hashCode +
+        (sheet == null ? 0 : sheet.hashCode) +
+        rivalSheets.hashCode +
         threats.hashCode +
         intel.hashCode +
         offers.hashCode +

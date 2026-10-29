@@ -6,17 +6,19 @@ import com.hof.tronnelkul.common.CurrentUser;
 import com.hof.tronnelkul.game.service.LobbyService;
 import com.hof.tronnelkul.game.world.MapDefinition;
 import com.hof.tronnelkul.game.world.MapRegistry;
+import com.hof.tronnelkul.i18n.Messages;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
 
-/** Játékválasztó és jelentkezés (api/openapi.yaml, `lobby` tag). */
+/** Game browser and joining (api/openapi.yaml, `lobby` tag). */
 @RestController
 public class LobbyController implements LobbyApi {
     private final LobbyService lobby;
+    private final Messages messages;
 
-    public LobbyController(LobbyService lobby) { this.lobby = lobby; }
+    public LobbyController(LobbyService lobby, Messages messages) { this.lobby = lobby; this.messages = messages; }
 
     @Override
     public List<GameSummary> listGames() { return lobby.list(CurrentUser.id()); }
@@ -24,7 +26,7 @@ public class LobbyController implements LobbyApi {
     @Override
     public GameDetail getGame(String id) { return lobby.detail(id, CurrentUser.id()); }
 
-    /** A térkép (városok, utak, kezdőhelyek, domborzat). Nyilvános adat, a kliens gyorsítótárazhatja. */
+    /** The map (cities, roads, start slots, terrain). Public data, the client may cache it. */
     @Override
     public MapDef getMap(String mapId) { return toDto(MapRegistry.get(mapId)); }
 
@@ -34,13 +36,13 @@ public class LobbyController implements LobbyApi {
     @Override
     public void withdrawGame(String id) { lobby.withdraw(id, CurrentUser.id()); }
 
-    static MapDef toDto(MapDefinition m) {
+    MapDef toDto(MapDefinition m) {
         var t = m.terrain();
-        return new MapDef(m.id(), m.name(),
-            m.cities().stream().map(c -> new CityDef(c.id(), c.name(), c.x(), c.y(), c.key(), c.coast(), c.profile(),
-                c.goods().stream().map(g -> new GoodDef(g.id(), g.name(), g.supply(), g.demand())).toList())).toList(),
+        return new MapDef(m.id(), messages.text(m.label()),
+            m.cities().stream().map(c -> new CityDef(c.id(), messages.text(c.label()), c.x(), c.y(), c.key(), c.coast(), messages.text(c.desc()),
+                c.goods().stream().map(g -> new GoodDef(g.id(), messages.text(g.label()), g.supply(), g.demand())).toList())).toList(),
             m.cityEdges(),
-            m.starts().stream().map(s -> new StartSlot(s.id(), s.name(), s.x(), s.y(), s.neighbors(), s.note())).toList(),
+            m.starts().stream().map(s -> new StartSlot(s.id(), messages.text(m.startLabel(s)), s.x(), s.y(), s.neighbors(), messages.text(m.startNote(s)))).toList(),
             new TerrainDef(t.sea(), t.rivers(), nums(t.mountains()), nums(t.forests()), nums(t.fields()), nums(t.marsh())));
     }
 

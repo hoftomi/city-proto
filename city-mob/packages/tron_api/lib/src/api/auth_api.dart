@@ -20,8 +20,8 @@ class AuthApi {
 
   const AuthApi(this._dio);
 
-  /// Discord-kód cseréje Firebase custom tokenre
-  /// A Google- és az Apple-belépés közvetlenül a Firebase-szel megy. A Discord-kódot a szerver ellenőrzi, és Firebase custom tokent ad.
+  /// Exchange a Discord code for a Firebase custom token
+  /// Google and Apple sign-in go directly through Firebase. The server verifies the Discord code and issues a Firebase custom token.
   ///
   /// Parameters:
   /// * [discordRequest] 
@@ -111,7 +111,7 @@ _responseData = rawData == null ? null : deserialize<CustomTokenResponse, Custom
     );
   }
 
-  /// A bejelentkezett felhasználó (az első hívás létrehozza)
+  /// The signed-in user (the first call creates it)
   /// 
   ///
   /// Parameters:

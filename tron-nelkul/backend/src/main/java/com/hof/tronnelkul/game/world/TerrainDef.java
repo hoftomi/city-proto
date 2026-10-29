@@ -3,8 +3,8 @@ package com.hof.tronnelkul.game.world;
 import java.util.List;
 
 /**
- * A térkép dekoratív domborzata. A kliens rajzolja ki, játékinformációt nem hordoz.
- * mountains: [x, y, méret], forests: [x, y, darab], fields: [x, y, szélesség, magasság, forgatás], marsh: [x, y, darab].
+ * Decorative terrain of the map. Drawn by the client, carries no game information.
+ * mountains: [x, y, size], forests: [x, y, count], fields: [x, y, width, height, rotation], marsh: [x, y, count].
  */
 public record TerrainDef(String sea, List<String> rivers, List<double[]> mountains, List<double[]> forests,
                          List<double[]> fields, List<double[]> marsh) {}

@@ -9,8 +9,8 @@ import com.hof.tronnelkul.common.CurrentUser;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * A Google- és az Apple-belépést a kliens közvetlenül a Firebase-szel végzi. Ide csak a Discord jön:
- * a kódot ellenőrizzük, majd Firebase custom tokent adunk, amellyel a kliens belép a Firebase-be.
+ * Google and Apple sign-in is done by the client directly with Firebase. Only Discord comes here:
+ * we verify the code, then issue a Firebase custom token the client signs in to Firebase with.
  */
 @RestController
 public class AuthController implements AuthApi {
@@ -24,12 +24,12 @@ public class AuthController implements AuthApi {
 
     @Override
     public CustomTokenResponse discordLogin(DiscordRequest r) {
-        if (blank(r.getCode())) throw ApiException.badRequest("Hiányzik a Discord-kód.");
-        if (blank(r.getCodeVerifier())) throw ApiException.badRequest("Hiányzik a PKCE-ellenőrző.");
-        if (blank(r.getRedirectUri())) throw ApiException.badRequest("Hiányzik az átirányítási cím.");
+        if (blank(r.getCode())) throw ApiException.badRequest("server.auth.discord_code_missing");
+        if (blank(r.getCodeVerifier())) throw ApiException.badRequest("server.auth.pkce_missing");
+        if (blank(r.getRedirectUri())) throw ApiException.badRequest("server.auth.redirect_missing");
         ExternalIdentity ext = verifier.discord(r.getCode(), r.getCodeVerifier(), r.getRedirectUri());
         String uid = "discord:" + ext.subject();
-        // A Discord-nevet itt mentjük el, mert a custom tokenes Firebase-fióknak nincs neve.
+        // The Discord name is saved here, because a custom-token Firebase account has no name.
         auth.findOrCreate(uid, ext.email(), ext.name());
         return new CustomTokenResponse(customTokens.create(uid));
     }

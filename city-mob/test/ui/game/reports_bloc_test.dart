@@ -14,7 +14,7 @@ import 'package:tron_nelkul/ui/game/reports/bloc/reports_bloc.dart';
 class _Service extends Mock implements GameService {}
 
 ReportView _report(String id, bool public) =>
-    ReportView(id: id, round: 1, kind: 'kem', confidence: null, title: id, text: '', tone: 'info', createdAt: DateTime.utc(2026, 9, 4), isPublic: public);
+    ReportView(id: id, round: 1, kind: 'spy', confidence: null, title: id, text: '', tone: 'info', createdAt: DateTime.utc(2026, 9, 4), isPublic: public);
 
 void main() {
   final game = GameState.fromJson(jsonDecode(File('test/fixtures/game_state.json').readAsStringSync()) as Map<String, dynamic>);
@@ -26,16 +26,16 @@ void main() {
     when(() => service.reports('delkelet-1')).thenAnswer((_) async => Right(reports));
   });
 
-  blocTest<ReportsBloc, ReportsState>('az első játékállapotnál betölti a jelentéseket',
+  blocTest<ReportsBloc, ReportsState>('loads reports on the first game state',
       build: () => ReportsBloc(service),
       act: (b) => b.add(ReportsGameUpdated(game)),
       expect: () => [
             isA<ReportsState>().having((s) => s.key, 'key', game.feedKey).having((s) => s.status, 'status', ReportsStatus.initial),
             isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.loading),
-            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.ready).having((s) => s.reports, 'jelentések', reports),
+            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.ready).having((s) => s.reports, 'reports', reports),
           ]);
 
-  blocTest<ReportsBloc, ReportsState>('nem tölt újra, ha a játékállapot lényegében nem változott (például új vázlatparancs)',
+  blocTest<ReportsBloc, ReportsState>('does not reload if the game state has not materially changed (e.g. new draft order)',
       build: () => ReportsBloc(service),
       act: (b) async {
         b.add(ReportsGameUpdated(game));
@@ -47,7 +47,7 @@ void main() {
       expect: () => const <ReportsState>[],
       verify: (_) => verify(() => service.reports('delkelet-1')).called(1));
 
-  blocTest<ReportsBloc, ReportsState>('elszámolás után újratölt',
+  blocTest<ReportsBloc, ReportsState>('reloads after settlement',
       build: () => ReportsBloc(service),
       act: (b) async {
         b.add(ReportsGameUpdated(game));
@@ -56,13 +56,13 @@ void main() {
       },
       verify: (_) => verify(() => service.reports('delkelet-1')).called(2));
 
-  blocTest<ReportsBloc, ReportsState>('szűrés: a látható jelentések a szűrő szerint',
+  blocTest<ReportsBloc, ReportsState>('filtering: visible reports follow the filter',
       build: () => ReportsBloc(service),
       seed: () => ReportsState(gameId: 'delkelet-1', status: ReportsStatus.ready, reports: reports),
-      act: (b) => b.add(const ReportsFilterChanged(ReportFilter.sajat)),
-      expect: () => [isA<ReportsState>().having((s) => s.visible.map((r) => r.id), 'látható', ['b'])]);
+      act: (b) => b.add(const ReportsFilterChanged(ReportFilter.own)),
+      expect: () => [isA<ReportsState>().having((s) => s.visible.map((r) => r.id), 'visible', ['b'])]);
 
-  blocTest<ReportsBloc, ReportsState>('hibánál a hiba az állapotban; kézi frissítés után eltűnik',
+  blocTest<ReportsBloc, ReportsState>('on error the failure is in the state; cleared after manual refresh',
       build: () {
         var n = 0;
         when(() => service.reports('delkelet-1')).thenAnswer((_) async => n++ == 0 ? const Left(Failure.offline) : Right(reports));
@@ -75,8 +75,8 @@ void main() {
       },
       skip: 2,
       expect: () => [
-            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.failure).having((s) => s.failure, 'hiba', Failure.offline),
+            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.failure).having((s) => s.failure, 'failure', Failure.offline),
             isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.loading),
-            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.ready).having((s) => s.failure, 'hiba', isNull),
+            isA<ReportsState>().having((s) => s.status, 'status', ReportsStatus.ready).having((s) => s.failure, 'failure', isNull),
           ]);
 }

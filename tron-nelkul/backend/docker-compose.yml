@@ -1,5 +1,5 @@
-# Helyi futtatás: `docker compose up -d db` csak az adatbázist indítja,
-# `docker compose up --build` a backendet is.
+# Local run: `docker compose up -d db` starts the database only,
+# `docker compose up --build` the backend too.
 services:
   db:
     image: postgres:17
@@ -30,7 +30,7 @@ services:
       FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-city-proto}
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
-      # Discord-belépéshez: a Firebase service account kulcsa (lásd README, 2. fejezet)
+      # For Discord sign-in: the Firebase service account key (see README, chapter 2)
       # GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase-service-account.json
     # volumes:
     #   - ./secrets/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro

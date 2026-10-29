@@ -11,7 +11,7 @@ import '../../../../widgets/game_widgets.dart';
 import '../bloc/city_bloc.dart';
 import 'city_common.dart';
 
-/// Vásártér: kivásárlási fenyegetések, árucikkek, haszonkulcs, vétel a Várostól és kivásárlás.
+/// Marketplace: buyout threats, goods, margin, buy from the City and buyout.
 class MarketSection extends StatelessWidget {
   const MarketSection({super.key, required this.s});
   final CityState s;

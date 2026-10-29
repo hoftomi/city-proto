@@ -7,7 +7,7 @@ sealed class ReportsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Megváltozott a játékállapot (a GameBlocból); a bloc dönti el, kell-e újratölteni.
+/// The game state changed (from the GameBloc); the bloc decides whether to reload.
 class ReportsGameUpdated extends ReportsEvent {
   const ReportsGameUpdated(this.game);
   final GameState? game;
@@ -16,7 +16,7 @@ class ReportsGameUpdated extends ReportsEvent {
   List<Object?> get props => [game];
 }
 
-/// Kézi frissítés (lehúzás).
+/// Manual refresh (pull-to-refresh).
 class ReportsRefreshRequested extends ReportsEvent {
   const ReportsRefreshRequested();
 }

@@ -1,7 +1,7 @@
 # Tabs
 
-Bőrfülek: a fülsor a fa alapvonalra ül. A kijelölt fül világos pergamen, felül bronz csíkkal, és rálóg a tartalomra.
+Leather tabs: the tab row sits on the wooden baseline. The selected tab is light parchment with a bronze stripe on top, and it overlaps the content.
 
-**Mit ad a hívó:** `tabs` (`[{id, label, badge?, art?, tone?}]`), `active`, `onChange`.
+**What the caller provides:** `tabs` (`[{id, label, badge?, art?, tone?}]`), `active`, `onChange`.
 
-- A `tone` (`vasarter` | `varoshaza` | `alvilag`) a felső csíkot az ág színére festi.
+- `tone` (`vasarter` | `varoshaza` | `alvilag`) paints the top stripe in the branch's color.

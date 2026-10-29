@@ -6,19 +6,19 @@ import '../../core/failure.dart';
 import '../../core/session_events.dart';
 import '../../data/repository/repositories.dart';
 
-/// Bejelentkezés és kilépés. A szolgáltatók: google, apple, discord.
+/// Sign-in and sign-out. Providers: google, apple, discord.
 @lazySingleton
 class AuthService {
   AuthService(this._repo, this._events);
   final AuthRepository _repo;
   final SessionEvents _events;
 
-  /// A szerver 401-et adott: a munkamenet lejárt.
+  /// The server returned 401: the session expired.
   Stream<void> get sessionExpired => _events.expired;
 
   Future<UserDto?> restore() => _repo.restore();
 
-  /// null jobb oldal: a felhasználó megszakította a belépést.
+  /// null right side: the user cancelled sign-in.
   Future<Either<Failure, UserDto?>> signIn(String provider) => _repo.signIn(provider);
 
   Future<Either<Failure, UserDto>> refresh() => _repo.refresh();

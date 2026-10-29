@@ -12,8 +12,8 @@ import org.springframework.web.client.RestClientException;
 import java.util.Map;
 
 /**
- * A Firebase által beépítetten nem támogatott szolgáltatók ellenőrzése.
- * Discord: OAuth 2.0 authorization code + PKCE csere, majd a felhasználói profil lekérése.
+ * Verification of providers Firebase does not support out of the box.
+ * Discord: OAuth 2.0 authorization code + PKCE exchange, then fetching the user profile.
  */
 @Component
 public class ProviderVerifier {
@@ -26,7 +26,7 @@ public class ProviderVerifier {
     public ExternalIdentity discord(String code, String codeVerifier, String redirectUri) {
         var a = props.auth();
         if (a.discordClientId() == null || a.discordClientId().isBlank())
-            throw ApiException.badRequest("A Discord-belépés nincs beállítva a szerveren (DISCORD_CLIENT_ID).");
+            throw ApiException.badRequest("server.auth.discord_no_client_id");
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("client_id", a.discordClientId());
         if (a.discordClientSecret() != null && !a.discordClientSecret().isBlank()) form.add("client_secret", a.discordClientSecret());
@@ -38,15 +38,15 @@ public class ProviderVerifier {
             Map<String, Object> token = http.post().uri("https://discord.com/api/oauth2/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED).body(form).retrieve().body(Map.class);
             String access = token == null ? null : (String) token.get("access_token");
-            if (access == null) throw ApiException.unauthorized("A Discord nem adott hozzáférési tokent.");
+            if (access == null) throw ApiException.unauthorized("server.auth.discord_no_token");
             Map<String, Object> me = http.get().uri("https://discord.com/api/users/@me")
                 .header("Authorization", "Bearer " + access).retrieve().body(Map.class);
-            if (me == null || me.get("id") == null) throw ApiException.unauthorized("A Discord-profil nem kérhető le.");
+            if (me == null || me.get("id") == null) throw ApiException.unauthorized("server.auth.discord_no_profile");
             Object global = me.get("global_name");
             String name = global != null ? global.toString() : String.valueOf(me.get("username"));
             return new ExternalIdentity("discord", me.get("id").toString(), (String) me.get("email"), name);
         } catch (RestClientException e) {
-            throw ApiException.unauthorized("A Discord-belépés nem sikerült. Próbáld újra.");
+            throw ApiException.unauthorized("server.auth.discord_failed");
         }
     }
 }

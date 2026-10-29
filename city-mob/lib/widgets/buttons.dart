@@ -6,7 +6,7 @@ import 'tn_icon.dart';
 
 enum TnButtonKind { normal, primary, seal, quiet, danger }
 
-/// A 80%-os szürkítés (CSS `grayscale(.8)`) színmátrixa a letiltott gombokhoz.
+/// Color matrix for 80% desaturation (CSS `grayscale(.8)`) on disabled buttons.
 const ColorFilter kGrayscale80 = ColorFilter.matrix([
   0.3702, 0.5723, 0.0575, 0, 0, //
   0.1702, 0.7723, 0.0575, 0, 0, //
@@ -14,11 +14,11 @@ const ColorFilter kGrayscale80 = ColorFilter.matrix([
   0, 0, 0, 1, 0,
 ]);
 
-/// Egy matt gombfesték három árnyalata (felső fény, alap, alsó perem).
+/// Three shades of a matte button paint (top highlight, base, bottom rim).
 typedef Paint3 = (Color hi, Color base, Color lo);
 
-/// Matt, enyhén domború felület: felső fény, alsó perem, tintakontúr és vetett árnyék (tn-btn).
-/// A CSS belső árnyékait (inset box-shadow) csíkokkal közelíti.
+/// Matte, slightly convex surface: top highlight, bottom rim, ink outline and drop shadow (tn-btn).
+/// Approximates the CSS inner shadows (inset box-shadow) with strips.
 class Bevel extends StatelessWidget {
   const Bevel({
     super.key,
@@ -76,13 +76,13 @@ class Bevel extends StatelessWidget {
   }
 }
 
-/// A design system gombja. Az érintési cél legalább 44 px magas (kicsi: 34 px, lepecsételés: 50 px).
+/// The design system button. Touch target is at least 44 px tall (small: 34 px, sealing: 50 px).
 ///
-/// * [kind]: `normal` acélkék (alap), `primary` erdőzöld, `seal` bronz sötét Cinzel felirattal
-///   (kizárólag a lepecsételéshez), `danger` téglavörös, `quiet` pergamen.
-/// * [art]: játékikon a felirat előtt ([GameIcon] név). Ha nincs megadva, az [icon] névből
-///   automatikusan játékikon lesz, ha van ilyen (például `route`, `pp`, `varos` → `navVaros`),
-///   különben az [icon] vonalikonként jelenik meg.
+/// * [kind]: `normal` steel blue (default), `primary` forest green, `seal` bronze with dark Cinzel label
+///   (for sealing only), `danger` brick red, `quiet` parchment.
+/// * [art]: game icon before the label ([GameIcon] name). If not given, the [icon] name
+///   automatically becomes a game icon if one exists (e.g. `route`, `pp`, `city` → `navCity`),
+///   otherwise [icon] is shown as a line icon.
 class TnButton extends StatefulWidget {
   const TnButton({
     super.key,
@@ -105,7 +105,7 @@ class TnButton extends StatefulWidget {
   final String? icon, art;
   final bool small, busy, expand, alignStart;
 
-  /// Egyedi elem a felirat előtt (például a közösségi belépés betűjele).
+  /// Custom element before the label (e.g. the social sign-in letter mark).
   final Widget? leading;
   final double? minHeight, fontSize;
 
@@ -195,8 +195,8 @@ class _TnButtonState extends State<TnButton> {
   }
 }
 
-/// Kis pergamen kapcsológomb (margin-btn, clock-btns): fokozatválasztó, szűrő, admin óra.
-/// A kijelölt ([on]) változat erdőzöld, világos felirattal.
+/// Small parchment toggle button (margin-btn, clock-btns): level picker, filter, admin clock.
+/// The selected ([on]) variant is forest green with a light label.
 class TnMiniButton extends StatelessWidget {
   const TnMiniButton({super.key, required this.child, this.on = false, this.onTap, this.semanticLabel});
   final Widget child;

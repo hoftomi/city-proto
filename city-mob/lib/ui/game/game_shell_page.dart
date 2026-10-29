@@ -16,9 +16,9 @@ import '../../widgets/tn_icon.dart';
 import '../auth/bloc/auth_bloc.dart';
 import 'bloc/game_bloc.dart';
 
-/// A futó játék kerete: betöltés és hiba, faragott fejléc (ház, elszámolás-időzítő, erőforrások), fejlesztői óra
-/// (csak ADMIN), a fülek (StatefulShellRoute ágai) és az alsó navigáció. A játék egyszeri üzeneteit (toast) is
-/// itt mutatjuk, egyetlen helyen.
+/// The running game's frame: loading and error, carved header (house, settlement timer, resources), dev clock
+/// (ADMIN only), the tabs (StatefulShellRoute branches) and the bottom navigation. The game's one-off messages (toast)
+/// are also shown here, in one place.
 class GameShellPage extends StatelessWidget {
   const GameShellPage({super.key, required this.shell});
   final StatefulNavigationShell shell;
@@ -52,7 +52,7 @@ class GameShellPage extends StatelessWidget {
   }
 }
 
-/// A játék nem töltődött be: vissza a játékokhoz, vagy újra.
+/// The game failed to load: back to the games, or retry.
 class _Failure extends StatelessWidget {
   const _Failure({required this.message, required this.gameId});
   final String message;
@@ -82,7 +82,7 @@ class _Failure extends StatelessWidget {
   }
 }
 
-/// Faragott fa fejléc: kilépés sáv, ház címere és neve, elszámolás-időzítő, erőforrás-kapszulák.
+/// Carved wooden header: exit bar, house crest and name, settlement timer, resource capsules.
 class _TopBar extends StatelessWidget {
   const _TopBar();
 
@@ -92,7 +92,7 @@ class _TopBar extends StatelessWidget {
     return BlocBuilder<GameBloc, GameViewState>(
       buildWhen: (a, b) => a.game != b.game || a.now != b.now,
       builder: (context, v) {
-        final s = v.game!, me = s.me, lap = s.lap, next = s.clock.nextSettlementAt;
+        final s = v.game!, me = s.me, sheet = s.sheet, next = s.clock.nextSettlementAt;
         return TnHeader(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           top: Padding(
@@ -122,10 +122,10 @@ class _TopBar extends StatelessWidget {
             ]),
             const SizedBox(height: 8),
             Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              ResourceChip(kind: 'arany', value: me.gold.floor()),
+              ResourceChip(kind: 'gold', value: me.gold.floor()),
               ResourceChip(kind: 'pp', value: me.pp, max: me.ppMax),
               ResourceChip(kind: 'legit', value: me.legit),
-              if (lap != null) Text('shell.lap_live_in'.tr(namedArgs: {'time': durText(v.until(lap.executeAt))}), style: TnText.caption(const Color(0xFFD9C49A))),
+              if (sheet != null) Text('shell.sheet_live_in'.tr(namedArgs: {'time': durText(v.until(sheet.executeAt))}), style: TnText.caption(const Color(0xFFD9C49A))),
             ]),
           ]),
         );
@@ -134,7 +134,7 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-/// Fejlesztői óra (csak ADMIN): pergamencsík a fejléc alatt, előretekerés és azonnali elszámolás.
+/// Dev clock (ADMIN only): parchment strip under the header, fast-forward and immediate settlement.
 class _AdminBar extends StatelessWidget {
   const _AdminBar();
 
@@ -160,10 +160,7 @@ class _AdminBar extends StatelessWidget {
               Text(v.now == null ? '' : shortDateTime(v.now!), style: TnText.data(c.ink)),
             ]),
             Wrap(spacing: 5, runSpacing: 5, children: [
-              btn('shell.admin.advance_30m'.tr(), const GameAdminAdvanceRequested(30)),
-              btn('shell.admin.advance_2h'.tr(), const GameAdminAdvanceRequested(120)),
-              btn('shell.admin.next_event'.tr(), const GameAdminAdvanceRequested(null), on: true),
-              btn('shell.admin.settle_now'.tr(), const GameAdminSettleRequested()),
+              btn('shell.admin.settle_now'.tr(), const GameAdminSettleRequested(), on: true),
             ]),
           ]),
         );
@@ -172,7 +169,7 @@ class _AdminBar extends StatelessWidget {
   }
 }
 
-/// Alsó navigáció: a StatefulShellRoute ágai (0 Térkép, 1 Város, 2 Jelentések, 3 Parancslap, 4 Rangsor).
+/// Bottom navigation: the StatefulShellRoute branches (0 Map, 1 City, 2 Reports, 3 Order sheet, 4 Ranking).
 class _NavBar extends StatelessWidget {
   const _NavBar({required this.shell});
   final StatefulNavigationShell shell;
@@ -185,9 +182,9 @@ class _NavBar extends StatelessWidget {
         active: shell.currentIndex,
         onChange: shell.goBranch,
         items: [
-          TnNavItem('shell.nav.map'.tr(), icon: 'terkep'),
-          TnNavItem('shell.nav.city'.tr(), icon: 'varos'),
-          TnNavItem('shell.nav.reports'.tr(), icon: 'kem'),
+          TnNavItem('shell.nav.map'.tr(), icon: 'map'),
+          TnNavItem('shell.nav.city'.tr(), icon: 'city'),
+          TnNavItem('shell.nav.reports'.tr(), icon: 'spy', art: 'navReports'),
           TnNavItem('shell.nav.orders'.tr(), icon: 'pp', badge: badgeText(orders)),
           TnNavItem('shell.nav.ranking'.tr(), icon: 'legit'),
         ],

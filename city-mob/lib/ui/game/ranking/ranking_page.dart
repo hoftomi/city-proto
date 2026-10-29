@@ -9,8 +9,8 @@ import '../bloc/game_bloc.dart';
 import '../widgets/game_tab_scroll.dart';
 import 'bloc/ranking_bloc.dart';
 
-/// A Rangsor fül: legitimitás-rangsor és a saját népszerűség városonként. A játékállapot változásait
-/// továbbadja a RankingBlocnak, amely eldönti, kell-e újratölteni.
+/// The Ranking tab: legitimacy ranking and own popularity per city. Forwards game state changes
+/// to the RankingBloc, which decides whether to reload.
 class RankingPage extends StatelessWidget {
   const RankingPage({super.key});
 

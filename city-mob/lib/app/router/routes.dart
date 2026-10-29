@@ -1,4 +1,4 @@
-/// Az app útvonalai (go_router). A játék fülei egy StatefulShellRoute ágai.
+/// App routes (go_router). The game's tabs are branches of a StatefulShellRoute.
 class Routes {
   static const splash = '/';
   static const login = '/login';
@@ -9,7 +9,7 @@ class Routes {
 
   static String map(String id) => '/games/$id/play/map';
 
-  /// A városnézet; a város és a negyed (keresk | polit | kem) lekérdezési paraméter, így mélylinkelhető.
+  /// The city view; the city and the district (trade | politics | espionage) are query parameters, so it's deep-linkable.
   static String city(String id, {String? cityId, String? district}) => Uri(
         path: '/games/$id/play/city',
         queryParameters: {'c': ?cityId, 'd': ?district},

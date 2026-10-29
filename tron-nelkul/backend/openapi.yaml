@@ -1,21 +1,21 @@
-# Trón nélkül – API-szerződés. Ez az egyetlen igazságforrás: a backend és a mobil is ebből generál.
+# Tron Nelkul – API contract. This is the single source of truth: both the backend and the mobile client generate from it.
 openapi: 3.0.3
 info:
-  title: Trón nélkül API
+  title: Tron Nelkul API
   version: 0.0.2
-  description: 'A Trón nélkül szerverének API-ja (szabálykönyv v0.2). Ebből generálja a Spring backend az interfészeket és a modelleket (openapi-generator, spring), és a mobil kliens a Dio-alapú kéréseket és a modelleket (dart-dio). Minden hiba RFC 9457 ProblemDetail, a detail mező magyar szöveg. Arany: a játékos készlete tizedes, minden költség egész. Időpontok: ISO-8601.'
+  description: 'API of the Tron Nelkul server (rulebook v0.2). The Spring backend generates its interfaces and models from it (openapi-generator, spring), and the mobile client its Dio-based requests and models (dart-dio). Every error is an RFC 9457 ProblemDetail; detail is displayable text. Gold: the player''s stock is decimal, every cost is an integer. Timestamps: ISO-8601.'
 servers:
 - url: http://localhost:8080
-  description: Helyi fejlesztés
+  description: Local development
 tags:
 - name: auth
-  description: Bejelentkezés
+  description: Sign-in
 - name: lobby
-  description: Játékválasztó és jelentkezés
+  description: Game browser and joining
 - name: game
-  description: A játék
+  description: The game
 - name: admin
-  description: Fejlesztői végpontok (ADMIN)
+  description: Development endpoints (ADMIN)
 - name: i18n
   description: A mobil kliens feliratai
 security:
@@ -26,14 +26,14 @@ paths:
       operationId: getTranslations
       tags:
       - i18n
-      summary: A kliens összes felirata egy nyelven (easy_localization formátum)
-      description: Névterenként beágyazott kulcs–szöveg párok (például {"lobby":{"title":"Játékok"}}). A paraméterek {név} alakúak. Ismeretlen nyelvnél a magyar változat jön. Bejelentkezés nélkül is elérhető, mert a belépőképernyő is ebből dolgozik.
+      summary: All client texts in one language (easy_localization format)
+      description: Key–text pairs nested by namespace (for example {"lobby":{"title":"..."}}). Parameters look like {name}. An unknown language falls back to Hungarian. Available without sign-in, because the sign-in screen uses it too.
       security: []
       parameters:
       - name: lang
         in: path
         required: true
-        description: Nyelvkód, például hu
+        description: Language code, for example hu
         schema:
           type: string
       responses:
@@ -50,8 +50,8 @@ paths:
       operationId: discordLogin
       tags:
       - auth
-      summary: Discord-kód cseréje Firebase custom tokenre
-      description: A Google- és az Apple-belépés közvetlenül a Firebase-szel megy. A Discord-kódot a szerver ellenőrzi, és Firebase custom tokent ad.
+      summary: Exchange a Discord code for a Firebase custom token
+      description: Google and Apple sign-in go directly through Firebase. The server verifies the Discord code and issues a Firebase custom token.
       requestBody:
         required: true
         content:
@@ -73,7 +73,7 @@ paths:
       operationId: getMe
       tags:
       - auth
-      summary: A bejelentkezett felhasználó (az első hívás létrehozza)
+      summary: The signed-in user (the first call creates it)
       responses:
         '200':
           description: OK
@@ -88,7 +88,7 @@ paths:
       operationId: listGames
       tags:
       - lobby
-      summary: Játékok listája, saját házzal
+      summary: List of games, with the own house
       responses:
         '200':
           description: OK
@@ -105,14 +105,14 @@ paths:
       operationId: getGame
       tags:
       - lobby
-      summary: 'Játék részletei: kezdőhelyek, hátterek, tinktúrák'
+      summary: 'Game details: start slots, backgrounds, tinctures'
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -127,14 +127,14 @@ paths:
       operationId: getMap
       tags:
       - lobby
-      summary: 'Térkép: városok, utak, kezdőhelyek, domborzat (gyorsítótárazható)'
+      summary: 'Map: cities, roads, start slots, terrain (cacheable)'
       parameters:
       - name: mapId
         in: path
         required: true
         schema:
           type: string
-        description: A térkép azonosítója
+        description: Map id
       responses:
         '200':
           description: OK
@@ -149,14 +149,14 @@ paths:
       operationId: joinGame
       tags:
       - lobby
-      summary: Jelentkezés (futó játékba az első 3 elszámolásig)
+      summary: Join (a running game until its first 3 settlements)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       requestBody:
         required: true
         content:
@@ -165,7 +165,7 @@ paths:
               $ref: '#/components/schemas/JoinRequest'
       responses:
         '201':
-          description: Létrejött
+          description: Created
           content:
             application/json:
               schema:
@@ -176,14 +176,14 @@ paths:
       operationId: withdrawGame
       tags:
       - lobby
-      summary: Jelentkezés visszavonása (csak a kezdés előtt)
+      summary: Withdraw (only before the start)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '204':
           description: Visszavonva
@@ -194,14 +194,14 @@ paths:
       operationId: getState
       tags:
       - game
-      summary: A játékos nézete (előtte a szerver lefuttatja az esedékes eseményeket)
+      summary: The player's view (the server runs the due events first)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -216,14 +216,14 @@ paths:
       operationId: addOrder
       tags:
       - game
-      summary: Parancs a vázlatra
+      summary: Add an order to the draft
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       requestBody:
         required: true
         content:
@@ -244,20 +244,20 @@ paths:
       operationId: removeOrder
       tags:
       - game
-      summary: Parancs törlése a vázlatról
+      summary: Remove an order from the draft
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       - name: orderId
         in: path
         required: true
         schema:
           type: string
-        description: A parancs azonosítója
+        description: Order id
       responses:
         '200':
           description: OK
@@ -272,14 +272,14 @@ paths:
       operationId: seal
       tags:
       - game
-      summary: 'Lepecsételés: a vázlatból érlelő parancslap lesz (visszavonni nem lehet)'
+      summary: 'Seal: the draft becomes a maturing order sheet (cannot be undone)'
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -294,20 +294,20 @@ paths:
       operationId: offerIntel
       tags:
       - game
-      summary: Kifürkészett parancslap felkínálása egy megnevezett háznak (7.5)
+      summary: Offer a scouted order sheet to a named house (7.5)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       - name: intelId
         in: path
         required: true
         schema:
           type: string
-        description: A kifürkészett terv azonosítója
+        description: Id of the scouted plan
       requestBody:
         required: true
         content:
@@ -328,20 +328,20 @@ paths:
       operationId: acceptOffer
       tags:
       - game
-      summary: 'Ajánlat elfogadása (letét: fizetés, és azonnal megkapod)'
+      summary: 'Accept an offer (escrow: you pay and receive it at once)'
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       - name: offerId
         in: path
         required: true
         schema:
           type: string
-        description: Az ajánlat azonosítója
+        description: Offer id
       responses:
         '200':
           description: OK
@@ -356,20 +356,20 @@ paths:
       operationId: declineOffer
       tags:
       - game
-      summary: Ajánlat elutasítása
+      summary: Decline an offer
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       - name: offerId
         in: path
         required: true
         schema:
           type: string
-        description: Az ajánlat azonosítója
+        description: Offer id
       responses:
         '200':
           description: OK
@@ -384,14 +384,14 @@ paths:
       operationId: getReports
       tags:
       - game
-      summary: Jelentések (a legutóbbi 100)
+      summary: Reports (the latest 100)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -408,14 +408,14 @@ paths:
       operationId: getRanking
       tags:
       - game
-      summary: Rangsor Legitimitás szerint
+      summary: Ranking by Legitimacy
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -432,14 +432,14 @@ paths:
       operationId: adminStart
       tags:
       - admin
-      summary: Játék indítása (ADMIN)
+      summary: Start a game (ADMIN)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
+        description: Game id
       responses:
         '200':
           description: OK
@@ -454,42 +454,14 @@ paths:
       operationId: adminSettle
       tags:
       - admin
-      summary: Azonnali elszámolás (ADMIN)
+      summary: Immediate settlement (ADMIN)
       parameters:
       - name: id
         in: path
         required: true
         schema:
           type: string
-        description: A játék azonosítója
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminResult'
-        default:
-          $ref: '#/components/responses/Problem'
-  /api/admin/games/{id}/advance:
-    post:
-      operationId: adminAdvance
-      tags:
-      - admin
-      summary: 'Az óra előretekerése; minutes = null: a következő eseményig (ADMIN)'
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description: A játék azonosítója
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdvanceRequest'
+        description: Game id
       responses:
         '200':
           description: OK
@@ -519,7 +491,7 @@ components:
   schemas:
     ActionInfo:
       type: object
-      description: 'gold: null, ha számolt (részesedés, kivásárlás, védekezés).'
+      description: 'gold: null if computed (shares, buyout, defence).'
       required:
       - id
       - label
@@ -542,24 +514,12 @@ components:
           nullable: true
     AdminResult:
       type: object
-      description: Az admin művelet eredménye.
+      description: Result of the admin operation.
       properties:
         started:
           type: string
           nullable: true
         settlements:
-          type: integer
-          format: int32
-          nullable: true
-        advancedMinutes:
-          type: integer
-          format: int32
-          nullable: true
-    AdvanceRequest:
-      type: object
-      required: []
-      properties:
-        minutes:
           type: integer
           format: int32
           nullable: true
@@ -626,7 +586,7 @@ components:
           $ref: '#/components/schemas/RulesInfo'
     CityDef:
       type: object
-      description: Egy városállam a térképen.
+      description: A city-state on the map.
       required:
       - id
       - name
@@ -659,7 +619,7 @@ components:
             $ref: '#/components/schemas/GoodDef'
     CityView:
       type: object
-      description: 'reach: reachable | unreachable. present: a városban jelen lévő más házak (hír célpontja lehet). foreignSpies: pletyka a más házak kémeiről (csak a nevük). myProgram: null, ha nincs pártod itt.'
+      description: 'reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses'' spies (names only). myProgram: null if you have no party here.'
       required:
       - id
       - name
@@ -746,7 +706,7 @@ components:
             $ref: '#/components/schemas/NewsView'
     ClockView:
       type: object
-      description: 'now: a játék órája (fejlesztéskor előretekerhető). campaign: a következő elszámolás választás, a fesztivál hatása és ára dupla. nextElectionIn: ennyi elszámolás múlva lesz választás.'
+      description: 'now: the game clock (can be fast-forwarded in development). campaign: the next settlement is an election, festival effect and price are doubled. nextElectionIn: settlements until the next election.'
       required:
       - now
       - nextSettlementAt
@@ -790,7 +750,7 @@ components:
           format: int32
     CustomTokenResponse:
       type: object
-      description: Firebase custom token a Discord-belépéshez.
+      description: Firebase custom token for Discord sign-in.
       required:
       - customToken
       properties:
@@ -846,8 +806,8 @@ components:
       - cities
       - draft
       - draftCost
-      - lap
-      - rivalLaps
+      - sheet
+      - rivalSheets
       - threats
       - intel
       - offers
@@ -884,14 +844,14 @@ components:
             $ref: '#/components/schemas/OrderView'
         draftCost:
           $ref: '#/components/schemas/Cost'
-        lap:
+        sheet:
           allOf:
-          - $ref: '#/components/schemas/LapView'
+          - $ref: '#/components/schemas/SheetView'
           nullable: true
-        rivalLaps:
+        rivalSheets:
           type: array
           items:
-            $ref: '#/components/schemas/RivalLap'
+            $ref: '#/components/schemas/RivalSheet'
         threats:
           type: array
           items:
@@ -912,17 +872,14 @@ components:
           $ref: '#/components/schemas/Catalog'
     GameSummary:
       type: object
-      description: round = eddigi elszámolások, maxRounds = a szezon elszámolásai (napi 2).
+      description: 'status: announced / open / running / finished (a finished game comes from the archive). closesAt = sign-up closes, the game starts then. round = settlements so far, maxRounds = settlements of the season (1 month, 2 per day).'
       required:
       - id
       - name
-      - season
       - status
       - mapId
-      - startsAt
+      - closesAt
       - opensAt
-      - days
-      - roundsPerDay
       - round
       - maxRounds
       - players
@@ -938,13 +895,11 @@ components:
           type: string
         name:
           type: string
-        season:
-          type: string
         status:
           type: string
         mapId:
           type: string
-        startsAt:
+        closesAt:
           type: string
           format: date-time
           nullable: true
@@ -952,12 +907,6 @@ components:
           type: string
           format: date-time
           nullable: true
-        days:
-          type: integer
-          format: int32
-        roundsPerDay:
-          type: integer
-          format: int32
         round:
           type: integer
           format: int32
@@ -993,7 +942,7 @@ components:
           nullable: true
     GoodDef:
       type: object
-      description: 'Árucikk: kínálat és kereslet elszámolásonként.'
+      description: 'Good: supply and demand per settlement.'
       required:
       - id
       - name
@@ -1022,7 +971,7 @@ components:
           type: string
     GoodView:
       type: object
-      description: 'marketValue: egy pont piaci értéke aranyban (az utolsó 3 elszámolás átlagos haszna pontonként × 10).'
+      description: 'marketValue: market value of a point in gold (average profit per point over the last 3 settlements × 10).'
       required:
       - id
       - name
@@ -1081,7 +1030,7 @@ components:
           type: boolean
     IntelView:
       type: object
-      description: 'Kifürkészett parancslap. depth: 1 típus, 2 célpont is, 3 költség is. live: még érlelődik (eladható).'
+      description: 'Scouted order sheet. depth: 1 type, 2 target too, 3 cost too. live: still maturing (sellable).'
       required:
       - id
       - of
@@ -1116,7 +1065,7 @@ components:
           type: boolean
     JoinRequest:
       type: object
-      description: 'startGood: csak a Kereskedőháznál, a kezdőváros egyik árucikke.'
+      description: 'startGood: merchant background only, one of the home city''s goods.'
       required:
       - houseName
       - tincture
@@ -1134,7 +1083,7 @@ components:
         startGood:
           type: string
           nullable: true
-    LapView:
+    SheetView:
       type: object
       required:
       - id
@@ -1177,7 +1126,7 @@ components:
           format: int32
     MapDef:
       type: object
-      description: 'Egy régió térképe: városok, utak, kezdőhelyek és domborzat (360×260).'
+      description: 'A region''s map: cities, roads, start slots and terrain (360×260).'
       required:
       - id
       - name
@@ -1287,7 +1236,7 @@ components:
           type: boolean
     NewsView:
       type: object
-      description: 'verified: a saját ellenőrzésed eredménye (igaz / hamis), vagy null, ha nem ellenőrizted.'
+      description: 'verified: result of your own verification (true / false), or null if you did not verify it.'
       required:
       - id
       - text
@@ -1336,7 +1285,7 @@ components:
           nullable: true
     OfferView:
       type: object
-      description: 'Neked felkínált információ (letét: elfogadáskor fizetsz, és azonnal megkapod).'
+      description: 'Information offered to you (escrow: you pay on acceptance and receive it at once).'
       required:
       - id
       - seller
@@ -1358,7 +1307,7 @@ components:
           format: date-time
     OrderRequest:
       type: object
-      description: 'Parancs a vázlatra. type szerint: route(from,to) · margin(city,good,level) · buyShares(city,good,pts) · buyout(city,good,target,pts) · defend(city,lapId,orderId) · foundParty(city) · program(city,level) · festival(city) · news(city,template,target,good?) · hireSpy(city) · moveSpy(city,to) · guard(city) · spy(city,target) · verify(city,newsId) · debunk(city,newsId)'
+      description: 'Order for the draft. By type: route(from,to) · margin(city,good,level) · buyShares(city,good,pts) · buyout(city,good,target,pts) · defend(city,sheetId,orderId) · foundParty(city) · program(city,level) · festival(city) · news(city,template,target,good?) · hireSpy(city) · moveSpy(city,to) · guard(city) · spy(city,target) · verify(city,newsId) · debunk(city,newsId)'
       required:
       - type
       properties:
@@ -1386,7 +1335,7 @@ components:
         newsId:
           type: string
           nullable: true
-        lapId:
+        sheetId:
           type: string
           nullable: true
         orderId:
@@ -1400,7 +1349,7 @@ components:
           nullable: true
     OrderView:
       type: object
-      description: 'branch: kozos | keresk | polit | kem. warning: például hamis hírnél „Ez az állítás jelenleg nem igaz.”'
+      description: 'branch: common | trade | politics | espionage. warning: why the order would not run now, or that the news is currently false.'
       required:
       - id
       - type
@@ -1461,7 +1410,7 @@ components:
           format: double
     ProblemDetail:
       type: object
-      description: RFC 9457 hibaválasz; a detail mező magyar, megjeleníthető szöveg.
+      description: RFC 9457 error response; detail is displayable text.
       properties:
         type:
           type: string
@@ -1476,7 +1425,7 @@ components:
           type: string
         code:
           type: string
-          description: 'Opcionális gépi kód, amely alapján a kliens dönthet (például house_name: a ház neve hibás vagy foglalt).'
+          description: 'Optional machine code the client can act on (for example house_name: the house name is invalid or taken).'
     RankRow:
       type: object
       required:
@@ -1514,7 +1463,7 @@ components:
           type: boolean
     ReportView:
       type: object
-      description: 'round: a jelentés elszámolásának sorszáma. isPublic: mindenki megkapta (választás, hír, leleplezés).'
+      description: 'round: number of the report''s settlement. isPublic: everyone received it (election, news, debunk). kind: spy | faction | diplomacy | event. confidence: weak | medium | strong, or null.'
       required:
       - id
       - round
@@ -1547,9 +1496,9 @@ components:
           format: date-time
         isPublic:
           type: boolean
-    RivalLap:
+    RivalSheet:
       type: object
-      description: Egy rivális érlelő parancslapja (a kifürkészés célpontja).
+      description: A rival's maturing order sheet (target of scouting).
       required:
       - house
       - executeAt
@@ -1659,7 +1608,7 @@ components:
           format: int32
     Seller:
       type: object
-      description: Egy árucikk eladója. A Város sorában house = null és city = true.
+      description: A seller of a good. In the City's row house = null and city = true.
       required:
       - house
       - city
@@ -1690,7 +1639,7 @@ components:
           type: boolean
     StartSlot:
       type: object
-      description: Kezdőhely (birtok); az első szomszéd a kezdőváros.
+      description: Start slot (estate); the first neighbour is the home city.
       required:
       - id
       - name
@@ -1717,7 +1666,7 @@ components:
           type: string
     StartSlotDto:
       type: object
-      description: 'homeCity: a kezdőváros (itt 20 a népszerűség, ide szól a háttér bónusza); homeGoods: a Kereskedőház választhat belőle.'
+      description: 'homeCity: the home city (popularity is 20 here, the background bonus applies here); homeGoods: the merchant background picks from these.'
       required:
       - id
       - name
@@ -1760,11 +1709,11 @@ components:
             $ref: '#/components/schemas/GoodOption'
     Translations:
       type: object
-      description: Névterenként beágyazott fordítások; a levelek szövegek.
+      description: Translations nested by namespace; the leaves are texts.
       additionalProperties: true
     TerrainDef:
       type: object
-      description: 'Dekoratív domborzat. mountains: [x, y, méret], forests: [x, y, darab], fields: [x, y, sz, m, forgatás], marsh: [x, y, darab].'
+      description: 'Decorative terrain. mountains: [x, y, size], forests: [x, y, count], fields: [x, y, w, h, rotation], marsh: [x, y, count].'
       required:
       - sea
       - rivers
@@ -1810,9 +1759,9 @@ components:
               format: double
     Threat:
       type: object
-      description: 'Kivásárlási ajánlat ellened. defending: a vázlatodon vagy az érlelő lapodon már van ellene védekező vétel.'
+      description: 'A buyout offer against you. defending: your draft or maturing sheet already has a defensive purchase against it.'
       required:
-      - lapId
+      - sheetId
       - orderId
       - by
       - cityId
@@ -1824,7 +1773,7 @@ components:
       - defendCost
       - defending
       properties:
-        lapId:
+        sheetId:
           type: string
         orderId:
           type: string
@@ -1851,7 +1800,7 @@ components:
           type: boolean
     UserDto:
       type: object
-      description: A bejelentkezett felhasználó.
+      description: The signed-in user.
       required:
       - id
       - name

@@ -1,20 +1,20 @@
 # GameIcon
 
-Teli, illusztratív ikon vékony (1,2px) tintakontúrral és tompított, festett színekkel a játék dolgaihoz: erőforrás, árucikk, hatalmi ág és akció. A vezérlőikonok (navigáció, állapot) továbbra is az `Icon` vonalikonjai.
+A filled, illustrative icon with a thin (1.2px) ink outline and muted, painted colors for the game's things: resource, good, branch of power and action. Control icons (navigation, status) remain the `Icon` line icons.
 
-**Mit ad a hívó:** `name`, `size` (alapérték 20), `label` (ha az ikon önállóan hordoz jelentést), `tile` (`true` = az akció ágának csempéje; vagy `vasarter` | `varoshaza` | `alvilag` | `kozos`).
+**What the caller provides:** `name`, `size` (default 20), `label` (if the icon carries meaning on its own), `tile` (`true` = the tile of the action's branch; or `vasarter` | `varoshaza` | `alvilag` | `kozos`).
 
-- Erőforrás: `arany`, `pp`, `legit`, `nep`, `ado`.
-- Árucikk: `gabona`, `bor`, `vas`, `ko`, `so`, `hal`, `fuszer`, `tozeg`, `csempesz`, `gyapju`, `lo`.
-- Ág: `vasarter`, `varoshaza`, `alvilag`.
-- Navigáció és idő: `navTerkep`, `navVaros`, `navJel`, `navRang`, `homokora`.
-- Akció: `route`, `margin`, `buyShares`, `buyout`, `defend`, `foundParty`, `program`, `festival`, `news`, `hireSpy`, `guard`, `spy`, `verify`, `debunk`.
+- Resource: `arany`, `pp`, `legit`, `nep`, `ado`.
+- Good: `gabona`, `bor`, `vas`, `ko`, `so`, `hal`, `fuszer`, `tozeg`, `csempesz`, `gyapju`, `lo`.
+- Branch: `vasarter`, `varoshaza`, `alvilag`.
+- Navigation and time: `navTerkep`, `navVaros`, `navJel`, `navRang`, `homokora`.
+- Action: `route`, `margin`, `buyShares`, `buyout`, `defend`, `foundParty`, `program`, `festival`, `news`, `hireSpy`, `guard`, `spy`, `verify`, `debunk`.
 
-Ismeretlen névnél a vonalikonra esik vissza. A festékek az `ic-*` tokenek, a csempe színe a `branch-*` tokenekből jön.
+For an unknown name it falls back to the line icon. The paints are the `ic-*` tokens; the tile color comes from the `branch-*` tokens.
 
-Kapcsolódó propok más komponensekben:
+Related props in other components:
 
-- `Button`: `art` (játékikon a felirat előtt, az `icon` helyett).
-- `Tabs`: fülenként `art` (ikon) és `tone` (ágszínű aláhúzás).
-- `OrderSheet`: parancsonként `art` (az akció csempés ikonja).
-- `ResourceChip`: az `arany`, `pp`, `legit`, `nep`, `ado` fajta automatikusan játékikont kap.
+- `Button`: `art` (game icon before the label, instead of `icon`).
+- `Tabs`: per tab `art` (icon) and `tone` (branch-colored underline).
+- `OrderSheet`: per order `art` (the action's tiled icon).
+- `ResourceChip`: the `arany`, `pp`, `legit`, `nep`, `ado` kinds automatically get a game icon.

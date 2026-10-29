@@ -1,5 +1,5 @@
 # MapEstate
 
-Egy hatalmi ház birtoka a térképen: kis pajzs a ház tinktúrájával.
+A house's estate on the map: a small shield with the house's tincture.
 
-**Mit ad a hívó:** `x`, `y`, `tincture`, `name`, `npc`.
+**What the caller provides:** `x`, `y`, `tincture`, `name`, `npc`.

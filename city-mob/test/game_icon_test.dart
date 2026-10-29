@@ -5,19 +5,19 @@ import 'package:tron_nelkul/theme/tokens.dart';
 import 'package:tron_nelkul/widgets/game_icon.dart';
 
 void main() {
-  test('minden játékikonhoz van SVG', () {
+  test('every game icon has an SVG', () {
     for (final n in kGameIcons) {
       expect(File('assets/k4/icons/$n.svg').existsSync(), isTrue, reason: n);
     }
   });
 
-  test('az akciók ága és az API ágnevei', () {
-    expect(kActionBranch['hireSpy'], 'alvilag');
-    expect(branchKey('keresk'), 'vasarter');
-    expect(branchKey('polit'), 'varoshaza');
-    expect(branchKey('kem'), 'alvilag');
-    expect(branchKey(null), 'kozos');
-    expect(gameArtFor('varos'), 'navVaros');
-    expect(gameArtFor('kereskedok'), isNull);
+  test('action branches and API branch names', () {
+    expect(kActionBranch['hireSpy'], 'espionage');
+    expect(branchKey('trade'), 'trade');
+    expect(branchKey('townHall'), 'politics');
+    expect(branchKey('espionage'), 'espionage');
+    expect(branchKey(null), 'common');
+    expect(gameArtFor('city'), 'navCity');
+    expect(gameArtFor('merchants'), isNull);
   });
 }

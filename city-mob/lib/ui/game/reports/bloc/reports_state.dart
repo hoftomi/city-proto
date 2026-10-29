@@ -8,23 +8,23 @@ class ReportsState extends Equatable {
     this.key,
     this.status = ReportsStatus.initial,
     this.reports = const [],
-    this.filter = ReportFilter.mind,
+    this.filter = ReportFilter.all,
     this.failure,
   });
 
   final String? gameId;
 
-  /// A játékállapot kulcsa az utolsó betöltéskor (GameViewX.feedKey).
+  /// The game state key at the last load (GameViewX.feedKey).
   final String? key;
   final ReportsStatus status;
   final List<ReportView> reports;
   final ReportFilter filter;
   final Failure? failure;
 
-  /// A szűrőnek megfelelő jelentések.
+  /// Reports matching the filter.
   List<ReportView> get visible => reports.where(filter.accepts).toList();
 
-  /// Még nincs mit mutatni (az első betöltés fut).
+  /// Nothing to show yet (the first load is running).
   bool get loading => status == ReportsStatus.loading && reports.isEmpty || status == ReportsStatus.initial;
 
   ReportsState copyWith({

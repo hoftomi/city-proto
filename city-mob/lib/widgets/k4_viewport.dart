@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// A Krónika IV rajzainak színei, amelyeket a térkép és a városkép kerete használ (design-system-kronika4/tokens).
+/// Krónika IV drawing colors used by the map and city view frame (design-system-kronika4/tokens).
 class K4 {
   static const wood = Color(0xFF5A3A22), woodHi = Color(0xFF7A5233), woodLo = Color(0xFF3A2416);
   static const frame = Color(0xFFB88A3E), frameHi = Color(0xFFE3C27A), frameLo = Color(0xFF7E5A22);
@@ -10,7 +10,7 @@ class K4 {
   static const road = Color(0xFFD9C08A), roadLo = Color(0xFFA8895A), paper = Color(0xFFFFF8E6);
   static const steel = Color(0xFF235F7E), red = Color(0xFF9E3B2C);
 
-  /// Vésett felirat a térképen (Cinzel, sötét peremmel).
+  /// Engraved label on the map (Cinzel, dark rim).
   static TextStyle label(double size, {Color color = paper}) => GoogleFonts.cinzel(
         fontSize: size,
         fontWeight: FontWeight.w700,
@@ -20,9 +20,9 @@ class K4 {
       );
 }
 
-/// Nagyítható, húzható ablak a világtérképhez és a városnézethez (design system: MapViewport).
-/// Fa és bronz keretben áll, jobb alul nagyítás, kicsinyítés és „teljes nézet” gombbal.
-/// A tartalom a teljes szélességre skálázott méretet kapja; a nagyítás 0,6-os lépésekben halad.
+/// Zoomable, pannable window for the world map and city view (design system: MapViewport).
+/// Sits in a wood and bronze frame, with zoom in, zoom out and "full view" buttons at bottom right.
+/// Content gets its size scaled to full width; zoom moves in 0.6 steps.
 class K4Viewport extends StatefulWidget {
   const K4Viewport({
     super.key,
@@ -34,17 +34,17 @@ class K4Viewport extends StatefulWidget {
     this.controls = true,
   });
 
-  /// Szélesség / magasság.
+  /// Width / height.
   final double aspect;
 
-  /// A tartalom a teljes szélességre skálázott méretben (1× nagyításnál ennyi látszik).
+  /// Content size scaled to full width (this much is visible at 1× zoom).
   final Widget Function(BuildContext context, Size size) builder;
 
-  /// Kezdő nagyítás (1 = teljes szélesség).
+  /// Initial zoom (1 = full width).
   final double zoom;
   final double maxZoom;
 
-  /// Erre a pontra (0–1 arányban) áll be a nézet induláskor és amikor megváltozik.
+  /// The view centers on this point (0–1 ratio) at start and whenever it changes.
   final Offset focus;
   final bool controls;
 
@@ -88,7 +88,7 @@ class _K4ViewportState extends State<K4Viewport> with SingleTickerProviderStateM
       ..scaleByDouble(z, z, 1, 1);
   }
 
-  /// A mostani nézet közepe 0–1 arányban (a nagyítás gombjai ezt tartják meg).
+  /// Center of the current view as a 0–1 ratio (the zoom buttons preserve it).
   Offset get _center {
     final m = _ctl.value, z = _scale;
     final tx = m.getTranslation().x, ty = m.getTranslation().y;
@@ -122,7 +122,7 @@ class _K4ViewportState extends State<K4Viewport> with SingleTickerProviderStateM
           child: LayoutBuilder(builder: (ctx, box) {
             final size = Size(box.maxWidth, box.maxWidth / widget.aspect);
             if (size != _size) {
-              // Első elhelyezéskor a kezdő nagyítás és fókusz, átméretezéskor a mostani nézet marad
+              // On first layout use the initial zoom and focus; on resize keep the current view
               final first = !_placed;
               final z = first ? widget.zoom : _scale, f = first ? widget.focus : _center;
               _size = size;

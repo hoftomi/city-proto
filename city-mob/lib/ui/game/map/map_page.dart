@@ -14,7 +14,7 @@ import '../../../widgets/map_view.dart';
 import '../bloc/game_bloc.dart';
 import '../widgets/game_tab_scroll.dart';
 
-/// A Térkép fül: parancspontok, a térkép, és a kijelölt város kártyája (áruk, tanács, útvonalépítés, megnyitás).
+/// The Map tab: order points, the map, and the selected city's card (goods, council, route building, open).
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
@@ -44,7 +44,7 @@ class MapPage extends StatelessWidget {
   }
 }
 
-/// A kijelölt város kártyája.
+/// The selected city's card.
 class _CityCard extends StatelessWidget {
   const _CityCard({required this.game, required this.city, required this.busy});
   final GameState game;
@@ -59,7 +59,7 @@ class _CityCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, runSpacing: 6, children: [
           Eyebrow(sel.cardEyebrow),
-          StatChip(label: 'map.your_popularity'.tr(), value: '${sel.myPop.round()}', art: 'nep'),
+          StatChip(label: 'map.your_popularity'.tr(), value: '${sel.myPop.round()}', art: 'popularity'),
         ]),
         const SizedBox(height: 4),
         Text(sel.name, style: TnText.display(c.ink).copyWith(fontSize: 26, height: 30 / 26)),
@@ -83,14 +83,14 @@ class _CityCard extends StatelessWidget {
         Wrap(alignment: WrapAlignment.end, spacing: 8, runSpacing: 8, children: [
           for (final b in game.buildableTo(sel.id))
             TnButton(label: 'map.route_from'.tr(namedArgs: {'from': b.fromName}), art: 'route', busy: busy, onPressed: () => context.read<GameBloc>().add(GameOrderAdded(b.order))),
-          TnButton(label: 'map.open_city'.tr(), icon: 'varos', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.city(game.gameId, cityId: sel.id))),
+          TnButton(label: 'map.open_city'.tr(), icon: 'city', kind: TnButtonKind.primary, onPressed: () => context.go(Routes.city(game.gameId, cityId: sel.id))),
         ]),
       ]),
     );
   }
 }
 
-/// Egy árucikk a térkép városkártyáján (mini-good): játékikon, Cinzel név, kínálat/kereslet, saját részesedés.
+/// A good on the map's city card (mini-good): game icon, Cinzel name, supply/demand, own shares.
 class _MiniGood extends StatelessWidget {
   const _MiniGood({required this.g, required this.marginLabel});
   final GoodView g;
@@ -101,7 +101,7 @@ class _MiniGood extends StatelessWidget {
     final c = context.tn;
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-      // inset 0 -2px 0 var(--line): alsó belső perem a lap aljára festett átmenettel
+      // inset 0 -2px 0 var(--line): inner bottom edge via a gradient painted at the sheet's bottom
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(TnRadius.sm),
         border: Border.all(color: c.lineStrong),

@@ -4,47 +4,47 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/tokens.dart';
 import 'tn_icon.dart';
 
-/// A Krónika IV illusztrált játékikonjai (`assets/k4/icons/<név>.svg`, a tokenek beégetve).
+/// Krónika IV illustrated game icons (`assets/k4/icons/<name>.svg`, tokens baked in).
 const Set<String> kGameIcons = {
-  // Erőforrás
-  'arany', 'pp', 'legit', 'nep', 'ado',
-  // Árucikk
-  'gabona', 'bor', 'vas', 'ko', 'so', 'hal', 'fuszer', 'tozeg', 'csempesz', 'gyapju', 'lo',
-  // Ág
-  'vasarter', 'varoshaza', 'alvilag',
-  // Navigáció és idő
-  'navTerkep', 'navVaros', 'navJel', 'navRang', 'homokora',
-  // Akció
+  // Resource
+  'gold', 'pp', 'legit', 'popularity', 'tax',
+  // Good
+  'grain', 'wine', 'iron', 'stone', 'salt', 'fish', 'spice', 'peat', 'contraband', 'wool', 'horse',
+  // Branch
+  'market', 'townHall', 'underworld',
+  // Navigation and time
+  'navMap', 'navCity', 'navReports', 'navRanking', 'hourglass',
+  // Action
   'route', 'margin', 'buyShares', 'buyout', 'defend', 'foundParty', 'program', 'festival', 'news', 'hireSpy', 'guard', 'spy', 'verify', 'debunk',
 };
 
-/// Az akciók hatalmi ága (a csempe színe). Ami nincs itt, az `kozos`.
+/// Power branch of each action (the tile color). Anything not listed is `common`.
 const Map<String, String> kActionBranch = {
-  'route': 'kozos',
-  'margin': 'vasarter', 'buyShares': 'vasarter', 'buyout': 'vasarter', 'defend': 'vasarter',
-  'foundParty': 'varoshaza', 'program': 'varoshaza', 'festival': 'varoshaza', 'news': 'varoshaza',
-  'hireSpy': 'alvilag', 'guard': 'alvilag', 'spy': 'alvilag', 'verify': 'alvilag', 'debunk': 'alvilag',
+  'route': 'common',
+  'margin': 'trade', 'buyShares': 'trade', 'buyout': 'trade', 'defend': 'trade',
+  'foundParty': 'politics', 'program': 'politics', 'festival': 'politics', 'news': 'politics',
+  'hireSpy': 'espionage', 'guard': 'espionage', 'spy': 'espionage', 'verify': 'espionage', 'debunk': 'espionage',
 };
 
-/// A vonalikon-nevek játékikonja (Button `icon`, NavBar `icon` automatikus fordítása).
-const Map<String, String> kNavArt = {'terkep': 'navTerkep', 'varos': 'navVaros', 'kem': 'navJel', 'pp': 'pp', 'legit': 'navRang', 'diplomacia': 'program'};
+/// Game icon for line-icon names (automatic mapping of Button `icon`, NavBar `icon`).
+const Map<String, String> kNavArt = {'map': 'navMap', 'city': 'navCity', 'spy': 'navReports', 'pp': 'pp', 'legit': 'navRanking', 'diplomacy': 'program'};
 
-/// Egy ikonnévhez tartozó játékikon neve, ha van ilyen (különben null).
+/// Game icon name for an icon name, if one exists (otherwise null).
 String? gameArtFor(String? name) => name == null ? null : (kGameIcons.contains(name) ? name : kNavArt[name]);
 
-/// Teli, illusztratív játékikon vékony tintakontúrral.
+/// Filled, illustrative game icon with a thin ink outline.
 ///
-/// * [name]: az ikon neve (lásd [kGameIcons]); ismeretlen névnél a [TnIcon] vonalikonra esik vissza.
-/// * [size]: az ikon mérete (alapérték 20).
-/// * [tile]: ha meg van adva, az ikon ágszínű csempére kerül (mérete `size × 1,6`). Értéke egy ág
-///   (`vasarter` | `varoshaza` | `alvilag` | `kozos`, vagy az API-s `keresk` | `polit` | `kem`),
-///   illetve `auto`: ekkor az akció ágából jön ([kActionBranch]). Lásd még [GameIcon.tile].
-/// * [shadow]: lágy vetett árnyék az ikon alatt (gombokon, sötét fán).
-/// * [label]: ha az ikon önállóan hordoz jelentést, ez a képernyőolvasó szövege.
+/// * [name]: icon name (see [kGameIcons]); unknown names fall back to the [TnIcon] line icon.
+/// * [size]: icon size (default 20).
+/// * [tile]: if set, the icon sits on a branch-colored tile (size `size × 1.6`). Its value is a branch
+///   (`trade` | `politics` | `espionage` | `common`, or the art names `market` | `townHall` | `underworld`),
+///   or `auto`: then it comes from the action's branch ([kActionBranch]). See also [GameIcon.tile].
+/// * [shadow]: soft drop shadow under the icon (on buttons, dark wood).
+/// * [label]: if the icon carries meaning on its own, this is the screen reader text.
 class GameIcon extends StatelessWidget {
   const GameIcon(this.name, {super.key, this.size = 20, this.tile, this.shadow = false, this.label, this.fallbackColor, this.opacity = 1});
 
-  /// Csempés ikon az akció ágának színével.
+  /// Tiled icon in the action's branch color.
   const GameIcon.tile(this.name, {super.key, this.size = 16, String branch = 'auto', this.label, this.fallbackColor})
       : tile = branch,
         shadow = false,
@@ -68,7 +68,7 @@ class GameIcon extends StatelessWidget {
     }
     Widget art = SvgPicture.asset('assets/k4/icons/$name.svg', width: size, height: size, excludeFromSemantics: true);
     if (shadow) {
-      // A CSS drop-shadow közelítése: sötét, eltolt sziluett az ikon alatt.
+      // Approximates CSS drop-shadow: dark, offset silhouette under the icon.
       art = SizedBox(
         width: size,
         height: size,
@@ -90,7 +90,7 @@ class GameIcon extends StatelessWidget {
 
   Widget _tile(BuildContext context, Widget child) {
     final c = context.tn;
-    final b = tile == 'auto' ? (kActionBranch[name] ?? 'kozos') : branchKey(tile);
+    final b = tile == 'auto' ? (kActionBranch[name] ?? 'common') : branchKey(tile);
     final s = (size * 1.6).roundToDouble();
     return Container(
       width: s,

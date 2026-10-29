@@ -1,7 +1,7 @@
 # Sheet
 
-Telefonon alulról nyíló lap, szélesebb képernyőn középre igazított párbeszédablak. Városi akciókhoz és kérésekhez.
+A bottom sheet on the phone, a centered dialog on wider screens. For city actions and requests.
 
-**Mit ad a hívó:** `title`, `children`, `footer` (gombok), `onClose`, `open`, `inline` (előnézethez: nem takarja a képernyőt).
+**What the caller provides:** `title`, `children`, `footer` (buttons), `onClose`, `open`, `inline` (for previews: does not cover the screen).
 
-- Egy lapon egy döntés legyen. A lábléc jobb szélső gombja a fő akció.
+- One decision per sheet. The rightmost footer button is the main action.

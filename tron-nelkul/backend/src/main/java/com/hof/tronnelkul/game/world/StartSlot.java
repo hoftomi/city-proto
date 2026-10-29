@@ -2,11 +2,16 @@ package com.hof.tronnelkul.game.world;
 
 import java.util.List;
 
-/** Kezdőhely (birtok). A birtokból a szomszédos városokba ingyenes útvonal indul; az első szomszéd a kezdőváros. */
-public record StartSlot(String id, String name, int x, int y, List<String> neighbors, String note) {
-    /** A birtok csomópontazonosítója a hálózatban. */
-    public String nodeId() { return "birtok:" + id; }
+/**
+ * Start slot (estate). Free routes lead from the estate to its neighbouring cities; the first neighbour is the home city.
+ * Name and note: i18n world.start.<mapId>.<id> (MapDefinition.startLabel / startNote).
+ */
+public record StartSlot(String id, int x, int y, List<String> neighbors) {
+    public static final String NODE_PREFIX = "estate:";
 
-    /** A kezdőváros: itt 20 a népszerűség, és ide szól a háttér induló bónusza (2.2). */
+    /** Node id of the estate in the network. */
+    public String nodeId() { return NODE_PREFIX + id; }
+
+    /** The home city: popularity is 20 here, and the background's starting bonus applies here (2.2). */
     public String homeCity() { return neighbors.get(0); }
 }

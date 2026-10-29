@@ -3,19 +3,19 @@ part of 'lobby_bloc.dart';
 class LobbyState extends Equatable {
   const LobbyState({this.loading = false, this.loaded = false, this.groups = const LobbyGroups(), this.tab = LobbyTab.fresh, this.failure});
 
-  /// Épp tölt (az első betöltésnél pörgő jelző, frissítéskor a lista marad).
+  /// Loading (spinner on the first load; on refresh the list stays).
   final bool loading;
 
-  /// Legalább egyszer betöltött.
+  /// Loaded at least once.
   final bool loaded;
   final LobbyGroups groups;
   final LobbyTab tab;
   final Failure? failure;
 
-  /// A kiválasztott fül játékai.
+  /// Games of the selected tab.
   List<GameSummary> get games => groups.tab(tab);
 
-  /// A „Saját” fül jelvénye.
+  /// The "Mine" tab badge.
   String? get mineBadge => groups.mine.isEmpty ? null : '${groups.mine.length}';
 
   Tr get emptyText => tab == LobbyTab.mine ? const Tr('lobby.empty_mine') : const Tr('lobby.empty');

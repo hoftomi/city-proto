@@ -41,8 +41,8 @@ void main() {
     return game;
   }
 
-  for (final (d, marker) in [('keresk', 'VÉTEL A VÁROSTÓL (95 SZABAD)'), ('polit', 'Városi tanács'), ('kem', 'Kémeid itt')]) {
-    testWidgets('a(z) $d negyed hiba nélkül megjelenik', (tester) async {
+  for (final (d, marker) in [('trade', 'VÉTEL A VÁROSTÓL (95 SZABAD)'), ('politics', 'Városi tanács'), ('espionage', 'Kémeid itt')]) {
+    testWidgets('the $d district renders without errors', (tester) async {
       await pump(tester, d);
       expect(find.text('Szélmező'), findsWidgets);
       expect(find.text('← Térkép'), findsOneWidget);
@@ -50,8 +50,8 @@ void main() {
     });
   }
 
-  testWidgets('Kém áthelyezése: párbeszéd, célváros, parancs a GameBlocnak', (tester) async {
-    final game = await pump(tester, 'kem');
+  testWidgets('moving a spy: dialog, destination city, order to the GameBloc', (tester) async {
+    final game = await pump(tester, 'espionage');
     await tester.tap(find.textContaining('Kém áthelyezése'));
     await tester.pumpAndSettle();
     expect(find.text('Hová költözzön a kém?'), findsOneWidget);

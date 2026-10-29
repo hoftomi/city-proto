@@ -1,8 +1,8 @@
 # Toast
 
-Rövid visszajelzés egy akció vagy feldolgozás után, négy hangnemben.
+Short feedback after an action or processing, in four tones.
 
-**Mit ad a hívó:** `tone` (`info` | `ok` | `warn` | `danger`), `title`, `children`, opcionálisan `icon`.
+**What the caller provides:** `tone` (`info` | `ok` | `warn` | `danger`), `title`, `children`, optionally `icon`.
 
-- A cím azt mondja meg, mi történt („Lebuktál Feketerévben”), a törzs pedig a következményt és a teendőt.
-- A `danger` hangnem `role="alert"`, a többi `status`.
+- The title says what happened („Lebuktál Feketerévben”, You were exposed in Feketerév), the body the consequence and what to do.
+- The `danger` tone is `role="alert"`, the others `status`.

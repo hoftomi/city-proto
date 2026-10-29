@@ -1,5 +1,5 @@
 # Toast
 
-Rövid értesítés pergamenen, tintakontúrral és bronz belső kerettel. A cím Cinzel betűs, és a tónus színét viseli.
+A short notification on parchment, with an ink outline and a bronze inner frame. The title is in Cinzel and carries the tone's color.
 
-**Mit ad a hívó:** `tone` (`info` | `ok` | `warn` | `danger`), `title`, `children`, `icon`.
+**What the caller provides:** `tone` (`info` | `ok` | `warn` | `danger`), `title`, `children`, `icon`.

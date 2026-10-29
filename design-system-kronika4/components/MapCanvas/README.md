@@ -1,15 +1,15 @@
 # MapCanvas
 
-A festett térkép alapja:
+The base of the painted map:
 
-- réti zöld színátmenet elmosott színfoltokkal és domborzati fény-árnyék foltokkal, így a talaj nem egyszínű;
-- ritkított fűcsomók és vadvirágok;
-- sűrű fűtextúra és papírszemcse (`kg-grain`) az egész lapon, ettől festett és nem rajzolóprogramos a hatás;
-- a bal felső sarokból érkező meleg fény és a szélek felé sötétedő vignetta;
-- belső keretvonal fokbeosztással.
+- a meadow-green gradient with blurred color patches and relief light-and-shadow patches, so the ground is not a single color;
+- sparse grass tufts and wildflowers;
+- dense grass texture and paper grain (`kg-grain`) over the whole sheet, which makes it look painted rather than drawn in a vector tool;
+- warm light coming from the top left corner and a vignette darkening toward the edges;
+- an inner frame line with degree marks.
 
-A lap a közös `kg-*` festett eszközkészletet (színátmenetek, szűrők) is betölti, ezt használják a hegyek, a fák és a szántók. A kontúrok lágyított tintabarna színűek.
+The sheet also loads the shared `kg-*` painted asset kit (gradients, filters), used by the mountains, trees and fields. The outlines are a softened ink brown.
 
-**Mit ad a hívó:** `width`, `height`, `title`, `children`.
+**What the caller provides:** `width`, `height`, `title`, `children`.
 
-A lap az izometrikus `i4` színátmeneteket is betölti, így a térkép városai, hegyei, fái és szántói ugyanazzal az anyaggal rajzolódnak, mint a városnézet.
+The sheet also loads the isometric `i4` gradients, so the map's cities, mountains, trees and fields are drawn with the same material as the city view.

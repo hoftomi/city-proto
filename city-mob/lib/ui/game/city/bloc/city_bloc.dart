@@ -14,9 +14,9 @@ import '../../bloc/game_bloc.dart';
 part 'city_event.dart';
 part 'city_state.dart';
 
-/// A városnézet (Vásártér, Városháza, Alvilág): a GameBloc állapotát követi, tartja a negyedek űrlapjait,
-/// és a beküldött űrlapokból a CityService-szel parancsot épít, amelyet a GameBlocnak ad át.
-/// Városonként új példány (a CityPage kulcsa a város).
+/// The city view (Marketplace, Town Hall, Underworld): follows the GameBloc state, holds the district forms,
+/// and builds orders from submitted forms with the CityService, handing them to the GameBloc.
+/// New instance per city (the CityPage key is the city).
 class CityBloc extends Bloc<CityEvent, CityState> {
   CityBloc(this._game, this._service) : super(const CityState()) {
     on<CityStarted>((e, emit) {
@@ -78,7 +78,7 @@ class CityBloc extends Bloc<CityEvent, CityState> {
   final CityService _service;
   late final StreamSubscription<GameViewState> _sub;
 
-  /// A GameBloc pillanatképe; az első ismert állapotnál feloldja a várost, és kijelöli a térképen is.
+  /// GameBloc snapshot; on the first known state it resolves the city and selects it on the map too.
   void _sync(GameViewState g, Emitter<CityState> emit) {
     final s = g.game;
     var id = state.cityId;

@@ -1,7 +1,7 @@
 # StabilityChip
 
-Egy városállam stabilitása: Stabil, Ingatag vagy Lázongó.
+The stability of a city-state: Stable, Unsettled or Rioting (Stabil, Ingatag, Lázongó).
 
-**Mit ad a hívó:** `level` (`stabil` | `ingatag` | `lazongo`).
+**What the caller provides:** `level` (`stabil` | `ingatag` | `lazongo`).
 
-- A Stabil kék (`ok`), nem zöld, így a Lázongó vöröstől színtévesztő játékos is elkülöníti. Ikon és szó is jár mellé.
+- Stable is blue (`ok`), not green, so a color-blind player can also tell it apart from the red of Rioting. It comes with an icon and a word as well.

@@ -7,7 +7,7 @@ part of 'threat.dart';
 // **************************************************************************
 
 abstract class _$ThreatCWProxy {
-  Threat lapId(String lapId);
+  Threat sheetId(String sheetId);
 
   Threat orderId(String orderId);
 
@@ -36,7 +36,7 @@ abstract class _$ThreatCWProxy {
   /// Threat(...).copyWith(id: 12, name: "My name")
   /// ````
   Threat call({
-    String lapId,
+    String sheetId,
     String orderId,
     HouseRef by,
     String cityId,
@@ -57,7 +57,7 @@ class _$ThreatCWProxyImpl implements _$ThreatCWProxy {
   final Threat _value;
 
   @override
-  Threat lapId(String lapId) => this(lapId: lapId);
+  Threat sheetId(String sheetId) => this(sheetId: sheetId);
 
   @override
   Threat orderId(String orderId) => this(orderId: orderId);
@@ -97,7 +97,7 @@ class _$ThreatCWProxyImpl implements _$ThreatCWProxy {
   /// Threat(...).copyWith(id: 12, name: "My name")
   /// ````
   Threat call({
-    Object? lapId = const $CopyWithPlaceholder(),
+    Object? sheetId = const $CopyWithPlaceholder(),
     Object? orderId = const $CopyWithPlaceholder(),
     Object? by = const $CopyWithPlaceholder(),
     Object? cityId = const $CopyWithPlaceholder(),
@@ -110,10 +110,10 @@ class _$ThreatCWProxyImpl implements _$ThreatCWProxy {
     Object? defending = const $CopyWithPlaceholder(),
   }) {
     return Threat(
-      lapId: lapId == const $CopyWithPlaceholder()
-          ? _value.lapId
+      sheetId: sheetId == const $CopyWithPlaceholder()
+          ? _value.sheetId
           // ignore: cast_nullable_to_non_nullable
-          : lapId as String,
+          : sheetId as String,
       orderId: orderId == const $CopyWithPlaceholder()
           ? _value.orderId
           // ignore: cast_nullable_to_non_nullable
@@ -173,7 +173,7 @@ Threat _$ThreatFromJson(Map<String, dynamic> json) =>
       $checkKeys(
         json,
         requiredKeys: const [
-          'lapId',
+          'sheetId',
           'orderId',
           'by',
           'cityId',
@@ -187,7 +187,7 @@ Threat _$ThreatFromJson(Map<String, dynamic> json) =>
         ],
       );
       final val = Threat(
-        lapId: $checkedConvert('lapId', (v) => v as String),
+        sheetId: $checkedConvert('sheetId', (v) => v as String),
         orderId: $checkedConvert('orderId', (v) => v as String),
         by: $checkedConvert(
           'by',
@@ -209,7 +209,7 @@ Threat _$ThreatFromJson(Map<String, dynamic> json) =>
     });
 
 Map<String, dynamic> _$ThreatToJson(Threat instance) => <String, dynamic>{
-  'lapId': instance.lapId,
+  'sheetId': instance.sheetId,
   'orderId': instance.orderId,
   'by': instance.by.toJson(),
   'cityId': instance.cityId,

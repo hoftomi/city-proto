@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/game_widgets.dart';
 
-/// Induláskor, amíg az AuthBloc visszaállítja a mentett munkamenetet.
+/// On startup, while the AuthBloc restores the saved session.
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 

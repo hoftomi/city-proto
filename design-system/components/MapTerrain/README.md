@@ -1,10 +1,10 @@
 # MapTerrain
 
-A térkép rézmetszet-hangulatú domborzati rétege: tenger partvonal-hullámokkal, folyók, hegyek csíkozással, erdők, szántóföldek, mocsár.
+The copper-engraving-style terrain layer of the map: sea with coastline ripples, rivers, hatched mountains, forests, fields, marsh.
 
-**Mit ad a hívó:** `sea` (SVG path, zárt), `rivers` (path-ok), `mountains` (`[x, y, méret]`), `forests` (`[x, y, fák száma]`), `fields` (`[x, y, szélesség, magasság, forgatás]`), `marsh` (`[x, y, darab]`).
+**What the caller provides:** `sea` (SVG path, closed), `rivers` (paths), `mountains` (`[x, y, size]`), `forests` (`[x, y, number of trees]`), `fields` (`[x, y, width, height, rotation]`), `marsh` (`[x, y, count]`).
 
-- A `MapCanvas` első gyermeke legyen, az útvonalak és városok alá kerül.
-- Tisztán dekoratív (`aria-hidden`). Játékinformációt soha ne hordozzon: az elérhetőséget és az állapotokat a `MapRoute` és a `MapCity` mutatja.
-- Az erdők és a mocsár a koordinátákból determinisztikusan generálódik, így minden betöltéskor ugyanúgy néz ki.
-- Színei: `map-sea`, `map-sea-line`, `map-relief`, `map-forest`.
+- It should be the first child of `MapCanvas`, so it goes under routes and cities.
+- Purely decorative (`aria-hidden`). It must never carry game information: reachability and states are shown by `MapRoute` and `MapCity`.
+- Forests and marsh are generated deterministically from the coordinates, so they look the same on every load.
+- Colors: `map-sea`, `map-sea-line`, `map-relief`, `map-forest`.

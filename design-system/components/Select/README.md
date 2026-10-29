@@ -1,5 +1,5 @@
 # Select
 
-Legördülő választó címkével.
+A dropdown picker with a label.
 
-**Mit ad a hívó:** `label`, `options` (szövegek vagy `{value, label}` elemek), `value` vagy `defaultValue`, `onChange`, `hint`.
+**What the caller provides:** `label`, `options` (strings or `{value, label}` items), `value` or `defaultValue`, `onChange`, `hint`.

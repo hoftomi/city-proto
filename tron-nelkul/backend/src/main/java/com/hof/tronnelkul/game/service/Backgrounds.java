@@ -1,19 +1,27 @@
 package com.hof.tronnelkul.game.service;
 
 import com.hof.tronnelkul.api.model.BackgroundDto;
+import com.hof.tronnelkul.i18n.Messages;
+
 import java.util.List;
 import java.util.Optional;
 
-/** Háttértípusok (szabálykönyv v0.2, 2.2). Csak induló bónuszt adnak, egyik ágba sem zárnak be. */
+/** Background types (rulebook v0.2, 2.2). They only give a starting bonus, none locks into a branch. Texts: i18n world.background.<id>. */
 public final class Backgrounds {
     private Backgrounds() {}
 
-    public static final List<BackgroundDto> ALL = List.of(
-        new BackgroundDto("kereskedo", "Kereskedőház", "kereskedok", List.of("20 részesedés a kezdőváros egyik árucikkéből", "Azonnal van eladható árud")),
-        new BackgroundDto("nemesi", "Nemesi ház", "nemesseg", List.of("Megalapított párt a kezdővárosban", "+10 népszerűség a kezdővárosban")),
-        new BackgroundDto("arnyek", "Árnyékrend", "hidden", List.of("2 felfogadott kém a kezdővárosban", "Az első naptól látsz a rivális parancslapokba")));
+    record Background(String id, String icon) {}
 
-    public static final List<String> TINCTURES = List.of("voros", "kek", "zold", "arany", "bibor", "fekete", "narancs", "szeder");
+    static final List<Background> ALL = List.of(new Background("merchant", "merchants"), new Background("noble", "nobility"), new Background("shadow", "hidden"));
 
-    public static Optional<BackgroundDto> of(String id) { return ALL.stream().filter(b -> b.getId().equals(id)).findFirst(); }
+    public static final List<String> TINCTURES = List.of("red", "blue", "green", "gold", "purple", "black", "orange", "mulberry");
+
+    public static boolean exists(String id) { return ALL.stream().anyMatch(b -> b.id().equals(id)); }
+
+    public static String name(Messages m, String id) { return m.text("world.background." + id + ".name"); }
+
+    public static List<BackgroundDto> dtos(Messages m) {
+        return ALL.stream().map(b -> new BackgroundDto(b.id(), name(m, b.id()), b.icon(),
+            List.of(m.text("world.background." + b.id() + ".perk1"), m.text("world.background." + b.id() + ".perk2")))).toList();
+    }
 }

@@ -1,7 +1,7 @@
 # TickTimer
 
-A következő feldolgozás időpontja és a hátralévő idő.
+The time of the next processing and the time remaining.
 
-**Mit ad a hívó:** `at` („20:00”), `remaining` („3 ó 12 p”), `soon` (az utolsó órában).
+**What the caller provides:** `at` („20:00”), `remaining` („3 ó 12 p”, 3 h 12 min), `soon` (in the last hour).
 
-- Az utolsó órában pecsétszínűre vált: ideje lepecsételni.
+- In the last hour it turns seal-colored: time to seal.

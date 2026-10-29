@@ -1,7 +1,7 @@
 # InfluenceBar
 
-Részesedés- vagy befolyássáv sötét fa sínben, bronz szegéllyel. A szegmensek felső élén fény, alsó élén árnyék fut.
+A share or influence bar in a dark wooden rail with a bronze border. The segments have a highlight along their top edge and a shadow along the bottom.
 
-**Mit ad a hívó:** `segments`, `unknown`, `precision`, `thresholds`, `legend`, `faction`, `aside`.
+**What the caller provides:** `segments`, `unknown`, `precision`, `thresholds`, `legend`, `faction`, `aside`.
 
-- A saját szegmens belső pergamenkeretet kap. A Város része csíkos, az Ismeretlen pöttyös.
+- The player's own segment gets an inner parchment frame. The City's part is striped, the Unknown part dotted.

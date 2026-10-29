@@ -16,14 +16,14 @@ export 'game_icon.dart';
 export 'surfaces.dart';
 
 // ---------------------------------------------------------------------------
-// Keretek
+// Frames
 // ---------------------------------------------------------------------------
 
 EdgeInsets _shrink(EdgeInsets p, double d) =>
     EdgeInsets.fromLTRB(math.max(0, p.left - d), math.max(0, p.top - d), math.max(0, p.right - d), math.max(0, p.bottom - d));
 
-/// Keretes felület: külső szegély, majd belső „inset” gyűrűk (a CSS `inset box-shadow` közelítése
-/// egymásba ágyazott szegélyekkel), pergamen átmenet és vetett árnyék.
+/// Framed surface: outer border, then inner "inset" rings (approximating CSS `inset box-shadow`
+/// with nested borders), parchment gradient and drop shadow.
 class Framed extends StatelessWidget {
   const Framed({
     super.key,
@@ -80,11 +80,11 @@ class Framed extends StatelessWidget {
 
 enum TnCardTone { normal, threat, pending, highlight, note }
 
-/// Pergamen kártya (tn-card): sötét fa keret, belső bronz vonal, 3 px-es tintaperem és lágy árnyék.
+/// Parchment card (tn-card): dark wood frame, inner bronze line, 3 px ink rim and soft shadow.
 ///
-/// * [tone]: `threat` (kivásárlási fenyegetés, téglavörös gyűrű), `pending` (érlelő lap, bronz),
-///   `highlight` (folytatható játék, zöld), `note` (szaggatott hatású, halvány).
-/// * [borderColor]: a belső gyűrű színe egyedi kiemeléshez.
+/// * [tone]: `threat` (buyout threat, brick red ring), `pending` (maturing sheet, bronze),
+///   `highlight` (resumable game, green), `note` (dashed look, faint).
+/// * [borderColor]: inner ring color for custom highlighting.
 class TnCard extends StatelessWidget {
   const TnCard({super.key, required this.child, this.borderColor, this.dashed = false, this.padding = const EdgeInsets.all(16), this.tone = TnCardTone.normal});
   final Widget child;
@@ -122,7 +122,7 @@ class TnCard extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Címer
+// Coat of arms
 // ---------------------------------------------------------------------------
 
 final Path _crestOuter = parseSvgPathData('M2 2.5h22v10.2c0 7-5.3 11.4-11 14.3C7.3 24.1 2 19.7 2 12.7z');
@@ -130,8 +130,8 @@ final Path _crestShield = parseSvgPathData('M5 5h16v7.4c0 5.2-3.8 8.6-8 10.9-4.2
 final Path _crestShade = parseSvgPathData('M13 4L22 4V14C22 19 18 22 13 25z');
 final Path _crestLight = parseSvgPathData('M5 5h6c-.5 4-2.5 7-6 9z');
 
-/// A ház címere: bronz szélű pajzs a ház tinktúrájával, jobb alsó árnyékkal és bal felső fénnyel.
-/// A kezdőbetű Cinzel, tintakontúrral. NPC-háznál a pajzs kontúrja szaggatott.
+/// House coat of arms: bronze-edged shield in the house tincture, with bottom-right shadow and top-left light.
+/// The initial is Cinzel with an ink outline. For NPC houses the shield outline is dashed.
 class HouseCrest extends StatelessWidget {
   const HouseCrest({super.key, required this.tincture, this.initial, this.size = 28, this.npc = false, this.name});
   final String tincture;
@@ -221,10 +221,10 @@ class _CrestPainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// Chipek
+// Chips
 // ---------------------------------------------------------------------------
 
-/// Chip (tn-chip): 13/20, 800, halvány pergamen alap, vékony kontúr.
+/// Chip (tn-chip): 13/20, 800, faint parchment base, thin outline.
 class TnChip extends StatelessWidget {
   const TnChip({super.key, required this.label, this.icon, this.fg, this.bg, this.border});
   final String label;
@@ -246,7 +246,7 @@ class TnChip extends StatelessWidget {
   }
 }
 
-/// Kis címkés érték-chip (pop-chip), például „Népszerűséged 23”, opcionális játékikonnal.
+/// Small labeled value chip (pop-chip), e.g. "Your popularity 23", with optional game icon.
 class StatChip extends StatelessWidget {
   const StatChip({super.key, required this.label, required this.value, this.suffix, this.tone, this.art});
   final String label, value;
@@ -281,7 +281,7 @@ class StatChip extends StatelessWidget {
   }
 }
 
-/// Kis kiemelő címke (cheap-tag), például „legolcsóbb”, „védett”.
+/// Small highlight tag (cheap-tag), e.g. "cheapest", "protected".
 class TinyTag extends StatelessWidget {
   const TinyTag(this.text, {super.key, this.tone});
   final String text;
@@ -304,14 +304,14 @@ class TinyTag extends StatelessWidget {
   }
 }
 
-/// Erőforrás sötét fa kapszulában, bronz szegéllyel és világos, vastag számmal (tn-res).
-/// Az `arany`, `pp`, `legit`, `nep`, `ado` fajta játékikont kap, amely balra kilóg a kapszulából.
+/// Resource in a dark wood capsule with bronze border and a light, bold number (tn-res).
+/// Kinds `gold`, `pp`, `legit`, `popularity`, `tax` get a game icon that sticks out to the left of the capsule.
 class ResourceChip extends StatelessWidget {
   const ResourceChip({super.key, required this.kind, required this.value, this.delta, this.max});
   final String kind;
   final int value;
   final int? delta, max;
-  static const _names = {'arany', 'legit', 'pp', 'nep', 'ado'};
+  static const _names = {'gold', 'legit', 'pp', 'popularity', 'tax'};
 
   @override
   Widget build(BuildContext context) {
@@ -352,11 +352,11 @@ class ResourceChip extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Parancspont-számláló
+// Command point counter
 // ---------------------------------------------------------------------------
 
-/// A Parancspont-számláló pergamenlapon, fa- és bronzkeretben: viaszpecsét-korongok egy sorban.
-/// Vörös viasz: elkölthető; szaggatott szélű bronz: lefoglalt; üres mélyedés: hiányzó pont.
+/// Command point counter on parchment in a wood and bronze frame: wax seal discs in a row.
+/// Red wax: spendable; dashed bronze: reserved; empty hollow: missing point.
 class CommandPoints extends StatelessWidget {
   const CommandPoints({super.key, required this.available, required this.pending, this.max = 20, this.daily = 10});
   final int available, pending, max, daily;
@@ -436,7 +436,7 @@ class _PipsPainter extends CustomPainter {
               ..color = c.frameLo);
       } else {
         canvas.drawCircle(ctr, r, Paint()..color = c.hollow);
-        // belső árnyék: felül sötétebb sarló
+        // inner shadow: darker crescent on top
         canvas.save();
         canvas.clipPath(Path()..addOval(rect));
         canvas.drawCircle(ctr + const Offset(0, 1.5), r, Paint()
@@ -458,11 +458,11 @@ class _PipsPainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// Részesedés-sáv és tanács
+// Shares bar and council
 // ---------------------------------------------------------------------------
 
-/// Egy árucikk 100 részesedési pontja a tulajdonosok tinktúrájával; a Város része sraffozott
-/// (a befolyássáv formája: sötét fa vályú, festett szegmensek felső fénnyel).
+/// A good's 100 share points in the owners' tinctures; the City's part is hatched
+/// (influence bar style: dark wood trough, painted segments with top highlight).
 class ShareBar extends StatelessWidget {
   const ShareBar({super.key, required this.good, this.legend = false});
   final GoodView good;
@@ -529,7 +529,7 @@ class ShareBar extends StatelessWidget {
       ]);
 }
 
-/// A városi tanács helyei (alapból 9) viaszpecsét-korongokként, a pártok tinktúrájával.
+/// City council seats (9 by default) as wax seal discs in the parties' tinctures.
 class SeatsBar extends StatelessWidget {
   const SeatsBar({super.key, required this.parties, this.total = 9});
   final List<PartyView> parties;
@@ -627,7 +627,7 @@ class _HatchPainter extends CustomPainter {
   bool shouldRepaint(_HatchPainter o) => o.bg != bg || o.line != line;
 }
 
-/// Haladásjelző vályú (lap-progress, game-seats-bar): festett bronz vagy zöld töltéssel.
+/// Progress trough (sheet-progress, game-seats-bar): painted bronze or green fill.
 class TnMeter extends StatelessWidget {
   const TnMeter({super.key, required this.value, this.green = false, this.height = 10});
   final double value, height;
@@ -659,17 +659,17 @@ class TnMeter extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Űrlapelemek: fokozatválasztó, legördülő, táblázat
+// Form elements: level picker, dropdown, table
 // ---------------------------------------------------------------------------
 
-/// Egy fokozat a választósorban: nagy szám, név, mellékhatás.
+/// One level in the picker row: big number, name, side effect.
 class OptionItem {
   const OptionItem(this.id, this.big, this.label, this.sub);
   final String id, big, label, sub;
 }
 
-/// Kapcsológombsor fokozatváltáshoz (haszonkulcs, adóprogram, margin-row). Az aktuális fokozat
-/// zöld, és nem választható.
+/// Toggle button row for switching levels (margin, tax program, margin-row). The current level
+/// is green and not selectable.
 class OptionRow extends StatelessWidget {
   const OptionRow({super.key, required this.items, required this.selected, this.onPick});
   final List<OptionItem> items;
@@ -699,7 +699,7 @@ class OptionRow extends StatelessWidget {
   }
 }
 
-/// Mezőcímke (tn-field-label), opcionális játékikonnal (label-art).
+/// Field label (tn-field-label), with optional game icon (label-art).
 class FieldLabel extends StatelessWidget {
   const FieldLabel(this.text, {super.key, this.art});
   final String text;
@@ -712,7 +712,7 @@ class FieldLabel extends StatelessWidget {
   }
 }
 
-/// Címkés legördülő lista (tn-select): pergamen mező, 1,5 px-es kontúr, benyomott belső árnyék.
+/// Labeled dropdown (tn-select): parchment field, 1.5 px outline, pressed-in inner shadow.
 class TnSelect<T> extends StatelessWidget {
   const TnSelect({super.key, required this.label, required this.value, required this.items, required this.onChanged, this.hint});
   final String label;
@@ -759,7 +759,7 @@ class TnSelect<T> extends StatelessWidget {
   }
 }
 
-/// Egy oszlop a [MiniTable]-ben.
+/// A column in the [MiniTable].
 class Col {
   const Col(this.label, {this.flex = 1, this.right = false});
   final String label;
@@ -767,8 +767,8 @@ class Col {
   final bool right;
 }
 
-/// Adattábla (tn-table, főkönyv): sötét fa fejléc bronz Cinzel felirattal, sávozott sorok,
-/// a saját sor acélkék kiemelésű; a számoszlopok jobbra igazítva.
+/// Data table (tn-table, ledger): dark wood header with bronze Cinzel text, striped rows,
+/// own row highlighted in steel blue; numeric columns right-aligned.
 class MiniTable extends StatelessWidget {
   const MiniTable({super.key, required this.cols, required this.rows, this.selfRows = const {}, this.empty});
   final List<Col> cols;
@@ -816,7 +816,7 @@ class MiniTable extends StatelessWidget {
   }
 }
 
-/// Egy ház címerrel és névvel (táblázatsorokba).
+/// A house with coat of arms and name (for table rows).
 class HouseName extends StatelessWidget {
   const HouseName(this.house, {super.key, this.size = 14});
   final HouseRef house;
@@ -830,23 +830,23 @@ class HouseName extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Jelentéskártya, értesítés
+// Report card, notification
 // ---------------------------------------------------------------------------
 
-/// Jelentés levélpapíron (tn-report): vékony fakeret, bronz belső vonal, hajszálvonallal elválasztott fejléc.
+/// Report on letter paper (tn-report): thin wood frame, bronze inner line, header separated by a hairline.
 class ReportCard extends StatelessWidget {
   const ReportCard({super.key, required this.report});
   final ReportView report;
-  /// A jelentés fajtái (ikon és felirat kulcsa: `ui.report.kind.<fajta>`); ismeretlennél városi esemény.
-  static const _kinds = {'kem', 'katonai', 'frakcio', 'diplomacia', 'esemeny'};
+  /// Report kinds (icon and label key: `ui.report.kind.<kind>`); unknown falls back to city event.
+  static const _kinds = {'spy', 'military', 'faction', 'diplomacy', 'event'};
 
-  /// A forrás megbízhatósága: a teli sávok száma (felirat: `ui.report.confidence.<szint>`).
-  static const _conf = {'gyenge': 1, 'kozepes': 2, 'eros': 3};
+  /// Source confidence: number of filled bars (label: `ui.report.confidence.<level>`).
+  static const _conf = {'weak': 1, 'medium': 2, 'strong': 3};
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final kind = _kinds.contains(report.kind) ? report.kind : 'esemeny';
+    final kind = _kinds.contains(report.kind) ? report.kind : 'event';
     final k = (kind, 'ui.report.kind.$kind'.tr());
     final level = _conf[report.confidence];
     final conf = level == null ? null : (level, 'ui.report.confidence.${report.confidence}'.tr());
@@ -905,7 +905,7 @@ class ReportCard extends StatelessWidget {
   }
 }
 
-/// Rövid értesítés pergamenen (Toast): tintakontúr és bronz belső keret; a cím Cinzel, a tónus színében.
+/// Short notification on parchment (Toast): ink outline and bronze inner frame; title in Cinzel, in the tone color.
 class Notice extends StatelessWidget {
   const Notice({super.key, required this.tone, required this.title, this.body, this.icon});
   final String tone, title;
@@ -946,7 +946,7 @@ class Notice extends StatelessWidget {
   }
 }
 
-/// Lebegő értesítés (Toast) a képernyő alján.
+/// Floating notification (Toast) at the bottom of the screen.
 void showToast(BuildContext context, String title, {String? body, String tone = 'info', Duration? duration}) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
@@ -960,10 +960,10 @@ void showToast(BuildContext context, String title, {String? body, String tone = 
     ));
 }
 
-/// Egységes hibaüzenet.
+/// Uniform error message.
 void showError(BuildContext context, Object e) => showToast(context, 'ui.failed'.tr(), body: e.toString(), tone: 'danger');
 
-/// Szemöldökcím (tn-eyebrow), opcionális játékikonnal.
+/// Eyebrow title (tn-eyebrow), with optional game icon.
 class Eyebrow extends StatelessWidget {
   const Eyebrow(this.text, {super.key, this.art});
   final String text;
@@ -976,7 +976,7 @@ class Eyebrow extends StatelessWidget {
   }
 }
 
-/// Kártyacím játékikonnal (good-title): Cinzel cím az ikon mellett.
+/// Card title with game icon (good-title): Cinzel title next to the icon.
 class ArtTitle extends StatelessWidget {
   const ArtTitle(this.text, {super.key, this.art, this.artSize = 26, this.size = 18});
   final String text;
@@ -990,22 +990,22 @@ class ArtTitle extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Parancslap
+// Order sheet
 // ---------------------------------------------------------------------------
 
-/// Egy sor a [OrderSheet]-en.
+/// A row on the [OrderSheet].
 class OrderSheetRow {
   const OrderSheetRow({required this.label, required this.cost, this.art, this.meta, this.warning, this.hidden = false});
   final String label, cost;
 
-  /// Az akció neve; a sor elején az ág színű csempés játékikon.
+  /// Action name; the row starts with the branch-colored tiled game icon.
   final String? art;
   final String? meta, warning;
   final bool hidden;
 }
 
-/// A parancslap tekercs formában (tn-orders): sötét fa fejléc bronz „Parancslap” címmel,
-/// soronként az akció csempés ikonja, alul a PP-összeg és a bronz lepecsételés gomb.
+/// The order sheet as a scroll (tn-orders): dark wood header with bronze "Order sheet" title,
+/// each row with the action's tiled icon, PP total and the bronze sealing button at the bottom.
 class OrderSheet extends StatelessWidget {
   const OrderSheet({
     super.key,
@@ -1026,7 +1026,7 @@ class OrderSheet extends StatelessWidget {
   final VoidCallback? onSeal;
   final void Function(int index)? onRemove;
 
-  /// A lepecsételés gomb felirata; alapból „Parancsok lepecsételése”.
+  /// Sealing button label; defaults to "Seal orders".
   final String? sealLabel;
 
   @override

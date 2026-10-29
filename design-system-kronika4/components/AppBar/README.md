@@ -1,5 +1,5 @@
 # AppBar
 
-Faragott fa fejléc bronz alsó szegéllyel. Benne a ház címere és bronz Cinzel neve, az elszámolás időzítője és az erőforrás-kapszulák.
+A carved wooden header with a bronze bottom border. It holds the house's crest and its name in bronze Cinzel, the settlement timer and the resource capsules.
 
-**Mit ad a hívó:** `house`, `timer`, `resources`.
+**What the caller provides:** `house`, `timer`, `resources`.

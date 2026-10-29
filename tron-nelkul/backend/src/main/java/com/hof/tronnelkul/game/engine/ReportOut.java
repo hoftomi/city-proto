@@ -1,7 +1,7 @@
 package com.hof.tronnelkul.game.engine;
 
 /**
- * Egy jelentés, amit a motor küld. Nyilvános jelentésnél a playerId null, és minden emberi játékos megkapja.
- * at: a játék órája (epoch ms). tone: info | ok | warn | danger
+ * A report sent by the engine. A public report has a null playerId and goes to every human player.
+ * at: game clock (epoch ms). tone: info | ok | warn | danger. title and text are resolved when stored.
  */
-public record ReportOut(String playerId, boolean isPublic, long at, String kind, String confidence, String title, String text, String tone) {}
+public record ReportOut(String playerId, boolean isPublic, long at, String kind, String confidence, Msg title, Msg text, String tone) {}

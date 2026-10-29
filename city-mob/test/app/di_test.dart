@@ -10,13 +10,13 @@ import 'package:tron_nelkul/ui/game_detail/bloc/game_detail_bloc.dart';
 import 'package:tron_nelkul/ui/join/bloc/join_bloc.dart';
 import 'package:tron_nelkul/ui/lobby/bloc/lobby_bloc.dart';
 
-/// A generált DI-regisztráció (di.config.dart) teljes: minden bloc és service feloldható.
+/// The generated DI registration (di.config.dart) is complete: every bloc and service resolves.
 void main() {
   setUpAll(configureDependencies);
 
-  test('a blocok és a service-ek feloldhatók', () {
-    expect(getIt<AuthBloc>(), same(getIt<AuthBloc>()), reason: 'az AuthBloc egyetlen példány');
-    expect(getIt<GameBloc>(), isNot(same(getIt<GameBloc>())), reason: 'a GameBloc játékonként új');
+  test('blocs and services resolve', () {
+    expect(getIt<AuthBloc>(), same(getIt<AuthBloc>()), reason: 'AuthBloc is a singleton');
+    expect(getIt<GameBloc>(), isNot(same(getIt<GameBloc>())), reason: 'GameBloc is new per game');
     for (final create in <Object Function()>[
       () => getIt<LobbyBloc>(), () => getIt<GameDetailBloc>(), () => getIt<JoinBloc>(), () => getIt<ReportsBloc>(),
       () => getIt<RankingBloc>(), () => getIt<CityService>(), () => getIt<JoinService>(),

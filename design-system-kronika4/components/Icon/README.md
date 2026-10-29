@@ -1,7 +1,7 @@
 # Icon
 
-Vonalikonok a vezérlőkhöz: 24-es rács, 2px vonal, `currentColor`.
+Line icons for controls: 24 grid, 2px stroke, `currentColor`.
 
-**Mit ad a hívó:** `name`, `size`, `label`.
+**What the caller provides:** `name`, `size`, `label`.
 
-A játék dolgaihoz a teli `GameIcon` való.
+For the game's things use the filled `GameIcon`.

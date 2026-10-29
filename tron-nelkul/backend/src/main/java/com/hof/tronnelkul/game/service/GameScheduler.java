@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 
 /**
- * Ütemezés: félpercenként előreviszi a futó játékokat (az érlelő parancslapok lejárata, elszámolás 8:00-kor és 20:00-kor,
- * Europe/Budapest), és percenként ellenőrzi a jelentkezést nyitó és az induló játékokat.
- * Több szerverpéldány esetén ezt egyetlen példányon kell futtatni (SCHEDULER_ENABLED=false a többin).
+ * Scheduling: every half minute advances the running games (maturing sheets expire, settlement at 8:00 and 20:00,
+ * Europe/Budapest), and every minute checks games opening sign-up and games starting.
+ * With several server instances run this on a single one only (SCHEDULER_ENABLED=false on the others).
  */
 @Component
 public class GameScheduler {
@@ -31,7 +31,7 @@ public class GameScheduler {
     public void tick() {
         if (!props.scheduler().enabled()) return;
         for (GameEntity g : games.findByStatus(GameStatus.RUNNING)) {
-            try { lifecycle.tick(g.id); } catch (RuntimeException e) { log.error("Nem sikerült előrevinni: {}", g.id, e); }
+            try { lifecycle.tick(g.id); } catch (RuntimeException e) { log.error("Failed to advance: {}", g.id, e); }
         }
     }
 
@@ -43,8 +43,8 @@ public class GameScheduler {
             g.status = GameStatus.OPEN;
             games.save(g);
         }
-        for (GameEntity g : games.findByStatusAndStartsAtBefore(GameStatus.OPEN, now)) {
-            try { lifecycle.start(g.id); } catch (RuntimeException e) { log.error("Nem sikerült elindítani: {}", g.id, e); }
+        for (GameEntity g : games.findByStatusAndClosesAtBefore(GameStatus.OPEN, now)) {
+            try { lifecycle.start(g.id); } catch (RuntimeException e) { log.error("Failed to start: {}", g.id, e); }
         }
     }
 }

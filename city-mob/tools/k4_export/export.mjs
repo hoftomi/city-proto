@@ -1,17 +1,20 @@
-// A Krónika IV design system rajzainak exportja a Flutter apphoz.
+// Exports the Krónika IV design system artwork for the Flutter app.
 //
-// Forrás: ../../../prototype-kronika4/src (a design system ES-modul változata, tokenek, CSS, a Délkelet domborzata)
-// és a backend térképei (MapRegistry.java). Kimenet: ../../assets/k4/
-//   icons/<név>.svg        játékikonok (GameIcon), a tokenek beégetve
-//   login.svg              a belépőkép
-//   map/<térkép>.webp      a világtérkép domborzata iránytűvel és kartussal, városok és utak nélkül (360 × 260, 8×)
-//   cities/<város>_on.webp / _off.webp   a térkép vára felirattal, elérhető és nem elérhető állapotban (8×)
-//   estates/<tinktúra>.webp, <tinktúra>_npc.webp   birtok (8×)
-//   cityview/<város>.webp  az izometrikus városkép (720 × 540, 3×), kijelölés nélkül
-//   k4.json                méretek, a várak és birtokok horgonypontja, a negyedek koppintható sokszögei
+// Source: ../../../prototype-kronika4/src (the design system as ES modules, tokens, CSS, the Délkelet terrain)
+// and the backend maps (MapRegistry.java). Output: ../../assets/k4/
+//   icons/<name>.svg       game icons (GameIcon), tokens baked in
+//   login.svg              the login artwork
+//   map/<map>.webp         world map terrain with compass and cartouche, without cities and roads (360 × 260, 8×)
+//   cities/<city>_on.webp / _off.webp   the map castle with its label, reachable and unreachable (8×)
+//   estates/<tincture>.webp, <tincture>_npc.webp   estate (8×)
+//   cityview/<city>.webp   the isometric city view (720 × 540, 3×), nothing selected
+//   k4.json                sizes, castle and estate anchors, the districts' tappable polygons
 //
-// Futtatás: npm install && npm run export   (Google Chrome és cwebp kell; a betűk a Google Fontsról töltődnek)
-// Csak egyes részek: ONLY=icons,login,maps,cities,estates,cityview npm run export (a többi kimenet megmarad)
+// Run: npm install && npm run export   (needs Google Chrome and cwebp; fonts load from Google Fonts)
+// Only some parts: ONLY=icons,login,maps,cities,estates,cityview npm run export (other outputs are kept)
+//
+// The prototype uses Hungarian names; the app uses English ids, so icon names, tinctures, branches and
+// district labels are mapped below (ICON_ID, TINCTURE_ID, BRANCH_ID, DISTRICT_ID).
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -22,12 +25,13 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PROTO = path.resolve(here, '../../../prototype-kronika4/src');
 const REGISTRY = path.resolve(here, '../../../tron-nelkul/backend/src/main/java/com/hof/tronnelkul/game/world/MapRegistry.java');
+const WORLD = JSON.parse(fs.readFileSync(path.resolve(here, '../../../tron-nelkul/backend/src/main/resources/i18n/hu/world.json'), 'utf8'));
 const OUT = path.resolve(here, '../../assets/k4');
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'k4-'));
 
-// ---------- A prototípus moduljai (JSX nélkül is: esbuild köti össze) ----------
-try { fs.symlinkSync(path.join(here, 'node_modules'), path.join(TMP, 'node_modules'), 'dir'); } catch { /* már megvan */ }
+// ---------- Prototype modules (bundled by esbuild, JSX included) ----------
+try { fs.symlinkSync(path.join(here, 'node_modules'), path.join(TMP, 'node_modules'), 'dir'); } catch { /* already there */ }
 const load = async (entry) => {
   const file = path.join(TMP, path.basename(entry).replace(/\W/g, '_') + '.mjs');
   await build({ entryPoints: [entry], bundle: true, format: 'esm', platform: 'node', outfile: file, jsx: 'automatic', loader: { '.js': 'jsx' },
@@ -42,7 +46,7 @@ const { TERRAIN: DELKELET_TERRAIN } = await load(path.join(PROTO, 'game/world.js
 const { default: LoginScreen } = await load(path.join(PROTO, 'lobby/LoginScreen.jsx'));
 const render = (el) => renderToStaticMarkup(el);
 
-// ---------- Tokenek: a var(--x) értékek beégetése a statikus SVG-kbe ----------
+// ---------- Tokens: bake var(--x) values into the static SVGs ----------
 const tokensCss = fs.readFileSync(path.join(PROTO, 'ds/tokens.css'), 'utf8');
 const componentsCss = fs.readFileSync(path.join(PROTO, 'ds/components.css'), 'utf8');
 const TOK = {};
@@ -52,17 +56,18 @@ function resolveVars(s) {
   return s;
 }
 
-// ---------- A backend térképei ----------
+// ---------- Backend maps (ids and geometry from MapRegistry.java, display names from i18n world.json) ----------
 function parseRegistry(src) {
   const maps = [];
   for (const part of src.split('new MapDefinition(').slice(1)) {
-    const [, id, name] = part.match(/^"(\w+)", "([^"]+)"/);
-    const cities = [...part.matchAll(/new CityDef\("(\w+)", "([^"]+)", (\d+), (\d+), (true|false), (true|false), "([^"]+)"/g)]
-      .map(([, cid, cname, x, y, key, coast, profile]) => ({ id: cid, name: cname, x: +x, y: +y, key: key === 'true', coast: coast === 'true', profile }));
+    const [, id] = part.match(/^"(\w+)"/);
+    const name = WORLD.map[id];
+    const cities = [...part.matchAll(/new CityDef\("(\w+)", (\d+), (\d+), (true|false), (true|false)/g)]
+      .map(([, cid, x, y, key, coast]) => ({ id: cid, name: WORLD.city[cid].name, x: +x, y: +y, key: key === 'true', coast: coast === 'true', profile: WORLD.city[cid].desc }));
     const edgePart = part.slice(part.indexOf('List.of(List.of('), part.indexOf('new StartSlot'));
     const edges = [...edgePart.matchAll(/List\.of\("(\w+)", "(\w+)"\)/g)].map(([, a, b]) => [a, b]);
-    const starts = [...part.matchAll(/new StartSlot\("(\w+)", "([^"]+)", (\d+), (\d+), List\.of\(([^)]*)\)/g)]
-      .map(([, sid, sname, x, y, nb]) => ({ id: sid, name: sname, x: +x, y: +y, neighbors: [...nb.matchAll(/"(\w+)"/g)].map((m) => m[1]) }));
+    const starts = [...part.matchAll(/new StartSlot\("(\w+)", (\d+), (\d+), List\.of\(([^)]*)\)/g)]
+      .map(([, sid, x, y, nb]) => ({ id: sid, name: WORLD.start[id][sid].name, x: +x, y: +y, neighbors: [...nb.matchAll(/"(\w+)"/g)].map((m) => m[1]) }));
     const t = part.slice(part.indexOf('new TerrainDef(') + 'new TerrainDef('.length);
     const sea = t.startsWith('null') ? undefined : t.match(/^"([^"]*)"/)[1];
     const lists = []; let depth = 0, cur = null;
@@ -78,7 +83,7 @@ function parseRegistry(src) {
 }
 const MAPS = parseRegistry(fs.readFileSync(REGISTRY, 'utf8'));
 
-// ---------- Képkészítés headless Chrome-mal ----------
+// ---------- Rendering with headless Chrome ----------
 const FONTS = componentsCss.match(/@import[^;]+;/g)?.join('\n') || '';
 function page(svg, w, h, bg = 'transparent') {
   return `<!doctype html><html><head><meta charset="utf-8"><style>${FONTS}\n${tokensCss}\n${componentsCss.replace(/@import[^;]+;/g, '')}
@@ -95,9 +100,19 @@ function shoot(svg, w, h, scale, out, { bg, quality = 82 } = {}) {
   execFileSync('cwebp', ['-quiet', '-q', String(quality), '-alpha_q', '90', png, '-o', out]);
 }
 
-// A térképvászon <defs> része (színátmenetek, elmosás), hogy a különálló várak és birtokok is ugyanúgy nézzenek ki
+// The map canvas <defs> (gradients, blur), so standalone castles and estates look the same
 const canvasDefs = (render(h(T.MapCanvas, { width: 360, height: 260 })).match(/<defs>[\s\S]*?<\/defs>/g) || []).join('');
 const sprite = (inner, box) => `<svg class="k4 tn-map" xmlns="http://www.w3.org/2000/svg" viewBox="${box.join(' ')}">${canvasDefs}${inner}</svg>`;
+
+// ---------- Prototype names → app ids ----------
+const ICON_ID = { arany: 'gold', nep: 'popularity', ado: 'tax', homokora: 'hourglass', navTerkep: 'navMap', navVaros: 'navCity', navJel: 'navReports',
+  navRang: 'navRanking', vasarter: 'market', varoshaza: 'townHall', alvilag: 'underworld', gabona: 'grain', bor: 'wine', vas: 'iron', ko: 'stone',
+  so: 'salt', hal: 'fish', fuszer: 'spice', tozeg: 'peat', csempesz: 'contraband', gyapju: 'wool', lo: 'horse', fa: 'timber', ezust: 'silver',
+  poszto: 'cloth', sor: 'beer', faszen: 'charcoal', mez: 'honey' };
+const iconId = (name) => ICON_ID[name] ?? name;
+const TINCTURE_ID = { voros: 'red', kek: 'blue', zold: 'green', arany: 'gold', bibor: 'purple', fekete: 'black', narancs: 'orange', szeder: 'mulberry' };
+const BRANCH_ID = { vasarter: 'trade', varoshaza: 'politics', alvilag: 'espionage', kozos: 'common' };
+const DISTRICT_ID = { 'Vásártér': 'trade', 'Városháza': 'politics', 'Alvilág': 'espionage' };
 
 const ONLY = process.env.ONLY ? new Set(process.env.ONLY.split(',')) : null;
 const want = (part) => !ONLY || ONLY.has(part);
@@ -107,20 +122,20 @@ const metaFile = path.join(OUT, 'k4.json');
 const meta = Object.assign({ version: 1, maps: {}, districts: null }, ONLY && fs.existsSync(metaFile) ? JSON.parse(fs.readFileSync(metaFile, 'utf8')) : {},
   { map: { width: 360, height: 260, scale: 8 }, cityBox: [-46, -58, 92, 90], estateBox: [-16, -24, 32, 34], cityView: { width: 720, height: 540, scale: 3 } });
 
-// 1. Játékikonok
+// 1. Game icons
 if (want('icons')) for (const name of T.GameIcon.names) {
   const svg = resolveVars(render(h(T.GameIcon, { name, size: 48 }))).replace(' class="tn-gicon"', ' xmlns="http://www.w3.org/2000/svg"').replace(/ aria-hidden="true"/, '');
   fs.mkdirSync(path.join(OUT, 'icons'), { recursive: true });
-  fs.writeFileSync(path.join(OUT, 'icons', name + '.svg'), svg);
+  fs.writeFileSync(path.join(OUT, 'icons', iconId(name) + '.svg'), svg);
 }
-meta.icons = T.GameIcon.names;
-meta.branchOf = T.GameIcon.branchOf;
+meta.icons = T.GameIcon.names.map(iconId);
+meta.branchOf = Object.fromEntries(Object.entries(T.GameIcon.branchOf).map(([k, v]) => [iconId(k), v == null ? v : BRANCH_ID[v] ?? v]));
 
-// 2. Belépőkép
+// 2. Login artwork
 if (want('login')) fs.writeFileSync(path.join(OUT, 'login.svg'), resolveVars(render(h(LoginScreen, { onLogin() {} })).match(/<svg[\s\S]*?<\/svg>/)[0]
   .replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')));
 
-// 3. Térképek, várak, birtokok
+// 3. Maps, castles, estates
 for (const m of MAPS) {
   const base = render(h(T.MapCanvas, { width: 360, height: 260, title: m.name }, h(T.MapTerrain, m.terrain), h(T.MapCompass, { x: 320, y: 44, size: 20 }),
     h(T.MapCartouche, { x: 8, y: 212, width: 120, title: m.name.toUpperCase() })));
@@ -133,32 +148,32 @@ for (const m of MAPS) {
     }
   }
   meta.maps[m.id] = { name: m.name, cities: m.cities.map(({ id, name, x, y, key, coast }) => ({ id, name, x, y, key, coast })), edges: m.edges, starts: m.starts };
-  console.log('térkép kész:', m.id);
+  console.log('map done:', m.id);
 }
-if (want('estates')) for (const t of ['voros', 'kek', 'zold', 'arany', 'bibor', 'fekete', 'narancs', 'szeder']) {
+if (want('estates')) for (const [t, id] of Object.entries(TINCTURE_ID)) {
   for (const npc of [false, true]) {
     shoot(sprite(render(h(T.MapEstate, { x: 0, y: 0, tincture: t, npc })), meta.estateBox), meta.estateBox[2], meta.estateBox[3], meta.map.scale,
-      path.join(OUT, 'estates', `${t}${npc ? '_npc' : ''}.webp`));
+      path.join(OUT, 'estates', `${id}${npc ? '_npc' : ''}.webp`));
   }
 }
 
-// 4. Városképek és a negyedek sokszögei
+// 4. City views and district polygons
 if (want('cityview')) for (const m of MAPS) for (const c of m.cities) {
   const svg = render(h(T.CityView, { name: c.name, coast: c.coast, stability: 'stabil', districts: {}, onSelect() {} }));
   shoot(svg, 720, 540, meta.cityView.scale, path.join(OUT, 'cityview', c.id + '.webp'), { quality: 78 });
   const districts = {};
   for (const hit of svg.matchAll(/<polygon points="([^"]+)" class="tn-cv-hit"[^>]*aria-label="([^"]+)"/g)) {
     const pts = hit[1].trim().split(/\s+/).map((p) => p.split(',').map(Number));
-    districts[hit[2]] = pts;
+    districts[DISTRICT_ID[hit[2]] ?? hit[2]] = pts;
   }
-  const labels = Object.fromEntries([...svg.matchAll(/<text x="([\d.]+)" y="([\d.]+)"[^>]*class="tn-cv-label">([^<]+)</g)].map(([, x, y, n]) => [n, [+x, +y]]));
+  const labels = Object.fromEntries([...svg.matchAll(/<text x="([\d.]+)" y="([\d.]+)"[^>]*class="tn-cv-label">([^<]+)</g)].map(([, x, y, n]) => [DISTRICT_ID[n] ?? n, [+x, +y]]));
   const d = { polygons: districts, labels };
   if (c === MAPS[0].cities[0]) { meta.districts = null; delete meta.cityDistricts; }
   if (meta.districts && JSON.stringify(meta.districts) !== JSON.stringify(d)) (meta.cityDistricts ||= {})[c.id] = d;
   meta.districts ||= d;
-  console.log('városkép kész:', c.id);
+  console.log('city view done:', c.id);
 }
 
 fs.writeFileSync(path.join(OUT, 'k4.json'), JSON.stringify(meta, null, 1));
 fs.rmSync(TMP, { recursive: true, force: true });
-console.log('Kész:', OUT);
+console.log('Done:', OUT);

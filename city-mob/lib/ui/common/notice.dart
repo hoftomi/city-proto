@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 import '../../core/tr.dart';
 
-/// Egyszeri, felugró üzenet a blocból a widgetnek (toast). A `seq` minden új üzenetnél nő,
-/// így a BlocListener akkor is jelez, ha ugyanaz a szöveg jön kétszer. A szöveg fordítási kulcs vagy kész szöveg.
+/// One-off popup message from the bloc to the widget (toast). `seq` grows with every new message,
+/// so the BlocListener fires even if the same text comes twice. The text is a translation key or final text.
 class Notice extends Equatable {
   const Notice(this.seq, this.title, {this.body, this.tone = 'info'});
 

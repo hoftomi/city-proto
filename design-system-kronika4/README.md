@@ -1,73 +1,73 @@
-A *Trón nélkül – Krónika IV* a Krónika festett stratégiai köntösének negyedik változata. A városnézet izometrikus és kézzel komponált: kevesebb, de kidolgozott épület valódi tetőformákkal (nyereg-, konty- és gúlatető, kupola), kőrakással, cserép- és palasorokkal, favázas, kiugró emeletekkel, zsalus és íves ablakokkal, kéménnyel és füsttel. A várfal pártázatos, kerek tornyai kúpos tetőt kapnak. A világtérkép városai ugyanebből az eszközkészletből épülő, izometrikus kis várak, a hegyek sziklás, havas csúcsok. Ugyanazokat a komponenseket és komponens-API-t adja, mint a korábbi változatok. Minden rajz saját, eredeti munka.
+*Trón nélkül – Krónika IV* is the fourth version of Krónika's painted strategy look. The city view is isometric and hand-composed: fewer but detailed buildings with real roof shapes (gable, hip and pyramid roofs, dome), stonework, rows of tiles and slates, half-timbered jettied upper floors, shuttered and arched windows, chimneys and smoke. The city wall is crenellated, and its round towers get conical roofs. The cities on the world map are small isometric castles built from the same asset kit, and the mountains are rocky, snowy peaks. It provides the same components and component API as the earlier versions. Every drawing is our own, original work.
 
-## Hangnem és szöveg
+## Tone and copy
 
-- Magyar nyelv, tegező, de kimértebb, krónikás hang: „A városi tanács jóváhagyta az adásvételt.”
-- A gombfelirat ige vagy igei főnév, a költséggel: „Kém felfogadása · 20 A”.
-- A játékfogalmak a szabálykönyv szavai: Parancspont (PP), Legitimitás (L), népszerűség (N), arany (A).
-- Emoji nincs. A hangulatot a rajzok és az anyagok adják.
+- Hungarian language, informal but more measured, chronicle-like voice: „A városi tanács jóváhagyta az adásvételt.” (The city council approved the sale.)
+- Button labels are verbs or verbal nouns, with the cost: „Kém felfogadása · 20 A” (Hire spy · 20 gold).
+- Game terms are the rulebook's words: Parancspont (PP, command point), Legitimitás (L, Legitimacy), népszerűség (N, popularity), arany (A, gold).
+- No emoji. The mood comes from the drawings and the materials.
 
-## Anyagok és szín
+## Materials and color
 
-- **Asztal:** a képernyő háttere régi térképlap (`table-hi` → `table`), halvány 48px-es rácsvonalakkal és széleken sötétedő vignettával.
-- **Pergamen:** kártya, jelentés és parancslap alapja `paper-raised` → `paper` átmenet. A szöveg `ink` (13,8:1), a másodlagos `ink-muted` (legalább 5:1 minden felületen, az asztalon is).
-- **Fa és bronz:** a kártyakeret, a fejléc, a navigáció, a táblafej és a térképkeret sötét fa (`wood`, `wood-hi`, `wood-lo`). Belül egy bronz vonal (`frame`) fut. Sötét fán a felirat világos bronz (`frame-hi`, 5,9:1).
-- **Mélység:** 3px-es tömör tintaperem (`outline`), plusz lágy vetett árnyék (`shadow-card`). A kontúr vékonyabb (1–1,5px), mint a Mesevilágban.
-- **Gombok:** matt festékek felső fénnyel és alsó peremmel.
-  - Erdőzöld (`btn-green-*`): elsődleges.
-  - Acélkék (`btn-blue-*`): alap.
-  - Bronz (`btn-gold-*`, sötét felirattal): kizárólag a lepecsételés.
-  - Téglavörös (`btn-red-*`): veszélyes lépés.
-  - Pergamen (`btn-cream-*`): csendes lépés.
-  A világos felirat a színes gombokon legalább 4,5:1.
-- **Kiemelés:** a `verdigris` itt acélkék: link, info, saját sor.
-- **Házszínek:** festett, tompított heraldikai tinktúrák (`house-*`).
-- **Ágszínek** (`branch-*`): az ikoncsempe szegélye és a kijelölt bőrfül felső csíkja.
+- **Table:** the screen background is an old map sheet (`table-hi` → `table`), with faint 48px grid lines and a vignette darkening toward the edges.
+- **Parchment:** the base of cards, reports and the order sheet is a `paper-raised` → `paper` gradient. Text is `ink` (13.8:1), secondary text `ink-muted` (at least 5:1 on every surface, the table included).
+- **Wood and bronze:** the card frame, header, navigation, table header and map frame are dark wood (`wood`, `wood-hi`, `wood-lo`). A bronze line (`frame`) runs inside. On dark wood the label is light bronze (`frame-hi`, 5.9:1).
+- **Depth:** a 3px solid ink rim (`outline`), plus a soft drop shadow (`shadow-card`). The outline is thinner (1–1.5px) than in Mesevilág.
+- **Buttons:** matte paints with a top highlight and a bottom rim.
+  - Forest green (`btn-green-*`): primary.
+  - Steel blue (`btn-blue-*`): default.
+  - Bronze (`btn-gold-*`, with dark label): exclusively for sealing.
+  - Brick red (`btn-red-*`): dangerous step.
+  - Parchment (`btn-cream-*`): quiet step.
+  Light labels on colored buttons are at least 4.5:1.
+- **Accent:** `verdigris` is steel blue here: link, info, own row.
+- **House colors:** painted, muted heraldic tinctures (`house-*`).
+- **Branch colors** (`branch-*`): the border of the icon tile and the top stripe of the selected leather tab.
 
-## Tipográfia
+## Typography
 
-- **Cinzel** (`display`): vésett, római feliratos címbetű. Képernyőcím, kártya- és jelentéscím, fül, városnév, kartus, lepecsételés gomb. A kisbetűi kiskapitálisként jelennek meg.
-- **Nunito Sans 600–900** (`sans`): minden felületi szöveg, gomb és szám.
-- Mindkettő teljes latin-ext (ő, ű) készlettel töltődik a Google Fontsról (`components/bundle.css` eleje).
+- **Cinzel** (`display`): an engraved, Roman inscriptional display face. Screen title, card and report title, tab, city name, cartouche, seal button. Its lowercase renders as small caps.
+- **Nunito Sans 600–900** (`sans`): all interface text, buttons and numbers.
+- Both load from Google Fonts with the full latin-ext set (ő, ű) (top of `components/bundle.css`).
 
-## Forma és térköz
+## Shape and spacing
 
-- 4px-es alap (`space-1` … `space-8`), a kártya belső térköze és az oldalmargó `space-4`.
-- Visszafogott sarkok: mező 6px, kártya és térképkeret 10px, lap 14px. Kerek csak a pecsétkorong, a pötty és a tanácshely.
-- Az érintési cél legalább 44px (kis gomb: 34px, kártyán belül).
+- 4px base (`space-1` … `space-8`); card padding and the page margin are `space-4`.
+- Restrained corners: field 6px, card and map frame 10px, sheet 14px. Only the seal disc, dots and council seats are round.
+- Touch targets are at least 44px (small button: 34px, inside cards).
 
-## Térkép és város
+## Map and city
 
-A világtérkép és a városnézet egy **`MapViewport`** ablakban él: telefonon ujjal, asztali gépen egérrel húzható, és nagyítható. A világtérkép 2×, a város 1,8× nagyítással indul, így a részletek látszanak. A „teljes nézet” gomb visszaállítja a teljes szélességet.
+The world map and the city view live in a **`MapViewport`** window: it can be dragged with a finger on the phone or with the mouse on desktop, and zoomed. The world map starts at 2× zoom and the city at 1.8×, so the details are visible. The "full view" button restores the full width.
 
-- **Világtérkép:** a táj és a városok is részletesen kidolgozottak.
-  - Talaj: réti színfoltok, fűcsomók, vadvirágok, fokbeosztásos belső keret.
-  - Hegyek: napos és árnyékos oldal, gerincek, sraffozás, hósapka, kövek.
-  - Dombok és vegyes erdők erdőtalaj-árnyékkal.
-  - Mozaikos szántók sövénnyel, tanyával és birkákkal; falvak templomtoronnyal; szélmalmok.
-  - Bánya, folyók homokparttal, kőhidak az utak kereszteződésénél, tó.
-  - Tenger: tajték, szigetek, világítótorony, hajók és egy bálna.
-  - Tájnevek és tengernév vésett betűvel.
-  - A városok fallal körülvett kisvárosok, a nevük pergamenszalagon áll.
-- **Városnézet** (720 × 540, izometrikus, kézzel komponált):
-  - Városháza: parlament rézkupolával, oszlopcsarnokkal és timpanonnal, két szárnnyal, óratoronnyal, díszkerttel és szökőkúttal.
-  - Vásártér: fedett vásárcsarnok, tíz stand ponyvával és áruval, céhház, kút, szekerek; polgárházak boltponyvával és cégérrel; kápolna harangtoronnyal; kovácsműhely izzó tűzzel.
-  - Alvilág: éjszakai tónus, düledező házak, izzó ablakú fogadó lámpásokkal, romos torony, köd és utcai lámpák.
-  - A falon kívül: szántók sorokkal, legelő állatokkal, pajta, szélmalom, tanyák, sziklás kőbánya aknával, sínnel, csillével és daruval; folyó kőhíddal vagy kikötő mólókkal.
-- **Világtérkép:** izometrikus kis várak (fal, saroktornyok, lakótorony, házak), havas sziklacsúcsok, változatos lombos és fenyőfák, iso szántók sövénnyel, fűtextúra.
-- **Festett eszközök:** közös `kg-*` színátmenetek, papírszemcse, elmosott árnyékok és lágyított kontúr a térképen és a városban is.
+- **World map:** both the landscape and the cities are richly detailed.
+  - Ground: meadow color patches, grass tufts, wildflowers, an inner frame with degree marks.
+  - Mountains: sunny and shaded sides, ridges, hatching, snowcaps, rocks.
+  - Hills and mixed forests with forest-floor shading.
+  - Patchwork fields with hedges, a farmstead and sheep; villages with church towers; windmills.
+  - Mine, rivers with sandy banks, stone bridges where roads cross, a lake.
+  - Sea: foam, islands, a lighthouse, ships and a whale.
+  - Region and sea names in engraved lettering.
+  - The cities are small walled towns, with their names on a parchment ribbon.
+- **City view** (720 × 540, isometric, hand-composed):
+  - Town Hall: a parliament with a copper dome, colonnade and pediment, two wings, a clock tower, a formal garden and a fountain.
+  - Marketplace: a covered market hall, ten stalls with awnings and wares, a guild hall, a well, carts; burgher houses with shop awnings and signs; a chapel with a bell tower; a smithy with a glowing fire.
+  - Underworld: night tone, ramshackle houses, an inn with glowing windows and lanterns, a ruined tower, fog and street lamps.
+  - Outside the wall: fields in rows, grazing animals, a barn, a windmill, farmsteads, a rocky quarry with a shaft, rails, a mine cart and a crane; a river with a stone bridge or a port with piers.
+- **World map:** small isometric castles (wall, corner towers, keep, houses), snowy rocky peaks, varied deciduous and pine trees, iso fields with hedges, grass texture.
+- **Painted assets:** shared `kg-*` gradients, paper grain, blurred shadows and softened outlines on both the map and the city.
 
-## Ikonok
+## Icons
 
-- **Játékikonok** (`GameIcon`): teli, illusztratív ikonok vékony tintakontúrral és tompított festékekkel (`ic-*`).
-  - Erőforrás: `arany`, `pp`, `legit`, `nep`, `ado`.
-  - Árucikk: 11 fajta.
-  - Ág: 3 fajta.
-  - Akció: 14 fajta.
-  - Navigáció: `navTerkep`, `navVaros`, `navJel`, `navRang`.
-  - Idő: `homokora`.
-- **Vonalikonok** (`Icon`): 2px vonal, csak vezérlőkhöz.
+- **Game icons** (`GameIcon`): filled, illustrative icons with a thin ink outline and muted paints (`ic-*`).
+  - Resource: `arany`, `pp`, `legit`, `nep`, `ado`.
+  - Good: 11 kinds.
+  - Branch: 3 kinds.
+  - Action: 14 kinds.
+  - Navigation: `navTerkep`, `navVaros`, `navJel`, `navRang`.
+  - Time: `homokora`.
+- **Line icons** (`Icon`): 2px stroke, for controls only.
 
-## Kapcsolat a többi stílussal
+## Relation to the other styles
 
-A komponensnevek, propok és osztálynevek (`tn-*`) azonosak a térképasztal és a Mesevilág rendszerrel. A névtér itt `window.TronKronika4`. Új itt az izometrikus `i4` eszközkészlet: doboz, tető, henger, kúp, ablak, ajtó, ház, torony, fal, szikla, fa és parcella.
+Component names, props and class names (`tn-*`) are the same as in the map-table and Mesevilág systems. The namespace here is `window.TronKronika4`. New here is the isometric `i4` asset kit: box, roof, cylinder, cone, window, door, house, tower, wall, rock, tree and plot.

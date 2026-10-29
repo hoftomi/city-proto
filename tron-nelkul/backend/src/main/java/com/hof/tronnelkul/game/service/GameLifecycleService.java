@@ -5,12 +5,15 @@ import com.hof.tronnelkul.game.engine.*;
 import com.hof.tronnelkul.game.model.*;
 import com.hof.tronnelkul.game.world.MapDefinition;
 import com.hof.tronnelkul.game.world.MapRegistry;
+import com.hof.tronnelkul.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Játék indítása, az óra előrevitele (ütemező), és a fejlesztői időkezelés. */
+import java.time.Instant;
+
+/** Starting a game, advancing the clock (scheduler), and the development immediate settlement. */
 @Service
 public class GameLifecycleService {
     private static final Logger log = LoggerFactory.getLogger(GameLifecycleService.class);
@@ -18,66 +21,46 @@ public class GameLifecycleService {
     private final GameRepository games;
     private final PlayerRepository players;
     private final GameRunner runner;
+    private final Messages messages;
 
-    public GameLifecycleService(GameRepository games, PlayerRepository players, GameRunner runner) {
-        this.games = games; this.players = players; this.runner = runner;
+    public GameLifecycleService(GameRepository games, PlayerRepository players, GameRunner runner, Messages messages) {
+        this.games = games; this.players = players; this.runner = runner; this.messages = messages;
     }
 
-    /** Elindít egy nyitott játékot: városok, NPC-házak, a jelentkezők induló állása. */
+    /** Starts an open game: cities, NPC houses, the starting position of those who joined. */
     @Transactional
     public void start(String gameId) {
-        GameEntity g = games.lockById(gameId).orElseThrow(() -> ApiException.notFound("Nincs ilyen játék."));
+        GameEntity g = games.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
         if (g.status == GameStatus.RUNNING) return;
-        if (g.status != GameStatus.OPEN) throw ApiException.conflict("Csak nyitott játék indítható.");
+        if (g.status != GameStatus.OPEN) throw ApiException.conflict("server.only_open_start");
         MapDefinition map = MapRegistry.get(g.mapId);
-        EngineState s = Setup.initial(map, g.now().toEpochMilli());
+        EngineState s = Setup.initial(map, Instant.now().toEpochMilli());
         for (int i = 0; i < Math.min(g.npcCount, Npcs.ALL.size()); i++) {
             Npcs.Template t = Npcs.ALL.get(i);
-            PlayerEntity p = new PlayerEntity(g.id, null, t.name(), t.tincture());
+            String name = messages.text(t.label());
+            PlayerEntity p = new PlayerEntity(g.id, null, name, t.tincture());
             p.npc = true; p.persona = t.persona();
             p = players.save(p);
-            Setup.addNpc(s, map, i, p.id.toString(), t.name(), t.tincture(), t.persona());
+            Setup.addNpc(s, map, i, p.id.toString(), name, t.tincture(), t.persona());
         }
         Engine e = new Engine(map, s, g.id.hashCode());
         for (PlayerEntity p : players.findByGameId(g.id)) {
             if (p.npc) continue;
             Setup.addPlayer(s, p.id.toString(), p.houseName, p.tincture, p.background, map.start(p.startSlot).orElseThrow(), p.startGood);
-            e.out.add(new ReportOut(p.id.toString(), false, s.clock, "esemeny", null, "Elkezdődött a szezon",
-                "A " + map.name() + " városai várják a házakat. Az első elszámolás " + Time.fmt(Time.nextSettlement(s.clock)) + "-kor lesz.", "info"));
+            e.out.add(new ReportOut(p.id.toString(), false, s.clock, "event", null, Msg.of("server.season_start.title"),
+                Msg.of("server.season_start.text", "map", map.label(), "time", Time.fmt(Time.nextSettlement(s.clock))), "info"));
         }
         e.scheduleNpcs();
         g.status = GameStatus.RUNNING;
         runner.persist(g, e);
-        log.info("Elindult a játék: {}", g.id);
+        log.info("Game started: {}", g.id);
     }
 
-    /** Az ütemező hívja: lefuttatja a mostanáig esedékes érlelő lapokat és elszámolásokat. */
+    /** Called by the scheduler: runs the maturing sheets and settlements due by now. */
     public void tick(String gameId) { runner.mutate(gameId, (g, e) -> null); }
 
-    /** Fejlesztéshez (ADMIN): azonnali elszámolás. */
+    /** For development (ADMIN): immediate settlement. */
     public int settleNow(String gameId) {
-        return runner.mutate(gameId, (g, e) -> { e.settleNow(g.maturationMinutes); return e.s.settlements; });
-    }
-
-    /**
-     * Fejlesztéshez (ADMIN): a játék órájának előretekerése. minutes = null: a következő eseményig
-     * (érlelő lap vagy elszámolás). A valódi időhöz képesti eltolás a játékban megmarad.
-     */
-    @Transactional
-    public int advance(String gameId, Integer minutes) {
-        GameEntity g = games.lockById(gameId).orElseThrow(() -> ApiException.notFound("Nincs ilyen játék."));
-        if (g.status != GameStatus.RUNNING) throw ApiException.conflict("A játék nem fut.");
-        int step = minutes != null ? minutes : nextEventInMinutes(g);
-        if (step < 1 || step > 7 * 24 * 60) throw ApiException.badRequest("1 perc és 7 nap között tekerhetsz előre.");
-        g.timeOffsetMinutes += step;
-        runner.mutate(gameId, (x, e) -> null);
-        return step;
-    }
-
-    private int nextEventInMinutes(GameEntity g) {
-        Engine e = runner.engine(g);
-        e.advance(g.now().toEpochMilli(), g.maturationMinutes, g.maxSettlements());
-        long ms = e.nextEventAt() - g.now().toEpochMilli();
-        return (int) Math.max(1, Math.ceil(ms / 60_000.0));
+        return runner.mutate(gameId, (g, e) -> { e.settleNow(GameEntity.MATURATION_MINUTES); return e.s.settlements; });
     }
 }

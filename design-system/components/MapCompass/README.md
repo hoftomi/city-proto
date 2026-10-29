@@ -1,7 +1,7 @@
 # MapCompass
 
-Nyolcágú szélrózsa É jelöléssel.
+An eight-point compass rose with an N (É) mark.
 
-**Mit ad a hívó:** `x`, `y`, `size` (a sugár, alapérték 22).
+**What the caller provides:** `x`, `y`, `size` (the radius, default 22).
 
-- Térképenként egy legyen, lehetőleg a tengeren vagy üres sarokban.
+- One per map, preferably on the sea or in an empty corner.
