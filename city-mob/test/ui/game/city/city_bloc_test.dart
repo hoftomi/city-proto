@@ -216,7 +216,7 @@ void main() {
     final b = build()..add(const CityStarted('szelmezo'));
     await Future<void>.delayed(Duration.zero);
     final st = b.state;
-    expect(st.dominants['trade'], 'gold');
+    expect(st.dominants['trade']?.name, 'Ezüstpart-ház');
     expect(st.threats.single.orderId, 'o100');
     expect(st.lowPop, isTrue);
     expect(st.freeSpies, 2);

@@ -55,7 +55,7 @@ public class GameMetrics {
     }
 
     private void gauge(MeterRegistry registry, String name, String key, String description, String... tags) {
-        Gauge.builder(name, values, v -> v.getOrDefault(key, Double.NaN))
+        Gauge.builder(name, values, snapshot -> snapshot.getOrDefault(key, Double.NaN))
             .description(description).tags(tags).register(registry);
     }
 
@@ -64,11 +64,12 @@ public class GameMetrics {
         try {
             jdbcTemplate.query(SNAPSHOT, rs -> {
                 var meta = rs.getMetaData();
-                for (int i = 1; i <= meta.getColumnCount(); i++)
-                    values.put(meta.getColumnLabel(i), rs.getDouble(i));
+                for (int column = 1; column <= meta.getColumnCount(); column++) {
+                    values.put(meta.getColumnLabel(column), rs.getDouble(column));
+                }
             });
-        } catch (DataAccessException e) {
-            log.warn("Game metrics refresh failed: {}", e.getMessage());
+        } catch (DataAccessException ex) {
+            log.warn("Game metrics refresh failed: {}", ex.getMessage());
         }
     }
 }

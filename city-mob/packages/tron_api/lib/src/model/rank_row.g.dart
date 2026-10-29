@@ -13,8 +13,6 @@ abstract class _$RankRowCWProxy {
 
   RankRow name(String name);
 
-  RankRow tincture(String tincture);
-
   RankRow npc(bool npc);
 
   RankRow legit(int legit);
@@ -35,7 +33,6 @@ abstract class _$RankRowCWProxy {
     int rank,
     String playerId,
     String name,
-    String tincture,
     bool npc,
     int legit,
     int shares,
@@ -58,9 +55,6 @@ class _$RankRowCWProxyImpl implements _$RankRowCWProxy {
 
   @override
   RankRow name(String name) => this(name: name);
-
-  @override
-  RankRow tincture(String tincture) => this(tincture: tincture);
 
   @override
   RankRow npc(bool npc) => this(npc: npc);
@@ -88,7 +82,6 @@ class _$RankRowCWProxyImpl implements _$RankRowCWProxy {
     Object? rank = const $CopyWithPlaceholder(),
     Object? playerId = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
-    Object? tincture = const $CopyWithPlaceholder(),
     Object? npc = const $CopyWithPlaceholder(),
     Object? legit = const $CopyWithPlaceholder(),
     Object? shares = const $CopyWithPlaceholder(),
@@ -108,10 +101,6 @@ class _$RankRowCWProxyImpl implements _$RankRowCWProxy {
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
-      tincture: tincture == const $CopyWithPlaceholder()
-          ? _value.tincture
-          // ignore: cast_nullable_to_non_nullable
-          : tincture as String,
       npc: npc == const $CopyWithPlaceholder()
           ? _value.npc
           // ignore: cast_nullable_to_non_nullable
@@ -154,7 +143,6 @@ RankRow _$RankRowFromJson(Map<String, dynamic> json) =>
           'rank',
           'playerId',
           'name',
-          'tincture',
           'npc',
           'legit',
           'shares',
@@ -166,7 +154,6 @@ RankRow _$RankRowFromJson(Map<String, dynamic> json) =>
         rank: $checkedConvert('rank', (v) => (v as num).toInt()),
         playerId: $checkedConvert('playerId', (v) => v as String),
         name: $checkedConvert('name', (v) => v as String),
-        tincture: $checkedConvert('tincture', (v) => v as String),
         npc: $checkedConvert('npc', (v) => v as bool),
         legit: $checkedConvert('legit', (v) => (v as num).toInt()),
         shares: $checkedConvert('shares', (v) => (v as num).toInt()),
@@ -180,7 +167,6 @@ Map<String, dynamic> _$RankRowToJson(RankRow instance) => <String, dynamic>{
   'rank': instance.rank,
   'playerId': instance.playerId,
   'name': instance.name,
-  'tincture': instance.tincture,
   'npc': instance.npc,
   'legit': instance.legit,
   'shares': instance.shares,

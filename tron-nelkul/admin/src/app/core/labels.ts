@@ -34,15 +34,3 @@ export const ROLE_KEYS: Record<string, string> = {
 export const isLive = (status: string) => status !== 'finished';
 export const canStart = (status: string) => status === 'announced' || status === 'open';
 export const isRunning = (status: string) => status === 'running';
-
-/** House tinctures (Backgrounds.TINCTURES) → swatch colour and label key. */
-export const TINCTURES: Record<string, { color: string; label: string }> = {
-  red: { color: '#c62828', label: key('tincture.red') },
-  blue: { color: '#1565c0', label: key('tincture.blue') },
-  green: { color: '#2e7d32', label: key('tincture.green') },
-  gold: { color: '#f9a825', label: key('tincture.gold') },
-  purple: { color: '#6a1b9a', label: key('tincture.purple') },
-  black: { color: '#212121', label: key('tincture.black') },
-  orange: { color: '#ef6c00', label: key('tincture.orange') },
-  mulberry: { color: '#880e4f', label: key('tincture.mulberry') },
-};

@@ -85,7 +85,7 @@ class LobbyRepository {
 
   Future<Either<Failure, GameDetail>> game(String id) => guard(() => _remote.game(id));
 
-  Future<Either<Failure, GameSummary>> join(String id, JoinRequest request) => guard(() => _remote.join(id, request));
+  Future<Either<Failure, void>> join(String id, JoinRequest request) => guard(() => _remote.join(id, request));
 
   Future<Either<Failure, void>> withdraw(String id) => guard(() => _remote.withdraw(id));
 }

@@ -11,7 +11,6 @@
   "house_name_short": "A ház neve legalább {min} betű legyen.",
   "house_name_long": "A ház neve legfeljebb {max} betű lehet.",
   "house_name_taken": "Ez a név ebben a játékban már foglalt.",
-  "pick_tincture": "Válassz tinktúrát.",
   "pick_background": "Válassz hátteret.",
   "pick_start_slot": "Válassz kezdőhelyet.",
   "pick_start_good": "Válaszd ki, melyik árucikkből kapsz részesedést ({city}).",

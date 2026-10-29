@@ -27,9 +27,9 @@ class MessagesTest {
     void placeholdersNestedMessagesJoinAndLowercase() {
         String good = messages.text("world.good.grain");
         String city = messages.text("world.city.szelmezo.name");
-        Msg m = Msg.of("engine.report.buyout_threat.text", "pts", 5, "good", GoodDef.label("grain").lower(), "city", CityDef.label("szelmezo"), "time", "09. 01. 20:00");
-        String t = messages.text(m);
-        assertTrue(t.startsWith("5 ") && t.contains(good.toLowerCase(Locale.ROOT)) && t.contains(city) && t.contains("09. 01. 20:00") && !t.contains("{"), t);
+        Msg msg = Msg.of("engine.report.buyout_threat.text", "pts", 5, "good", GoodDef.label("grain").lower(), "city", CityDef.label("szelmezo"), "time", "09. 01. 20:00");
+        String text = messages.text(msg);
+        assertTrue(text.startsWith("5 ") && text.contains(good.toLowerCase(Locale.ROOT)) && text.contains(city) && text.contains("09. 01. 20:00") && !text.contains("{"), text);
         assertEquals("a, " + city, messages.resolve(Msg.join(", ", List.of("a", CityDef.label("szelmezo")))));
     }
 
@@ -47,19 +47,27 @@ class MessagesTest {
     @Test
     void worldAndCatalogTextsExist() {
         List<String> keys = new ArrayList<>();
-        for (MapDefinition m : List.of(MapRegistry.DELKELET, MapRegistry.KODOS, MapRegistry.SO)) {
-            keys.add(m.label().key());
-            for (CityDef c : m.cities()) {
-                keys.add(c.label().key()); keys.add(c.desc().key());
-                c.goods().forEach(g -> keys.add(g.label().key()));
+        for (MapDefinition map : List.of(MapRegistry.DELKELET, MapRegistry.KODOS, MapRegistry.SO)) {
+            keys.add(map.label().key());
+            for (CityDef cityDef : map.cities()) {
+                keys.add(cityDef.label().key()); keys.add(cityDef.desc().key());
+                cityDef.goods().forEach(good -> keys.add(good.label().key()));
             }
-            for (StartSlot s : m.starts()) { keys.add(m.startLabel(s).key()); keys.add(m.startNote(s).key()); }
+            for (StartSlot slot : map.starts()) { keys.add(map.startLabel(slot).key()); keys.add(map.startNote(slot).key()); }
         }
-        for (Rules.Action a : Rules.Action.values()) keys.add(a.label().key());
-        for (Rules.Margin x : Rules.Margin.values()) keys.add(x.label().key());
-        for (Rules.Program p : Rules.Program.values()) keys.add(p.label().key());
-        for (Rules.NewsTemplate n : Rules.NewsTemplate.values()) keys.add(n.labelKey());
-        keys.forEach(k -> assertTrue(messages.find(k).isPresent(), k));
+        for (Rules.Action action : Rules.Action.values()) {
+            keys.add(action.label().key());
+        }
+        for (Rules.Margin margin : Rules.Margin.values()) {
+            keys.add(margin.label().key());
+        }
+        for (Rules.Program program : Rules.Program.values()) {
+            keys.add(program.label().key());
+        }
+        for (Rules.NewsTemplate news : Rules.NewsTemplate.values()) {
+            keys.add(news.labelKey());
+        }
+        keys.forEach(key -> assertTrue(messages.find(key).isPresent(), key));
     }
 
     /** Every server-side key the code names literally (or via the Engine's err/title/text helpers) has a text. */
@@ -69,21 +77,27 @@ class MessagesTest {
         Pattern helper = Pattern.compile("\\b(err|title|text)\\(\"(\\w+)\"");
         Set<String> keys = new TreeSet<>();
         try (Stream<Path> files = Files.walk(Path.of("src/main/java"))) {
-            for (Path f : files.filter(p -> p.toString().endsWith(".java")).toList()) {
-                String src = Files.readString(f);
-                Matcher m = literal.matcher(src);
-                while (m.find()) keys.add(m.group(1));
-                if (!f.endsWith("Engine.java")) continue;
-                m = helper.matcher(src);
-                while (m.find()) keys.add(switch (m.group(1)) {
-                    case "err" -> "engine.error." + m.group(2);
-                    case "title" -> "engine.report." + m.group(2) + ".title";
-                    default -> "engine.report." + m.group(2) + ".text";
-                });
+            for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
+                String src = Files.readString(file);
+                Matcher matcher = literal.matcher(src);
+                while (matcher.find()) {
+                    keys.add(matcher.group(1));
+                }
+                if (!file.endsWith("Engine.java")) {
+                    continue;
+                }
+                matcher = helper.matcher(src);
+                while (matcher.find()) {
+                    keys.add(switch (matcher.group(1)) {
+                        case "err" -> "engine.error." + matcher.group(2);
+                        case "title" -> "engine.report." + matcher.group(2) + ".title";
+                        default -> "engine.report." + matcher.group(2) + ".text";
+                    });
+                }
             }
         }
         assertTrue(keys.size() > 100, "found " + keys.size());
-        List<String> missing = keys.stream().filter(k -> messages.find(k).isEmpty()).toList();
+        List<String> missing = keys.stream().filter(key -> messages.find(key).isEmpty()).toList();
         assertEquals(List.of(), missing);
     }
 }

@@ -97,17 +97,12 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color stone = const Color(0xFFCBBFA7);
   final Color stoneLo = const Color(0xFF958770);
 
-  /// House colors (painted, muted heraldic tinctures).
-  final Map<String, Color> houses = const {
-    'red': Color(0xFFB23A2E),
-    'blue': Color(0xFF2F5F9E),
-    'green': Color(0xFF3D7B3A),
-    'gold': Color(0xFFC99A2A),
-    'purple': Color(0xFF744A9A),
-    'black': Color(0xFF34313A),
-    'orange': Color(0xFFC46A24),
-    'mulberry': Color(0xFF973B62),
-  };
+  /// Houses have no colour of their own: every coat of arms, share segment and council seal uses this one
+  /// muted umber; the own house stands out by its bronze ring/outline and bold name, never by hue.
+  final Color house = const Color(0xFF5E5246);
+
+  /// Owners' segments in a share bar: a lighter step of the house tone, so the dark gaps between owners show.
+  final Color houseShare = const Color(0xFF9A8973);
 
   /// Power branches: icon tile border and the selected leather tab's top strip.
   final Map<String, (Color, Color)> branches = const {
@@ -116,8 +111,6 @@ class TnColors extends ThemeExtension<TnColors> {
     'espionage': (Color(0xFF6A4A8A), Color(0xFFE6DCEC)),
     'common': (Color(0xFF4F7A35), Color(0xFFE1E9D2)),
   };
-
-  Color house(String? tincture) => houses[tincture] ?? houses['black']!;
 
   /// Branch color; also accepts art and faction names (see [branchKey]).
   Color branch(String? id) => branches[branchKey(id)]!.$1;

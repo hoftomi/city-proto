@@ -7,7 +7,7 @@ part of 'background_dto.dart';
 // **************************************************************************
 
 abstract class _$BackgroundDtoCWProxy {
-  BackgroundDto id(String id);
+  BackgroundDto id(Background id);
 
   BackgroundDto name(String name);
 
@@ -21,7 +21,12 @@ abstract class _$BackgroundDtoCWProxy {
   /// ```dart
   /// BackgroundDto(...).copyWith(id: 12, name: "My name")
   /// ````
-  BackgroundDto call({String id, String name, String icon, List<String> perks});
+  BackgroundDto call({
+    Background id,
+    String name,
+    String icon,
+    List<String> perks,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfBackgroundDto.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfBackgroundDto.copyWith.fieldName(...)`
@@ -31,7 +36,7 @@ class _$BackgroundDtoCWProxyImpl implements _$BackgroundDtoCWProxy {
   final BackgroundDto _value;
 
   @override
-  BackgroundDto id(String id) => this(id: id);
+  BackgroundDto id(Background id) => this(id: id);
 
   @override
   BackgroundDto name(String name) => this(name: name);
@@ -59,7 +64,7 @@ class _$BackgroundDtoCWProxyImpl implements _$BackgroundDtoCWProxy {
       id: id == const $CopyWithPlaceholder()
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
-          : id as String,
+          : id as Background,
       name: name == const $CopyWithPlaceholder()
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
@@ -90,7 +95,7 @@ BackgroundDto _$BackgroundDtoFromJson(Map<String, dynamic> json) =>
     $checkedCreate('BackgroundDto', json, ($checkedConvert) {
       $checkKeys(json, requiredKeys: const ['id', 'name', 'icon', 'perks']);
       final val = BackgroundDto(
-        id: $checkedConvert('id', (v) => v as String),
+        id: $checkedConvert('id', (v) => $enumDecode(_$BackgroundEnumMap, v)),
         name: $checkedConvert('name', (v) => v as String),
         icon: $checkedConvert('icon', (v) => v as String),
         perks: $checkedConvert(
@@ -103,8 +108,14 @@ BackgroundDto _$BackgroundDtoFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$BackgroundDtoToJson(BackgroundDto instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'id': _$BackgroundEnumMap[instance.id]!,
       'name': instance.name,
       'icon': instance.icon,
       'perks': instance.perks,
     };
+
+const _$BackgroundEnumMap = {
+  Background.merchant: 'merchant',
+  Background.noble: 'noble',
+  Background.shadow: 'shadow',
+};

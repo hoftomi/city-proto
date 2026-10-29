@@ -27,30 +27,36 @@ public class Messages {
 
     public String text(String key, Object... args) { return text(Msg.of(key, args)); }
 
-    public String text(Msg m) {
-        String t = find(m.key()).orElseGet(() -> {
-            log.warn("Missing translation: {}", m.key());
-            return m.key();
+    public String text(Msg message) {
+        String template = find(message.key()).orElseGet(() -> {
+            log.warn("Missing translation: {}", message.key());
+            return message.key();
         });
-        if (!m.args().isEmpty()) {
-            Matcher x = PLACEHOLDER.matcher(t);
+        if (!message.args().isEmpty()) {
+            Matcher matcher = PLACEHOLDER.matcher(template);
             StringBuilder out = new StringBuilder();
-            while (x.find()) {
-                Object v = m.args().get(x.group(1));
-                x.appendReplacement(out, Matcher.quoteReplacement(v == null && !m.args().containsKey(x.group(1)) ? x.group() : resolve(v)));
+            while (matcher.find()) {
+                Object value = message.args().get(matcher.group(1));
+                matcher.appendReplacement(out, Matcher.quoteReplacement(value == null && !message.args().containsKey(matcher.group(1)) ? matcher.group() : resolve(value)));
             }
-            x.appendTail(out);
-            t = out.toString();
+            matcher.appendTail(out);
+            template = out.toString();
         }
-        return m.lowercase() ? t.toLowerCase(LOCALE) : t;
+        return message.lowercase() ? template.toLowerCase(LOCALE) : template;
     }
 
     /** An arg or name as text: Msg and Msg.Join are resolved, null is empty, anything else is toString. */
-    public String resolve(Object v) {
-        if (v == null) return "";
-        if (v instanceof Msg m) return text(m);
-        if (v instanceof Msg.Join j) return j.parts().stream().map(this::resolve).collect(Collectors.joining(j.separator()));
-        return v.toString();
+    public String resolve(Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof Msg msg) {
+            return text(msg);
+        }
+        if (value instanceof Msg.Join join) {
+            return join.parts().stream().map(this::resolve).collect(Collectors.joining(join.separator()));
+        }
+        return value.toString();
     }
 
     /** The text of a key without placeholders resolved, if it exists. */
@@ -58,9 +64,11 @@ public class Messages {
     public Optional<String> find(String key) {
         Object node = translations.translations(TranslationService.DEFAULT_LANG);
         for (String part : key.split("\\.")) {
-            if (!(node instanceof Map<?, ?> map)) return Optional.empty();
+            if (!(node instanceof Map<?, ?> map)) {
+                return Optional.empty();
+            }
             node = ((Map<String, Object>) map).get(part);
         }
-        return node instanceof String s ? Optional.of(s) : Optional.empty();
+        return node instanceof String text ? Optional.of(text) : Optional.empty();
     }
 }

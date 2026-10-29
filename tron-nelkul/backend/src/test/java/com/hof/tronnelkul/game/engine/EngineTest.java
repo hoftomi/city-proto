@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.game.engine;
 
+import com.hof.tronnelkul.api.model.Background;
 import com.hof.tronnelkul.game.engine.EngineState.*;
 import com.hof.tronnelkul.game.world.MapDefinition;
 import com.hof.tronnelkul.game.world.GoodDef;
@@ -23,28 +24,30 @@ class EngineTest {
 
     static Engine game() { return new Engine(MAP, Setup.initial(MAP, START), 42); }
 
-    static Order order(String type, String city) { Order o = new Order(); o.type = type; o.city = city; return o; }
+    static Order order(String type, String city) { Order order = new Order(); order.type = type; order.city = city; return order; }
 
-    static void join(Engine e, String id, String background, String startGood) {
-        Setup.addPlayer(e.s, id, id.toUpperCase(), "blue", background, MAP.start("west").orElseThrow(), startGood);
+    static void join(Engine engine, String id, Background background, String startGood) {
+        Setup.addPlayer(engine.state, id, id.toUpperCase(), background, MAP.start("west").orElseThrow(), startGood);
     }
 
     @Test
     void demandSplitsByWeightLikeTheRulebookExample() {
         // 5.3 example: Feketerev, salt. A 50 points Expensive P30, B 30 points Cheap P50, the City's 20 points Market P20.
-        Engine e = game();
-        for (String p : new String[] { "a", "b" }) { PlayerSt ps = new PlayerSt(); ps.id = p; ps.name = p; ps.npc = true; e.s.players.put(p, ps); }
-        CitySt c = e.s.cities.get("feketerev");
-        Good salt = c.goods.get("salt");
+        Engine engine = game();
+        for (String player : new String[] { "a", "b" }) {
+            PlayerSt house = new PlayerSt(); house.id = player; house.name = player; house.npc = true; engine.state.players.put(player, house);
+        }
+        CitySt cs = engine.state.cities.get("feketerev");
+        Good salt = cs.goods.get("salt");
         salt.shares.put("a", 50); salt.margins.put("a", "expensive");
         salt.shares.put("b", 30); salt.margins.put("b", "cheap");
-        c.pop.put("a", 30.0); c.pop.put("b", 50.0);
-        e.settle();
+        cs.pop.put("a", 30.0); cs.pop.put("b", 50.0);
+        engine.settle();
         assertEquals(35.1, salt.sold.get("a"), 0.05);
         assertEquals(30.0, salt.sold.get("b"), 0.05);
         assertEquals(14.9, salt.sold.get(Engine.CITY), 0.05);
         // B is the cheapest: +1 (Cheap) +1 (cheapest), then the drift −2
-        assertEquals(50.0, c.pop.get("b"), 0.001);
+        assertEquals(50.0, cs.pop.get("b"), 0.001);
     }
 
     @Test
@@ -55,164 +58,168 @@ class EngineTest {
 
     @Test
     void sealedSheetRunsAfterMaturation() {
-        Engine e = game();
-        join(e, "te", "merchant", "grain");
-        Order r = order("route", null); r.from = "szelmezo"; r.to = "feketerev";
-        e.addDraft("te", r);
-        e.seal("te", START, 120);
-        assertEquals(2, e.s.routesOf("te").size(), "two free routes start from the estate");
-        e.advance(START + 119 * MIN, 120, 28);
-        assertFalse(e.hasRoute("te", "szelmezo", "feketerev"));
-        e.advance(START + 121 * MIN, 120, 28);
-        assertTrue(e.hasRoute("te", "szelmezo", "feketerev"));
-        assertEquals(10 - 1, e.s.players.get("te").pp);
-        assertEquals(30 - 3, e.s.players.get("te").gold, 0.001);
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        Order order = order("route", null); order.from = "szelmezo"; order.to = "feketerev";
+        engine.addDraft("te", order);
+        engine.seal("te", START, 120);
+        assertEquals(2, engine.state.routesOf("te").size(), "two free routes start from the estate");
+        engine.advance(START + 119 * MIN, 120, 28);
+        assertFalse(engine.hasRoute("te", "szelmezo", "feketerev"));
+        engine.advance(START + 121 * MIN, 120, 28);
+        assertTrue(engine.hasRoute("te", "szelmezo", "feketerev"));
+        assertEquals(10 - 1, engine.state.players.get("te").pp);
+        assertEquals(30 - 3, engine.state.players.get("te").gold, 0.001);
     }
 
     @Test
     void onlyOneMaturingSheet() {
-        Engine e = game();
-        join(e, "te", null, null);
-        e.s.players.get("te").gold = 100;
-        e.addDraft("te", order("hireSpy", "szelmezo"));
-        e.seal("te", START, 120);
-        e.addDraft("te", order("hireSpy", "szelmezo"));
-        EngineException ex = assertThrows(EngineException.class, () -> e.seal("te", START + MIN, 120));
+        Engine engine = game();
+        join(engine, "te", null, null);
+        engine.state.players.get("te").gold = 100;
+        engine.addDraft("te", order("hireSpy", "szelmezo"));
+        engine.seal("te", START, 120);
+        engine.addDraft("te", order("hireSpy", "szelmezo"));
+        EngineException ex = assertThrows(EngineException.class, () -> engine.seal("te", START + MIN, 120));
         assertEquals("engine.error.sheet_maturing", ex.msg().key());
     }
 
     @Test
     void sealedDefenceBlocksBuyout() {
-        Engine e = game();
-        join(e, "a", "merchant", "grain");
-        join(e, "b", "merchant", "grain");
-        e.s.players.get("a").gold = 200;
+        Engine engine = game();
+        join(engine, "a", Background.MERCHANT, "grain");
+        join(engine, "b", Background.MERCHANT, "grain");
+        engine.state.players.get("a").gold = 200;
         Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
-        e.addDraft("a", bo);
-        Sheet attack = e.seal("a", START, 120);
+        engine.addDraft("a", bo);
+        Sheet attack = engine.seal("a", START, 120);
         // B seals an hour later: its sheet would run after the offer, but it defends while maturing
-        Order d = order("defend", "szelmezo"); d.sheetId = attack.id; d.orderId = attack.orders.get(0).id;
-        e.s.players.get("b").gold = 200;
-        e.addDraft("b", d);
-        e.seal("b", START + 60 * MIN, 120);
-        e.advance(START + 200 * MIN, 120, 28);
-        Good g = e.s.cities.get("szelmezo").goods.get("grain");
-        assertEquals(20, g.shares.get("b"));
-        assertEquals(20, g.shares.get("a"));
-        assertEquals(200, e.s.players.get("a").gold, 0.001, "the price of the foiled offer is refunded");
+        Order defence = order("defend", "szelmezo"); defence.sheetId = attack.id; defence.orderId = attack.orders.get(0).id;
+        engine.state.players.get("b").gold = 200;
+        engine.addDraft("b", defence);
+        engine.seal("b", START + 60 * MIN, 120);
+        engine.advance(START + 200 * MIN, 120, 28);
+        Good good = engine.state.cities.get("szelmezo").goods.get("grain");
+        assertEquals(20, good.shares.get("b"));
+        assertEquals(20, good.shares.get("a"));
+        assertEquals(200, engine.state.players.get("a").gold, 0.001, "the price of the foiled offer is refunded");
     }
 
     @Test
     void buyoutTransfersSharesAndPaysTheRival() {
-        Engine e = game();
-        join(e, "a", "merchant", "grain");
-        join(e, "b", "merchant", "grain");
-        e.s.players.get("a").gold = 200;
+        Engine engine = game();
+        join(engine, "a", Background.MERCHANT, "grain");
+        join(engine, "b", Background.MERCHANT, "grain");
+        engine.state.players.get("a").gold = 200;
         Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
-        Order added = e.addDraft("a", bo);
-        e.seal("a", START, 120);
-        e.advance(START + 121 * MIN, 120, 28);
-        Good g = e.s.cities.get("szelmezo").goods.get("grain");
-        assertEquals(25, g.shares.get("a"));
-        assertEquals(15, g.shares.get("b"));
-        assertEquals(30 + added.gold, e.s.players.get("b").gold, 0.001);
-        assertTrue(e.isProtected("szelmezo", "grain", "b"));
-        assertTrue(e.newsTruth("szelmezo", "boughtOut", "a", null));
+        Order added = engine.addDraft("a", bo);
+        engine.seal("a", START, 120);
+        engine.advance(START + 121 * MIN, 120, 28);
+        Good good = engine.state.cities.get("szelmezo").goods.get("grain");
+        assertEquals(25, good.shares.get("a"));
+        assertEquals(15, good.shares.get("b"));
+        assertEquals(30 + added.gold, engine.state.players.get("b").gold, 0.001);
+        assertTrue(engine.isProtected("szelmezo", "grain", "b"));
+        assertTrue(engine.newsTruth("szelmezo", "boughtOut", "a", null));
     }
 
     @Test
     void falseNewsCanBeVerifiedAndDebunked() {
-        Engine e = game();
-        join(e, "liar", null, null);
-        join(e, "victim", "merchant", "grain");
-        join(e, "spy", "shadow", null);
-        Order n = order("news", "szelmezo"); n.template = "usury"; n.target = "victim"; n.good = "grain"; // Market: false
-        assertFalse(e.newsTruth("szelmezo", "usury", "victim", "grain"));
-        e.addDraft("liar", n);
-        e.seal("liar", START, 120);
-        e.advance(START + 121 * MIN, 120, 28);
-        News news = e.s.news.get(0);
+        Engine engine = game();
+        join(engine, "liar", null, null);
+        join(engine, "victim", Background.MERCHANT, "grain");
+        join(engine, "spy", Background.SHADOW, null);
+        Order newsOrder = order("news", "szelmezo"); newsOrder.template = "usury"; newsOrder.target = "victim"; newsOrder.good = "grain"; // Market: false
+        assertFalse(engine.newsTruth("szelmezo", "usury", "victim", "grain"));
+        engine.addDraft("liar", newsOrder);
+        engine.seal("liar", START, 120);
+        engine.advance(START + 121 * MIN, 120, 28);
+        News news = engine.state.news.get(0);
         assertFalse(news.trueAtCreation);
-        assertEquals(15.0, e.popOf("szelmezo", "victim"), 0.001);
+        assertEquals(15.0, engine.popOf("szelmezo", "victim"), 0.001);
 
-        Order v = order("verify", "szelmezo"); v.newsId = news.id;
-        e.addDraft("spy", v);
-        e.seal("spy", START + 130 * MIN, 120);
-        e.advance(START + 260 * MIN, 120, 28);
-        assertEquals(Boolean.FALSE, e.s.players.get("spy").verified.get(news.id));
+        Order verify = order("verify", "szelmezo"); verify.newsId = news.id;
+        engine.addDraft("spy", verify);
+        engine.seal("spy", START + 130 * MIN, 120);
+        engine.advance(START + 260 * MIN, 120, 28);
+        assertEquals(Boolean.FALSE, engine.state.players.get("spy").verified.get(news.id));
 
-        Order d = order("debunk", "szelmezo"); d.newsId = news.id;
-        e.addDraft("spy", d);
-        e.seal("spy", START + 270 * MIN, 120);
-        e.advance(START + 400 * MIN, 120, 28);
+        Order debunk = order("debunk", "szelmezo"); debunk.newsId = news.id;
+        engine.addDraft("spy", debunk);
+        engine.seal("spy", START + 270 * MIN, 120);
+        engine.advance(START + 400 * MIN, 120, 28);
         assertTrue(news.debunked);
-        assertEquals(20.0, e.popOf("szelmezo", "victim"), 0.001);
-        assertEquals(10.0, e.popOf("szelmezo", "liar"), 0.001, "20 − 10 penalty");
-        assertEquals(Rules.DEBUNK_REWARD_LEGIT, e.s.players.get("spy").legit);
+        assertEquals(20.0, engine.popOf("szelmezo", "victim"), 0.001);
+        assertEquals(10.0, engine.popOf("szelmezo", "liar"), 0.001, "20 − 10 penalty");
+        assertEquals(Rules.DEBUNK_REWARD_LEGIT, engine.state.players.get("spy").legit);
     }
 
     @Test
     void settlementRunsAtEightPmAndElectionEverySixth() {
-        Engine e = game();
-        join(e, "te", "noble", null);
-        e.advance(START + 11 * 60 * MIN, 120, 28); // 20:30
-        assertEquals(1, e.s.settlements);
-        assertEquals(20, e.s.players.get("te").pp);
-        e.advance(START + 3 * 24 * 60 * MIN, 120, 28);
-        assertEquals(6, e.s.settlements);
-        assertTrue(e.s.cities.get("szelmezo").council.getOrDefault("te", 0) > 0, "the noble house's party got into the council");
+        Engine engine = game();
+        join(engine, "te", Background.NOBLE, null);
+        engine.advance(START + 11 * 60 * MIN, 120, 28); // 20:30
+        assertEquals(1, engine.state.settlements);
+        assertEquals(20, engine.state.players.get("te").pp);
+        engine.advance(START + 3 * 24 * 60 * MIN, 120, 28);
+        assertEquals(6, engine.state.settlements);
+        assertTrue(engine.state.cities.get("szelmezo").council.getOrDefault("te", 0) > 0, "the noble house's party got into the council");
     }
 
     @Test
     void stateSurvivesJsonRoundTrip() {
-        Engine e = game();
-        join(e, "te", "merchant", "grain");
-        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "gold", "trader");
-        e.advance(START + 2 * 24 * 60 * MIN, 120, 28);
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        Setup.addNpc(engine.state, MAP, 0, "npc", "NPC", "trader");
+        engine.advance(START + 2 * 24 * 60 * MIN, 120, 28);
         JsonMapper json = JsonMapper.builder().build();
-        String a = json.writeValueAsString(e.s);
-        String b = json.writeValueAsString(json.readValue(a, EngineState.class));
-        assertEquals(a, b);
+        String written = json.writeValueAsString(engine.state);
+        String rewritten = json.writeValueAsString(json.readValue(written, EngineState.class));
+        assertEquals(written, rewritten);
     }
 
     @Test
     void fullSeasonWithNpcsRunsToTheEnd() {
-        Engine e = game();
-        join(e, "te", "merchant", "grain");
-        String[][] npcs = { { "trader", "gold" }, { "politician", "green" }, { "spymaster", "purple" }, { "raider", "black" } };
-        for (int i = 0; i < npcs.length; i++) Setup.addNpc(e.s, MAP, i, "npc" + i, "NPC" + i, npcs[i][1], npcs[i][0]);
-        e.advance(START + 15L * 24 * 60 * MIN, 120, 28);
-        assertEquals(28, e.s.settlements);
-        e.coronation();
-        assertTrue(e.s.players.values().stream().anyMatch(p -> p.legit > 0));
-        assertTrue(e.s.cities.values().stream().anyMatch(c -> !c.council.isEmpty()), "there was an election");
-        assertTrue(e.out.stream().anyMatch(r -> r.title().key().equals("engine.report.buyout_threat.title") || r.title().key().equals("engine.report.plans.title")),
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        String[] npcs = { "trader", "politician", "spymaster", "raider" };
+        for (int npcIndex = 0; npcIndex < npcs.length; npcIndex++) {
+            Setup.addNpc(engine.state, MAP, npcIndex, "npc" + npcIndex, "NPC" + npcIndex, npcs[npcIndex]);
+        }
+        engine.advance(START + 15L * 24 * 60 * MIN, 120, 28);
+        assertEquals(28, engine.state.settlements);
+        engine.coronation();
+        assertTrue(engine.state.players.values().stream().anyMatch(house -> house.legit > 0));
+        assertTrue(engine.state.cities.values().stream().anyMatch(cs -> !cs.council.isEmpty()), "there was an election");
+        assertTrue(engine.out.stream().anyMatch(report -> report.title().key().equals("engine.report.buyout_threat.title") || report.title().key().equals("engine.report.plans.title")),
             "NPCs act against the player too");
         // Every report text resolves fully: no missing key, no unfilled placeholder
-        for (ReportOut r : e.out) for (Msg m : new Msg[] { r.title(), r.text() }) {
-            String t = MESSAGES.text(m);
-            assertFalse(t.contains("{") || t.startsWith("engine.") || t.contains(" engine.") || t.contains("world.") || t.contains("catalog."), m.key() + ": " + t);
+        for (ReportOut report : engine.out) {
+            for (Msg msg : new Msg[] { report.title(), report.text() }) {
+                String text = MESSAGES.text(msg);
+                assertFalse(text.contains("{") || text.startsWith("engine.") || text.contains(" engine.") || text.contains("world.") || text.contains("catalog."), msg.key() + ": " + text);
+            }
         }
-        e.s.players.values().forEach(p -> assertTrue(p.gold >= 0 && p.pp <= Rules.PP_MAX));
+        engine.state.players.values().forEach(house -> assertTrue(house.gold >= 0 && house.pp <= Rules.PP_MAX));
     }
 
     @Test
     void scoutingRevealsOnlyOrdersOfThatCity() {
-        Engine e = game();
-        join(e, "target", "merchant", "grain");
-        join(e, "spy", "shadow", null);
-        e.s.players.get("target").gold = 100;
-        e.addDraft("target", order("hireSpy", "delkapu"));
-        Order m = order("margin", "szelmezo"); m.good = "grain"; m.level = "expensive";
-        e.addDraft("target", m);
-        e.seal("target", START, 120);
+        Engine engine = game();
+        join(engine, "target", Background.MERCHANT, "grain");
+        join(engine, "spy", Background.SHADOW, null);
+        engine.state.players.get("target").gold = 100;
+        engine.addDraft("target", order("hireSpy", "delkapu"));
+        Order margin = order("margin", "szelmezo"); margin.good = "grain"; margin.level = "expensive";
+        engine.addDraft("target", margin);
+        engine.seal("target", START, 120);
         Order sp = order("spy", "szelmezo"); sp.target = "target";
-        e.addDraft("spy", sp);
-        e.seal("spy", START + 10 * MIN, 100); // the spy's runs first
-        e.advance(START + 115 * MIN, 120, 28);
-        Intel it = e.s.intel.get(0);
+        engine.addDraft("spy", sp);
+        engine.seal("spy", START + 10 * MIN, 100); // the spy's runs first
+        engine.advance(START + 115 * MIN, 120, 28);
+        Intel it = engine.state.intel.get(0);
         assertEquals(1, it.orders.size());
-        Msg line = e.intelLines(it).get(0);
+        Msg line = engine.intelLines(it).get(0);
         assertEquals("engine.order.margin", line.key());
         String text = MESSAGES.text(line);
         assertTrue(text.startsWith(MESSAGES.text(GoodDef.label("grain"))) && text.contains(MESSAGES.text(Rules.Margin.EXPENSIVE.label())), text);
@@ -220,28 +227,28 @@ class EngineTest {
 
     @Test
     void spyCanBeMovedToAnotherCityInTheNetwork() {
-        Engine e = game();
-        join(e, "te", "shadow", null);
+        Engine engine = game();
+        join(engine, "te", Background.SHADOW, null);
         Order mv = order("moveSpy", "szelmezo"); mv.to = "delkapu";
-        e.addDraft("te", mv);
-        e.seal("te", START, 120);
-        e.advance(START + 121 * MIN, 120, 28);
-        assertEquals(1, e.s.cities.get("szelmezo").spies.get("te"));
-        assertEquals(1, e.s.cities.get("delkapu").spies.get("te"));
+        engine.addDraft("te", mv);
+        engine.seal("te", START, 120);
+        engine.advance(START + 121 * MIN, 120, 28);
+        assertEquals(1, engine.state.cities.get("szelmezo").spies.get("te"));
+        assertEquals(1, engine.state.cities.get("delkapu").spies.get("te"));
         Order far = order("moveSpy", "szelmezo"); far.to = "holtag";
-        assertThrows(EngineException.class, () -> e.addDraft("te", far), "holtag is not in the network");
+        assertThrows(EngineException.class, () -> engine.addDraft("te", far), "holtag is not in the network");
     }
 
     @Test
     void npcsSealWithTheSameMaturationAtAnyTime() {
-        Engine e = game();
-        join(e, "te", null, null);
-        Setup.addNpc(e.s, MAP, 0, "npc", "NPC", "gold", "trader");
-        e.scheduleNpcs();
-        long planAt = e.s.players.get("npc").nextPlanAt;
+        Engine engine = game();
+        join(engine, "te", null, null);
+        Setup.addNpc(engine.state, MAP, 0, "npc", "NPC", "trader");
+        engine.scheduleNpcs();
+        long planAt = engine.state.players.get("npc").nextPlanAt;
         assertTrue(planAt >= START && planAt < START + 6 * 60 * MIN);
-        e.advance(planAt, 120, 28);
-        Sheet sheet = e.s.sheetOf("npc").orElseThrow();
+        engine.advance(planAt, 120, 28);
+        Sheet sheet = engine.state.sheetOf("npc").orElseThrow();
         assertEquals(planAt, sheet.sealedAt);
         assertEquals(120 * MIN, sheet.executeAt - sheet.sealedAt);
     }

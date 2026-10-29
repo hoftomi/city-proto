@@ -23,7 +23,6 @@ class JoinBloc extends Bloc<JoinEvent, JoinState> {
     on<JoinStarted>(_started);
     on<JoinNameChanged>((e, emit) => emit(state.copyWith(name: e.name, nameError: _service.nameError(e.name), clearNameError: true)));
     on<JoinNameSubmitted>((e, emit) => emit(state.copyWith(touched: true)));
-    on<JoinTinctureSelected>((e, emit) => emit(state.copyWith(tincture: e.tincture)));
     on<JoinBackgroundSelected>((e, emit) => emit(state.copyWith(background: e.background)));
     on<JoinStartSelected>((e, emit) => emit(state.copyWith(start: e.start)));
     on<JoinStartGoodSelected>((e, emit) => emit(state.copyWith(startGood: e.good)));
@@ -44,7 +43,6 @@ class JoinBloc extends Bloc<JoinEvent, JoinState> {
         detail: v.$1,
         map: v.$2,
         clearFailure: true,
-        tincture: v.$1.defaultTincture,
         background: v.$1.defaultBackground,
         start: v.$1.defaultStart,
       )),
@@ -70,7 +68,8 @@ class JoinBloc extends Bloc<JoinEvent, JoinState> {
         step: _service.nameRejected(f) ? 0 : null,
         notice: Notice((state.notice?.seq ?? 0) + 1, const Tr('join.failed'), body: f.message, tone: 'danger'),
       )),
-      (g) => emit(state.copyWith(busy: false, outcome: g.running || d.game.running ? JoinOutcome.enterGame : JoinOutcome.backToDetail)),
+      // The join answers 204 without a body: the outcome follows from the game the screen already shows.
+      (_) => emit(state.copyWith(busy: false, outcome: d.game.running ? JoinOutcome.enterGame : JoinOutcome.backToDetail)),
     );
   }
 }

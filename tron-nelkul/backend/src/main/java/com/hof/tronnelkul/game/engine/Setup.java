@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.game.engine;
 
+import com.hof.tronnelkul.api.model.Background;
 import com.hof.tronnelkul.game.engine.EngineState.*;
 import com.hof.tronnelkul.game.world.CityDef;
 import com.hof.tronnelkul.game.world.GoodDef;
@@ -13,18 +14,18 @@ public final class Setup {
     private Setup() {}
 
     public static EngineState initial(MapDefinition map, long startAt) {
-        EngineState s = new EngineState();
-        s.clock = startAt;
-        for (CityDef c : map.cities()) {
+        EngineState state = new EngineState();
+        state.clock = startAt;
+        for (CityDef city : map.cities()) {
             CitySt cs = new CitySt();
-            for (GoodDef gd : c.goods()) {
-                Good g = new Good();
-                g.supply = gd.supply(); g.demand = gd.demand();
-                cs.goods.put(gd.id(), g);
+            for (GoodDef gd : city.goods()) {
+                Good good = new Good();
+                good.supply = gd.supply(); good.demand = gd.demand();
+                cs.goods.put(gd.id(), good);
             }
-            s.cities.put(c.id(), cs);
+            state.cities.put(city.id(), cs);
         }
-        return s;
+        return state;
     }
 
     /**
@@ -32,14 +33,14 @@ public final class Setup {
      * persona: trader (pricing merchant), raider (buyouts), politician (party, festivals, news), spymaster (spies, fake news).
      * name: the resolved display name.
      */
-    public static void addNpc(EngineState s, MapDefinition map, int index, String id, String name, String tincture, String persona) {
-        PlayerSt p = new PlayerSt();
-        p.id = id; p.name = name; p.tincture = tincture; p.npc = true; p.persona = persona;
-        p.gold = Rules.NPC_GOLD; p.pp = Rules.START_PP;
-        s.players.put(id, p);
+    public static void addNpc(EngineState state, MapDefinition map, int index, String id, String name, String persona) {
+        PlayerSt player = new PlayerSt();
+        player.id = id; player.name = name; player.npc = true; player.persona = persona;
+        player.gold = Rules.NPC_GOLD; player.pp = Rules.START_PP;
+        state.players.put(id, player);
         List<CityDef> cities = map.cities();
-        String a = cities.get((2 * index) % cities.size()).id(), b = cities.get((2 * index + 1) % cities.size()).id();
-        CitySt ca = s.cities.get(a), cb = s.cities.get(b);
+        String first = cities.get((2 * index) % cities.size()).id(), second = cities.get((2 * index + 1) % cities.size()).id();
+        CitySt ca = state.cities.get(first), cb = state.cities.get(second);
         ca.pop.put(id, 18.0); cb.pop.put(id, 14.0);
         switch (persona) {
             case "trader" -> { take(ca, 0, id, 30, "expensive"); take(cb, 0, id, 15, "market"); }
@@ -54,34 +55,47 @@ public final class Setup {
      * Joining player: 10 PP, 30 G, 20 P in the home city, two free routes from the estate (2.2), and the background bonus:
      * merchant: 20 shares of the chosen good · noble: party and +10 P · shadow: 2 spies — all in the home city.
      */
-    public static void addPlayer(EngineState s, String id, String name, String tincture, String background, StartSlot slot, String startGood) {
-        PlayerSt p = new PlayerSt();
-        p.id = id; p.name = name; p.tincture = tincture; p.background = background; p.estate = slot.nodeId();
-        p.gold = Rules.START_GOLD; p.pp = Rules.START_PP;
-        s.players.put(id, p);
-        for (String n : slot.neighbors()) s.routesOf(id).add(new Edge(slot.nodeId(), n));
+    public static void addPlayer(EngineState state, String id, String name, Background background, StartSlot slot, String startGood) {
+        PlayerSt player = new PlayerSt();
+        player.id = id; player.name = name; player.background = background; player.estate = slot.nodeId();
+        player.gold = Rules.START_GOLD; player.pp = Rules.START_PP;
+        state.players.put(id, player);
+        for (String neighbor : slot.neighbors()) {
+            state.routesOf(id).add(new Edge(slot.nodeId(), neighbor));
+        }
         String home = slot.homeCity();
-        CitySt cs = s.cities.get(home);
+        CitySt cs = state.cities.get(home);
         cs.pop.put(id, Rules.POP_HOME);
-        switch (background == null ? "" : background) {
-            case "merchant" -> {
-                Good g = startGood == null ? null : cs.goods.get(startGood);
-                if (g == null) g = cs.goods.values().stream().max((x, y) -> Integer.compare(Engine.cityShare(x), Engine.cityShare(y))).orElseThrow();
-                int pts = Math.min(Rules.MERCHANT_START_SHARES, Engine.cityShare(g));
-                if (pts > 0) { g.shares.merge(id, pts, Integer::sum); g.margins.put(id, "market"); }
+        if (background != null) {
+            switch (background) {
+                case MERCHANT -> {
+                    Good good = startGood == null ? null : cs.goods.get(startGood);
+                    if (good == null) {
+                        good = cs.goods.values().stream().max((left, right) -> Integer.compare(Engine.cityShare(left), Engine.cityShare(right))).orElseThrow();
+                    }
+                    int pts = Math.min(Rules.MERCHANT_START_SHARES, Engine.cityShare(good));
+                    if (pts > 0) {
+                        good.shares.merge(id, pts, Integer::sum);
+                        good.margins.put(id, "market");
+                    }
+                }
+                case NOBLE -> {
+                    cs.parties.put(id, "medium");
+                    cs.pop.put(id, Rules.POP_HOME + Rules.NOBLE_START_POP);
+                }
+                case SHADOW -> cs.spies.put(id, Rules.SHADOW_START_SPIES);
             }
-            case "noble" -> { cs.parties.put(id, "medium"); cs.pop.put(id, Rules.POP_HOME + Rules.NOBLE_START_POP); }
-            case "shadow" -> cs.spies.put(id, Rules.SHADOW_START_SPIES);
-            default -> {}
         }
     }
 
-    private static void take(CitySt cs, int goodIndex, String p, int pts, String margin) {
+    private static void take(CitySt cs, int goodIndex, String player, int pts, String margin) {
         List<Good> goods = List.copyOf(cs.goods.values());
-        Good g = goods.get(Math.min(goodIndex, goods.size() - 1));
-        int n = Math.min(pts, Engine.cityShare(g));
-        if (n <= 0) return;
-        g.shares.merge(p, n, Integer::sum);
-        g.margins.put(p, margin);
+        Good good = goods.get(Math.min(goodIndex, goods.size() - 1));
+        int taken = Math.min(pts, Engine.cityShare(good));
+        if (taken <= 0) {
+            return;
+        }
+        good.shares.merge(player, taken, Integer::sum);
+        good.margins.put(player, margin);
     }
 }

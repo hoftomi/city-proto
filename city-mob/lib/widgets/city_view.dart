@@ -7,18 +7,23 @@ import 'k4_assets.dart';
 import 'k4_viewport.dart';
 import 'paint_util.dart';
 
-/// A district's flags: the leading house (Marketplace: most shares, Town Hall: most council seats,
-/// Underworld: your own spy network) and the tincture of an optional second house.
+/// A district's flag: the leading house's name (Marketplace: most shares, Town Hall: most council seats,
+/// Underworld: your own spy network), and whether it is your own house. Houses have no colours: every flag is
+/// the neutral house tone, your own one carries a bronze border and finial.
 class DistrictFlags {
-  const DistrictFlags({this.dominant, this.contested});
-  final String? dominant, contested;
+  const DistrictFlags({this.leader, this.self = false});
+  final String? leader;
+  final bool self;
+
+  @override
+  bool operator ==(Object other) => other is DistrictFlags && other.leader == leader && other.self == self;
+
+  @override
+  int get hashCode => Object.hash(leader, self);
 }
 
-/// Painted colors of the heraldic tinctures (design system: house-*).
-const _houseColors = {
-  'red': Color(0xFFB23A2E), 'blue': Color(0xFF2F5F9E), 'green': Color(0xFF3D7B3A), 'gold': Color(0xFFC99A2A),
-  'purple': Color(0xFF744A9A), 'black': Color(0xFF34313A), 'orange': Color(0xFFC46A24), 'mulberry': Color(0xFF973B62),
-};
+/// The neutral house tone (TnColors.house).
+const _houseTone = Color(0xFF5E5246);
 
 /// When zoomed, the view centers on this point for the selected district (the prototype's FOCUS values).
 const _focus = {'trade': Offset(0.6, 0.6), 'politics': Offset(0.5, 0.42), 'espionage': Offset(0.42, 0.56)};
@@ -123,8 +128,7 @@ class _Overlay extends CustomPainter {
     // Leading house's flag above the district label
     for (final e in a.labels.entries) {
       final f = flags[e.key];
-      if (f?.dominant != null) _flag(canvas, e.value + const Offset(-4, -34), _houseColors[f!.dominant] ?? K4.ink);
-      if (f?.contested != null) _flag(canvas, e.value + const Offset(12, -28), _houseColors[f!.contested] ?? K4.ink, small: true);
+      if (f?.leader != null) _flag(canvas, e.value + const Offset(-4, -34), self: f!.self);
       if (e.key == selected) {
         final tp = TextPainter(
           text: TextSpan(text: districtName(e.key), style: GoogleFonts.cinzel(fontSize: 14, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: K4.frameHi,
@@ -136,25 +140,26 @@ class _Overlay extends CustomPainter {
     }
   }
 
-  void _flag(Canvas canvas, Offset at, Color color, {bool small = false}) {
-    final s = small ? 0.75 : 1.0;
+  void _flag(Canvas canvas, Offset at, {bool self = false}) {
     final pole = Paint()
       ..color = K4.outline
-      ..strokeWidth = 1.4 * s
+      ..strokeWidth = 1.4
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(at, at + Offset(0, 22 * s), pole);
+    canvas.drawLine(at, at + const Offset(0, 22), pole);
+    // Own house: a bronze finial on the pole.
+    if (self) canvas.drawCircle(at - const Offset(0, 1.5), 2.2, Paint()..color = K4.frameHi);
     final cloth = Path()
       ..moveTo(at.dx, at.dy)
-      ..cubicTo(at.dx + 5 * s, at.dy - 2 * s, at.dx + 10 * s, at.dy + 2 * s, at.dx + 15 * s, at.dy)
-      ..lineTo(at.dx + 12 * s, at.dy + 4.5 * s)
-      ..lineTo(at.dx + 15 * s, at.dy + 9 * s)
-      ..cubicTo(at.dx + 10 * s, at.dy + 11 * s, at.dx + 5 * s, at.dy + 7 * s, at.dx, at.dy + 9 * s)
+      ..cubicTo(at.dx + 5, at.dy - 2, at.dx + 10, at.dy + 2, at.dx + 15, at.dy)
+      ..lineTo(at.dx + 12, at.dy + 4.5)
+      ..lineTo(at.dx + 15, at.dy + 9)
+      ..cubicTo(at.dx + 10, at.dy + 11, at.dx + 5, at.dy + 7, at.dx, at.dy + 9)
       ..close();
-    canvas.drawPath(cloth, Paint()..color = color);
+    canvas.drawPath(cloth, Paint()..color = _houseTone);
     canvas.drawPath(cloth, Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
-      ..color = K4.outline);
+      ..strokeWidth = self ? 1.6 : 0.9
+      ..color = self ? K4.frameHi : K4.outline);
   }
 
   @override

@@ -27,15 +27,15 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain api(HttpSecurity http, JwtDecoder decoder, FirebaseUserConverter users) throws Exception {
-        http.csrf(c -> c.disable())
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(a -> a
+        http.csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/api/i18n/**", "/error").permitAll()
                 // Actuator runs on the management port (8091), which must not be public; Prometheus scrapes it without auth
                 .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
-            .oauth2ResourceServer(o -> o.jwt(j -> j.decoder(decoder).jwtAuthenticationConverter(users)));
+            .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.decoder(decoder).jwtAuthenticationConverter(users)));
         return http.build();
     }
 
@@ -43,13 +43,14 @@ public class SecurityConfig {
     @Bean
     JwtDecoder jwtDecoder(AppProperties props) {
         String project = props.auth().firebaseProjectId();
-        if (project == null || project.isBlank())
+        if (project == null || project.isBlank()) {
             throw new IllegalStateException("Missing Firebase project id (FIREBASE_PROJECT_ID).");
-        NimbusJwtDecoder d = NimbusJwtDecoder.withJwkSetUri(FIREBASE_JWKS).build();
-        d.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+        }
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(FIREBASE_JWKS).build();
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
             JwtValidators.createDefaultWithIssuer("https://securetoken.google.com/" + project),
             new JwtClaimValidator<List<String>>(JwtClaimNames.AUD, aud -> aud != null && aud.contains(project)),
             new JwtClaimValidator<String>(JwtClaimNames.SUB, sub -> sub != null && !sub.isBlank())));
-        return d;
+        return decoder;
     }
 }

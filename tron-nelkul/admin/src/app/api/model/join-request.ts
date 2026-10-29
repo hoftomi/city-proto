@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Background } from './background';
 
 
 /**
@@ -14,9 +15,10 @@
  */
 export interface JoinRequest { 
     houseName: string;
-    tincture: string;
-    background: string;
+    background: Background;
     startSlot: string;
     startGood?: string | null;
 }
+
+
 

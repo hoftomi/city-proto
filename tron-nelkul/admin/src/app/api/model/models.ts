@@ -8,6 +8,7 @@ export * from './admin-report';
 export * from './admin-result';
 export * from './admin-user';
 export * from './advance-request';
+export * from './background';
 export * from './background-dto';
 export * from './buildable';
 export * from './catalog';

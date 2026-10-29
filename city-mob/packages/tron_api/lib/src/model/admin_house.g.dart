@@ -15,9 +15,7 @@ abstract class _$AdminHouseCWProxy {
 
   AdminHouse houseName(String houseName);
 
-  AdminHouse tincture(String tincture);
-
-  AdminHouse background(String? background);
+  AdminHouse background(Background? background);
 
   AdminHouse npc(bool npc);
 
@@ -44,8 +42,7 @@ abstract class _$AdminHouseCWProxy {
     String? userId,
     String? userName,
     String houseName,
-    String tincture,
-    String? background,
+    Background? background,
     bool npc,
     String? persona,
     int legit,
@@ -75,10 +72,7 @@ class _$AdminHouseCWProxyImpl implements _$AdminHouseCWProxy {
   AdminHouse houseName(String houseName) => this(houseName: houseName);
 
   @override
-  AdminHouse tincture(String tincture) => this(tincture: tincture);
-
-  @override
-  AdminHouse background(String? background) => this(background: background);
+  AdminHouse background(Background? background) => this(background: background);
 
   @override
   AdminHouse npc(bool npc) => this(npc: npc);
@@ -113,7 +107,6 @@ class _$AdminHouseCWProxyImpl implements _$AdminHouseCWProxy {
     Object? userId = const $CopyWithPlaceholder(),
     Object? userName = const $CopyWithPlaceholder(),
     Object? houseName = const $CopyWithPlaceholder(),
-    Object? tincture = const $CopyWithPlaceholder(),
     Object? background = const $CopyWithPlaceholder(),
     Object? npc = const $CopyWithPlaceholder(),
     Object? persona = const $CopyWithPlaceholder(),
@@ -140,14 +133,10 @@ class _$AdminHouseCWProxyImpl implements _$AdminHouseCWProxy {
           ? _value.houseName
           // ignore: cast_nullable_to_non_nullable
           : houseName as String,
-      tincture: tincture == const $CopyWithPlaceholder()
-          ? _value.tincture
-          // ignore: cast_nullable_to_non_nullable
-          : tincture as String,
       background: background == const $CopyWithPlaceholder()
           ? _value.background
           // ignore: cast_nullable_to_non_nullable
-          : background as String?,
+          : background as Background?,
       npc: npc == const $CopyWithPlaceholder()
           ? _value.npc
           // ignore: cast_nullable_to_non_nullable
@@ -201,7 +190,6 @@ AdminHouse _$AdminHouseFromJson(Map<String, dynamic> json) => $checkedCreate(
         'userId',
         'userName',
         'houseName',
-        'tincture',
         'background',
         'npc',
         'persona',
@@ -217,8 +205,10 @@ AdminHouse _$AdminHouseFromJson(Map<String, dynamic> json) => $checkedCreate(
       userId: $checkedConvert('userId', (v) => v as String?),
       userName: $checkedConvert('userName', (v) => v as String?),
       houseName: $checkedConvert('houseName', (v) => v as String),
-      tincture: $checkedConvert('tincture', (v) => v as String),
-      background: $checkedConvert('background', (v) => v as String?),
+      background: $checkedConvert(
+        'background',
+        (v) => $enumDecodeNullable(_$BackgroundEnumMap, v),
+      ),
       npc: $checkedConvert('npc', (v) => v as bool),
       persona: $checkedConvert('persona', (v) => v as String?),
       legit: $checkedConvert('legit', (v) => (v as num).toInt()),
@@ -237,8 +227,7 @@ Map<String, dynamic> _$AdminHouseToJson(AdminHouse instance) =>
       'userId': instance.userId,
       'userName': instance.userName,
       'houseName': instance.houseName,
-      'tincture': instance.tincture,
-      'background': instance.background,
+      'background': _$BackgroundEnumMap[instance.background],
       'npc': instance.npc,
       'persona': instance.persona,
       'legit': instance.legit,
@@ -247,3 +236,9 @@ Map<String, dynamic> _$AdminHouseToJson(AdminHouse instance) =>
       'place': instance.place,
       'joinedAt': instance.joinedAt.toIso8601String(),
     };
+
+const _$BackgroundEnumMap = {
+  Background.merchant: 'merchant',
+  Background.noble: 'noble',
+  Background.shadow: 'shadow',
+};

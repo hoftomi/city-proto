@@ -50,7 +50,6 @@ public abstract class AdminMapper {
     @Mapping(target = "userId", source = "player.userId")
     @Mapping(target = "userName", source = "userName")
     @Mapping(target = "houseName", source = "player.houseName")
-    @Mapping(target = "tincture", source = "player.tincture")
     @Mapping(target = "background", source = "player.background")
     @Mapping(target = "npc", source = "player.npc")
     @Mapping(target = "persona", source = "player.persona")
@@ -70,10 +69,12 @@ public abstract class AdminMapper {
 
     @Mapping(target = "id", source = "report.id")
     @Mapping(target = "houseName", source = "houseName")
+    @Mapping(target = "isPublic", source = "report.public")
     public abstract AdminReport report(ReportEntity report, String houseName);
 
     @Mapping(target = "id", source = "report.id")
     @Mapping(target = "houseName", source = "houseName")
+    @Mapping(target = "isPublic", source = "report.public")
     public abstract AdminReport report(ArchivedReportEntity report, String houseName);
 
     @Mapping(target = "name", expression = "java(messages.text(map.label()))")

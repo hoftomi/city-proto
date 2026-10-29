@@ -14,8 +14,10 @@ public final class CurrentUser {
     private CurrentUser() {}
 
     public static UUID id() {
-        Authentication a = SecurityContextHolder.getContext().getAuthentication();
-        if (a instanceof JwtAuthenticationToken t) return UUID.fromString(t.getToken().getSubject());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwt) {
+            return UUID.fromString(jwt.getToken().getSubject());
+        }
         throw ApiException.unauthorized("server.auth.sign_in");
     }
 }

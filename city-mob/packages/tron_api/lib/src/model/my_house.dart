@@ -22,8 +22,6 @@ class MyHouse {
 
     required  this.houseName,
 
-    required  this.tincture,
-
     required  this.backgroundName,
   });
 
@@ -36,18 +34,6 @@ class MyHouse {
 
 
   final String houseName;
-
-
-
-  @JsonKey(
-    
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
 
 
 
@@ -68,13 +54,11 @@ class MyHouse {
     @override
     bool operator ==(Object other) => identical(this, other) || other is MyHouse &&
       other.houseName == houseName &&
-      other.tincture == tincture &&
       other.backgroundName == backgroundName;
 
     @override
     int get hashCode =>
         houseName.hashCode +
-        tincture.hashCode +
         (backgroundName == null ? 0 : backgroundName.hashCode);
 
   factory MyHouse.fromJson(Map<String, dynamic> json) => _$MyHouseFromJson(json);

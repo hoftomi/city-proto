@@ -24,6 +24,7 @@ lib/src/model/admin_report.dart
 lib/src/model/admin_result.dart
 lib/src/model/admin_user.dart
 lib/src/model/advance_request.dart
+lib/src/model/background.dart
 lib/src/model/background_dto.dart
 lib/src/model/buildable.dart
 lib/src/model/catalog.dart

@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../app/di/di.dart';
 import '../../app/router/routes.dart';
 import '../../theme/tokens.dart';
-import '../../util/format.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/game_widgets.dart';
 import '../../widgets/map_view.dart';
@@ -110,7 +109,7 @@ Widget _title(TnColors c, String t) =>
 
 String _initial(String name) => name.isEmpty ? '?' : name.characters.first.toUpperCase();
 
-/// Step 1: the house name and tincture.
+/// Step 1: the house name.
 class _HouseStep extends StatefulWidget {
   const _HouseStep({required this.s});
   final JoinState s;
@@ -135,7 +134,7 @@ class _HouseStepState extends State<_HouseStep> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       _title(c, 'join.house.title'.tr()),
       Row(children: [
-        HouseCrest(tincture: s.tincture, initial: _initial(s.trimmedName), size: 64, name: s.name),
+        HouseCrest(initial: _initial(s.trimmedName), size: 64, name: s.name),
         const SizedBox(width: 16),
         Expanded(
             child: Text(s.trimmedName.isEmpty ? 'join.house.name_placeholder'.tr() : s.trimmedName, style: TnText.title(c.ink).copyWith(fontSize: 24, height: 28 / 24))),
@@ -156,23 +155,6 @@ class _HouseStepState extends State<_HouseStep> {
           counterText: '',
         ),
       ),
-      const SizedBox(height: 16),
-      FieldLabel('join.house.tincture_label'.tr()),
-      const SizedBox(height: 8),
-      GridView.count(
-        crossAxisCount: 4,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: 1.1,
-        children: [
-          for (final t in s.detail!.tinctures)
-            TinctureTile(tincture: t, selected: t == s.tincture, onTap: () => bloc.add(JoinTinctureSelected(t))),
-        ],
-      ),
-      const SizedBox(height: 8),
-      Text('join.house.tincture_note'.tr(), style: TnText.caption(c.inkMuted)),
     ]);
   }
 }
@@ -266,12 +248,12 @@ class _SummaryStep extends StatelessWidget {
       TnCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            HouseCrest(tincture: s.tincture, initial: _initial(s.trimmedName), size: 56, name: s.name),
+            HouseCrest(initial: _initial(s.trimmedName), size: 56, name: s.name),
             const SizedBox(width: 16),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(s.trimmedName, style: TnText.title(c.ink).copyWith(fontSize: 24, height: 28 / 24)),
-                Text('${s.backgroundDto?.name ?? ''} · ${tinctureName(s.tincture)}', style: TnText.body(c.inkMuted)),
+                if (s.backgroundDto != null) Text(s.backgroundDto!.name, style: TnText.body(c.inkMuted)),
               ]),
             ),
           ]),

@@ -11,8 +11,6 @@ abstract class _$HouseRefCWProxy {
 
   HouseRef name(String name);
 
-  HouseRef tincture(String tincture);
-
   HouseRef npc(bool npc);
 
   HouseRef self(bool self);
@@ -23,13 +21,7 @@ abstract class _$HouseRefCWProxy {
   /// ```dart
   /// HouseRef(...).copyWith(id: 12, name: "My name")
   /// ````
-  HouseRef call({
-    String playerId,
-    String name,
-    String tincture,
-    bool npc,
-    bool self,
-  });
+  HouseRef call({String playerId, String name, bool npc, bool self});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHouseRef.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfHouseRef.copyWith.fieldName(...)`
@@ -43,9 +35,6 @@ class _$HouseRefCWProxyImpl implements _$HouseRefCWProxy {
 
   @override
   HouseRef name(String name) => this(name: name);
-
-  @override
-  HouseRef tincture(String tincture) => this(tincture: tincture);
 
   @override
   HouseRef npc(bool npc) => this(npc: npc);
@@ -63,7 +52,6 @@ class _$HouseRefCWProxyImpl implements _$HouseRefCWProxy {
   HouseRef call({
     Object? playerId = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
-    Object? tincture = const $CopyWithPlaceholder(),
     Object? npc = const $CopyWithPlaceholder(),
     Object? self = const $CopyWithPlaceholder(),
   }) {
@@ -76,10 +64,6 @@ class _$HouseRefCWProxyImpl implements _$HouseRefCWProxy {
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
-      tincture: tincture == const $CopyWithPlaceholder()
-          ? _value.tincture
-          // ignore: cast_nullable_to_non_nullable
-          : tincture as String,
       npc: npc == const $CopyWithPlaceholder()
           ? _value.npc
           // ignore: cast_nullable_to_non_nullable
@@ -104,14 +88,10 @@ extension $HouseRefCopyWith on HouseRef {
 
 HouseRef _$HouseRefFromJson(Map<String, dynamic> json) =>
     $checkedCreate('HouseRef', json, ($checkedConvert) {
-      $checkKeys(
-        json,
-        requiredKeys: const ['playerId', 'name', 'tincture', 'npc', 'self'],
-      );
+      $checkKeys(json, requiredKeys: const ['playerId', 'name', 'npc', 'self']);
       final val = HouseRef(
         playerId: $checkedConvert('playerId', (v) => v as String),
         name: $checkedConvert('name', (v) => v as String),
-        tincture: $checkedConvert('tincture', (v) => v as String),
         npc: $checkedConvert('npc', (v) => v as bool),
         self: $checkedConvert('self', (v) => v as bool),
       );
@@ -121,7 +101,6 @@ HouseRef _$HouseRefFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$HouseRefToJson(HouseRef instance) => <String, dynamic>{
   'playerId': instance.playerId,
   'name': instance.name,
-  'tincture': instance.tincture,
   'npc': instance.npc,
   'self': instance.self,
 };

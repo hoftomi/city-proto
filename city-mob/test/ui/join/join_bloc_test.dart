@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tron_api/tron_api.dart';
 import 'package:tron_nelkul/core/failure.dart';
 import 'package:tron_nelkul/core/tr.dart';
+import 'package:tron_nelkul/domain/model/join_extensions.dart';
 import 'package:tron_nelkul/domain/service/join_service.dart';
 import 'package:tron_nelkul/domain/service/lobby_service.dart';
 import 'package:tron_nelkul/ui/join/bloc/join_bloc.dart';
@@ -20,7 +21,7 @@ void main() {
   final d = detail();
 
   setUpAll(loadTestTranslations);
-  setUpAll(() => registerFallbackValue(JoinRequest(houseName: '', tincture: '', background: '', startSlot: '')));
+  setUpAll(() => registerFallbackValue(JoinRequest(houseName: '', background: Background.merchant, startSlot: '')));
 
   setUp(() {
     lobby = _MockLobby();
@@ -30,15 +31,14 @@ void main() {
   });
 
   /// Loaded form with the defaults.
-  JoinState ready({int step = 0, String name = ''}) => JoinState(
+  JoinState ready({int step = 0, String name = '', GameDetail? detail}) => JoinState(
         gameId: 'g1',
-        detail: d,
+        detail: detail ?? d,
         map: mapDef,
         step: step,
         name: name,
         nameError: service.nameError(name),
-        tincture: 'azur',
-        background: 'merchant',
+        background: Background.merchant,
         start: 's1',
       );
 
@@ -53,11 +53,18 @@ void main() {
     });
 
     test('request: starting good only for the merchant house', () {
-      final f = (name: ' Kékholló ', tincture: 'azur', background: 'merchant', start: 's1', startGood: null);
-      expect(service.request(d, f), JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'merchant', startSlot: 's1', startGood: 'wine'));
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'merchant', start: 's1', startGood: 'salt')).startGood, 'salt');
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'noble', start: 's1', startGood: 'salt')).startGood, isNull);
-      expect(service.request(d, (name: 'X', tincture: 'azur', background: 'merchant', start: 's2', startGood: 'salt')).startGood, isNull);
+      final f = (name: ' Kékholló ', background: Background.merchant, start: 's1', startGood: null);
+      expect(service.request(d, f), JoinRequest(houseName: 'Kékholló', background: Background.merchant, startSlot: 's1', startGood: 'wine'));
+      expect(service.request(d, (name: 'X', background: Background.merchant, start: 's1', startGood: 'salt')).startGood, 'salt');
+      expect(service.request(d, (name: 'X', background: Background.noble, start: 's1', startGood: 'salt')).startGood, isNull);
+      expect(service.request(d, (name: 'X', background: Background.merchant, start: 's2', startGood: 'salt')).startGood, isNull);
+    });
+
+    test('default background: the merchant house if offered, otherwise the first one', () {
+      expect(d.defaultBackground, Background.merchant);
+      final noMerchant = detail().copyWith(backgrounds: [BackgroundDto(id: Background.shadow, name: 'Árnyékház', icon: 'spy', perks: const [])]);
+      expect(noMerchant.defaultBackground, Background.shadow);
+      expect(noMerchant.needsGood(Background.shadow, 's1'), isFalse);
     });
   });
 
@@ -95,11 +102,10 @@ void main() {
     act: (b) async {
       b
         ..add(const JoinNameChanged('Kékholló'))
-        ..add(const JoinTinctureSelected('gules'))
         ..add(const JoinNextPressed());
       await Future<void>.delayed(Duration.zero);
       b
-        ..add(const JoinBackgroundSelected('noble'))
+        ..add(const JoinBackgroundSelected(Background.noble))
         ..add(const JoinNextPressed());
       await Future<void>.delayed(Duration.zero);
       b
@@ -110,8 +116,7 @@ void main() {
     },
     verify: (b) {
       expect(b.state.step, 2);
-      expect(b.state.tincture, 'gules');
-      expect(b.state.background, 'noble');
+      expect(b.state.background, Background.noble);
       expect(b.state.start, 's2');
       expect(b.state.needsGood, isFalse);
       expect(b.state.canPop, isFalse);
@@ -121,7 +126,7 @@ void main() {
 
   blocTest<JoinBloc, JoinState>(
     'submit: open game goes back to the details',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(myHouse: house()))),
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Right<Failure, void>(null)),
     build: () => JoinBloc(service),
     seed: () => ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'salt'),
     act: (b) => b.add(const JoinNextPressed()),
@@ -130,14 +135,14 @@ void main() {
       ready(step: 3, name: 'Kékholló').copyWith(touched: true, startGood: 'salt', outcome: JoinOutcome.backToDetail),
     ],
     verify: (_) => verify(() => lobby.join('g1',
-        JoinRequest(houseName: 'Kékholló', tincture: 'azur', background: 'merchant', startSlot: 's1', startGood: 'salt'))).called(1),
+        JoinRequest(houseName: 'Kékholló', background: Background.merchant, startSlot: 's1', startGood: 'salt'))).called(1),
   );
 
   blocTest<JoinBloc, JoinState>(
-    'submit: running game enters the game',
-    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => Right(summary(status: 'running', myHouse: house()))),
+    'submit: running game enters the game (decided from the shown details; the join has no body)',
+    setUp: () => when(() => lobby.join('g1', any())).thenAnswer((_) async => const Right<Failure, void>(null)),
     build: () => JoinBloc(service),
-    seed: () => ready(step: 3, name: 'Kékholló'),
+    seed: () => ready(step: 3, name: 'Kékholló', detail: detail(game: summary(status: 'running'))),
     act: (b) => b.add(const JoinNextPressed()),
     verify: (b) => expect(b.state.outcome, JoinOutcome.enterGame),
   );

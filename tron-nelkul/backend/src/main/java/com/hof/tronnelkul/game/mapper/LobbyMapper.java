@@ -44,7 +44,6 @@ public abstract class LobbyMapper {
     @Mapping(target = "cities", source = "cities")
     @Mapping(target = "starts", source = "options.starts")
     @Mapping(target = "backgrounds", source = "options.backgrounds")
-    @Mapping(target = "tinctures", source = "options.tinctures")
     public abstract GameDetail detail(GameEntity game, GameSummary card, int round, int players, int cities, JoinOptions options);
 
     /** A finished game's details: it ran all its settlements; the archive keeps no head limit, so maxPlayers is the head count. */
@@ -57,7 +56,6 @@ public abstract class LobbyMapper {
     @Mapping(target = "npcCount", source = "npcCount")
     @Mapping(target = "starts", source = "options.starts")
     @Mapping(target = "backgrounds", source = "options.backgrounds")
-    @Mapping(target = "tinctures", source = "options.tinctures")
     public abstract GameDetail detail(ArchivedGameEntity game, GameSummary card, int players, int npcCount, int cities, JoinOptions options);
 
     @Mapping(target = "backgroundName", source = "background", qualifiedByName = "backgroundName")
@@ -69,8 +67,8 @@ public abstract class LobbyMapper {
     protected String status(GameStatus status) { return status.apiId; }
 
     @Named("backgroundName")
-    protected String backgroundName(String background) { return Backgrounds.exists(background) ? Backgrounds.name(messages, background) : null; }
+    protected String backgroundName(Background background) { return background == null ? null : Backgrounds.name(messages, background); }
 
-    /** The choices of the join form: start slots of the map, backgrounds, tinctures. */
-    public record JoinOptions(List<StartSlotDto> starts, List<BackgroundDto> backgrounds, List<String> tinctures) {}
+    /** The choices of the join form: start slots of the map, backgrounds. */
+    public record JoinOptions(List<StartSlotDto> starts, List<BackgroundDto> backgrounds) {}
 }

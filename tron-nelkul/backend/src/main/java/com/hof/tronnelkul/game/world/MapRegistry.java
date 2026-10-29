@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 public final class MapRegistry {
     private MapRegistry() {}
 
-    private static double[] p(double... v) { return v; }
+    private static double[] p(double... values) { return values; }
 
     public static final MapDefinition DELKELET = new MapDefinition("delkelet",
         List.of(
@@ -81,8 +81,10 @@ public final class MapRegistry {
     public static boolean exists(String id) { return id != null && ALL.containsKey(id); }
 
     public static MapDefinition get(String id) {
-        MapDefinition m = ALL.get(id);
-        if (m == null) throw new NoSuchElementException("Unknown map: " + id);
-        return m;
+        MapDefinition map = ALL.get(id);
+        if (map == null) {
+            throw new NoSuchElementException("Unknown map: " + id);
+        }
+        return map;
     }
 }

@@ -6,15 +6,15 @@
 //   login.svg              the login artwork
 //   map/<map>.webp         world map terrain with compass and cartouche, without cities and roads (360 × 260, 8×)
 //   cities/<city>_on.webp / _off.webp   the map castle with its label, reachable and unreachable (8×)
-//   estates/<tincture>.webp, <tincture>_npc.webp   estate (8×)
+//   estates/estate.webp, estate_npc.webp   estate (8×), one neutral rendering: houses have no colours
 //   cityview/<city>.webp   the isometric city view (720 × 540, 3×), nothing selected
 //   k4.json                sizes, castle and estate anchors, the districts' tappable polygons
 //
 // Run: npm install && npm run export   (needs Google Chrome and cwebp; fonts load from Google Fonts)
 // Only some parts: ONLY=icons,login,maps,cities,estates,cityview npm run export (other outputs are kept)
 //
-// The prototype uses Hungarian names; the app uses English ids, so icon names, tinctures, branches and
-// district labels are mapped below (ICON_ID, TINCTURE_ID, BRANCH_ID, DISTRICT_ID).
+// The prototype uses Hungarian names; the app uses English ids, so icon names, branches and district labels are
+// mapped below (ICON_ID, BRANCH_ID, DISTRICT_ID).
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -110,7 +110,8 @@ const ICON_ID = { arany: 'gold', nep: 'popularity', ado: 'tax', homokora: 'hourg
   so: 'salt', hal: 'fish', fuszer: 'spice', tozeg: 'peat', csempesz: 'contraband', gyapju: 'wool', lo: 'horse', fa: 'timber', ezust: 'silver',
   poszto: 'cloth', sor: 'beer', faszen: 'charcoal', mez: 'honey' };
 const iconId = (name) => ICON_ID[name] ?? name;
-const TINCTURE_ID = { voros: 'red', kek: 'blue', zold: 'green', arany: 'gold', bibor: 'purple', fekete: 'black', narancs: 'orange', szeder: 'mulberry' };
+// Houses have no colours: estates are rendered once, in the design system's neutral dark tincture.
+const ESTATE_TINCTURE = 'fekete';
 const BRANCH_ID = { vasarter: 'trade', varoshaza: 'politics', alvilag: 'espionage', kozos: 'common' };
 const DISTRICT_ID = { 'Vásártér': 'trade', 'Városháza': 'politics', 'Alvilág': 'espionage' };
 
@@ -150,10 +151,11 @@ for (const m of MAPS) {
   meta.maps[m.id] = { name: m.name, cities: m.cities.map(({ id, name, x, y, key, coast }) => ({ id, name, x, y, key, coast })), edges: m.edges, starts: m.starts };
   console.log('map done:', m.id);
 }
-if (want('estates')) for (const [t, id] of Object.entries(TINCTURE_ID)) {
+if (want('estates')) {
+  fs.rmSync(path.join(OUT, 'estates'), { recursive: true, force: true });
   for (const npc of [false, true]) {
-    shoot(sprite(render(h(T.MapEstate, { x: 0, y: 0, tincture: t, npc })), meta.estateBox), meta.estateBox[2], meta.estateBox[3], meta.map.scale,
-      path.join(OUT, 'estates', `${id}${npc ? '_npc' : ''}.webp`));
+    shoot(sprite(render(h(T.MapEstate, { x: 0, y: 0, tincture: ESTATE_TINCTURE, npc })), meta.estateBox), meta.estateBox[2], meta.estateBox[3], meta.map.scale,
+      path.join(OUT, 'estates', `estate${npc ? '_npc' : ''}.webp`));
   }
 }
 

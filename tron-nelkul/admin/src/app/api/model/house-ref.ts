@@ -12,7 +12,6 @@
 export interface HouseRef { 
     playerId: string;
     name: string;
-    tincture: string;
     npc: boolean;
     self: boolean;
 }

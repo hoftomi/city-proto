@@ -25,7 +25,7 @@ public class FirebaseCustomTokens {
     public String create(String uid) {
         try {
             return auth().createCustomToken(uid);
-        } catch (FirebaseAuthException e) {
+        } catch (FirebaseAuthException ex) {
             throw ApiException.unauthorized("server.auth.login_failed");
         }
     }
@@ -37,7 +37,7 @@ public class FirebaseCustomTokens {
                     GoogleCredentials cred;
                     try {
                         cred = GoogleCredentials.getApplicationDefault();
-                    } catch (IOException e) {
+                    } catch (IOException ex) {
                         throw ApiException.badRequest("server.auth.discord_no_credentials");
                     }
                     FirebaseApp app = FirebaseApp.initializeApp(FirebaseOptions.builder()

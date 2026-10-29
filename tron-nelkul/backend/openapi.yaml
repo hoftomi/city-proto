@@ -139,7 +139,7 @@ paths:
       operationId: getGame
       tags:
       - lobby
-      summary: 'Game details: start slots, backgrounds, tinctures'
+      summary: 'Game details: start slots and backgrounds'
       parameters:
       - name: id
         in: path
@@ -198,12 +198,8 @@ paths:
             schema:
               $ref: '#/components/schemas/JoinRequest'
       responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GameSummary'
+        '204':
+          description: Joined
         default:
           $ref: '#/components/responses/Problem'
     delete:
@@ -220,7 +216,7 @@ paths:
         description: Game id
       responses:
         '204':
-          description: Visszavonva
+          description: Withdrawn
         default:
           $ref: '#/components/responses/Problem'
   /api/games/{id}/state:
@@ -922,14 +918,16 @@ components:
     AdminHouse:
       type: object
       description: 'gold and pp: from the game state (null before the start and for archived games). place: archived games only.'
-      required: [playerId, userId, userName, houseName, tincture, background, npc, persona, legit, gold, pp, place, joinedAt]
+      required: [playerId, userId, userName, houseName, background, npc, persona, legit, gold, pp, place, joinedAt]
       properties:
         playerId: {type: string}
         userId: {type: string, format: uuid, nullable: true}
         userName: {type: string, nullable: true}
         houseName: {type: string}
-        tincture: {type: string}
-        background: {type: string, nullable: true}
+        background:
+          allOf:
+          - $ref: '#/components/schemas/Background'
+          nullable: true
         npc: {type: boolean}
         persona: {type: string, nullable: true}
         legit: {type: integer, format: int32}
@@ -1005,6 +1003,13 @@ components:
         role:
           type: string
           description: PLAYER or ADMIN
+    Background:
+      type: string
+      description: 'House background (rulebook 2.2): merchant = shares in a home-city good (needs startGood), noble = a party and popularity at home, shadow = spies at home.'
+      enum:
+      - merchant
+      - noble
+      - shadow
     BackgroundDto:
       type: object
       required:
@@ -1014,7 +1019,7 @@ components:
       - perks
       properties:
         id:
-          type: string
+          $ref: '#/components/schemas/Background'
         name:
           type: string
         icon:
@@ -1266,7 +1271,6 @@ components:
       - npcCount
       - starts
       - backgrounds
-      - tinctures
       properties:
         game:
           $ref: '#/components/schemas/GameSummary'
@@ -1298,10 +1302,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BackgroundDto'
-        tinctures:
-          type: array
-          items:
-            type: string
     GameState:
       type: object
       required:
@@ -1500,15 +1500,12 @@ components:
       required:
       - playerId
       - name
-      - tincture
       - npc
       - self
       properties:
         playerId:
           type: string
         name:
-          type: string
-        tincture:
           type: string
         npc:
           type: boolean
@@ -1554,16 +1551,13 @@ components:
       description: 'startGood: merchant background only, one of the home city''s goods.'
       required:
       - houseName
-      - tincture
       - background
       - startSlot
       properties:
         houseName:
           type: string
-        tincture:
-          type: string
         background:
-          type: string
+          $ref: '#/components/schemas/Background'
         startSlot:
           type: string
         startGood:
@@ -1646,7 +1640,6 @@ components:
       required:
       - playerId
       - houseName
-      - tincture
       - background
       - estate
       - pp
@@ -1658,10 +1651,9 @@ components:
           type: string
         houseName:
           type: string
-        tincture:
-          type: string
         background:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/Background'
           nullable: true
         estate:
           type: string
@@ -1683,12 +1675,9 @@ components:
       description: The user's own house in a game, as the lobby and the details show it.
       required:
       - houseName
-      - tincture
       - backgroundName
       properties:
         houseName:
-          type: string
-        tincture:
           type: string
         backgroundName:
           type: string
@@ -1908,7 +1897,6 @@ components:
       - rank
       - playerId
       - name
-      - tincture
       - npc
       - legit
       - shares
@@ -1921,8 +1909,6 @@ components:
         playerId:
           type: string
         name:
-          type: string
-        tincture:
           type: string
         npc:
           type: boolean

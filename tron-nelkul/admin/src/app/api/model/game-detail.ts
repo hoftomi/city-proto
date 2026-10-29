@@ -26,6 +26,5 @@ export interface GameDetail {
     npcCount: number;
     starts: Array<StartSlotDto>;
     backgrounds: Array<BackgroundDto>;
-    tinctures: Array<string>;
 }
 

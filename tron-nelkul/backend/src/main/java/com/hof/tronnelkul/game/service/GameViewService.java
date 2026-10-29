@@ -40,12 +40,12 @@ public class GameViewService {
     }
 
     /** Action, margin, program and news template catalog; labels from i18n catalog.*. */
-    static Catalog catalog(Messages m) {
+    static Catalog catalog(Messages messages) {
         return new Catalog(
-        Arrays.stream(Action.values()).map(a -> new ActionInfo(a.id, m.text(a.label()), a.branch, a.pp, a.gold)).toList(),
-        Arrays.stream(Margin.values()).map(x -> new LevelInfo(x.id, m.text(x.label()), (int) Math.round(x.rate * 100), x.pop)).toList(),
-        Arrays.stream(Program.values()).map(p -> new LevelInfo(p.id, m.text(p.label()), (int) Math.round(p.rate * 100), p.pop)).toList(),
-        Arrays.stream(NewsTemplate.values()).map(n -> new NewsTemplateInfo(n.id, m.text(n.labelKey()), n.effect, n.needsGood)).toList(),
+        Arrays.stream(Action.values()).map(action -> new ActionInfo(action.id, messages.text(action.label()), action.branch, action.pp, action.gold)).toList(),
+        Arrays.stream(Margin.values()).map(margin -> new LevelInfo(margin.id, messages.text(margin.label()), (int) Math.round(margin.rate * 100), margin.pop)).toList(),
+        Arrays.stream(Program.values()).map(program -> new LevelInfo(program.id, messages.text(program.label()), (int) Math.round(program.rate * 100), program.pop)).toList(),
+        Arrays.stream(NewsTemplate.values()).map(template -> new NewsTemplateInfo(template.id, messages.text(template.labelKey()), template.effect, template.needsGood)).toList(),
         new RulesInfo(Rules.BASE_PRICE, Rules.CITY_SHARE_COST, Rules.MAX_SHARES_PER_ORDER, (int) Math.round(Rules.BUYOUT_PREMIUM * 100),
             Rules.PARTY_COST, Rules.FESTIVAL_GOLD, (int) Rules.FESTIVAL_POP, Rules.NEWS_GOLD, Rules.SPY_COST, Rules.SPY_UPKEEP,
             Rules.SPIES_PER_CITY, (int) Math.round(Rules.GUARD_CHANCE * 100), (int) Rules.DEBUNK_REWARD_POP, Rules.DEBUNK_REWARD_GOLD,
@@ -54,173 +54,201 @@ public class GameViewService {
 
     /** Runs the events due by now first. A finished game is already in the archive, hence 404. */
     public GameState state(String gameId, UUID userId) {
-        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
-        if (g.status == GameStatus.OPEN || g.status == GameStatus.ANNOUNCED) throw ApiException.conflict("server.game_not_started");
-        String me = p.id.toString();
-        return runner.mutate(gameId, (gg, e) -> build(gg, e, me));
+        GameEntity game = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        PlayerEntity player = playerRepository.findByGameIdAndUserId(game.getId(), userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
+        if (game.getStatus() == GameStatus.OPEN || game.getStatus() == GameStatus.ANNOUNCED) {
+            throw ApiException.conflict("server.game_not_started");
+        }
+        String me = player.getId().toString();
+        return runner.mutate(gameId, (lockedGame, engine) -> build(lockedGame, engine, me));
     }
 
-    GameState build(GameEntity g, Engine e, String me) {
-        EngineState s = e.s;
-        MapDefinition map = e.map;
-        PlayerSt ps = s.players.get(me);
-        if (ps == null) throw ApiException.conflict("server.house_not_in_game");
-        Map<String, Integer> net = e.network(me);
+    GameState build(GameEntity game, Engine engine, String me) {
+        EngineState state = engine.state;
+        MapDefinition map = engine.map;
+        PlayerSt ps = state.players.get(me);
+        if (ps == null) {
+            throw ApiException.conflict("server.house_not_in_game");
+        }
+        Map<String, Integer> net = engine.network(me);
         java.util.function.Function<String, HouseRef> ref = id -> {
-            PlayerSt x = s.players.get(id);
-            return x == null ? null : new HouseRef(id, x.name, x.tincture, x.npc, id.equals(me));
+            PlayerSt house = state.players.get(id);
+            return house == null ? null : new HouseRef(id, house.name, house.npc, id.equals(me));
         };
 
         // Routes: own ones and those on the draft or the maturing sheet
-        List<Order> mine = new ArrayList<>(s.draftOf(me));
-        s.sheetOf(me).ifPresent(l -> mine.addAll(l.orders));
+        List<Order> mine = new ArrayList<>(state.draftOf(me));
+        state.sheetOf(me).ifPresent(sheet -> mine.addAll(sheet.orders));
         List<RouteView> routes = new ArrayList<>();
-        s.routesOf(me).forEach(r -> routes.add(new RouteView(r.a(), r.b(), "own")));
-        mine.stream().filter(o -> "route".equals(o.type)).forEach(o -> routes.add(new RouteView(o.from, o.to, "pending")));
+        state.routesOf(me).forEach(route -> routes.add(new RouteView(route.from(), route.to(), "own")));
+        mine.stream().filter(order -> "route".equals(order.type)).forEach(order -> routes.add(new RouteView(order.from, order.to, "pending")));
         List<Buildable> buildable = new ArrayList<>();
         for (List<String> edge : map.allEdges()) {
-            String a = edge.get(0), b = edge.get(1);
-            if (routes.stream().anyMatch(r -> (r.getFrom().equals(a) && r.getTo().equals(b)) || (r.getFrom().equals(b) && r.getTo().equals(a)))) continue;
-            String from = net.containsKey(a) ? a : net.containsKey(b) ? b : null;
-            if (from == null) continue;
-            String to = from.equals(a) ? b : a;
-            if (!map.isCity(to) || net.containsKey(to)) continue;
+            String first = edge.get(0), second = edge.get(1);
+            if (routes.stream().anyMatch(route -> (route.getFrom().equals(first) && route.getTo().equals(second)) || (route.getFrom().equals(second) && route.getTo().equals(first)))) {
+                continue;
+            }
+            String from = net.containsKey(first) ? first : net.containsKey(second) ? second : null;
+            if (from == null) {
+                continue;
+            }
+            String to = from.equals(first) ? second : first;
+            if (!map.isCity(to) || net.containsKey(to)) {
+                continue;
+            }
             buildable.add(new Buildable(from, to, messages.resolve(map.nodeName(from)), messages.resolve(map.nodeName(to))));
         }
 
         List<CityView> cities = new ArrayList<>();
-        for (CityDef cd : map.cities()) cities.add(cityView(e, cd, me, net, ref));
+        for (CityDef cd : map.cities()) {
+            cities.add(cityView(engine, cd, me, net, ref));
+        }
 
-        List<OrderView> draft = s.draftOf(me).stream().map(o -> orderView(e, me, o, true)).toList();
-        Engine.Cost dc = e.draftCost(me);
-        SheetView sheet = s.sheetOf(me).map(l -> new SheetView(l.id, Instant.ofEpochMilli(l.sealedAt), Instant.ofEpochMilli(l.executeAt),
-            l.orders.stream().map(o -> orderView(e, me, o, false)).toList(), new Cost(l.pp, l.gold))).orElse(null);
-        List<RivalSheet> rivalSheets = s.sheets.stream().filter(l -> !l.player.equals(me)).sorted(Comparator.comparingLong(l -> l.executeAt))
-            .map(l -> new RivalSheet(ref.apply(l.player), Instant.ofEpochMilli(l.executeAt))).toList();
+        List<OrderView> draft = state.draftOf(me).stream().map(order -> orderView(engine, me, order, true)).toList();
+        Engine.Cost draftCost = engine.draftCost(me);
+        SheetView sheet = state.sheetOf(me).map(ownSheet -> new SheetView(ownSheet.id, Instant.ofEpochMilli(ownSheet.sealedAt), Instant.ofEpochMilli(ownSheet.executeAt),
+            ownSheet.orders.stream().map(order -> orderView(engine, me, order, false)).toList(), new Cost(ownSheet.pp, ownSheet.gold))).orElse(null);
+        List<RivalSheet> rivalSheets = state.sheets.stream().filter(rival -> !rival.player.equals(me)).sorted(Comparator.comparingLong(rival -> rival.executeAt))
+            .map(rival -> new RivalSheet(ref.apply(rival.player), Instant.ofEpochMilli(rival.executeAt))).toList();
 
         Set<String> defending = new HashSet<>();
-        mine.stream().filter(o -> "defend".equals(o.type)).forEach(o -> defending.add(o.orderId));
+        mine.stream().filter(order -> "defend".equals(order.type)).forEach(order -> defending.add(order.orderId));
         List<Threat> threats = new ArrayList<>();
-        for (Sheet l : s.sheets) {
-            if (l.player.equals(me)) continue;
-            for (Order o : l.orders) {
-                if (!"buyout".equals(o.type) || !me.equals(o.target)) continue;
-                Order d = new Order();
-                d.type = "defend"; d.city = o.city; d.sheetId = l.id; d.orderId = o.id;
-                Good gd = s.cities.get(o.city).goods.get(o.good);
-                threats.add(new Threat(l.id, o.id, ref.apply(l.player), o.city, messages.resolve(map.nodeName(o.city)), o.good,
-                    gd == null ? o.good : messages.text(GoodDef.label(o.good)), o.pts,
-                    Instant.ofEpochMilli(l.executeAt), e.cost(me, d).gold(), defending.contains(o.id)));
+        for (Sheet rivalSheet : state.sheets) {
+            if (rivalSheet.player.equals(me)) {
+                continue;
+            }
+            for (Order order : rivalSheet.orders) {
+                if (!"buyout".equals(order.type) || !me.equals(order.target)) {
+                    continue;
+                }
+                Order defense = new Order();
+                defense.type = "defend"; defense.city = order.city; defense.sheetId = rivalSheet.id; defense.orderId = order.id;
+                Good good = state.cities.get(order.city).goods.get(order.good);
+                threats.add(new Threat(rivalSheet.id, order.id, ref.apply(rivalSheet.player), order.city, messages.resolve(map.nodeName(order.city)), order.good,
+                    good == null ? order.good : messages.text(GoodDef.label(order.good)), order.pts,
+                    Instant.ofEpochMilli(rivalSheet.executeAt), engine.cost(me, defense).gold(), defending.contains(order.id)));
             }
         }
 
-        List<IntelView> intel = s.intel.stream().filter(i -> i.owner.equals(me)).limit(12)
-            .map(i -> new IntelView(i.id, ref.apply(i.of), Instant.ofEpochMilli(i.executeAt), e.intelLines(i).stream().map(messages::text).toList(),
-                i.depth, e.sheet(i.sheetId).isPresent(), i.offeredTo.stream().map(x -> messages.resolve(e.name(x))).toList(), i.bought)).toList();
+        List<IntelView> intel = state.intel.stream().filter(item -> item.owner.equals(me)).limit(12)
+            .map(item -> new IntelView(item.id, ref.apply(item.of), Instant.ofEpochMilli(item.executeAt), engine.intelLines(item).stream().map(messages::text).toList(),
+                item.depth, engine.sheet(item.sheetId).isPresent(), item.offeredTo.stream().map(buyer -> messages.resolve(engine.name(buyer))).toList(), item.bought)).toList();
         List<OfferView> offers = new ArrayList<>();
-        for (Offer o : s.offers) {
-            if (!o.buyer.equals(me)) continue;
-            s.intel.stream().filter(i -> i.id.equals(o.intelId)).findFirst()
-                .ifPresent(i -> offers.add(new OfferView(o.id, ref.apply(o.seller), ref.apply(i.of), o.price, Instant.ofEpochMilli(i.executeAt))));
+        for (Offer offer : state.offers) {
+            if (!offer.buyer.equals(me)) {
+                continue;
+            }
+            state.intel.stream().filter(item -> item.id.equals(offer.intelId)).findFirst()
+                .ifPresent(item -> offers.add(new OfferView(offer.id, ref.apply(offer.seller), ref.apply(item.of), offer.price, Instant.ofEpochMilli(item.executeAt))));
         }
-        List<HouseRef> houses = s.players.keySet().stream().map(ref).toList();
+        List<HouseRef> houses = state.players.keySet().stream().map(ref).toList();
 
-        ClockView clock = new ClockView(Instant.ofEpochMilli(s.clock), Instant.ofEpochMilli(Time.nextSettlement(s.clock)), s.settlements,
-            GameEntity.maxSettlements(), e.nextElectionIn(), e.isCampaign(), GameEntity.MATURATION_MINUTES);
-        Me meDto = new Me(me, ps.name, ps.tincture, ps.background, ps.estate, ps.pp, Rules.PP_MAX, Math.round(ps.gold * 10) / 10.0, ps.legit);
-        return new GameState(g.id, g.name, g.mapId, g.status.apiId, clock, meDto, routes, buildable, cities, draft,
-            new Cost(dc.pp(), dc.gold()), sheet, rivalSheets, threats, intel, offers, houses, catalog);
+        ClockView clock = new ClockView(Instant.ofEpochMilli(state.clock), Instant.ofEpochMilli(Time.nextSettlement(state.clock)), state.settlements,
+            GameEntity.maxSettlements(), engine.nextElectionIn(), engine.isCampaign(), GameEntity.MATURATION_MINUTES);
+        Me meDto = new Me(me, ps.name, ps.background, ps.estate, ps.pp, Rules.PP_MAX, Math.round(ps.gold * 10) / 10.0, ps.legit);
+        return new GameState(game.getId(), game.getName(), game.getMapId(), game.getStatus().apiId, clock, meDto, routes, buildable, cities, draft,
+            new Cost(draftCost.pp(), draftCost.gold()), sheet, rivalSheets, threats, intel, offers, houses, catalog);
     }
 
-    private CityView cityView(Engine e, CityDef cd, String me, Map<String, Integer> net, java.util.function.Function<String, HouseRef> ref) {
-        EngineState s = e.s;
-        CitySt cs = s.cities.get(cd.id());
+    private CityView cityView(Engine engine, CityDef cd, String me, Map<String, Integer> net, java.util.function.Function<String, HouseRef> ref) {
+        EngineState state = engine.state;
+        CitySt cs = state.cities.get(cd.id());
         String city = cd.id();
         List<GoodView> goods = new ArrayList<>();
-        for (var ge : cs.goods.entrySet()) {
-            Good g = ge.getValue();
-            double cheapest = g.shares.entrySet().stream().filter(x -> x.getValue() > 0)
-                .mapToDouble(x -> Margin.of(g.margins.get(x.getKey())).rate).min().orElse(Double.NaN);
-            long sellersCount = g.shares.values().stream().filter(v -> v > 0).count();
+        for (var goodEntry : cs.goods.entrySet()) {
+            Good good = goodEntry.getValue();
+            double cheapest = good.shares.entrySet().stream().filter(entry -> entry.getValue() > 0)
+                .mapToDouble(entry -> Margin.of(good.margins.get(entry.getKey())).rate).min().orElse(Double.NaN);
+            long sellersCount = good.shares.values().stream().filter(pts -> pts > 0).count();
             List<Seller> sellers = new ArrayList<>();
-            g.shares.entrySet().stream().filter(x -> x.getValue() > 0).sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(x -> {
-                String m = g.margins.getOrDefault(x.getKey(), Margin.MARKET.id);
-                sellers.add(new Seller(ref.apply(x.getKey()), false, x.getValue(), m, g.sold.get(x.getKey()),
-                    sellersCount > 1 && Margin.of(m).rate == cheapest, e.isProtected(city, ge.getKey(), x.getKey())));
+            good.shares.entrySet().stream().filter(entry -> entry.getValue() > 0).sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(entry -> {
+                String margin = good.margins.getOrDefault(entry.getKey(), Margin.MARKET.id);
+                sellers.add(new Seller(ref.apply(entry.getKey()), false, entry.getValue(), margin, good.sold.get(entry.getKey()),
+                    sellersCount > 1 && Margin.of(margin).rate == cheapest, engine.isProtected(city, goodEntry.getKey(), entry.getKey())));
             });
-            int cityPts = Engine.cityShare(g);
-            if (cityPts > 0) sellers.add(new Seller(null, true, cityPts, Margin.MARKET.id, g.sold.get(Engine.CITY), false, false));
-            goods.add(new GoodView(ge.getKey(), messages.text(GoodDef.label(ge.getKey())), g.supply, g.demand, cityPts, Engine.marketValue(g), g.shares.getOrDefault(me, 0),
-                g.shares.containsKey(me) ? g.margins.getOrDefault(me, Margin.MARKET.id) : null, sellers));
+            int cityPts = Engine.cityShare(good);
+            if (cityPts > 0) {
+                sellers.add(new Seller(null, true, cityPts, Margin.MARKET.id, good.sold.get(Engine.CITY), false, false));
+            }
+            goods.add(new GoodView(goodEntry.getKey(), messages.text(GoodDef.label(goodEntry.getKey())), good.supply, good.demand, cityPts, Engine.marketValue(good), good.shares.getOrDefault(me, 0),
+                good.shares.containsKey(me) ? good.margins.getOrDefault(me, Margin.MARKET.id) : null, sellers));
         }
         List<PopRow> pop = cs.pop.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed())
-            .map(x -> new PopRow(ref.apply(x.getKey()), x.getValue())).filter(r -> r.getHouse() != null).toList();
+            .map(entry -> new PopRow(ref.apply(entry.getKey()), entry.getValue())).filter(row -> row.getHouse() != null).toList();
         List<PartyView> parties = cs.parties.entrySet().stream()
-            .map(x -> new PartyView(ref.apply(x.getKey()), x.getValue(), (int) Math.round(e.popOf(city, x.getKey())), cs.council.getOrDefault(x.getKey(), 0)))
+            .map(entry -> new PartyView(ref.apply(entry.getKey()), entry.getValue(), (int) Math.round(engine.popOf(city, entry.getKey())), cs.council.getOrDefault(entry.getKey(), 0)))
             .sorted(Comparator.comparingInt(PartyView::getVotes).reversed()).toList();
-        List<HouseRef> foreignSpies = cs.spies.entrySet().stream().filter(x -> !x.getKey().equals(me) && x.getValue() > 0).map(x -> ref.apply(x.getKey())).toList();
+        List<HouseRef> foreignSpies = cs.spies.entrySet().stream().filter(entry -> !entry.getKey().equals(me) && entry.getValue() > 0).map(entry -> ref.apply(entry.getKey())).toList();
         Set<String> presentIds = new LinkedHashSet<>(cs.pop.keySet());
         presentIds.addAll(cs.parties.keySet());
-        cs.goods.values().forEach(g -> g.shares.forEach((p, v) -> { if (v > 0) presentIds.add(p); }));
+        cs.goods.values().forEach(good -> good.shares.forEach((player, pts) -> {
+            if (pts > 0) {
+                presentIds.add(player);
+            }
+        }));
         presentIds.remove(me);
         List<HouseRef> present = presentIds.stream().map(ref).filter(Objects::nonNull).toList();
-        PlayerSt ps = s.players.get(me);
-        List<NewsView> news = s.news.stream().filter(n -> n.city.equals(city)).limit(8)
-            .map(n -> new NewsView(n.id, messages.text(e.newsText(n)), n.template, n.effect, ref.apply(n.author), ref.apply(n.target), Instant.ofEpochMilli(n.createdAt),
-                n.debunked, ps.verified.get(n.id), n.author.equals(me))).toList();
+        PlayerSt ps = state.players.get(me);
+        List<NewsView> news = state.news.stream().filter(story -> story.city.equals(city)).limit(8)
+            .map(story -> new NewsView(story.id, messages.text(engine.newsText(story)), story.template, story.effect, ref.apply(story.author), ref.apply(story.target), Instant.ofEpochMilli(story.createdAt),
+                story.debunked, ps.verified.get(story.id), story.author.equals(me))).toList();
         Integer dist = net.get(city);
         return new CityView(city, messages.text(cd.label()), messages.text(cd.desc()), cd.key(), cd.coast(), dist != null ? "reachable" : "unreachable", dist,
-            e.popOf(city, me), Math.round(e.taxRate(city) * 1000) / 1000.0, cs.lastTaxPool, Rules.COUNCIL_SEATS, goods, pop, parties,
+            engine.popOf(city, me), Math.round(engine.taxRate(city) * 1000) / 1000.0, cs.lastTaxPool, Rules.COUNCIL_SEATS, goods, pop, parties,
             cs.parties.get(me), cs.spies.getOrDefault(me, 0), cs.guards.getOrDefault(me, 0), foreignSpies, present, news);
     }
 
     /** View of an own order. On the draft it warns if the order would not run now, or the news is false (6.5). */
-    private OrderView orderView(Engine e, String me, Order o, boolean draft) {
-        Action a = Action.of(o.type);
+    private OrderView orderView(Engine engine, String me, Order order, boolean draft) {
+        Action action = Action.of(order.type);
         Msg warning = null;
         if (draft) {
-            warning = e.validate(me, o);
-            if (warning == null && a == Action.NEWS && !e.newsTruth(o.city, o.template, o.target, o.good)) warning = Msg.of("server.news_untrue");
+            warning = engine.validate(me, order);
+            if (warning == null && action == Action.NEWS && !engine.newsTruth(order.city, order.template, order.target, order.good)) {
+                warning = Msg.of("server.news_untrue");
+            }
         }
-        return new OrderView(o.id, o.type, a.branch, messages.text(e.orderLabel(o, 2)), o.city, o.city == null ? null : messages.resolve(e.cityName(o.city)),
-            new Cost(a.pp, o.gold), warning == null ? null : messages.text(warning));
+        return new OrderView(order.id, order.type, action.branch, messages.text(engine.orderLabel(order, 2)), order.city, order.city == null ? null : messages.resolve(engine.cityName(order.city)),
+            new Cost(action.pp, order.gold), warning == null ? null : messages.text(warning));
     }
 
     @Transactional(readOnly = true)
     public List<ReportView> reports(String gameId, UUID userId) {
-        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        PlayerEntity p = playerRepository.findByGameIdAndUserId(g.id, userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
-        return reportRepository.findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(g.id, p.id).stream()
+        GameEntity game = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        PlayerEntity player = playerRepository.findByGameIdAndUserId(game.getId(), userId).orElseThrow(() -> ApiException.forbidden("server.not_a_member"));
+        return reportRepository.findTop100ByGameIdAndPlayerIdOrderByCreatedAtDesc(game.getId(), player.getId()).stream()
             .map(reportMapper::view).toList();
     }
 
     @Transactional(readOnly = true)
     public List<RankRow> ranking(String gameId, UUID userId) {
-        GameEntity g = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        String me = playerRepository.findByGameIdAndUserId(g.id, userId).map(p -> p.id.toString()).orElse(null);
-        if (g.state == null) {
-            List<PlayerEntity> all = new ArrayList<>(playerRepository.findByGameId(g.id));
-            all.sort(Comparator.comparing(p -> p.houseName));
+        GameEntity game = gameRepository.findById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        String me = playerRepository.findByGameIdAndUserId(game.getId(), userId).map(player -> player.getId().toString()).orElse(null);
+        if (game.getState() == null) {
+            List<PlayerEntity> all = new ArrayList<>(playerRepository.findByGameId(game.getId()));
+            all.sort(Comparator.comparing(player -> player.getHouseName()));
             List<RankRow> out = new ArrayList<>();
-            for (int i = 0; i < all.size(); i++) {
-                PlayerEntity p = all.get(i);
-                out.add(new RankRow(i + 1, p.id.toString(), p.houseName, p.tincture, p.npc, 0, 0, 0, p.id.toString().equals(me)));
+            for (int index = 0; index < all.size(); index++) {
+                PlayerEntity player = all.get(index);
+                out.add(new RankRow(index + 1, player.getId().toString(), player.getHouseName(), player.isNpc(), 0, 0, 0, player.getId().toString().equals(me)));
             }
             return out;
         }
-        EngineState s = runner.read(g);
-        List<PlayerSt> all = new ArrayList<>(s.players.values());
-        all.sort(Comparator.comparingInt((PlayerSt p) -> p.legit).reversed().thenComparing(p -> p.name));
+        EngineState state = runner.read(game);
+        List<PlayerSt> all = new ArrayList<>(state.players.values());
+        all.sort(Comparator.comparingInt((PlayerSt player) -> player.legit).reversed().thenComparing(player -> player.name));
         List<RankRow> out = new ArrayList<>();
-        for (int i = 0; i < all.size(); i++) {
-            PlayerSt p = all.get(i);
+        for (int index = 0; index < all.size(); index++) {
+            PlayerSt player = all.get(index);
             int shares = 0, seats = 0;
-            for (CitySt c : s.cities.values()) {
-                seats += c.council.getOrDefault(p.id, 0);
-                for (Good gd : c.goods.values()) shares += gd.shares.getOrDefault(p.id, 0);
+            for (CitySt cs : state.cities.values()) {
+                seats += cs.council.getOrDefault(player.id, 0);
+                for (Good good : cs.goods.values()) {
+                    shares += good.shares.getOrDefault(player.id, 0);
+                }
             }
-            out.add(new RankRow(i + 1, p.id, p.name, p.tincture, p.npc, p.legit, shares, seats, p.id.equals(me)));
+            out.add(new RankRow(index + 1, player.id, player.name, player.npc, player.legit, shares, seats, player.id.equals(me)));
         }
         return out;
     }

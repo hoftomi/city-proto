@@ -88,7 +88,7 @@ class UnderworldSection extends StatelessWidget {
                 CityLine(
                   body: Row(
                     children: [
-                      HouseCrest(tincture: l.house.tincture, size: 18, npc: l.house.npc, name: l.house.name),
+                      HouseCrest(size: 18, npc: l.house.npc, name: l.house.name),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text.rich(

@@ -108,7 +108,7 @@ class _TopBar extends StatelessWidget {
           bottom: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, runSpacing: 8, children: [
               Row(mainAxisSize: MainAxisSize.min, children: [
-                HouseCrest(tincture: me.tincture, initial: me.houseName.characters.first, size: 24, name: me.houseName),
+                HouseCrest(initial: me.houseName.characters.first, size: 24, name: me.houseName),
                 const SizedBox(width: 8),
                 Text(me.houseName, style: woodTitle(c)),
               ]),

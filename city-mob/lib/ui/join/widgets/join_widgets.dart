@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../theme/tokens.dart';
-import '../../../util/format.dart';
 import '../../../widgets/game_widgets.dart';
 import '../../../widgets/tn_icon.dart';
 
@@ -97,41 +96,6 @@ class JoinChoice extends StatelessWidget {
               ]),
             ),
             SizedBox(width: 22, child: selected ? TnIcon('check', size: 18, color: c.btnGreenLo) : null),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
-/// Tincture picker tile (tincture): bronze ring and warm parchment when selected.
-class TinctureTile extends StatelessWidget {
-  const TinctureTile({super.key, required this.tincture, required this.selected, required this.onTap});
-  final String tincture;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.tn;
-    return Semantics(
-      selected: selected,
-      button: true,
-      label: tinctureName(tincture),
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Framed(
-          border: selected ? c.frameLo : c.lineStrong,
-          borderWidth: 1,
-          rings: selected ? [(c.frame, 1.5)] : const [],
-          radius: TnRadius.sm,
-          gradient: selected ? const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFBF1D3), Color(0xFFF0DCA3)]) : null,
-          color: c.field,
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            HouseCrest(tincture: tincture, size: 26),
-            const SizedBox(height: 4),
-            Text(tinctureName(tincture), style: TnText.data(c.ink, size: 12)),
           ]),
         ),
       ),

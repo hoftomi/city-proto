@@ -1,8 +1,12 @@
 package com.hof.tronnelkul.game.engine;
 
-/** Undirected edge on the map. */
-public record Edge(String a, String b) {
-    public boolean touches(String n) { return a.equals(n) || b.equals(n); }
-    public String other(String n) { return a.equals(n) ? b : a; }
-    public boolean same(String x, String y) { return (a.equals(x) && b.equals(y)) || (a.equals(y) && b.equals(x)); }
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+/** Undirected edge on the map. Stored states written before the rename use "a" / "b". */
+public record Edge(@JsonAlias("a") String from, @JsonAlias("b") String to) {
+    public boolean touches(String node) { return from.equals(node) || to.equals(node); }
+    public String other(String node) { return from.equals(node) ? to : from; }
+    public boolean same(String first, String second) {
+        return (from.equals(first) && to.equals(second)) || (from.equals(second) && to.equals(first));
+    }
 }

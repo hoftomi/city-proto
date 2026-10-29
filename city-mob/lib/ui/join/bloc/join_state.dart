@@ -13,8 +13,7 @@ class JoinState extends Equatable {
     this.name = '',
     this.nameError,
     this.touched = false,
-    this.tincture = '',
-    this.background = '',
+    this.background = Background.merchant,
     this.start = '',
     this.startGood,
     this.busy = false,
@@ -34,7 +33,8 @@ class JoinState extends Equatable {
   /// The name error (always computed; shown only after `touched`).
   final Tr? nameError;
   final bool touched;
-  final String tincture, background, start;
+  final Background background;
+  final String start;
 
   /// The Merchant House chosen starting good (if none chosen, the first).
   final String? startGood;
@@ -70,7 +70,7 @@ class JoinState extends Equatable {
   bool get needsGood => detail?.needsGood(background, start) ?? false;
   GoodOption? get good => detail?.good(background, start, startGood);
 
-  JoinForm get form => (name: name, tincture: tincture, background: background, start: start, startGood: startGood);
+  JoinForm get form => (name: name, background: background, start: start, startGood: startGood);
 
   /// The summary's "Start" row.
   Tr get startText => game == null ? const Tr.raw('') : (game!.running ? const Tr('join.start_now') : game!.startsAtText);
@@ -86,8 +86,7 @@ class JoinState extends Equatable {
     Tr? nameError,
     bool clearNameError = false,
     bool? touched,
-    String? tincture,
-    String? background,
+    Background? background,
     String? start,
     String? startGood,
     bool? busy,
@@ -103,7 +102,6 @@ class JoinState extends Equatable {
       name: name ?? this.name,
       nameError: clearNameError ? nameError : nameError ?? this.nameError,
       touched: touched ?? this.touched,
-      tincture: tincture ?? this.tincture,
       background: background ?? this.background,
       start: start ?? this.start,
       startGood: startGood ?? this.startGood,
@@ -115,5 +113,5 @@ class JoinState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [gameId, detail, map, failure, step, name, nameError, touched, tincture, background, start, startGood, busy, notice, outcome];
+      [gameId, detail, map, failure, step, name, nameError, touched, background, start, startGood, busy, notice, outcome];
 }

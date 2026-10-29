@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Background } from './background';
 
 
 /**
@@ -17,8 +18,7 @@ export interface AdminHouse {
     userId: string | null;
     userName: string | null;
     houseName: string;
-    tincture: string;
-    background: string | null;
+    background: Background | null;
     npc: boolean;
     persona: string | null;
     legit: number;
@@ -27,4 +27,6 @@ export interface AdminHouse {
     place: number | null;
     joinedAt: string;
 }
+
+
 

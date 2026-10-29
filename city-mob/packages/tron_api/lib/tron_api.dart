@@ -25,6 +25,7 @@ export 'package:tron_api/src/model/admin_report.dart';
 export 'package:tron_api/src/model/admin_result.dart';
 export 'package:tron_api/src/model/admin_user.dart';
 export 'package:tron_api/src/model/advance_request.dart';
+export 'package:tron_api/src/model/background.dart';
 export 'package:tron_api/src/model/background_dto.dart';
 export 'package:tron_api/src/model/buildable.dart';
 export 'package:tron_api/src/model/catalog.dart';

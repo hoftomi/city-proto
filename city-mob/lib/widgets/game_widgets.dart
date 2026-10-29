@@ -130,11 +130,11 @@ final Path _crestShield = parseSvgPathData('M5 5h16v7.4c0 5.2-3.8 8.6-8 10.9-4.2
 final Path _crestShade = parseSvgPathData('M13 4L22 4V14C22 19 18 22 13 25z');
 final Path _crestLight = parseSvgPathData('M5 5h6c-.5 4-2.5 7-6 9z');
 
-/// House coat of arms: bronze-edged shield in the house tincture, with bottom-right shadow and top-left light.
-/// The initial is Cinzel with an ink outline. For NPC houses the shield outline is dashed.
+/// House coat of arms: bronze-edged shield in the one neutral house tone (houses have no colours), with
+/// bottom-right shadow and top-left light. The initial is Cinzel with an ink outline. For NPC houses the shield
+/// outline is dashed.
 class HouseCrest extends StatelessWidget {
-  const HouseCrest({super.key, required this.tincture, this.initial, this.size = 28, this.npc = false, this.name});
-  final String tincture;
+  const HouseCrest({super.key, this.initial, this.size = 28, this.npc = false, this.name});
   final String? initial, name;
   final double size;
   final bool npc;
@@ -151,7 +151,7 @@ class HouseCrest extends StatelessWidget {
           width: size,
           height: size * 1.12,
           child: CustomPaint(
-            painter: _CrestPainter(c, c.house(tincture), npc),
+            painter: _CrestPainter(c, c.house, npc),
             child: initial == null
                 ? null
                 : Align(
@@ -461,8 +461,9 @@ class _PipsPainter extends CustomPainter {
 // Shares bar and council
 // ---------------------------------------------------------------------------
 
-/// A good's 100 share points in the owners' tinctures; the City's part is hatched
-/// (influence bar style: dark wood trough, painted segments with top highlight).
+/// A good's 100 share points: owners' segments in the one neutral house tone (the own one with a parchment
+/// outline), the City's part hatched (influence bar style: dark wood trough, painted segments with top highlight).
+/// The legend names the owners in bar order; the own house is bold.
 class ShareBar extends StatelessWidget {
   const ShareBar({super.key, required this.good, this.legend = false});
   final GoodView good;
@@ -483,7 +484,7 @@ class ShareBar extends StatelessWidget {
           ]),
         );
     final parts = <(int, Widget)>[
-      for (final s in owners) (s.shares, seg(c.house(s.house!.tincture), self: s.house!.self)),
+      for (final s in owners) (s.shares, seg(c.houseShare, self: s.house!.self)),
       if (cityPart > 0) (cityPart, CustomPaint(painter: _HatchPainter(c.shareNeutral, const Color(0xFFC9B083)))),
     ];
     final cityName = 'ui.shares.city'.tr();
@@ -513,23 +514,22 @@ class ShareBar extends StatelessWidget {
       if (legend) ...[
         const SizedBox(height: 6),
         Wrap(spacing: 12, runSpacing: 4, children: [
-          for (final s in owners) _key(c, c.house(s.house!.tincture), s.house!.name, '${s.shares}', bold: s.house!.self),
-          if (cityPart > 0) _key(c, c.shareNeutral, cityName, '$cityPart'),
+          for (final s in owners) _key(c, s.house!.name, '${s.shares}', bold: s.house!.self),
+          if (cityPart > 0) _key(c, cityName, '$cityPart'),
         ]),
       ],
     ]);
   }
 
-  Widget _key(TnColors c, Color sw, String name, String value, {bool bold = false}) => Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(width: 11, height: 11, decoration: BoxDecoration(color: sw, borderRadius: BorderRadius.circular(2), border: Border.all(color: c.outline))),
-        const SizedBox(width: 6),
+  Widget _key(TnColors c, String name, String value, {bool bold = false}) => Row(mainAxisSize: MainAxisSize.min, children: [
         Text(name, style: (bold ? TnText.bodyStrong(c.ink) : TnText.body(c.ink)).copyWith(fontSize: 13)),
         const SizedBox(width: 4),
         Text(value, style: TnText.data(c.inkMuted, size: 12)),
       ]);
 }
 
-/// City council seats (9 by default) as wax seal discs in the parties' tinctures.
+/// City council seats (9 by default) as wax seal discs in the one neutral house tone; the own seats carry a
+/// bronze ring, empty seats are dashed. The caption names the parties.
 class SeatsBar extends StatelessWidget {
   const SeatsBar({super.key, required this.parties, this.total = 9});
   final List<PartyView> parties;
@@ -549,7 +549,7 @@ class SeatsBar extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ExcludeSemantics(
           child: Wrap(spacing: 4, runSpacing: 4, children: [
-            for (final h in seats) SizedBox(width: 22, height: 22, child: CustomPaint(painter: _SeatPainter(c, h == null ? null : c.house(h.tincture), h?.self == true))),
+            for (final h in seats) SizedBox(width: 22, height: 22, child: CustomPaint(painter: _SeatPainter(c, h == null ? null : c.house, h?.self == true))),
           ]),
         ),
         const SizedBox(height: 6),
@@ -823,7 +823,7 @@ class HouseName extends StatelessWidget {
   final double size;
   @override
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
-        HouseCrest(tincture: house.tincture, size: size, npc: house.npc, name: house.name),
+        HouseCrest(size: size, npc: house.npc, name: house.name),
         const SizedBox(width: 6),
         Flexible(child: Text(house.self ? 'ui.self'.tr(namedArgs: {'name': house.name}) : house.name, overflow: TextOverflow.ellipsis, style: TnText.body(context.tn.ink).copyWith(fontSize: 14))),
       ]);

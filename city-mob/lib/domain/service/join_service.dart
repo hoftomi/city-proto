@@ -8,7 +8,7 @@ import '../model/join_extensions.dart';
 import 'lobby_service.dart';
 
 /// Data of the join form.
-typedef JoinForm = ({String name, String tincture, String background, String start, String? startGood});
+typedef JoinForm = ({String name, Background background, String start, String? startGood});
 
 /// Game details with the map, join validation and request assembly.
 @lazySingleton
@@ -39,13 +39,12 @@ class JoinService {
 
   JoinRequest request(GameDetail d, JoinForm f) => JoinRequest(
         houseName: f.name.trim(),
-        tincture: f.tincture,
         background: f.background,
         startSlot: f.start,
         startGood: d.good(f.background, f.start, f.startGood)?.id,
       );
 
-  Future<Either<Failure, GameSummary>> join(GameDetail d, JoinForm f) => _lobby.join(d.game.id, request(d, f));
+  Future<Either<Failure, void>> join(GameDetail d, JoinForm f) => _lobby.join(d.game.id, request(d, f));
 
   /// The server complains about a taken or invalid name: back to the first step. Inspects the server text (ProblemDetail
   /// `detail`), not a displayed label.

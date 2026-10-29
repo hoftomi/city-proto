@@ -23,11 +23,17 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    public CustomTokenResponse discordLogin(DiscordRequest r) {
-        if (blank(r.getCode())) throw ApiException.badRequest("server.auth.discord_code_missing");
-        if (blank(r.getCodeVerifier())) throw ApiException.badRequest("server.auth.pkce_missing");
-        if (blank(r.getRedirectUri())) throw ApiException.badRequest("server.auth.redirect_missing");
-        ExternalIdentity ext = verifier.discord(r.getCode(), r.getCodeVerifier(), r.getRedirectUri());
+    public CustomTokenResponse discordLogin(DiscordRequest request) {
+        if (blank(request.getCode())) {
+            throw ApiException.badRequest("server.auth.discord_code_missing");
+        }
+        if (blank(request.getCodeVerifier())) {
+            throw ApiException.badRequest("server.auth.pkce_missing");
+        }
+        if (blank(request.getRedirectUri())) {
+            throw ApiException.badRequest("server.auth.redirect_missing");
+        }
+        ExternalIdentity ext = verifier.discord(request.getCode(), request.getCodeVerifier(), request.getRedirectUri());
         String uid = "discord:" + ext.subject();
         // The Discord name is saved here, because a custom-token Firebase account has no name.
         auth.findOrCreate(uid, ext.email(), ext.name());
@@ -37,5 +43,5 @@ public class AuthController implements AuthApi {
     @Override
     public UserDto getMe() { return auth.me(CurrentUser.id()); }
 
-    private static boolean blank(String s) { return s == null || s.isBlank(); }
+    private static boolean blank(String value) { return value == null || value.isBlank(); }
 }

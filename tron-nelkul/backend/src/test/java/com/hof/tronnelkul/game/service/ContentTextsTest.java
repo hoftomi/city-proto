@@ -12,19 +12,21 @@ class ContentTextsTest {
 
     @Test
     void backgroundsAndNpcsHaveTexts() {
-        for (var b : Backgrounds.dtos(messages)) {
-            assertFalse(b.getName().startsWith("world."), b.getId());
-            b.getPerks().forEach(p -> assertFalse(p.startsWith("world."), b.getId()));
+        for (var background : Backgrounds.dtos(messages)) {
+            assertFalse(background.getName().startsWith("world."), background.getId().getValue());
+            background.getPerks().forEach(perk -> assertFalse(perk.startsWith("world."), background.getId().getValue()));
         }
-        for (var t : Npcs.ALL) assertTrue(messages.find(t.label().key()).isPresent(), t.id());
+        for (var npc : Npcs.ALL) {
+            assertTrue(messages.find(npc.label().key()).isPresent(), npc.id());
+        }
     }
 
     @Test
     void catalogLabelsResolve() {
-        var c = GameViewService.catalog(messages);
-        c.getActions().forEach(a -> assertFalse(a.getLabel().startsWith("catalog."), a.getId()));
-        c.getMargins().forEach(m -> assertFalse(m.getLabel().startsWith("catalog."), m.getId()));
-        c.getPrograms().forEach(p -> assertFalse(p.getLabel().startsWith("catalog."), p.getId()));
-        c.getNews().forEach(n -> assertTrue(n.getLabel().contains("{t}"), n.getId()));
+        var catalog = GameViewService.catalog(messages);
+        catalog.getActions().forEach(action -> assertFalse(action.getLabel().startsWith("catalog."), action.getId()));
+        catalog.getMargins().forEach(margin -> assertFalse(margin.getLabel().startsWith("catalog."), margin.getId()));
+        catalog.getPrograms().forEach(program -> assertFalse(program.getLabel().startsWith("catalog."), program.getId()));
+        catalog.getNews().forEach(news -> assertTrue(news.getLabel().contains("{t}"), news.getId()));
     }
 }

@@ -90,7 +90,7 @@ class CityState extends Equatable {
   ClockView get clock => game!.clock;
 
   List<CityStat> get stats => game!.cityStats(city!);
-  Map<String, String?> get dominants => game!.districtDominants(city!);
+  Map<String, HouseRef?> get dominants => game!.districtDominants(city!);
   List<Buildable> get routes => game!.routesTo(cityId!);
   List<Threat> get threats => game!.threatsIn(cityId!);
   bool defendOnlyInDraft(Threat t) => game!.defendOnlyInDraft(t);

@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.game.mapper;
 
+import com.hof.tronnelkul.api.model.Background;
 import com.hof.tronnelkul.api.model.GameDetail;
 import com.hof.tronnelkul.api.model.GameSummary;
 import com.hof.tronnelkul.api.model.MyHouse;
@@ -20,26 +21,26 @@ class LobbyMapperTest {
     final LobbyMapper mapper = Mappers.getMapper(LobbyMapper.class);
     { mapper.messages = new Messages(new TranslationService(JsonMapper.builder().build())); }
 
-    final LobbyMapper.JoinOptions options = new LobbyMapper.JoinOptions(List.of(), List.of(), List.of("red"));
+    final LobbyMapper.JoinOptions options = new LobbyMapper.JoinOptions(List.of(), List.of());
 
     @Test
     void liveCard() {
-        GameEntity g = new GameEntity("g1", "Game one", GameStatus.RUNNING, "delkelet", 30, 4, "A, B");
-        g.closesAt = Instant.parse("2026-11-01T07:00:00Z");
-        PlayerEntity p = new PlayerEntity("g1", UUID.randomUUID(), "Bluecrow", "blue");
-        p.id = UUID.randomUUID();
-        GameSummary s = mapper.card(g, p, false);
-        assertEquals("g1", s.getId());
-        assertEquals("Game one", s.getName());
-        assertEquals("running", s.getStatus());
-        assertEquals(g.closesAt, s.getClosesAt());
-        assertEquals(List.of("A", "B"), s.getTags());
-        assertFalse(s.getCanJoin());
-        assertEquals("Bluecrow", s.getMyHouse().getHouseName());
-        assertNull(s.getWinner());
-        assertNull(s.getMyPlace());
+        GameEntity game = new GameEntity("g1", "Game one", GameStatus.RUNNING, "delkelet", 30, 4, "A, B");
+        game.setClosesAt(Instant.parse("2026-11-01T07:00:00Z"));
+        PlayerEntity player = new PlayerEntity("g1", UUID.randomUUID(), "Bluecrow");
+        player.setId(UUID.randomUUID());
+        GameSummary summary = mapper.card(game, player, false);
+        assertEquals("g1", summary.getId());
+        assertEquals("Game one", summary.getName());
+        assertEquals("running", summary.getStatus());
+        assertEquals(game.getClosesAt(), summary.getClosesAt());
+        assertEquals(List.of("A", "B"), summary.getTags());
+        assertFalse(summary.getCanJoin());
+        assertEquals("Bluecrow", summary.getMyHouse().getHouseName());
+        assertNull(summary.getWinner());
+        assertNull(summary.getMyPlace());
 
-        GameSummary other = mapper.card(g, null, true);
+        GameSummary other = mapper.card(game, null, true);
         assertTrue(other.getCanJoin());
         assertNull(other.getMyHouse());
     }
@@ -47,61 +48,59 @@ class LobbyMapperTest {
     @Test
     void archivedCard() {
         GameEntity live = new GameEntity("g2", "Game two", GameStatus.RUNNING, "so", 30, 2, "");
-        ArchivedGameEntity a = new ArchivedGameEntity(live, "Ravenhold (NPC)");
-        PlayerEntity p = new PlayerEntity("g2", UUID.randomUUID(), "Bluecrow", "blue");
-        p.id = UUID.randomUUID();
-        GameSummary s = mapper.card(a, new ArchivedPlayerEntity(p, 3));
-        assertEquals("g2", s.getId());
-        assertEquals("finished", s.getStatus());
-        assertNull(s.getClosesAt());
-        assertEquals(List.of(), s.getTags());
-        assertFalse(s.getCanJoin());
-        assertEquals("Ravenhold (NPC)", s.getWinner());
-        assertEquals(3, s.getMyPlace());
-        assertEquals("Bluecrow", s.getMyHouse().getHouseName());
+        ArchivedGameEntity archived = new ArchivedGameEntity(live, "Ravenhold (NPC)");
+        PlayerEntity player = new PlayerEntity("g2", UUID.randomUUID(), "Bluecrow");
+        player.setId(UUID.randomUUID());
+        GameSummary summary = mapper.card(archived, new ArchivedPlayerEntity(player, 3));
+        assertEquals("g2", summary.getId());
+        assertEquals("finished", summary.getStatus());
+        assertNull(summary.getClosesAt());
+        assertEquals(List.of(), summary.getTags());
+        assertFalse(summary.getCanJoin());
+        assertEquals("Ravenhold (NPC)", summary.getWinner());
+        assertEquals(3, summary.getMyPlace());
+        assertEquals("Bluecrow", summary.getMyHouse().getHouseName());
 
-        GameSummary notPlayed = mapper.card(a, null);
+        GameSummary notPlayed = mapper.card(archived, null);
         assertNull(notPlayed.getMyPlace());
         assertNull(notPlayed.getMyHouse());
     }
 
     @Test
     void liveDetail() {
-        GameEntity g = new GameEntity("g1", "Game one", GameStatus.RUNNING, "delkelet", 30, 4, "");
+        GameEntity game = new GameEntity("g1", "Game one", GameStatus.RUNNING, "delkelet", 30, 4, "");
         GameSummary card = new GameSummary();
-        GameDetail d = mapper.detail(g, card, 7, 12, 5, options);
-        assertSame(card, d.getGame());
-        assertEquals("delkelet", d.getMapId());
-        assertEquals(7, d.getRound());
-        assertEquals(GameEntity.maxSettlements(), d.getMaxRounds());
-        assertEquals(12, d.getPlayers());
-        assertEquals(30, d.getMaxPlayers());
-        assertEquals(5, d.getCities());
-        assertEquals(4, d.getNpcCount());
-        assertEquals(List.of("red"), d.getTinctures());
+        GameDetail detail = mapper.detail(game, card, 7, 12, 5, options);
+        assertSame(card, detail.getGame());
+        assertEquals("delkelet", detail.getMapId());
+        assertEquals(7, detail.getRound());
+        assertEquals(GameEntity.maxSettlements(), detail.getMaxRounds());
+        assertEquals(12, detail.getPlayers());
+        assertEquals(30, detail.getMaxPlayers());
+        assertEquals(5, detail.getCities());
+        assertEquals(4, detail.getNpcCount());
     }
 
     @Test
     void archivedDetail() {
-        ArchivedGameEntity a = new ArchivedGameEntity(new GameEntity("g2", "Game two", GameStatus.RUNNING, "so", 30, 2, ""), null);
-        GameDetail d = mapper.detail(a, new GameSummary(), 9, 2, 5, options);
-        assertEquals("so", d.getMapId());
-        assertEquals(GameEntity.maxSettlements(), d.getRound());
-        assertEquals(GameEntity.maxSettlements(), d.getMaxRounds());
-        assertEquals(9, d.getPlayers());
-        assertEquals(9, d.getMaxPlayers());
-        assertEquals(2, d.getNpcCount());
+        ArchivedGameEntity archived = new ArchivedGameEntity(new GameEntity("g2", "Game two", GameStatus.RUNNING, "so", 30, 2, ""), null);
+        GameDetail detail = mapper.detail(archived, new GameSummary(), 9, 2, 5, options);
+        assertEquals("so", detail.getMapId());
+        assertEquals(GameEntity.maxSettlements(), detail.getRound());
+        assertEquals(GameEntity.maxSettlements(), detail.getMaxRounds());
+        assertEquals(9, detail.getPlayers());
+        assertEquals(9, detail.getMaxPlayers());
+        assertEquals(2, detail.getNpcCount());
     }
 
     @Test
     void ownHouse() {
-        PlayerEntity p = new PlayerEntity("g1", UUID.randomUUID(), "Bluecrow", "blue");
-        p.background = "merchant";
-        MyHouse h = mapper.myHouse(p);
-        assertEquals("Bluecrow", h.getHouseName());
-        assertEquals("blue", h.getTincture());
-        assertEquals(mapper.messages.text("world.background.merchant.name"), h.getBackgroundName());
-        p.background = null;
-        assertNull(mapper.myHouse(p).getBackgroundName());
+        PlayerEntity player = new PlayerEntity("g1", UUID.randomUUID(), "Bluecrow");
+        player.setBackground(Background.MERCHANT);
+        MyHouse house = mapper.myHouse(player);
+        assertEquals("Bluecrow", house.getHouseName());
+        assertEquals(mapper.messages.text("world.background.merchant.name"), house.getBackgroundName());
+        player.setBackground(null);
+        assertNull(mapper.myHouse(player).getBackgroundName());
     }
 }

@@ -67,10 +67,11 @@ public class AdminStatsService {
 
     /** One entry for each of the last DAYS days up to today, oldest first; days without a row count 0. */
     static List<DailyCount> fillDays(LocalDate today, List<DayCount> rows) {
-        Map<LocalDate, Long> counts = rows.stream().collect(Collectors.toMap(r -> LocalDate.parse(r.getDay()), DayCount::getCount, Long::sum));
+        Map<LocalDate, Long> counts = rows.stream().collect(Collectors.toMap(row -> LocalDate.parse(row.getDay()), DayCount::getCount, Long::sum));
         List<DailyCount> out = new ArrayList<>(DAYS);
-        for (LocalDate d = firstDay(today); !d.isAfter(today); d = d.plusDays(1))
-            out.add(new DailyCount(d, counts.getOrDefault(d, 0L).intValue()));
+        for (LocalDate day = firstDay(today); !day.isAfter(today); day = day.plusDays(1)) {
+            out.add(new DailyCount(day, counts.getOrDefault(day, 0L).intValue()));
+        }
         return out;
     }
 }

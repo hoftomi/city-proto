@@ -1,6 +1,10 @@
 package com.hof.tronnelkul.game.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -10,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "games")
 public class GameEntity {
     /** Length of a season: 1 month (single game mode). */
@@ -21,24 +28,22 @@ public class GameEntity {
     /** Late join: a running game can still be joined up to this many settlements. */
     public static final int LATE_JOIN_SETTLEMENTS = 3;
 
-    @Id public String id;
-    @Column(nullable = false) public String name;
-    @Enumerated(EnumType.STRING) @Column(nullable = false) public GameStatus status;
-    @Column(name = "map_id", nullable = false) public String mapId;
-    @Column(name = "opens_at") public Instant opensAt;
+    @Id private String id;
+    @Column(nullable = false) private String name;
+    @Enumerated(EnumType.STRING) @Column(nullable = false) private GameStatus status;
+    @Column(name = "map_id", nullable = false) private String mapId;
+    @Column(name = "opens_at") private Instant opensAt;
     /** Sign-up closes: the game starts at this time. */
-    @Column(name = "closes_at") public Instant closesAt;
-    @Column(name = "max_players", nullable = false) public int maxPlayers;
-    @Column(name = "npc_count", nullable = false) public int npcCount;
-    @Column(nullable = false) public String tags = "";
-    @Column(nullable = false) public String mode = "citizen";
+    @Column(name = "closes_at") private Instant closesAt;
+    @Column(name = "max_players", nullable = false) private int maxPlayers;
+    @Column(name = "npc_count", nullable = false) private int npcCount;
+    @Column(nullable = false) private String tags = "";
+    @Column(nullable = false) private String mode = "citizen";
     /** Rule engine state (engine.EngineState) as JSON; null before start. */
-    @JdbcTypeCode(SqlTypes.JSON) @Column(columnDefinition = "jsonb") public String state;
-    @Column(name = "created_at", nullable = false) public Instant createdAt = Instant.now();
+    @JdbcTypeCode(SqlTypes.JSON) @Column(columnDefinition = "jsonb") private String state;
+    @Column(name = "created_at", nullable = false) private Instant createdAt = Instant.now();
     /** The admin moved the game clock forward by this much (game clock = real time + offset). */
-    @Column(name = "time_offset_minutes", nullable = false) public int timeOffsetMinutes;
-
-    protected GameEntity() {}
+    @Column(name = "time_offset_minutes", nullable = false) private int timeOffsetMinutes;
 
     public GameEntity(String id, String name, GameStatus status, String mapId, int maxPlayers, int npcCount, String tags) {
         this.id = id; this.name = name; this.status = status; this.mapId = mapId;

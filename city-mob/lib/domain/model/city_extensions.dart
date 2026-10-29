@@ -55,9 +55,9 @@ extension CityGameX on GameState {
         if (clock.campaign) (label: const Tr('city.stat.campaign'), value: const Tr.raw('×2'), suffix: const Tr('city.stat.campaign_suffix'), tone: 'warn', art: 'festival'),
       ];
 
-  /// Tincture of the district banners: Marketplace – most shares, Town Hall – most council seats,
+  /// The house flying a district's banner: Marketplace – most shares, Town Hall – most council seats,
   /// Underworld – your own house, if you have spies here.
-  Map<String, String?> districtDominants(CityView cv) {
+  Map<String, HouseRef?> districtDominants(CityView cv) {
     final shares = <String, (HouseRef, int)>{};
     for (final g in cv.goods) {
       for (final x in g.sellers.where((x) => x.house != null)) {
@@ -67,7 +67,8 @@ extension CityGameX on GameState {
     }
     final topS = (shares.values.toList()..sort((a, b) => b.$2.compareTo(a.$2))).firstOrNull;
     final topP = (cv.parties.where((p) => p.seats > 0).toList()..sort((a, b) => b.seats.compareTo(a.seats))).firstOrNull;
-    return {'trade': topS?.$1.tincture, 'politics': topP?.house.tincture, 'espionage': cv.mySpies > 0 ? me.tincture : null};
+    final self = HouseRef(playerId: me.playerId, name: me.houseName, npc: false, self: true);
+    return {'trade': topS?.$1, 'politics': topP?.house, 'espionage': cv.mySpies > 0 ? self : null};
   }
 
   /// Routes buildable to this city.

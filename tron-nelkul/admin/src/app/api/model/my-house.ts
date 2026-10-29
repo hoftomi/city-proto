@@ -14,7 +14,6 @@
  */
 export interface MyHouse { 
     houseName: string;
-    tincture: string;
     backgroundName: string | null;
 }
 

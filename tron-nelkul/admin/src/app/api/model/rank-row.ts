@@ -13,7 +13,6 @@ export interface RankRow {
     rank: number;
     playerId: string;
     name: string;
-    tincture: string;
     npc: boolean;
     legit: number;
     shares: number;

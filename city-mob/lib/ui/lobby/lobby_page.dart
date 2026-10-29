@@ -112,7 +112,7 @@ class _ContinueCard extends StatelessWidget {
       tone: TnCardTone.highlight,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          HouseCrest(tincture: h.tincture, initial: h.houseName.characters.first, size: 26, name: h.houseName),
+          HouseCrest(initial: h.houseName.characters.first, size: 26, name: h.houseName),
           const SizedBox(width: 8),
           Expanded(child: Text(g.name, style: TnText.bodyStrong(c.ink))),
         ]),
@@ -159,7 +159,7 @@ class _GameCard extends StatelessWidget {
             if (g.myHouse != null) ...[
               const SizedBox(height: 8),
               Row(children: [
-                HouseCrest(tincture: g.myHouse!.tincture, size: 16, name: g.myHouse!.houseName),
+                HouseCrest(size: 16, name: g.myHouse!.houseName),
                 const SizedBox(width: 6),
                 Text(g.myHouse!.houseName, style: TnText.data(c.ink, size: 13)),
               ]),

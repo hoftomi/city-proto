@@ -24,37 +24,41 @@ public class ApiExceptionHandler {
     public ApiExceptionHandler(Messages messages) { this.messages = messages; }
 
     @ExceptionHandler(ApiException.class)
-    ProblemDetail api(ApiException e) {
-        ProblemDetail p = ProblemDetail.forStatusAndDetail(e.status, messages.text(e.msg));
-        if (e.code != null) p.setProperty("code", e.code);
-        return p;
+    ProblemDetail api(ApiException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(ex.status, messages.text(ex.msg));
+        if (ex.code != null) {
+            problem.setProperty("code", ex.code);
+        }
+        return problem;
     }
 
     /** Rule violation in the engine, if GameRunner did not translate it. */
     @ExceptionHandler(EngineException.class)
-    ProblemDetail rule(EngineException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text(e.msg())); }
+    ProblemDetail rule(EngineException ex) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text(ex.msg())); }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ProblemDetail invalid(MethodArgumentNotValidException e) {
-        String msg = e.getBindingResult().getFieldErrors().stream().findFirst()
-            .map(f -> f.getDefaultMessage()).orElseGet(() -> messages.text("server.bad_request"));
+    ProblemDetail invalid(MethodArgumentNotValidException ex) {
+        String msg = ex.getBindingResult().getFieldErrors().stream().findFirst()
+            .map(fieldError -> fieldError.getDefaultMessage()).orElseGet(() -> messages.text("server.bad_request"));
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, msg);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
-    ProblemDetail unreadable(Exception e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text("server.bad_request")); }
+    ProblemDetail unreadable(Exception ex) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, messages.text("server.bad_request")); }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    ProblemDetail illegal(IllegalArgumentException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage()); }
+    ProblemDetail illegal(IllegalArgumentException ex) { return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage()); }
 
     @ExceptionHandler(NoSuchElementException.class)
-    ProblemDetail missing(NoSuchElementException e) { return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, messages.text("server.not_found")); }
+    ProblemDetail missing(NoSuchElementException ex) { return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, messages.text("server.not_found")); }
 
     @ExceptionHandler(Exception.class)
-    ProblemDetail other(Exception e) {
+    ProblemDetail other(Exception ex) {
         // Spring MVC's own errors (404 unknown path, 405, 415 ...) keep their status.
-        if (e instanceof ErrorResponse er) return er.getBody();
-        log.error("Unexpected error", e);
+        if (ex instanceof ErrorResponse errorResponse) {
+            return errorResponse.getBody();
+        }
+        log.error("Unexpected error", ex);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, messages.text("server.unexpected"));
     }
 }

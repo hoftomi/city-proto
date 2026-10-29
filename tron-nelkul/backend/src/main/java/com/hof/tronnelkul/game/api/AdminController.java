@@ -35,7 +35,7 @@ public class AdminController implements AdminApi {
     public List<AdminGame> adminGames() { return adminGameService.games(); }
 
     @Override
-    public AdminGame adminCreateGame(CreateGameRequest r) { return adminGameService.create(r); }
+    public AdminGame adminCreateGame(CreateGameRequest request) { return adminGameService.create(request); }
 
     @Override
     public AdminResult adminSeed() { return adminGameService.seed(); }
@@ -63,7 +63,7 @@ public class AdminController implements AdminApi {
     public AdminResult adminSettle(String id) { return new AdminResult().settlements(lifecycle.settleNow(id)); }
 
     @Override
-    public AdminResult adminAdvance(String id, AdvanceRequest r) { return new AdminResult().advancedMinutes(lifecycle.advance(id, r.getMinutes())); }
+    public AdminResult adminAdvance(String id, AdvanceRequest request) { return new AdminResult().advancedMinutes(lifecycle.advance(id, request.getMinutes())); }
 
     /** Ends the season now; settlements: how many the season had. */
     @Override
@@ -73,5 +73,5 @@ public class AdminController implements AdminApi {
     public List<AdminUser> adminUsers() { return adminUserService.users(); }
 
     @Override
-    public AdminUser adminSetRole(String id, RoleRequest r) { return adminUserService.setRole(id, r.getRole(), CurrentUser.id()); }
+    public AdminUser adminSetRole(String id, RoleRequest request) { return adminUserService.setRole(id, request.getRole(), CurrentUser.id()); }
 }

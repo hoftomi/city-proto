@@ -8,15 +8,15 @@ import java.util.List;
 public final class Npcs {
     private Npcs() {}
 
-    record Template(String id, String tincture, String persona) {
+    record Template(String id, String persona) {
         Msg label() { return Msg.of("world.npc." + id); }
     }
 
     static final List<Template> ALL = List.of(
-        new Template("silvershore", "gold", "trader"),
-        new Template("ancientOak", "green", "politician"),
-        new Template("crimsonHand", "purple", "spymaster"),
-        new Template("ravenhold", "black", "raider"));
+        new Template("silvershore", "trader"),
+        new Template("ancientOak", "politician"),
+        new Template("crimsonHand", "spymaster"),
+        new Template("ravenhold", "raider"));
 
     /** Number of NPC templates: the most NPC houses a game can have. */
     public static int count() { return ALL.size(); }

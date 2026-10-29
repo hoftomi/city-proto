@@ -59,7 +59,7 @@ class _RankingView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Row(children: [
-                      HouseCrest(tincture: r.tincture, size: 18, npc: r.npc, name: r.name),
+                      HouseCrest(size: 18, npc: r.npc, name: r.name),
                       const SizedBox(width: 8),
                       Flexible(child: Text(r.self ? 'ranking.self'.tr(namedArgs: {'name': r.name}) : r.name, overflow: TextOverflow.ellipsis, style: TnText.body(c.ink))),
                     ]),

@@ -25,7 +25,7 @@ class LobbyService {
 
   Future<Either<Failure, MapDef>> map(String mapId) => _maps.map(mapId);
 
-  Future<Either<Failure, GameSummary>> join(String id, JoinRequest request) => _lobby.join(id, request);
+  Future<Either<Failure, void>> join(String id, JoinRequest request) => _lobby.join(id, request);
 
   Future<Either<Failure, void>> withdraw(String id) => _lobby.withdraw(id);
 }

@@ -30,7 +30,7 @@ class LobbyRemoteDataSource {
 
   Future<MapDef> map(String mapId) async => (await _api.getMap(mapId: mapId)).data!;
 
-  Future<GameSummary> join(String id, JoinRequest request) async => (await _api.joinGame(id: id, joinRequest: request)).data!;
+  Future<void> join(String id, JoinRequest request) async => await _api.joinGame(id: id, joinRequest: request);
 
   Future<void> withdraw(String id) => _api.withdrawGame(id: id);
 }

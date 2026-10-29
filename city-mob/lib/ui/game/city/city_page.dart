@@ -109,7 +109,7 @@ class _CityBody extends StatelessWidget {
         CityViewWidget(
           name: cv.name,
           coast: cv.coast,
-          districts: {for (final e in s.dominants.entries) e.key: DistrictFlags(dominant: e.value)},
+          districts: {for (final e in s.dominants.entries) e.key: DistrictFlags(leader: e.value?.name, self: e.value?.self ?? false)},
           selected: district,
           onSelect: openDistrict,
         ),

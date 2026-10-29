@@ -39,14 +39,16 @@ public class GameRunner {
         this.json = json; this.messages = messages;
     }
 
-    public EngineState read(GameEntity g) {
-        if (g.state == null) throw ApiException.conflict("server.game_not_started");
-        return json.readValue(g.state, EngineState.class);
+    public EngineState read(GameEntity game) {
+        if (game.getState() == null) {
+            throw ApiException.conflict("server.game_not_started");
+        }
+        return json.readValue(game.getState(), EngineState.class);
     }
 
-    public Engine engine(GameEntity g) {
-        EngineState s = read(g);
-        return new Engine(MapRegistry.get(g.mapId), s, g.id.hashCode() * 31L + s.seq * 7919L + s.clock);
+    public Engine engine(GameEntity game) {
+        EngineState state = read(game);
+        return new Engine(MapRegistry.get(game.getMapId()), state, game.getId().hashCode() * 31L + state.seq * 7919L + state.clock);
     }
 
     /**
@@ -55,16 +57,16 @@ public class GameRunner {
      */
     @Transactional
     public <T> T mutate(String gameId, BiFunction<GameEntity, Engine, T> op) {
-        GameEntity g = lockRunning(gameId);
-        Engine e = engine(g);
-        catchUp(g, e);
+        GameEntity game = lockRunning(gameId);
+        Engine engine = engine(game);
+        catchUp(game, engine);
         T result;
         try {
-            result = op.apply(g, e);
+            result = op.apply(game, engine);
         } catch (EngineException ex) {
             throw ApiException.badRequest(ex.msg());
         }
-        persist(g, e);
+        persist(game, engine);
         return result;
     }
 
@@ -74,11 +76,11 @@ public class GameRunner {
      */
     @Transactional
     public int advanceClock(String gameId, Integer minutes) {
-        return mutate(gameId, (g, e) -> {
-            int m = minutes != null ? minutes : minutesUntil(g.now().toEpochMilli(), e.nextEventAt());
-            g.timeOffsetMinutes += m;
-            catchUp(g, e);
-            return m;
+        return mutate(gameId, (game, engine) -> {
+            int added = minutes != null ? minutes : minutesUntil(game.now().toEpochMilli(), engine.nextEventAt());
+            game.setTimeOffsetMinutes(game.getTimeOffsetMinutes() + added);
+            catchUp(game, engine);
+            return added;
         });
     }
 
@@ -94,92 +96,101 @@ public class GameRunner {
      */
     @Transactional
     public int endSeason(String gameId) {
-        GameEntity g = lockRunning(gameId);
-        Engine e = engine(g);
-        catchUp(g, e);
-        persist(g, e, true);
-        return e.s.settlements;
+        GameEntity game = lockRunning(gameId);
+        Engine engine = engine(game);
+        catchUp(game, engine);
+        persist(game, engine, true);
+        return engine.state.settlements;
     }
 
     private GameEntity lockRunning(String gameId) {
-        GameEntity g = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
-        if (g.status != GameStatus.RUNNING) throw ApiException.conflict("server.game_not_running");
-        return g;
+        GameEntity game = gameRepository.lockById(gameId).orElseThrow(() -> ApiException.notFound("server.game_not_found"));
+        if (game.getStatus() != GameStatus.RUNNING) {
+            throw ApiException.conflict("server.game_not_running");
+        }
+        return game;
     }
 
     /** Runs the sheets and settlements due by the game clock. */
-    private static void catchUp(GameEntity g, Engine e) {
-        e.advance(g.now().toEpochMilli(), GameEntity.MATURATION_MINUTES, GameEntity.maxSettlements());
+    private static void catchUp(GameEntity game, Engine engine) {
+        engine.advance(game.now().toEpochMilli(), GameEntity.MATURATION_MINUTES, GameEntity.maxSettlements());
     }
 
     /**
      * Saves the state, the reports (texts resolved here) and the Legitimacy copy. At season end the Coronation
      * Council decides, and the game moves to the archive.
      */
-    void persist(GameEntity g, Engine e) { persist(g, e, false); }
+    void persist(GameEntity game, Engine engine) { persist(game, engine, false); }
 
     /** endSeason: the season ends now, even before its last settlement. */
-    private void persist(GameEntity g, Engine e, boolean endSeason) {
-        boolean over = g.status == GameStatus.RUNNING && (endSeason || e.s.settlements >= GameEntity.maxSettlements());
-        List<String> ranking = over ? finish(g, e) : List.of();
-        g.state = json.writeValueAsString(e.s);
-        List<PlayerEntity> all = playerRepository.findByGameId(g.id);
-        for (PlayerEntity p : all) {
-            EngineState.PlayerSt ps = e.s.players.get(p.id.toString());
-            if (ps != null) p.legit = ps.legit;
+    private void persist(GameEntity game, Engine engine, boolean endSeason) {
+        boolean over = game.getStatus() == GameStatus.RUNNING && (endSeason || engine.state.settlements >= GameEntity.maxSettlements());
+        List<String> ranking = over ? finish(game, engine) : List.of();
+        game.setState(json.writeValueAsString(engine.state));
+        List<PlayerEntity> all = playerRepository.findByGameId(game.getId());
+        for (PlayerEntity player : all) {
+            EngineState.PlayerSt ps = engine.state.players.get(player.getId().toString());
+            if (ps != null) {
+                player.setLegit(ps.legit);
+            }
         }
         List<ReportEntity> rep = new ArrayList<>();
-        for (ReportOut r : e.out) {
-            Instant at = Instant.ofEpochMilli(r.at());
-            String title = messages.text(r.title()), text = messages.text(r.text());
-            if (r.isPublic()) {
-                for (PlayerEntity p : all)
-                    if (!p.npc) rep.add(new ReportEntity(g.id, p.id, e.s.settlements, r.kind(), r.confidence(), title, text, r.tone(), true, at));
-            } else if (r.playerId() != null) {
-                rep.add(new ReportEntity(g.id, UUID.fromString(r.playerId()), e.s.settlements, r.kind(), r.confidence(), title, text, r.tone(), false, at));
+        for (ReportOut report : engine.out) {
+            Instant at = Instant.ofEpochMilli(report.at());
+            String title = messages.text(report.title()), text = messages.text(report.text());
+            if (report.isPublic()) {
+                for (PlayerEntity player : all) {
+                    if (!player.isNpc()) {
+                        rep.add(new ReportEntity(game.getId(), player.getId(), engine.state.settlements, report.kind(), report.confidence(), title, text, report.tone(), true, at));
+                    }
+                }
+            } else if (report.playerId() != null) {
+                rep.add(new ReportEntity(game.getId(), UUID.fromString(report.playerId()), engine.state.settlements, report.kind(), report.confidence(), title, text, report.tone(), false, at));
             }
         }
         reportRepository.saveAll(rep);
-        e.out.clear();
-        if (over) archive(g, e, ranking);
+        engine.out.clear();
+        if (over) {
+            archive(game, engine, ranking);
+        }
     }
 
     /** The Coronation Council: the winner's house (or null) and the public closing report. */
-    private List<String> finish(GameEntity g, Engine e) {
-        e.coronation();
-        List<String> ranking = ranking(e);
-        EngineState.PlayerSt top = ranking.isEmpty() ? null : e.s.players.get(ranking.getFirst());
+    private List<String> finish(GameEntity game, Engine engine) {
+        engine.coronation();
+        List<String> ranking = ranking(engine);
+        EngineState.PlayerSt top = ranking.isEmpty() ? null : engine.state.players.get(ranking.getFirst());
         String winner = winnerName(top);
-        e.out.add(new ReportOut(null, true, e.s.clock, "event", null, Msg.of("server.season_end.title"),
+        engine.out.add(new ReportOut(null, true, engine.state.clock, "event", null, Msg.of("server.season_end.title"),
             Msg.of("server.season_end.text", "who", winner == null ? Msg.of("server.season_end.nobody") : Msg.of("server.season_end.winner", "house", winner)), "info"));
-        log.info("Game finished: {}, winner: {}", g.id, winner);
+        log.info("Game finished: {}, winner: {}", game.getId(), winner);
         return ranking;
     }
 
     /** Final ranking by Legitimacy, highest first; ties keep the state's order, so the winner is always the first. */
-    private static List<String> ranking(Engine e) {
-        return e.s.players.entrySet().stream().sorted(Comparator.comparingInt((Map.Entry<String, EngineState.PlayerSt> x) -> x.getValue().legit).reversed())
+    private static List<String> ranking(Engine engine) {
+        return engine.state.players.entrySet().stream().sorted(Comparator.comparingInt((Map.Entry<String, EngineState.PlayerSt> entry) -> entry.getValue().legit).reversed())
             .map(Map.Entry::getKey).toList();
     }
 
     private static String winnerName(EngineState.PlayerSt top) { return top == null ? null : top.name + (top.npc ? " (NPC)" : ""); }
 
     /** The finished game, its houses (with their final place) and reports move to the archived_* tables. */
-    private void archive(GameEntity g, Engine e, List<String> ranking) {
-        archivedGameRepository.save(new ArchivedGameEntity(g, winnerName(ranking.isEmpty() ? null : e.s.players.get(ranking.getFirst()))));
-        List<PlayerEntity> ps = playerRepository.findByGameId(g.id);
-        archivedPlayerRepository.saveAll(ps.stream().map(p -> new ArchivedPlayerEntity(p, place(ranking, p))).toList());
-        List<ReportEntity> rs = reportRepository.findByGameId(g.id);
+    private void archive(GameEntity game, Engine engine, List<String> ranking) {
+        archivedGameRepository.save(new ArchivedGameEntity(game, winnerName(ranking.isEmpty() ? null : engine.state.players.get(ranking.getFirst()))));
+        List<PlayerEntity> ps = playerRepository.findByGameId(game.getId());
+        archivedPlayerRepository.saveAll(ps.stream().map(player -> new ArchivedPlayerEntity(player, place(ranking, player))).toList());
+        List<ReportEntity> rs = reportRepository.findByGameId(game.getId());
         archivedReportRepository.saveAll(rs.stream().map(ArchivedReportEntity::new).toList());
         reportRepository.deleteAll(rs);
         playerRepository.deleteAll(ps);
-        gameRepository.delete(g);
-        log.info("Archived: {}", g.id);
+        gameRepository.delete(game);
+        log.info("Archived: {}", game.getId());
     }
 
     /** 1-based place in the final ranking; a house missing from the state comes last. */
-    private static int place(List<String> ranking, PlayerEntity p) {
-        int i = ranking.indexOf(p.id.toString());
-        return i < 0 ? ranking.size() + 1 : i + 1;
+    private static int place(List<String> ranking, PlayerEntity player) {
+        int index = ranking.indexOf(player.getId().toString());
+        return index < 0 ? ranking.size() + 1 : index + 1;
     }
 }

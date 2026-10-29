@@ -42,8 +42,6 @@ class GameDetail {
     required  this.starts,
 
     required  this.backgrounds,
-
-    required  this.tinctures,
   });
 
   @JsonKey(
@@ -166,18 +164,6 @@ class GameDetail {
 
 
 
-  @JsonKey(
-    
-    name: r'tinctures',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final List<String> tinctures;
-
-
-
 
 
     @override
@@ -191,8 +177,7 @@ class GameDetail {
       other.cities == cities &&
       other.npcCount == npcCount &&
       other.starts == starts &&
-      other.backgrounds == backgrounds &&
-      other.tinctures == tinctures;
+      other.backgrounds == backgrounds;
 
     @override
     int get hashCode =>
@@ -205,8 +190,7 @@ class GameDetail {
         cities.hashCode +
         npcCount.hashCode +
         starts.hashCode +
-        backgrounds.hashCode +
-        tinctures.hashCode;
+        backgrounds.hashCode;
 
   factory GameDetail.fromJson(Map<String, dynamic> json) => _$GameDetailFromJson(json);
 

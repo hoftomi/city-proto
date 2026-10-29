@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:tron_api/src/model/background.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -37,7 +38,7 @@ class BackgroundDto {
   )
 
 
-  final String id;
+  final Background id;
 
 
 

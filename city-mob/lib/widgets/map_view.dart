@@ -10,6 +10,8 @@ import 'paint_util.dart';
 
 /// Painted map of the region (Krónika IV): terrain, castles and estates are images exported from the design system
 /// (assets/k4); routes and selection are a drawn layer. 360×260 coordinate system.
+/// Houses have no colours: every estate is the same neutral sprite. Your own estate (or the chosen start slot
+/// when joining) stands on a bronze ring; the other start slots use the dashed-flag variant.
 /// In game (state + onSelect) it is zoomable and pannable, starting at 2× zoom; full view in preview.
 class MapView extends StatelessWidget {
   const MapView({
@@ -32,6 +34,9 @@ class MapView extends StatelessWidget {
   final ValueChanged<String>? onSelectStart;
 
   static const w = 360.0, h = 260.0;
+
+  /// The estate sprite (own or chosen) and the dashed-flag variant (a start slot not chosen).
+  static const _estate = 'assets/k4/estates/estate.webp', _estateFree = 'assets/k4/estates/estate_npc.webp';
 
   bool get _inGame => state != null && onSelect != null;
 
@@ -72,9 +77,9 @@ class MapView extends StatelessWidget {
         Positioned.fill(child: Image.asset('assets/k4/map/${map.id}.webp', fit: BoxFit.fill, filterQuality: FilterQuality.medium, gaplessPlayback: true)),
         Positioned.fill(child: IgnorePointer(child: CustomPaint(painter: _RoutePainter(map, state, showStarts ? selectedStart : null, selected, k)))),
         if (showStarts)
-          for (final s in map.starts) sprite('assets/k4/estates/${s.id == selectedStart ? 'blue' : 'black_npc'}.webp', s.x, s.y, a.estateBox),
+          for (final s in map.starts) sprite(s.id == selectedStart ? _estate : _estateFree, s.x, s.y, a.estateBox),
         if (estatePos != null) ...[
-          sprite('assets/k4/estates/${state!.me.tincture}.webp', estatePos.$1, estatePos.$2, a.estateBox),
+          sprite(_estate, estatePos.$1, estatePos.$2, a.estateBox),
           Positioned(
             left: (estatePos.$1 - 40) * k,
             top: (estatePos.$2 + 10) * k,
@@ -157,6 +162,20 @@ class _RoutePainter extends CustomPainter {
       if (a == null || b == null) continue;
       final key = _key(e.$1, e.$2);
       _route(canvas, a, b, own.contains(key) ? 'own' : pending.contains(key) ? 'pending' : 'base');
+    }
+    // Own estate (or the chosen start slot): a solid bronze ring under the tents
+    final home = startSlot != null ? _pos('estate:${startSlot.id}') : (state?.me.estate == null ? null : _pos(state!.me.estate!));
+    if (home != null) {
+      final oval = Rect.fromCenter(center: home + const Offset(0, 6), width: 40, height: 20);
+      canvas.drawOval(oval, Paint()..color = K4.paper.withValues(alpha: 0.45));
+      canvas.drawOval(oval, Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.4
+        ..color = K4.frameHi);
+      canvas.drawOval(oval.inflate(1.4), Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..color = K4.outline.withValues(alpha: 0.5));
     }
     // Selected castle's base: isometric, dashed bronze ellipse under the castle
     final sel = selected == null ? null : map.city(selected!);

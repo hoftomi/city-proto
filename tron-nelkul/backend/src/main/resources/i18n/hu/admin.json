@@ -59,16 +59,6 @@
     "medium": "Közepes forrás",
     "strong": "Erős forrás"
   },
-  "tincture": {
-    "red": "Vörös",
-    "blue": "Kék",
-    "green": "Zöld",
-    "gold": "Arany",
-    "purple": "Bíbor",
-    "black": "Fekete",
-    "orange": "Narancs",
-    "mulberry": "Szeder"
-  },
   "duration": {
     "none": "nincs eltolás",
     "days": "{n} nap",

@@ -30,7 +30,9 @@ void main() {
     });
 
     test('district flags: most shares, most council seats, own spies', () {
-      expect(s.districtDominants(cv), {'trade': 'gold', 'politics': 'blue', 'espionage': 'blue'});
+      final flags = s.districtDominants(cv);
+      expect(flags.map((k, v) => MapEntry(k, (v?.name, v?.self))),
+          {'trade': ('Ezüstpart-ház', false), 'politics': ('Kékholló', true), 'espionage': ('Kékholló', true)});
       expect(s.districtDominants(s.city('delkapu'))['espionage'], isNull);
     });
 

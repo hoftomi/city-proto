@@ -24,8 +24,6 @@ class HouseRef {
 
     required  this.name,
 
-    required  this.tincture,
-
     required  this.npc,
 
     required  this.self,
@@ -52,18 +50,6 @@ class HouseRef {
 
 
   final String name;
-
-
-
-  @JsonKey(
-    
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
 
 
 
@@ -97,7 +83,6 @@ class HouseRef {
     bool operator ==(Object other) => identical(this, other) || other is HouseRef &&
       other.playerId == playerId &&
       other.name == name &&
-      other.tincture == tincture &&
       other.npc == npc &&
       other.self == self;
 
@@ -105,7 +90,6 @@ class HouseRef {
     int get hashCode =>
         playerId.hashCode +
         name.hashCode +
-        tincture.hashCode +
         npc.hashCode +
         self.hashCode;
 

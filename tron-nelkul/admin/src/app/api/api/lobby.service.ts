@@ -44,7 +44,7 @@ export class LobbyService extends BaseService {
     }
 
     /**
-     * Game details: start slots, backgrounds, tinctures
+     * Game details: start slots and backgrounds
      * @endpoint get /api/games/{id}
      * @param id Game id
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -172,10 +172,10 @@ export class LobbyService extends BaseService {
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<GameSummary>;
-    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GameSummary>>;
-    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GameSummary>>;
-    public joinGame(id: string, joinRequest: JoinRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/problem+json' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/problem+json' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public joinGame(id: string, joinRequest: JoinRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/problem+json' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public joinGame(id: string, joinRequest: JoinRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/problem+json' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinGame.');
         }
@@ -189,8 +189,8 @@ export class LobbyService extends BaseService {
         localVarHeaders = this.configuration.addCredentialToHeaders('bearerAuth', 'Authorization', localVarHeaders, 'Bearer ');
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json',
-            'application/problem+json'
+            'application/problem+json',
+            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -223,7 +223,7 @@ export class LobbyService extends BaseService {
 
         let localVarPath = `/api/games/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/join`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<GameSummary>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: joinRequest,

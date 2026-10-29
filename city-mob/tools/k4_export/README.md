@@ -18,19 +18,19 @@ Requires Google Chrome (headless screenshots), `cwebp` and internet access (the 
 | `login.svg` | the prototype's login artwork | SVG |
 | `map/<map>.webp` | `MapCanvas` + `MapTerrain` + compass + cartouche, without cities and roads | 360 × 260, 8× |
 | `cities/<city>_on.webp`, `_off.webp` | `MapCity` with label, reachable and unreachable | 8× |
-| `estates/<tincture>[_npc].webp` | `MapEstate` | 8× |
+| `estates/estate.webp`, `estate_npc.webp` | `MapEstate` in the neutral dark tincture (houses have no colours); `_npc` has the dashed flag | 8× |
 | `cityview/<city>.webp` | `CityView`, without selection | 720 × 540, 3× |
 | `k4.json` | crop boxes, the district polygons and labels, the maps' cities | JSON |
 
 - The maps' cities, start slots and terrain come from the backend `MapRegistry.java`; their display names come from the backend i18n file `world.json`. The Délkelet terrain is the prototype's more detailed version (`game/world.js`).
-- File names and `k4.json` keys use the app's English ids. The prototype still uses Hungarian names, so `export.mjs` maps them (`ICON_ID`, `TINCTURE_ID`, `BRANCH_ID`, `DISTRICT_ID`).
+- File names and `k4.json` keys use the app's English ids. The prototype still uses Hungarian names, so `export.mjs` maps them (`ICON_ID`, `BRANCH_ID`, `DISTRICT_ID`).
 - Small details of a city view drawing are randomised from the city's name, so every city has its own image.
 
 ## What the app draws itself
 
 - **Roads:** in the style of `MapRoute` (`lib/widgets/map_view.dart`).
-- **Selection:** the ring around the selected city and the polygon of the selected district.
-- **Flags:** the flag of the district's leading house.
+- **Selection:** the ring around the selected city, the bronze ring under your own estate (or the chosen start slot) and the polygon of the selected district.
+- **Flags:** the flag of the district's leading house (neutral; your own one has a bronze border and finial).
 - **Labels:** the "Birtokod" ("Your estate") label.
 - **Zoomable frame:** `lib/widgets/k4_viewport.dart`, the counterpart of `MapViewport`.
 

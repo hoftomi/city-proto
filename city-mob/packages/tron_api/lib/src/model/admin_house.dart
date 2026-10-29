@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:tron_api/src/model/background.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -27,8 +28,6 @@ class AdminHouse {
     required  this.userName,
 
     required  this.houseName,
-
-    required  this.tincture,
 
     required  this.background,
 
@@ -97,25 +96,13 @@ class AdminHouse {
 
   @JsonKey(
     
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
-
-
-
-  @JsonKey(
-    
     name: r'background',
     required: true,
     includeIfNull: true,
   )
 
 
-  final String? background;
+  final Background? background;
 
 
 
@@ -211,7 +198,6 @@ class AdminHouse {
       other.userId == userId &&
       other.userName == userName &&
       other.houseName == houseName &&
-      other.tincture == tincture &&
       other.background == background &&
       other.npc == npc &&
       other.persona == persona &&
@@ -227,7 +213,6 @@ class AdminHouse {
         (userId == null ? 0 : userId.hashCode) +
         (userName == null ? 0 : userName.hashCode) +
         houseName.hashCode +
-        tincture.hashCode +
         (background == null ? 0 : background.hashCode) +
         npc.hashCode +
         (persona == null ? 0 : persona.hashCode) +

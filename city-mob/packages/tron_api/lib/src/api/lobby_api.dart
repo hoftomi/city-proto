@@ -21,7 +21,7 @@ class LobbyApi {
 
   const LobbyApi(this._dio);
 
-  /// Game details: start slots, backgrounds, tinctures
+  /// Game details: start slots and backgrounds
   /// 
   ///
   /// Parameters:
@@ -190,9 +190,9 @@ _responseData = rawData == null ? null : deserialize<MapDef, MapDef>(rawData, 'M
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [GameSummary] as data
+  /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<GameSummary>> joinGame({ 
+  Future<Response<void>> joinGame({ 
     required String id,
     required JoinRequest joinRequest,
     CancelToken? cancelToken,
@@ -248,32 +248,7 @@ _responseData = rawData == null ? null : deserialize<MapDef, MapDef>(rawData, 'M
       onReceiveProgress: onReceiveProgress,
     );
 
-    GameSummary? _responseData;
-
-    try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<GameSummary, GameSummary>(rawData, 'GameSummary', growable: true);
-
-    } catch (error, stackTrace) {
-      throw DioException(
-        requestOptions: _response.requestOptions,
-        response: _response,
-        type: DioExceptionType.unknown,
-        error: error,
-        stackTrace: stackTrace,
-      );
-    }
-
-    return Response<GameSummary>(
-      data: _responseData,
-      headers: _response.headers,
-      isRedirect: _response.isRedirect,
-      requestOptions: _response.requestOptions,
-      redirects: _response.redirects,
-      statusCode: _response.statusCode,
-      statusMessage: _response.statusMessage,
-      extra: _response.extra,
-    );
+    return _response;
   }
 
   /// Finished games the user played in, newest first, with the winner and the own place

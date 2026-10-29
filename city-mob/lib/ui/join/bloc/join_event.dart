@@ -7,7 +7,7 @@ sealed class JoinEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// On screen open: the game's options (tinctures, backgrounds, start slots) and the map.
+/// On screen open: the game's options (backgrounds, start slots) and the map.
 class JoinStarted extends JoinEvent {
   const JoinStarted(this.gameId);
   final String gameId;
@@ -29,17 +29,9 @@ class JoinNameSubmitted extends JoinEvent {
   const JoinNameSubmitted();
 }
 
-class JoinTinctureSelected extends JoinEvent {
-  const JoinTinctureSelected(this.tincture);
-  final String tincture;
-
-  @override
-  List<Object?> get props => [tincture];
-}
-
 class JoinBackgroundSelected extends JoinEvent {
   const JoinBackgroundSelected(this.background);
-  final String background;
+  final Background background;
 
   @override
   List<Object?> get props => [background];

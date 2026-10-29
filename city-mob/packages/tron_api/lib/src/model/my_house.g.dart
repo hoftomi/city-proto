@@ -9,8 +9,6 @@ part of 'my_house.dart';
 abstract class _$MyHouseCWProxy {
   MyHouse houseName(String houseName);
 
-  MyHouse tincture(String tincture);
-
   MyHouse backgroundName(String? backgroundName);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `MyHouse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -19,7 +17,7 @@ abstract class _$MyHouseCWProxy {
   /// ```dart
   /// MyHouse(...).copyWith(id: 12, name: "My name")
   /// ````
-  MyHouse call({String houseName, String tincture, String? backgroundName});
+  MyHouse call({String houseName, String? backgroundName});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfMyHouse.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfMyHouse.copyWith.fieldName(...)`
@@ -30,9 +28,6 @@ class _$MyHouseCWProxyImpl implements _$MyHouseCWProxy {
 
   @override
   MyHouse houseName(String houseName) => this(houseName: houseName);
-
-  @override
-  MyHouse tincture(String tincture) => this(tincture: tincture);
 
   @override
   MyHouse backgroundName(String? backgroundName) =>
@@ -47,7 +42,6 @@ class _$MyHouseCWProxyImpl implements _$MyHouseCWProxy {
   /// ````
   MyHouse call({
     Object? houseName = const $CopyWithPlaceholder(),
-    Object? tincture = const $CopyWithPlaceholder(),
     Object? backgroundName = const $CopyWithPlaceholder(),
   }) {
     return MyHouse(
@@ -55,10 +49,6 @@ class _$MyHouseCWProxyImpl implements _$MyHouseCWProxy {
           ? _value.houseName
           // ignore: cast_nullable_to_non_nullable
           : houseName as String,
-      tincture: tincture == const $CopyWithPlaceholder()
-          ? _value.tincture
-          // ignore: cast_nullable_to_non_nullable
-          : tincture as String,
       backgroundName: backgroundName == const $CopyWithPlaceholder()
           ? _value.backgroundName
           // ignore: cast_nullable_to_non_nullable
@@ -79,13 +69,9 @@ extension $MyHouseCopyWith on MyHouse {
 
 MyHouse _$MyHouseFromJson(Map<String, dynamic> json) =>
     $checkedCreate('MyHouse', json, ($checkedConvert) {
-      $checkKeys(
-        json,
-        requiredKeys: const ['houseName', 'tincture', 'backgroundName'],
-      );
+      $checkKeys(json, requiredKeys: const ['houseName', 'backgroundName']);
       final val = MyHouse(
         houseName: $checkedConvert('houseName', (v) => v as String),
-        tincture: $checkedConvert('tincture', (v) => v as String),
         backgroundName: $checkedConvert('backgroundName', (v) => v as String?),
       );
       return val;
@@ -93,6 +79,5 @@ MyHouse _$MyHouseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$MyHouseToJson(MyHouse instance) => <String, dynamic>{
   'houseName': instance.houseName,
-  'tincture': instance.tincture,
   'backgroundName': instance.backgroundName,
 };

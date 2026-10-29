@@ -19,7 +19,9 @@ class AdminStatsServiceTest {
         assertEquals(14, days.size());
         assertEquals(LocalDate.of(2026, 3, 17), days.getFirst().getDate());
         assertEquals(today, days.getLast().getDate());
-        for (int i = 1; i < days.size(); i++) assertEquals(days.get(i - 1).getDate().plusDays(1), days.get(i).getDate());
+        for (int dayIndex = 1; dayIndex < days.size(); dayIndex++) {
+            assertEquals(days.get(dayIndex - 1).getDate().plusDays(1), days.get(dayIndex).getDate());
+        }
         assertEquals(2, days.getFirst().getCount());
         assertEquals(5, days.get(12).getCount());
         assertEquals(1, days.getLast().getCount());
@@ -31,6 +33,6 @@ class AdminStatsServiceTest {
         List<DailyCount> days = AdminStatsService.fillDays(LocalDate.of(2026, 1, 5), List.of());
         assertEquals(14, days.size());
         assertEquals(LocalDate.of(2025, 12, 23), days.getFirst().getDate());
-        assertTrue(days.stream().allMatch(d -> d.getCount() == 0));
+        assertTrue(days.stream().allMatch(day -> day.getCount() == 0));
     }
 }

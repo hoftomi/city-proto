@@ -15,7 +15,7 @@ import 'package:tron_nelkul/ui/game/ranking/bloc/ranking_bloc.dart';
 class _Service extends Mock implements GameService {}
 
 RankRow _row(int rank, String id, bool self) =>
-    RankRow(rank: rank, playerId: id, name: id, tincture: 'blue', npc: !self, legit: 10 - rank, shares: 3, seats: 2, self: self);
+    RankRow(rank: rank, playerId: id, name: id, npc: !self, legit: 10 - rank, shares: 3, seats: 2, self: self);
 
 void main() {
   final game = GameState.fromJson(jsonDecode(File('test/fixtures/game_state.json').readAsStringSync()) as Map<String, dynamic>);

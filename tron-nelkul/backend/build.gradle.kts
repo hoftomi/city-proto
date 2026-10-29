@@ -1,5 +1,6 @@
 plugins {
     java
+    checkstyle
     id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.openapi.generator") version "7.25.0"
@@ -28,10 +29,16 @@ dependencies {
     implementation("com.google.firebase:firebase-admin:9.9.0")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.mapstruct:mapstruct:1.6.3")
+    // Processor order matters: Lombok first, then the binding, so MapStruct sees the Lombok accessors
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testCompileOnly("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -71,3 +78,12 @@ openApiGenerate {
 sourceSets { main { java { srcDir(generatedApi.map { it.dir("src/main/java") }) } } }
 tasks.named("compileJava") { dependsOn("openApiGenerate") }
 tasks.named("openApiGenerate") { inputs.file(apiSpec) }
+
+// House rules (config/checkstyle/checkstyle.xml): braces on every block, no single-letter names. Generated code is skipped.
+checkstyle {
+    toolVersion = "10.26.1"
+    isIgnoreFailures = false
+    maxWarnings = 0
+}
+tasks.named<Checkstyle>("checkstyleMain") { source = fileTree("src/main/java") }
+tasks.named<Checkstyle>("checkstyleTest") { source = fileTree("src/test/java") }

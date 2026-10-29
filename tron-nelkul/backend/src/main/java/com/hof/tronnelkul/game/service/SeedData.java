@@ -41,18 +41,26 @@ public class SeedData implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (gameRepository.count() > 0) return;
+        if (gameRepository.count() > 0) {
+            return;
+        }
         int created = seedMissing();
-        if (created > 0) log.info("Sample games created: {}", created);
+        if (created > 0) {
+            log.info("Sample games created: {}", created);
+        }
     }
 
     /** Creates the sample games that are neither live nor archived; returns how many were created. */
     public int seedMissing() {
         int created = 0;
-        for (GameEntity g : samples(Instant.now().truncatedTo(ChronoUnit.HOURS))) {
-            if (gameRepository.existsById(g.id) || archivedGameRepository.existsById(g.id)) continue;
-            gameRepository.save(g);
-            if (g.id.equals(STARTED)) lifecycle.start(g.id);
+        for (GameEntity sample : samples(Instant.now().truncatedTo(ChronoUnit.HOURS))) {
+            if (gameRepository.existsById(sample.getId()) || archivedGameRepository.existsById(sample.getId())) {
+                continue;
+            }
+            gameRepository.save(sample);
+            if (sample.getId().equals(STARTED)) {
+                lifecycle.start(sample.getId());
+            }
             created++;
         }
         return created;
@@ -60,26 +68,26 @@ public class SeedData implements ApplicationRunner {
 
     private List<GameEntity> samples(Instant day) {
         GameEntity delkelet = game(STARTED, GameStatus.OPEN, "delkelet", 30, 4, "beginnerFriendly");
-        delkelet.closesAt = day;
+        delkelet.setClosesAt(day);
 
         GameEntity kodos = game("kodos-autumn", GameStatus.OPEN, "kodos", 30, 3, "beginnerFriendly", "strongNpcs");
-        kodos.closesAt = day.plus(Duration.ofDays(2));
+        kodos.setClosesAt(day.plus(Duration.ofDays(2)));
 
         GameEntity so = game("so-league-1", GameStatus.OPEN, "so", 40, 2, "league", "spies");
-        so.closesAt = day.plus(Duration.ofDays(5));
+        so.setClosesAt(day.plus(Duration.ofDays(5)));
 
         GameEntity lightning = game("lightning-1", GameStatus.OPEN, "kodos", 30, 1, "veterans");
-        lightning.closesAt = day.plus(Duration.ofDays(1));
+        lightning.setClosesAt(day.plus(Duration.ofDays(1)));
 
         GameEntity spring = game("spring-championship", GameStatus.ANNOUNCED, "so", 60, 2, "ranked");
-        spring.opensAt = day.plus(Duration.ofDays(12));
-        spring.closesAt = day.plus(Duration.ofDays(20));
+        spring.setOpensAt(day.plus(Duration.ofDays(12)));
+        spring.setClosesAt(day.plus(Duration.ofDays(20)));
 
         return List.of(delkelet, kodos, so, lightning, spring);
     }
 
     private GameEntity game(String id, GameStatus status, String mapId, int maxPlayers, int npcCount, String... tags) {
-        String tagText = Arrays.stream(tags).map(t -> messages.text("world.tag." + t)).collect(Collectors.joining(","));
+        String tagText = Arrays.stream(tags).map(tag -> messages.text("world.tag." + tag)).collect(Collectors.joining(","));
         return new GameEntity(id, messages.text("world.seed." + id + ".name"), status, mapId, maxPlayers, npcCount, tagText);
     }
 }

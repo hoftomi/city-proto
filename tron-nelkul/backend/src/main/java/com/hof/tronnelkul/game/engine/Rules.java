@@ -57,8 +57,8 @@ public final class Rules {
 
         public Msg label() { return Msg.of("catalog.margin." + id); }
 
-        public static Margin of(String id) { return Arrays.stream(values()).filter(m -> m.id.equals(id)).findFirst().orElse(MARKET); }
-        public static boolean valid(String id) { return Arrays.stream(values()).anyMatch(m -> m.id.equals(id)); }
+        public static Margin of(String id) { return Arrays.stream(values()).filter(margin -> margin.id.equals(id)).findFirst().orElse(MARKET); }
+        public static boolean valid(String id) { return Arrays.stream(values()).anyMatch(margin -> margin.id.equals(id)); }
     }
 
     /** Party program (6.1). */
@@ -71,8 +71,8 @@ public final class Rules {
 
         public Msg label() { return Msg.of("catalog.program." + id); }
 
-        public static Program of(String id) { return Arrays.stream(values()).filter(p -> p.id.equals(id)).findFirst().orElse(MEDIUM); }
-        public static boolean valid(String id) { return Arrays.stream(values()).anyMatch(p -> p.id.equals(id)); }
+        public static Program of(String id) { return Arrays.stream(values()).filter(program -> program.id.equals(id)).findFirst().orElse(MEDIUM); }
+        public static boolean valid(String id) { return Arrays.stream(values()).anyMatch(program -> program.id.equals(id)); }
     }
 
     /** News template (6.5); its text has {t} (target) and {g} (good). Truth is decided by the game state (Engine.newsTruth). */
@@ -90,7 +90,7 @@ public final class Rules {
         public String labelKey() { return "catalog.news." + id; }
 
         public static NewsTemplate of(String id) {
-            return Arrays.stream(values()).filter(n -> n.id.equals(id)).findFirst().orElseThrow(() -> new EngineException("engine.error.unknown_news_template"));
+            return Arrays.stream(values()).filter(template -> template.id.equals(id)).findFirst().orElseThrow(() -> new EngineException("engine.error.unknown_news_template"));
         }
     }
 
@@ -119,7 +119,7 @@ public final class Rules {
         public Msg label() { return Msg.of("catalog.action." + id); }
 
         public static Action of(String id) {
-            return Arrays.stream(values()).filter(a -> a.id.equals(id)).findFirst().orElseThrow(() -> new EngineException("engine.error.unknown_action"));
+            return Arrays.stream(values()).filter(action -> action.id.equals(id)).findFirst().orElseThrow(() -> new EngineException("engine.error.unknown_action"));
         }
     }
 }

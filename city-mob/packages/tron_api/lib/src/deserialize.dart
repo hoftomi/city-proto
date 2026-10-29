@@ -94,6 +94,9 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return AdminUser.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'AdvanceRequest':
           return AdvanceRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'Background':
+          
+          
         case 'BackgroundDto':
           return BackgroundDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Buildable':

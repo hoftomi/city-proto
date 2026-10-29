@@ -17,9 +17,9 @@ public class ApiException extends RuntimeException {
 
     public ApiException(HttpStatus status, Msg msg, String code) { super(msg.key()); this.status = status; this.msg = msg; this.code = code; }
 
-    public ApiException withCode(String c) { return new ApiException(status, msg, c); }
+    public ApiException withCode(String code) { return new ApiException(status, msg, code); }
 
-    public static ApiException badRequest(Msg m) { return new ApiException(HttpStatus.BAD_REQUEST, m); }
+    public static ApiException badRequest(Msg msg) { return new ApiException(HttpStatus.BAD_REQUEST, msg); }
     public static ApiException badRequest(String key, Object... args) { return badRequest(Msg.of(key, args)); }
     public static ApiException notFound(String key, Object... args) { return new ApiException(HttpStatus.NOT_FOUND, Msg.of(key, args)); }
     public static ApiException conflict(String key, Object... args) { return new ApiException(HttpStatus.CONFLICT, Msg.of(key, args)); }

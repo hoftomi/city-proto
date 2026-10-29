@@ -26,8 +26,6 @@ class RankRow {
 
     required  this.name,
 
-    required  this.tincture,
-
     required  this.npc,
 
     required  this.legit,
@@ -72,18 +70,6 @@ class RankRow {
 
 
   final String name;
-
-
-
-  @JsonKey(
-    
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
 
 
 
@@ -154,7 +140,6 @@ class RankRow {
       other.rank == rank &&
       other.playerId == playerId &&
       other.name == name &&
-      other.tincture == tincture &&
       other.npc == npc &&
       other.legit == legit &&
       other.shares == shares &&
@@ -166,7 +151,6 @@ class RankRow {
         rank.hashCode +
         playerId.hashCode +
         name.hashCode +
-        tincture.hashCode +
         npc.hashCode +
         legit.hashCode +
         shares.hashCode +

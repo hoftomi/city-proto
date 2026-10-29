@@ -7,17 +7,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Background } from './background';
 
 
 export interface Me { 
     playerId: string;
     houseName: string;
-    tincture: string;
-    background: string | null;
+    background: Background | null;
     estate: string | null;
     pp: number;
     ppMax: number;
     gold: number;
     legit: number;
 }
+
+
 

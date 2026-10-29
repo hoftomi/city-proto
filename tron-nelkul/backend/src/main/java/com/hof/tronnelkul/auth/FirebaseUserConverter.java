@@ -27,17 +27,17 @@ public class FirebaseUserConverter implements Converter<Jwt, AbstractAuthenticat
         AppUser user;
         try {
             user = auth.resolve(token);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException ex) {
             // Two concurrent first requests: the other one already created the user.
             user = auth.resolve(token);
         }
         Jwt jwt = Jwt.withTokenValue(token.getTokenValue())
-            .headers(h -> h.putAll(token.getHeaders()))
-            .claims(c -> c.putAll(token.getClaims()))
-            .subject(user.id.toString())
+            .headers(headers -> headers.putAll(token.getHeaders()))
+            .claims(claims -> claims.putAll(token.getClaims()))
+            .subject(user.getId().toString())
             .claim("uid", token.getSubject())
-            .claim("roles", List.of(user.role))
+            .claim("roles", List.of(user.getRole()))
             .build();
-        return new JwtAuthenticationToken(jwt, List.of(new SimpleGrantedAuthority("ROLE_" + user.role)), user.displayName);
+        return new JwtAuthenticationToken(jwt, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())), user.getDisplayName());
     }
 }

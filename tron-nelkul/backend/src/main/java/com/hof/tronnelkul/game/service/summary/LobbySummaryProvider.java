@@ -34,7 +34,7 @@ public class LobbySummaryProvider {
     public List<GameSummary> available(UUID userId) {
         List<GameEntity> games = gameRepository.findNotJoined(userId);
         Set<String> joinable = joinable(games);
-        return games.stream().map(g -> lobbyMapper.card(g, null, joinable.contains(g.id))).toList();
+        return games.stream().map(game -> lobbyMapper.card(game, null, joinable.contains(game.getId()))).toList();
     }
 
     /** Finished games the user played in, newest first. */
@@ -43,29 +43,31 @@ public class LobbySummaryProvider {
     }
 
     /** One live game's card for the user (details, join). */
-    public GameSummary card(GameEntity g, UUID userId) {
-        Optional<PlayerEntity> mine = userId == null ? Optional.empty() : playerRepository.findByGameIdAndUserId(g.id, userId);
-        return lobbyMapper.card(g, mine.orElse(null), mine.isEmpty() && joinable(List.of(g)).contains(g.id));
+    public GameSummary card(GameEntity game, UUID userId) {
+        Optional<PlayerEntity> mine = userId == null ? Optional.empty() : playerRepository.findByGameIdAndUserId(game.getId(), userId);
+        return lobbyMapper.card(game, mine.orElse(null), mine.isEmpty() && joinable(List.of(game)).contains(game.getId()));
     }
 
     /** One finished game's card for the user. */
-    public GameSummary card(ArchivedGameEntity a, UUID userId) {
-        return lobbyMapper.card(a, userId == null ? null : archivedPlayerRepository.findByGameIdAndUserId(a.id, userId).orElse(null));
+    public GameSummary card(ArchivedGameEntity archived, UUID userId) {
+        return lobbyMapper.card(archived, userId == null ? null : archivedPlayerRepository.findByGameIdAndUserId(archived.getId(), userId).orElse(null));
     }
 
     /** Ids of the games a not-yet-joined user may join: open, or running inside the late-join window, and with room left. */
     private Set<String> joinable(List<GameEntity> games) {
-        List<GameEntity> candidates = games.stream().filter(g -> g.status == GameStatus.OPEN || g.status == GameStatus.RUNNING).toList();
-        if (candidates.isEmpty()) return Set.of();
-        Map<String, Long> humans = playerRepository.countHumans(candidates.stream().map(g -> g.id).toList()).stream()
+        List<GameEntity> candidates = games.stream().filter(game -> game.getStatus() == GameStatus.OPEN || game.getStatus() == GameStatus.RUNNING).toList();
+        if (candidates.isEmpty()) {
+            return Set.of();
+        }
+        Map<String, Long> humans = playerRepository.countHumans(candidates.stream().map(game -> game.getId()).toList()).stream()
             .collect(Collectors.toMap(PlayerRepository.Headcount::getGameId, PlayerRepository.Headcount::getHumans));
-        List<String> running = candidates.stream().filter(g -> g.status == GameStatus.RUNNING).map(g -> g.id).toList();
+        List<String> running = candidates.stream().filter(game -> game.getStatus() == GameStatus.RUNNING).map(game -> game.getId()).toList();
         Map<String, Integer> settlements = running.isEmpty() ? Map.of() : gameRepository.findProgress(running).stream()
-            .filter(p -> p.getSettlements() != null)
+            .filter(progress -> progress.getSettlements() != null)
             .collect(Collectors.toMap(GameRepository.Progress::getGameId, GameRepository.Progress::getSettlements));
         return candidates.stream()
-            .filter(g -> humans.getOrDefault(g.id, 0L) < g.maxPlayers)
-            .filter(g -> g.status == GameStatus.OPEN || settlements.getOrDefault(g.id, Integer.MAX_VALUE) <= GameEntity.LATE_JOIN_SETTLEMENTS)
-            .map(g -> g.id).collect(Collectors.toSet());
+            .filter(game -> humans.getOrDefault(game.getId(), 0L) < game.getMaxPlayers())
+            .filter(game -> game.getStatus() == GameStatus.OPEN || settlements.getOrDefault(game.getId(), Integer.MAX_VALUE) <= GameEntity.LATE_JOIN_SETTLEMENTS)
+            .map(GameEntity::getId).collect(Collectors.toSet());
     }
 }

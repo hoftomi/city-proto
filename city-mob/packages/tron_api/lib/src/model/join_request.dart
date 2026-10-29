@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:tron_api/src/model/background.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -21,8 +22,6 @@ class JoinRequest {
   JoinRequest({
 
     required  this.houseName,
-
-    required  this.tincture,
 
     required  this.background,
 
@@ -45,25 +44,13 @@ class JoinRequest {
 
   @JsonKey(
     
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
-
-
-
-  @JsonKey(
-    
     name: r'background',
     required: true,
     includeIfNull: false,
   )
 
 
-  final String background;
+  final Background background;
 
 
 
@@ -96,7 +83,6 @@ class JoinRequest {
     @override
     bool operator ==(Object other) => identical(this, other) || other is JoinRequest &&
       other.houseName == houseName &&
-      other.tincture == tincture &&
       other.background == background &&
       other.startSlot == startSlot &&
       other.startGood == startGood;
@@ -104,7 +90,6 @@ class JoinRequest {
     @override
     int get hashCode =>
         houseName.hashCode +
-        tincture.hashCode +
         background.hashCode +
         startSlot.hashCode +
         (startGood == null ? 0 : startGood.hashCode);

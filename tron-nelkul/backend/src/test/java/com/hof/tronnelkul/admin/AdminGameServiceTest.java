@@ -24,69 +24,69 @@ class AdminGameServiceTest {
     }
 
     static void rejects(String key, Consumer<CreateGameRequest> change) {
-        CreateGameRequest r = request();
-        change.accept(r);
-        ApiException e = assertThrows(ApiException.class, () -> AdminGameService.newGame(r, NOW));
-        assertEquals(HttpStatus.BAD_REQUEST, e.status);
-        assertEquals(key, e.msg.key());
+        CreateGameRequest request = request();
+        change.accept(request);
+        ApiException ex = assertThrows(ApiException.class, () -> AdminGameService.newGame(request, NOW));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.status);
+        assertEquals(key, ex.msg.key());
     }
 
     @Test
     void validGameIsOpen() {
-        GameEntity g = AdminGameService.newGame(request(), NOW);
-        assertEquals("autumn-cup-2", g.id);
-        assertEquals("Autumn cup", g.name);
-        assertEquals(GameStatus.OPEN, g.status);
-        assertEquals("kodos", g.mapId);
-        assertEquals(30, g.maxPlayers);
-        assertEquals(2, g.npcCount);
-        assertEquals("League,a b", g.tags);
-        assertNull(g.opensAt);
-        assertEquals(NOW.plus(Duration.ofDays(2)), g.closesAt);
-        assertEquals(0, g.timeOffsetMinutes);
+        GameEntity game = AdminGameService.newGame(request(), NOW);
+        assertEquals("autumn-cup-2", game.getId());
+        assertEquals("Autumn cup", game.getName());
+        assertEquals(GameStatus.OPEN, game.getStatus());
+        assertEquals("kodos", game.getMapId());
+        assertEquals(30, game.getMaxPlayers());
+        assertEquals(2, game.getNpcCount());
+        assertEquals("League,a b", game.getTags());
+        assertNull(game.getOpensAt());
+        assertEquals(NOW.plus(Duration.ofDays(2)), game.getClosesAt());
+        assertEquals(0, game.getTimeOffsetMinutes());
     }
 
     @Test
     void futureOpeningIsAnnounced() {
-        CreateGameRequest r = request();
-        r.setOpensAt(NOW.plus(Duration.ofDays(1)));
-        assertEquals(GameStatus.ANNOUNCED, AdminGameService.newGame(r, NOW).status);
-        r.setOpensAt(NOW.minus(Duration.ofMinutes(1)));
-        assertEquals(GameStatus.OPEN, AdminGameService.newGame(r, NOW).status);
-        r.setClosesAt(null);
-        assertEquals(GameStatus.OPEN, AdminGameService.newGame(r, NOW).status);
+        CreateGameRequest request = request();
+        request.setOpensAt(NOW.plus(Duration.ofDays(1)));
+        assertEquals(GameStatus.ANNOUNCED, AdminGameService.newGame(request, NOW).getStatus());
+        request.setOpensAt(NOW.minus(Duration.ofMinutes(1)));
+        assertEquals(GameStatus.OPEN, AdminGameService.newGame(request, NOW).getStatus());
+        request.setClosesAt(null);
+        assertEquals(GameStatus.OPEN, AdminGameService.newGame(request, NOW).getStatus());
     }
 
     @Test
     void validation() {
-        rejects("server.admin.game_id_invalid", r -> r.setId(null));
-        rejects("server.admin.game_id_invalid", r -> r.setId("ab"));
-        rejects("server.admin.game_id_invalid", r -> r.setId("Autumn"));
-        rejects("server.admin.game_id_invalid", r -> r.setId("autumn_cup"));
-        rejects("server.admin.game_id_invalid", r -> r.setId("a".repeat(41)));
-        rejects("server.admin.game_name_required", r -> r.setName("   "));
-        rejects("server.admin.game_name_required", r -> r.setName(null));
-        rejects("server.admin.game_name_long", r -> r.setName("x".repeat(81)));
-        rejects("server.admin.map_unknown", r -> r.setMapId("atlantis"));
-        rejects("server.admin.map_unknown", r -> r.setMapId(null));
-        rejects("server.admin.max_players_range", r -> r.setMaxPlayers(0));
-        rejects("server.admin.max_players_range", r -> r.setMaxPlayers(201));
-        rejects("server.admin.max_players_range", r -> r.setMaxPlayers(null));
-        rejects("server.admin.npc_count_range", r -> r.setNpcCount(-1));
-        rejects("server.admin.npc_count_range", r -> r.setNpcCount(Npcs.count() + 1));
-        rejects("server.admin.closes_before_opens", r -> { r.setOpensAt(NOW.plus(Duration.ofDays(3))); r.setClosesAt(NOW.plus(Duration.ofDays(3))); });
-        rejects("server.admin.tags_long", r -> r.setTags(Arrays.asList("t".repeat(301))));
+        rejects("server.admin.game_id_invalid", request -> request.setId(null));
+        rejects("server.admin.game_id_invalid", request -> request.setId("ab"));
+        rejects("server.admin.game_id_invalid", request -> request.setId("Autumn"));
+        rejects("server.admin.game_id_invalid", request -> request.setId("autumn_cup"));
+        rejects("server.admin.game_id_invalid", request -> request.setId("a".repeat(41)));
+        rejects("server.admin.game_name_required", request -> request.setName("   "));
+        rejects("server.admin.game_name_required", request -> request.setName(null));
+        rejects("server.admin.game_name_long", request -> request.setName("x".repeat(81)));
+        rejects("server.admin.map_unknown", request -> request.setMapId("atlantis"));
+        rejects("server.admin.map_unknown", request -> request.setMapId(null));
+        rejects("server.admin.max_players_range", request -> request.setMaxPlayers(0));
+        rejects("server.admin.max_players_range", request -> request.setMaxPlayers(201));
+        rejects("server.admin.max_players_range", request -> request.setMaxPlayers(null));
+        rejects("server.admin.npc_count_range", request -> request.setNpcCount(-1));
+        rejects("server.admin.npc_count_range", request -> request.setNpcCount(Npcs.count() + 1));
+        rejects("server.admin.closes_before_opens", request -> { request.setOpensAt(NOW.plus(Duration.ofDays(3))); request.setClosesAt(NOW.plus(Duration.ofDays(3))); });
+        rejects("server.admin.tags_long", request -> request.setTags(Arrays.asList("t".repeat(301))));
     }
 
     @Test
     void limits() {
-        CreateGameRequest r = request();
-        r.setId("a".repeat(40)); r.setMaxPlayers(200); r.setNpcCount(Npcs.count()); r.setTags(null);
-        GameEntity g = AdminGameService.newGame(r, NOW);
-        assertEquals(200, g.maxPlayers);
-        assertEquals("", g.tags);
-        r.setMaxPlayers(1); r.setNpcCount(0);
-        assertEquals(1, AdminGameService.newGame(r, NOW).maxPlayers);
+        CreateGameRequest request = request();
+        request.setId("a".repeat(40)); request.setMaxPlayers(200); request.setNpcCount(Npcs.count()); request.setTags(null);
+        GameEntity game = AdminGameService.newGame(request, NOW);
+        assertEquals(200, game.getMaxPlayers());
+        assertEquals("", game.getTags());
+        request.setMaxPlayers(1); request.setNpcCount(0);
+        assertEquals(1, AdminGameService.newGame(request, NOW).getMaxPlayers());
     }
 
     @Test

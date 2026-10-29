@@ -94,7 +94,7 @@ Class | Method | HTTP request | Description
 [*GameApi*](doc/GameApi.md) | [**removeOrder**](doc/GameApi.md#removeorder) | **DELETE** /api/games/{id}/orders/{orderId} | Remove an order from the draft
 [*GameApi*](doc/GameApi.md) | [**seal**](doc/GameApi.md#seal) | **POST** /api/games/{id}/seal | Seal: the draft becomes a maturing order sheet (cannot be undone)
 [*I18nApi*](doc/I18nApi.md) | [**getTranslations**](doc/I18nApi.md#gettranslations) | **GET** /api/i18n/{lang} | All client texts in one language (easy_localization format)
-[*LobbyApi*](doc/LobbyApi.md) | [**getGame**](doc/LobbyApi.md#getgame) | **GET** /api/games/{id} | Game details: start slots, backgrounds, tinctures
+[*LobbyApi*](doc/LobbyApi.md) | [**getGame**](doc/LobbyApi.md#getgame) | **GET** /api/games/{id} | Game details: start slots and backgrounds
 [*LobbyApi*](doc/LobbyApi.md) | [**getMap**](doc/LobbyApi.md#getmap) | **GET** /api/games/maps/{mapId} | Map: cities, roads, start slots, terrain (cacheable)
 [*LobbyApi*](doc/LobbyApi.md) | [**joinGame**](doc/LobbyApi.md#joingame) | **POST** /api/games/{id}/join | Join (a running game until its first 3 settlements)
 [*LobbyApi*](doc/LobbyApi.md) | [**listArchivedGames**](doc/LobbyApi.md#listarchivedgames) | **GET** /api/games/archived | Finished games the user played in, newest first, with the winner and the own place
@@ -115,6 +115,7 @@ Class | Method | HTTP request | Description
  - [AdminResult](doc/AdminResult.md)
  - [AdminUser](doc/AdminUser.md)
  - [AdvanceRequest](doc/AdvanceRequest.md)
+ - [Background](doc/Background.md)
  - [BackgroundDto](doc/BackgroundDto.md)
  - [Buildable](doc/Buildable.md)
  - [Catalog](doc/Catalog.md)

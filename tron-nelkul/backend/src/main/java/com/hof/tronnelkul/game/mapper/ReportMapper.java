@@ -11,5 +11,6 @@ import org.mapstruct.ReportingPolicy;
 public interface ReportMapper {
     @Mapping(target = "round", source = "settlement")
     @Mapping(target = "text", source = "body")
+    @Mapping(target = "isPublic", source = "public")
     ReportView view(ReportEntity report);
 }

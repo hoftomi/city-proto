@@ -14,10 +14,14 @@ public record Msg(String key, Map<String, Object> args, boolean lowercase) {
 
     /** key with arg name/value pairs: Msg.of("engine.report.route.title", "city", cityMsg). */
     public static Msg of(String key, Object... kv) {
-        if (kv.length % 2 != 0) throw new IllegalArgumentException("Msg args must be name/value pairs: " + key);
-        Map<String, Object> a = new LinkedHashMap<>();
-        for (int i = 0; i < kv.length; i += 2) a.put((String) kv[i], kv[i + 1]);
-        return new Msg(key, a, false);
+        if (kv.length % 2 != 0) {
+            throw new IllegalArgumentException("Msg args must be name/value pairs: " + key);
+        }
+        Map<String, Object> named = new LinkedHashMap<>();
+        for (int index = 0; index < kv.length; index += 2) {
+            named.put((String) kv[index], kv[index + 1]);
+        }
+        return new Msg(key, named, false);
     }
 
     public Msg lower() { return new Msg(key, args, true); }

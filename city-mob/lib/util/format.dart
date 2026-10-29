@@ -14,10 +14,6 @@ String branchName(String b) => const {'trade', 'politics', 'espionage', 'common'
 /// The city view's districts: Marketplace (shops), Town Hall (parliament), Underworld (spy network).
 String districtName(String d) => branchName(d);
 
-const _tinctures = {'red', 'blue', 'green', 'gold', 'purple', 'black', 'orange', 'mulberry'};
-
-String tinctureName(String t) => _tinctures.contains(t) ? 'format.tincture.$t'.tr() : t;
-
 /// In local time (the server sends timestamps in UTC).
 String hhmm(DateTime t) {
   final d = t.toLocal();

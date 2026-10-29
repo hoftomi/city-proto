@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:tron_api/src/model/background.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -23,8 +24,6 @@ class Me {
     required  this.playerId,
 
     required  this.houseName,
-
-    required  this.tincture,
 
     required  this.background,
 
@@ -65,25 +64,13 @@ class Me {
 
   @JsonKey(
     
-    name: r'tincture',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String tincture;
-
-
-
-  @JsonKey(
-    
     name: r'background',
     required: true,
     includeIfNull: true,
   )
 
 
-  final String? background;
+  final Background? background;
 
 
 
@@ -153,7 +140,6 @@ class Me {
     bool operator ==(Object other) => identical(this, other) || other is Me &&
       other.playerId == playerId &&
       other.houseName == houseName &&
-      other.tincture == tincture &&
       other.background == background &&
       other.estate == estate &&
       other.pp == pp &&
@@ -165,7 +151,6 @@ class Me {
     int get hashCode =>
         playerId.hashCode +
         houseName.hashCode +
-        tincture.hashCode +
         (background == null ? 0 : background.hashCode) +
         (estate == null ? 0 : estate.hashCode) +
         pp.hashCode +

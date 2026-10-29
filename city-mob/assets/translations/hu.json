@@ -190,16 +190,6 @@
    "open": "Jelentkezés nyitva",
    "running": "Fut"
   },
-  "tincture": {
-   "black": "Fekete",
-   "blue": "Kék",
-   "gold": "Arany",
-   "green": "Zöld",
-   "mulberry": "Szeder",
-   "orange": "Narancs",
-   "purple": "Bíbor",
-   "red": "Vörös"
-  },
   "users": {
    "col": {
     "admin": "Admin",
@@ -692,16 +682,6 @@
    "8": "augusztus",
    "9": "szeptember"
   },
-  "tincture": {
-   "black": "Fekete",
-   "blue": "Kék",
-   "gold": "Arany",
-   "green": "Zöld",
-   "mulberry": "Szeder",
-   "orange": "Narancs",
-   "purple": "Bíbor",
-   "red": "Vörös"
-  },
   "today_at": "ma {time}",
   "tomorrow": "holnap",
   "weekday": {
@@ -728,8 +708,6 @@
    "name_hint": "például Kékholló",
    "name_label": "A ház neve",
    "name_placeholder": "Házad neve",
-   "tincture_label": "Tinktúra (a házad színe)",
-   "tincture_note": "Egy tinktúrát több ház is választhat; a nevek egyediek.",
    "title": "Alapítsd meg a házad"
   },
   "name_too_long": "Legfeljebb {max} betű lehet.",
@@ -934,7 +912,6 @@
   "pick_background": "Válassz hátteret.",
   "pick_start_good": "Válaszd ki, melyik árucikkből kapsz részesedést ({city}).",
   "pick_start_slot": "Válassz kezdőhelyet.",
-  "pick_tincture": "Válassz tinktúrát.",
   "season_end": {
    "nobody": "senkit sem",
    "text": "A Koronázási Tanács {who} ismerte el a legtöbb Legitimitással.",

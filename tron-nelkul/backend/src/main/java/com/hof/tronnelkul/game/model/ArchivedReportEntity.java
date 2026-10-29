@@ -1,30 +1,35 @@
 package com.hof.tronnelkul.game.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.Instant;
 import java.util.UUID;
 
 /** A report of a finished game (copy of the reports row, with the same id). */
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "archived_reports")
 public class ArchivedReportEntity {
-    @Id public UUID id;
-    @Column(name = "game_id", nullable = false) public String gameId;
-    @Column(name = "player_id", nullable = false) public UUID playerId;
-    @Column(nullable = false) public int settlement;
-    @Column(nullable = false) public String kind;
-    public String confidence;
-    @Column(nullable = false) public String title;
-    @Column(nullable = false, length = 2000) public String body;
-    @Column(nullable = false) public String tone;
-    @Column(name = "is_public", nullable = false) public boolean isPublic;
-    @Column(name = "created_at", nullable = false) public Instant createdAt;
+    @Id private UUID id;
+    @Column(name = "game_id", nullable = false) private String gameId;
+    @Column(name = "player_id", nullable = false) private UUID playerId;
+    @Column(nullable = false) private int settlement;
+    @Column(nullable = false) private String kind;
+    private String confidence;
+    @Column(nullable = false) private String title;
+    @Column(nullable = false, length = 2000) private String body;
+    @Column(nullable = false) private String tone;
+    @Column(name = "is_public", nullable = false) private boolean isPublic;
+    @Column(name = "created_at", nullable = false) private Instant createdAt;
 
-    protected ArchivedReportEntity() {}
-
-    public ArchivedReportEntity(ReportEntity r) {
-        this.id = r.id; this.gameId = r.gameId; this.playerId = r.playerId; this.settlement = r.settlement; this.kind = r.kind;
-        this.confidence = r.confidence; this.title = r.title; this.body = r.body; this.tone = r.tone; this.isPublic = r.isPublic;
-        this.createdAt = r.createdAt;
+    public ArchivedReportEntity(ReportEntity report) {
+        this.id = report.getId(); this.gameId = report.getGameId(); this.playerId = report.getPlayerId(); this.settlement = report.getSettlement(); this.kind = report.getKind();
+        this.confidence = report.getConfidence(); this.title = report.getTitle(); this.body = report.getBody(); this.tone = report.getTone(); this.isPublic = report.isPublic();
+        this.createdAt = report.getCreatedAt();
     }
 }

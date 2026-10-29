@@ -26,9 +26,9 @@ public class TranslationService {
     public TranslationService(JsonMapper json) { this.json = json; }
 
     public Map<String, Object> translations(String lang) {
-        String l = lang == null ? DEFAULT_LANG : lang.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
-        Map<String, Object> t = cache.computeIfAbsent(l, this::load);
-        return t.isEmpty() && !l.equals(DEFAULT_LANG) ? translations(DEFAULT_LANG) : t;
+        String normalized = lang == null ? DEFAULT_LANG : lang.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
+        Map<String, Object> loaded = cache.computeIfAbsent(normalized, this::load);
+        return loaded.isEmpty() && !normalized.equals(DEFAULT_LANG) ? translations(DEFAULT_LANG) : loaded;
     }
 
     @SuppressWarnings("unchecked")
@@ -37,14 +37,14 @@ public class TranslationService {
         try {
             Resource[] files = resolver.getResources("classpath*:i18n/" + lang + "/*.json");
             Arrays.sort(files, Comparator.comparing(Resource::getFilename));
-            for (Resource r : files) {
-                String ns = Objects.requireNonNull(r.getFilename()).replaceFirst("\\.json$", "");
-                try (InputStream in = r.getInputStream()) {
+            for (Resource resource : files) {
+                String ns = Objects.requireNonNull(resource.getFilename()).replaceFirst("\\.json$", "");
+                try (InputStream in = resource.getInputStream()) {
                     out.put(ns, json.readValue(in, Map.class));
                 }
             }
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot read translations: " + lang, e);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Cannot read translations: " + lang, ex);
         }
         return Collections.unmodifiableMap(out);
     }

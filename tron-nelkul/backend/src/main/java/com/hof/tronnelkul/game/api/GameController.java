@@ -28,44 +28,44 @@ public class GameController implements GameApi {
     public List<RankRow> getRanking(String id) { return view.ranking(id, CurrentUser.id()); }
 
     @Override
-    public GameState addOrder(String id, OrderRequest r) {
-        UUID u = CurrentUser.id();
-        play.addOrder(id, u, r);
-        return view.state(id, u);
+    public GameState addOrder(String id, OrderRequest request) {
+        UUID userId = CurrentUser.id();
+        play.addOrder(id, userId, request);
+        return view.state(id, userId);
     }
 
     @Override
     public GameState removeOrder(String id, String orderId) {
-        UUID u = CurrentUser.id();
-        play.removeOrder(id, u, orderId);
-        return view.state(id, u);
+        UUID userId = CurrentUser.id();
+        play.removeOrder(id, userId, orderId);
+        return view.state(id, userId);
     }
 
     @Override
     public GameState seal(String id) {
-        UUID u = CurrentUser.id();
-        play.seal(id, u);
-        return view.state(id, u);
+        UUID userId = CurrentUser.id();
+        play.seal(id, userId);
+        return view.state(id, userId);
     }
 
     @Override
-    public GameState offerIntel(String id, String intelId, OfferRequest r) {
-        UUID u = CurrentUser.id();
-        play.offer(id, u, intelId, r);
-        return view.state(id, u);
+    public GameState offerIntel(String id, String intelId, OfferRequest request) {
+        UUID userId = CurrentUser.id();
+        play.offer(id, userId, intelId, request);
+        return view.state(id, userId);
     }
 
     @Override
     public GameState acceptOffer(String id, String offerId) {
-        UUID u = CurrentUser.id();
-        play.accept(id, u, offerId);
-        return view.state(id, u);
+        UUID userId = CurrentUser.id();
+        play.accept(id, userId, offerId);
+        return view.state(id, userId);
     }
 
     @Override
     public GameState declineOffer(String id, String offerId) {
-        UUID u = CurrentUser.id();
-        play.decline(id, u, offerId);
-        return view.state(id, u);
+        UUID userId = CurrentUser.id();
+        play.decline(id, userId, offerId);
+        return view.state(id, userId);
     }
 }

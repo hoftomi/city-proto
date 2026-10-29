@@ -20,6 +20,7 @@ model/admin-result.ts
 model/admin-user.ts
 model/advance-request.ts
 model/background-dto.ts
+model/background.ts
 model/buildable.ts
 model/catalog.ts
 model/city-def.ts

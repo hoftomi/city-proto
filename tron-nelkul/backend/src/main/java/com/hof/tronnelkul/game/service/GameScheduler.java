@@ -29,22 +29,26 @@ public class GameScheduler {
 
     @Scheduled(fixedDelay = 30_000, initialDelay = 15_000)
     public void tick() {
-        if (!props.scheduler().enabled()) return;
-        for (GameEntity g : gameRepository.findByStatus(GameStatus.RUNNING)) {
-            try { lifecycle.tick(g.id); } catch (RuntimeException e) { log.error("Failed to advance: {}", g.id, e); }
+        if (!props.scheduler().enabled()) {
+            return;
+        }
+        for (GameEntity game : gameRepository.findByStatus(GameStatus.RUNNING)) {
+            try { lifecycle.tick(game.getId()); } catch (RuntimeException ex) { log.error("Failed to advance: {}", game.getId(), ex); }
         }
     }
 
     @Scheduled(fixedDelay = 60_000, initialDelay = 10_000)
     public void lifecycle() {
-        if (!props.scheduler().enabled()) return;
-        Instant now = Instant.now();
-        for (GameEntity g : gameRepository.findByStatusAndOpensAtBefore(GameStatus.ANNOUNCED, now)) {
-            g.status = GameStatus.OPEN;
-            gameRepository.save(g);
+        if (!props.scheduler().enabled()) {
+            return;
         }
-        for (GameEntity g : gameRepository.findByStatusAndClosesAtBefore(GameStatus.OPEN, now)) {
-            try { lifecycle.start(g.id); } catch (RuntimeException e) { log.error("Failed to start: {}", g.id, e); }
+        Instant now = Instant.now();
+        for (GameEntity game : gameRepository.findByStatusAndOpensAtBefore(GameStatus.ANNOUNCED, now)) {
+            game.setStatus(GameStatus.OPEN);
+            gameRepository.save(game);
+        }
+        for (GameEntity game : gameRepository.findByStatusAndClosesAtBefore(GameStatus.OPEN, now)) {
+            try { lifecycle.start(game.getId()); } catch (RuntimeException ex) { log.error("Failed to start: {}", game.getId(), ex); }
         }
     }
 }

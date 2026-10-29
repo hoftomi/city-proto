@@ -7,12 +7,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Background } from './background';
 
 
 export interface BackgroundDto { 
-    id: string;
+    id: Background;
     name: string;
     icon: string;
     perks: Array<string>;
 }
+
+
 

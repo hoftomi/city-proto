@@ -15,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, filter, finalize } from 'rxjs';
 import { AdminGame, AdminGameDetail, AdminHouse, AdminReport, AdminService } from '../../api';
 import { DurationPipe, HDatePipe, HNumberPipe } from '../../core/format';
-import { CONFIDENCE_KEYS, REPORT_KIND_KEYS, TINCTURES, canStart, isRunning } from '../../core/labels';
+import { CONFIDENCE_KEYS, REPORT_KIND_KEYS, canStart, isRunning } from '../../core/labels';
 import { Notifier } from '../../core/notifier';
 import { TPipe } from '../../core/t.pipe';
 import { key } from '../../core/translator';
@@ -129,7 +129,6 @@ const ADVANCE_STEPS = [
             <ng-container matColumnDef="house">
               <th mat-header-cell *matHeaderCellDef>{{ 'detail.col.house' | t }}</th>
               <td mat-cell *matCellDef="let h">
-                <span class="swatch" [style.background]="tinctureColor(h.tincture)" [matTooltip]="tinctureLabel(h.tincture) | t"></span>
                 <span class="strong">{{ h.houseName }}</span>
               </td>
             </ng-container>
@@ -271,7 +270,6 @@ const ADVANCE_STEPS = [
     dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px 24px; margin: 0; }
     dt { font: var(--mat-sys-label-medium); color: var(--mat-sys-on-surface-variant); }
     dd { margin: 2px 0 0; font: var(--mat-sys-body-large); }
-    .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: middle; box-shadow: 0 0 0 1px var(--mat-sys-outline-variant); }
     .reports-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
     .compact { width: 160px; }
     .kind-counts { display: block; margin: 8px 0 16px; }
@@ -365,14 +363,6 @@ export class GameDetailPage {
 
   protected removeHouse(game: AdminGame, h: AdminHouse): void {
     this.act(this.actions.removeHouse(game, h.playerId, h.houseName));
-  }
-
-  protected tinctureColor(t: string): string {
-    return TINCTURES[t]?.color ?? 'transparent';
-  }
-
-  protected tinctureLabel(t: string): string {
-    return TINCTURES[t]?.label ?? t;
   }
 
   protected kindLabel(k: string): string {

@@ -1,5 +1,7 @@
 package com.hof.tronnelkul.game.engine;
 
+import com.hof.tronnelkul.api.model.Background;
+
 import java.util.*;
 
 /**
@@ -31,14 +33,16 @@ public final class EngineState {
 
     public String nextId(String prefix) { return prefix + seq++; }
 
-    public List<Edge> routesOf(String player) { return routes.computeIfAbsent(player, k -> new ArrayList<>()); }
+    public List<Edge> routesOf(String player) { return routes.computeIfAbsent(player, key -> new ArrayList<>()); }
 
-    public List<Order> draftOf(String player) { return drafts.computeIfAbsent(player, k -> new ArrayList<>()); }
+    public List<Order> draftOf(String player) { return drafts.computeIfAbsent(player, key -> new ArrayList<>()); }
 
-    public Optional<Sheet> sheetOf(String player) { return sheets.stream().filter(l -> l.player.equals(player)).findFirst(); }
+    public Optional<Sheet> sheetOf(String player) { return sheets.stream().filter(sheet -> sheet.player.equals(player)).findFirst(); }
 
     public static final class PlayerSt {
-        public String id, name, tincture, persona, background;
+        public String id, name, persona;
+        /** Stored in the state JSON as its API value ("merchant"…); null for NPCs. */
+        public Background background;
         public boolean npc;
         /** "estate:<id>", or null (NPC networks are unrestricted). */
         public String estate;
@@ -79,10 +83,10 @@ public final class EngineState {
         public int pts, gold;
 
         public Order copy() {
-            Order o = new Order();
-            o.id = id; o.type = type; o.city = city; o.good = good; o.level = level; o.target = target; o.template = template;
-            o.newsId = newsId; o.sheetId = sheetId; o.orderId = orderId; o.from = from; o.to = to; o.pts = pts; o.gold = gold;
-            return o;
+            Order copy = new Order();
+            copy.id = id; copy.type = type; copy.city = city; copy.good = good; copy.level = level; copy.target = target; copy.template = template;
+            copy.newsId = newsId; copy.sheetId = sheetId; copy.orderId = orderId; copy.from = from; copy.to = to; copy.pts = pts; copy.gold = gold;
+            return copy;
         }
     }
 

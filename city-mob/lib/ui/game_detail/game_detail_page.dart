@@ -127,7 +127,7 @@ class _MyHouseCard extends StatelessWidget {
     return TnCard(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          HouseCrest(tincture: house.tincture, initial: house.houseName.characters.first, size: 26, name: house.houseName),
+          HouseCrest(initial: house.houseName.characters.first, size: 26, name: house.houseName),
           const SizedBox(width: 8),
           Text(house.houseName, style: TnText.bodyStrong(c.ink)),
           if (house.backgroundName != null) Text(' · ${house.backgroundName}', style: TnText.body(c.inkMuted)),

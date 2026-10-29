@@ -27,8 +27,6 @@ abstract class _$GameDetailCWProxy {
 
   GameDetail backgrounds(List<BackgroundDto> backgrounds);
 
-  GameDetail tinctures(List<String> tinctures);
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `GameDetail(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -46,7 +44,6 @@ abstract class _$GameDetailCWProxy {
     int npcCount,
     List<StartSlotDto> starts,
     List<BackgroundDto> backgrounds,
-    List<String> tinctures,
   });
 }
 
@@ -88,9 +85,6 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
       this(backgrounds: backgrounds);
 
   @override
-  GameDetail tinctures(List<String> tinctures) => this(tinctures: tinctures);
-
-  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `GameDetail(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -108,7 +102,6 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
     Object? npcCount = const $CopyWithPlaceholder(),
     Object? starts = const $CopyWithPlaceholder(),
     Object? backgrounds = const $CopyWithPlaceholder(),
-    Object? tinctures = const $CopyWithPlaceholder(),
   }) {
     return GameDetail(
       game: game == const $CopyWithPlaceholder()
@@ -151,10 +144,6 @@ class _$GameDetailCWProxyImpl implements _$GameDetailCWProxy {
           ? _value.backgrounds
           // ignore: cast_nullable_to_non_nullable
           : backgrounds as List<BackgroundDto>,
-      tinctures: tinctures == const $CopyWithPlaceholder()
-          ? _value.tinctures
-          // ignore: cast_nullable_to_non_nullable
-          : tinctures as List<String>,
     );
   }
 }
@@ -184,7 +173,6 @@ GameDetail _$GameDetailFromJson(Map<String, dynamic> json) =>
           'npcCount',
           'starts',
           'backgrounds',
-          'tinctures',
         ],
       );
       final val = GameDetail(
@@ -211,10 +199,6 @@ GameDetail _$GameDetailFromJson(Map<String, dynamic> json) =>
               .map((e) => BackgroundDto.fromJson(e as Map<String, dynamic>))
               .toList(),
         ),
-        tinctures: $checkedConvert(
-          'tinctures',
-          (v) => (v as List<dynamic>).map((e) => e as String).toList(),
-        ),
       );
       return val;
     });
@@ -231,5 +215,4 @@ Map<String, dynamic> _$GameDetailToJson(GameDetail instance) =>
       'npcCount': instance.npcCount,
       'starts': instance.starts.map((e) => e.toJson()).toList(),
       'backgrounds': instance.backgrounds.map((e) => e.toJson()).toList(),
-      'tinctures': instance.tinctures,
     };

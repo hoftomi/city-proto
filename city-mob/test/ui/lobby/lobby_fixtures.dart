@@ -21,7 +21,7 @@ GameSummary summary({
       myHouse: myHouse,
     );
 
-MyHouse house() => MyHouse(houseName: 'Bluecrow', tincture: 'azur', backgroundName: 'Merchant house');
+MyHouse house() => MyHouse(houseName: 'Bluecrow', backgroundName: 'Merchant house');
 
 StartSlotDto slot(String id, {List<GoodOption> goods = const []}) => StartSlotDto(
       id: id,
@@ -50,10 +50,9 @@ GameDetail detail({GameSummary? game, int round = 0, int players = 3, int maxPla
         slot('s2'),
       ],
       backgrounds: [
-        BackgroundDto(id: 'noble', name: 'Nemesház', icon: 'nobility', perks: const []),
-        BackgroundDto(id: 'merchant', name: 'Kereskedőház', icon: 'merchants', perks: const []),
+        BackgroundDto(id: Background.noble, name: 'Nemesház', icon: 'nobility', perks: const []),
+        BackgroundDto(id: Background.merchant, name: 'Kereskedőház', icon: 'merchants', perks: const []),
       ],
-      tinctures: const ['azur', 'gules'],
     );
 
 final mapDef = MapDef(

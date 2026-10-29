@@ -37,20 +37,20 @@ public class LobbyController implements LobbyApi {
     public MapDef getMap(String mapId) { return toDto(MapRegistry.get(mapId)); }
 
     @Override
-    public GameSummary joinGame(String id, JoinRequest r) { return lobby.join(id, CurrentUser.id(), r); }
+    public void joinGame(String id, JoinRequest request) { lobby.join(id, CurrentUser.id(), request); }
 
     @Override
     public void withdrawGame(String id) { lobby.withdraw(id, CurrentUser.id()); }
 
-    MapDef toDto(MapDefinition m) {
-        var t = m.terrain();
-        return new MapDef(m.id(), messages.text(m.label()),
-            m.cities().stream().map(c -> new CityDef(c.id(), messages.text(c.label()), c.x(), c.y(), c.key(), c.coast(), messages.text(c.desc()),
-                c.goods().stream().map(g -> new GoodDef(g.id(), messages.text(g.label()), g.supply(), g.demand())).toList())).toList(),
-            m.cityEdges(),
-            m.starts().stream().map(s -> new StartSlot(s.id(), messages.text(m.startLabel(s)), s.x(), s.y(), s.neighbors(), messages.text(m.startNote(s)))).toList(),
-            new TerrainDef(t.sea(), t.rivers(), nums(t.mountains()), nums(t.forests()), nums(t.fields()), nums(t.marsh())));
+    MapDef toDto(MapDefinition map) {
+        var terrain = map.terrain();
+        return new MapDef(map.id(), messages.text(map.label()),
+            map.cities().stream().map(city -> new CityDef(city.id(), messages.text(city.label()), city.x(), city.y(), city.key(), city.coast(), messages.text(city.desc()),
+                city.goods().stream().map(good -> new GoodDef(good.id(), messages.text(good.label()), good.supply(), good.demand())).toList())).toList(),
+            map.cityEdges(),
+            map.starts().stream().map(start -> new StartSlot(start.id(), messages.text(map.startLabel(start)), start.x(), start.y(), start.neighbors(), messages.text(map.startNote(start)))).toList(),
+            new TerrainDef(terrain.sea(), terrain.rivers(), nums(terrain.mountains()), nums(terrain.forests()), nums(terrain.fields()), nums(terrain.marsh())));
     }
 
-    private static List<List<Double>> nums(List<double[]> v) { return v.stream().map(a -> Arrays.stream(a).boxed().toList()).toList(); }
+    private static List<List<Double>> nums(List<double[]> shapes) { return shapes.stream().map(points -> Arrays.stream(points).boxed().toList()).toList(); }
 }

@@ -16,7 +16,7 @@ class TranslationServiceTest {
         Map<String, Object> hu = service.translations("hu");
         assertTrue(hu.containsKey("common") && hu.containsKey("error") && hu.containsKey("format"));
         Object retry = ((Map<String, Object>) hu.get("common")).get("retry");
-        assertTrue(retry instanceof String t && !t.isBlank(), "common.retry is a text");
+        assertTrue(retry instanceof String text && !text.isBlank(), "common.retry is a text");
     }
 
     @Test

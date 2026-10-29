@@ -32,10 +32,12 @@ public class AuthService {
     @Transactional
     public AppUser findOrCreate(String uid, String email, String name) {
         var existing = userIdentityRepository.findByProviderAndSubject(FIREBASE, uid);
-        if (existing.isPresent()) return userRepository.findById(existing.get().userId).orElseThrow();
-        String n = name == null || name.isBlank() ? messages.text("server.auth.default_name") : name.strip();
-        AppUser user = userRepository.save(new AppUser(n.length() > 80 ? n.substring(0, 80) : n, "PLAYER"));
-        userIdentityRepository.saveAndFlush(new UserIdentity(user.id, FIREBASE, uid, email));
+        if (existing.isPresent()) {
+            return userRepository.findById(existing.get().getUserId()).orElseThrow();
+        }
+        String displayName = name == null || name.isBlank() ? messages.text("server.auth.default_name") : name.strip();
+        AppUser user = userRepository.save(new AppUser(displayName.length() > 80 ? displayName.substring(0, 80) : displayName, "PLAYER"));
+        userIdentityRepository.saveAndFlush(new UserIdentity(user.getId(), FIREBASE, uid, email));
         return user;
     }
 

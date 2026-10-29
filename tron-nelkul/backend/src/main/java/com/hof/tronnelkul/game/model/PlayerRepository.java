@@ -48,5 +48,4 @@ public interface PlayerRepository extends JpaRepository<PlayerEntity, UUID> {
     Optional<PlayerEntity> findByGameIdAndUserId(String gameId, UUID userId);
     long countByGameIdAndNpcFalse(String gameId);
     boolean existsByGameIdAndHouseNameIgnoreCase(String gameId, String houseName);
-    boolean existsByGameIdAndTincture(String gameId, String tincture);
 }

@@ -11,9 +11,7 @@ abstract class _$MeCWProxy {
 
   Me houseName(String houseName);
 
-  Me tincture(String tincture);
-
-  Me background(String? background);
+  Me background(Background? background);
 
   Me estate(String? estate);
 
@@ -34,8 +32,7 @@ abstract class _$MeCWProxy {
   Me call({
     String playerId,
     String houseName,
-    String tincture,
-    String? background,
+    Background? background,
     String? estate,
     int pp,
     int ppMax,
@@ -57,10 +54,7 @@ class _$MeCWProxyImpl implements _$MeCWProxy {
   Me houseName(String houseName) => this(houseName: houseName);
 
   @override
-  Me tincture(String tincture) => this(tincture: tincture);
-
-  @override
-  Me background(String? background) => this(background: background);
+  Me background(Background? background) => this(background: background);
 
   @override
   Me estate(String? estate) => this(estate: estate);
@@ -87,7 +81,6 @@ class _$MeCWProxyImpl implements _$MeCWProxy {
   Me call({
     Object? playerId = const $CopyWithPlaceholder(),
     Object? houseName = const $CopyWithPlaceholder(),
-    Object? tincture = const $CopyWithPlaceholder(),
     Object? background = const $CopyWithPlaceholder(),
     Object? estate = const $CopyWithPlaceholder(),
     Object? pp = const $CopyWithPlaceholder(),
@@ -104,14 +97,10 @@ class _$MeCWProxyImpl implements _$MeCWProxy {
           ? _value.houseName
           // ignore: cast_nullable_to_non_nullable
           : houseName as String,
-      tincture: tincture == const $CopyWithPlaceholder()
-          ? _value.tincture
-          // ignore: cast_nullable_to_non_nullable
-          : tincture as String,
       background: background == const $CopyWithPlaceholder()
           ? _value.background
           // ignore: cast_nullable_to_non_nullable
-          : background as String?,
+          : background as Background?,
       estate: estate == const $CopyWithPlaceholder()
           ? _value.estate
           // ignore: cast_nullable_to_non_nullable
@@ -153,7 +142,6 @@ Me _$MeFromJson(Map<String, dynamic> json) =>
         requiredKeys: const [
           'playerId',
           'houseName',
-          'tincture',
           'background',
           'estate',
           'pp',
@@ -165,8 +153,10 @@ Me _$MeFromJson(Map<String, dynamic> json) =>
       final val = Me(
         playerId: $checkedConvert('playerId', (v) => v as String),
         houseName: $checkedConvert('houseName', (v) => v as String),
-        tincture: $checkedConvert('tincture', (v) => v as String),
-        background: $checkedConvert('background', (v) => v as String?),
+        background: $checkedConvert(
+          'background',
+          (v) => $enumDecodeNullable(_$BackgroundEnumMap, v),
+        ),
         estate: $checkedConvert('estate', (v) => v as String?),
         pp: $checkedConvert('pp', (v) => (v as num).toInt()),
         ppMax: $checkedConvert('ppMax', (v) => (v as num).toInt()),
@@ -179,11 +169,16 @@ Me _$MeFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MeToJson(Me instance) => <String, dynamic>{
   'playerId': instance.playerId,
   'houseName': instance.houseName,
-  'tincture': instance.tincture,
-  'background': instance.background,
+  'background': _$BackgroundEnumMap[instance.background],
   'estate': instance.estate,
   'pp': instance.pp,
   'ppMax': instance.ppMax,
   'gold': instance.gold,
   'legit': instance.legit,
+};
+
+const _$BackgroundEnumMap = {
+  Background.merchant: 'merchant',
+  Background.noble: 'noble',
+  Background.shadow: 'shadow',
 };
