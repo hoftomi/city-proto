@@ -50,16 +50,35 @@ export class Translator {
     return typeof node === 'string' ? interpolate(node, params) : k;
   }
 
+  /** Money in whole bronze as spelled-out coins, e.g. 435 → "4 arany 3 ezüst 5 bronz". */
+  coins(bronze: number | null | undefined): string {
+    return bronze === null || bronze === undefined ? '–' : this.units(coinMarkers(bronze));
+  }
+
   /** Server texts carry unit markers ([pp], [gold], [pop], [legit]; the mobile shows icons): spelled out here. */
   units(text: string | null | undefined): string {
     return (text ?? '').replace(UNIT_MARKER, (_, unit: string) => this.t(UNIT_KEYS[unit]));
   }
 }
 
-const UNIT_MARKER = /\[(pp|gold|pop|legit)\]/g;
+const UNIT_MARKER = /\[(pp|gold|silver|bronze|pop|legit)\]/g;
 const UNIT_KEYS: Record<string, string> = {
   pp: key('unit.pp'),
   gold: key('unit.gold'),
+  silver: key('unit.silver'),
+  bronze: key('unit.bronze'),
   pop: key('unit.pop'),
   legit: key('unit.legit'),
 };
+
+/** 1 gold = 10 silver = 100 bronze; only the non-zero coins, biggest first ("0 [gold]" for zero, "−" when negative). */
+export function coinMarkers(bronze: number): string {
+  const abs = Math.abs(Math.round(bronze));
+  const parts: string[] = [];
+  const gold = Math.floor(abs / 100), silver = Math.floor((abs % 100) / 10), copper = abs % 10;
+  if (gold) parts.push(`${gold} [gold]`);
+  if (silver) parts.push(`${silver} [silver]`);
+  if (copper) parts.push(`${copper} [bronze]`);
+  const text = parts.length ? parts.join(' ') : '0 [gold]';
+  return bronze < 0 ? `\u2212${text}` : text;
+}

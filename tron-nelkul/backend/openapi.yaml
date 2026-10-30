@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Tron Nelkul API
   version: 0.0.2
-  description: 'API of the Tron Nelkul server (rulebook v0.2). The Spring backend generates its interfaces and models from it (openapi-generator, spring), and the mobile client its Dio-based requests and models (dart-dio). Every error is an RFC 9457 ProblemDetail; detail is displayable text. Gold: the player''s stock is decimal, every cost is an integer. Timestamps: ISO-8601.'
+  description: 'API of the Tron Nelkul server (rulebook v0.2). The Spring backend generates its interfaces and models from it (openapi-generator, spring), and the mobile client its Dio-based requests and models (dart-dio). Every error is an RFC 9457 ProblemDetail; detail is displayable text. Money: every amount (gold balance, cost, price, market value, tax pool, income) is an integer number of bronze; 1 gold = 10 silver = 100 bronze. Timestamps: ISO-8601.'
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -794,7 +794,7 @@ components:
   schemas:
     ActionInfo:
       type: object
-      description: 'gold: null if computed (shares, buyout, defence).'
+      description: 'gold: base cost in bronze (1 gold = 100 bronze); null if computed (shares, buyout, defence).'
       required:
       - id
       - label
@@ -917,7 +917,7 @@ components:
         maturingSheets: {type: integer, format: int32}
     AdminHouse:
       type: object
-      description: 'gold and pp: from the game state (null before the start and for archived games). place: archived games only.'
+      description: 'gold (in bronze, 1 gold = 100 bronze) and pp: from the game state (null before the start and for archived games). place: archived games only.'
       required: [playerId, userId, userName, houseName, background, npc, persona, legit, gold, pp, place, joinedAt]
       properties:
         playerId: {type: string}
@@ -931,7 +931,7 @@ components:
         npc: {type: boolean}
         persona: {type: string, nullable: true}
         legit: {type: integer, format: int32}
-        gold: {type: number, format: double, nullable: true}
+        gold: {type: integer, format: int64, nullable: true, description: 'Money in bronze (1 gold = 100 bronze).'}
         pp: {type: integer, format: int32, nullable: true}
         place: {type: integer, format: int32, nullable: true}
         joinedAt: {type: string, format: date-time}
@@ -1106,7 +1106,7 @@ components:
             $ref: '#/components/schemas/GoodDef'
     CityView:
       type: object
-      description: 'reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses'' spies (names only). myProgram: null if you have no party here. expectedIncome: your expected gold from selling in this city at the next settlement (after tax, from the current state); null if you hold no shares here.'
+      description: 'reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses'' spies (names only). myProgram: null if you have no party here. lastTaxPool: the council parties'' share of the latest tax, in bronze (1 gold = 100 bronze). expectedIncome: your expected income in bronze from selling in this city at the next settlement (after tax, from the current state); null if you hold no shares here.'
       required:
       - id
       - name
@@ -1153,16 +1153,18 @@ components:
           type: number
           format: double
         lastTaxPool:
-          type: number
-          format: double
+          type: integer
+          format: int64
           nullable: true
+          description: 'In bronze (1 gold = 100 bronze).'
         councilSeats:
           type: integer
           format: int32
         expectedIncome:
-          type: number
-          format: double
+          type: integer
+          format: int64
           nullable: true
+          description: 'In bronze (1 gold = 100 bronze).'
         goods:
           type: array
           items:
@@ -1230,6 +1232,7 @@ components:
           format: int32
     Cost:
       type: object
+      description: 'gold: in bronze (1 gold = 100 bronze).'
       required:
       - pp
       - gold
@@ -1462,7 +1465,7 @@ components:
           type: string
     GoodView:
       type: object
-      description: 'marketValue: market value of a point in gold (average profit per point over the last 3 settlements × 10).'
+      description: 'marketValue: market value of a point in bronze, 1 gold = 100 bronze (average profit per point over the last 3 settlements × 10).'
       required:
       - id
       - name
@@ -1488,8 +1491,8 @@ components:
           type: integer
           format: int32
         marketValue:
-          type: number
-          format: double
+          type: integer
+          format: int64
         myShares:
           type: integer
           format: int32
@@ -1670,8 +1673,9 @@ components:
           type: integer
           format: int32
         gold:
-          type: number
-          format: double
+          type: integer
+          format: int64
+          description: 'Money in bronze (1 gold = 100 bronze).'
         legit:
           type: integer
           format: int32
@@ -1753,6 +1757,7 @@ components:
           type: integer
           format: int32
           nullable: true
+          description: 'In bronze (1 gold = 100 bronze), 100–50000; null: the default information price.'
     OfferView:
       type: object
       description: 'Information offered to you (escrow: you pay on acceptance and receive it at once).'
@@ -1772,6 +1777,7 @@ components:
         price:
           type: integer
           format: int32
+          description: 'In bronze (1 gold = 100 bronze).'
         executeAt:
           type: string
           format: date-time
@@ -1819,7 +1825,7 @@ components:
           nullable: true
     OrderView:
       type: object
-      description: 'branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [pop], [legit] (rendered as icons by the client).'
+      description: 'branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [silver], [bronze], [pop], [legit] (rendered as icons by the client); money is written as coins, e.g. 4 [gold] 3 [silver] 5 [bronze].'
       required:
       - id
       - type
@@ -1999,6 +2005,7 @@ components:
           type: string
     RulesInfo:
       type: object
+      description: 'Money rules (basePrice, cityShareCost, partyCost, festivalGold, newsGold, spyCost, spyUpkeep, debunkRewardGold, routeCost, routeUpkeep, infoPrice) are in bronze (1 gold = 100 bronze).'
       required:
       - basePrice
       - cityShareCost
@@ -2256,6 +2263,7 @@ components:
         defendCost:
           type: integer
           format: int32
+          description: 'In bronze (1 gold = 100 bronze).'
         defending:
           type: boolean
     UserDto:

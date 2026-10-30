@@ -19,6 +19,7 @@ import { CONFIDENCE_KEYS, REPORT_KIND_KEYS, canStart, isRunning } from '../../co
 import { Notifier } from '../../core/notifier';
 import { TPipe } from '../../core/t.pipe';
 import { UnitsPipe } from '../../core/units.pipe';
+import { CoinsPipe } from '../../core/coins.pipe';
 import { key } from '../../core/translator';
 import { StatusChip } from '../../shared/status-chip';
 import { GameActions } from '../games/game-actions';
@@ -39,7 +40,7 @@ const ADVANCE_STEPS = [
   imports: [
     RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatFormFieldModule,
     MatIconModule, MatMenuModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
-    TPipe, UnitsPipe, HDatePipe, HNumberPipe, DurationPipe, StatusChip,
+    TPipe, UnitsPipe, CoinsPipe, HDatePipe, HNumberPipe, DurationPipe, StatusChip,
   ],
   template: `
     <a mat-button routerLink="/games" class="back">
@@ -154,7 +155,7 @@ const ADVANCE_STEPS = [
             </ng-container>
             <ng-container matColumnDef="gold">
               <th mat-header-cell *matHeaderCellDef class="num">{{ 'detail.col.gold' | t }}</th>
-              <td mat-cell *matCellDef="let h" class="num">{{ h.gold | hnum }}</td>
+              <td mat-cell *matCellDef="let h" class="num">{{ h.gold | coins }}</td>
             </ng-container>
             <ng-container matColumnDef="pp">
               <th mat-header-cell *matHeaderCellDef class="num">{{ 'detail.col.pp' | t }}</th>

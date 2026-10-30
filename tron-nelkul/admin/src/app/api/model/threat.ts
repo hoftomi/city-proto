@@ -23,6 +23,9 @@ export interface Threat {
     goodName: string;
     pts: number;
     executeAt: string;
+    /**
+     * In bronze (1 gold = 100 bronze).
+     */
     defendCost: number;
     defending: boolean;
 }

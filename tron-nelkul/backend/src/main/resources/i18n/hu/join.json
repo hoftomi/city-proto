@@ -46,7 +46,7 @@
     "good": "Induló árucikk",
     "good_value": "20% részesedés · {good}",
     "kit": "Induló készlet",
-    "kit_value": "10 [pp] · 30 [gold] · 20 [pop] a kezdővárosban · 2 útvonal",
+    "kit_value": "10 [pp] · {gold} · 20 [pop] a kezdővárosban · 2 útvonal",
     "note": "A kezdésig bármikor visszavonhatod a jelentkezést. A ház neve a kezdés után már nem változtatható."
   }
 }

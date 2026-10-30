@@ -7,7 +7,7 @@ import 'tn_icon.dart';
 /// Krónika IV illustrated game icons (`assets/k4/icons/<name>.svg`, tokens baked in).
 const Set<String> kGameIcons = {
   // Resource
-  'gold', 'pp', 'legit', 'popularity', 'tax',
+  'gold', 'silver', 'bronze', 'pp', 'legit', 'popularity', 'tax',
   // Good
   'grain', 'wine', 'iron', 'stone', 'salt', 'fish', 'spice', 'peat', 'contraband', 'wool', 'horse',
   // Branch

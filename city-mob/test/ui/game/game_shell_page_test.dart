@@ -93,6 +93,13 @@ void main() {
     expect(header, findsOneWidget);
   });
 
+  testWidgets('the gold chip shows the treasury as coins, never fractional gold', (tester) async {
+    await pump(tester, '/map');
+    final chip = find.byType(ResourceChip).first;
+    expect(find.descendant(of: chip, matching: find.byWidgetPredicate((w) => w is UnitText && w.text == '117 [gold] 4 [silver] 5 [bronze]')), findsOneWidget);
+    expect(find.descendant(of: chip, matching: find.byType(GameIcon)), findsNWidgets(4));
+  });
+
   testWidgets('no city header on the other tabs', (tester) async {
     await pump(tester, '/map');
     expect(find.text('map tab'), findsOneWidget);

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tron_api/tron_api.dart';
+import 'package:tron_nelkul/widgets/unit_text.dart';
 import 'package:tron_nelkul/app/di/di.dart';
 import 'package:tron_nelkul/domain/service/city_service.dart';
 import 'package:tron_nelkul/theme/tokens.dart';
@@ -72,7 +73,7 @@ void main() {
     final income = find.byKey(const ValueKey('city/expected-income'));
     expect(income, findsOneWidget);
     expect(find.descendant(of: income, matching: find.text('Várható bevétel a következő elszámoláskor')), findsOneWidget);
-    expect(find.descendant(of: income, matching: find.textContaining('+12,5', findRichText: true)), findsOneWidget);
+    expect(find.descendant(of: income, matching: find.byWidgetPredicate((w) => w is UnitText && w.text == '+12 [gold] 5 [silver]')), findsOneWidget);
     expect(tester.getTopLeft(income).dy, lessThan(tester.getTopLeft(find.text('VÉTEL A VÁROSTÓL (95% SZABAD)')).dy));
     expect(find.textContaining('Haszon ='), findsNothing);
     expect(find.textContaining('Kivásárlás:'), findsNothing);

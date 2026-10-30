@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.i18n;
 
+import com.hof.tronnelkul.game.engine.Money;
 import com.hof.tronnelkul.game.engine.Msg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,8 @@ import java.util.stream.Collectors;
 
 /**
  * Server-side text: resolves Msg values (engine, API errors, content names) from the i18n files of the default
- * language. Placeholders are {name}; an arg may be a Msg or Msg.Join, resolved recursively. A missing key is logged
+ * language. Placeholders are {name}; an arg may be a Msg or Msg.Join, resolved recursively, or a Money amount, written
+ * as a coin string with unit markers ("4 [gold] 3 [silver] 5 [bronze]"). A missing key is logged
  * and the key itself is returned.
  */
 @Component
@@ -45,13 +47,16 @@ public class Messages {
         return message.lowercase() ? template.toLowerCase(LOCALE) : template;
     }
 
-    /** An arg or name as text: Msg and Msg.Join are resolved, null is empty, anything else is toString. */
+    /** An arg or name as text: Msg and Msg.Join are resolved, Money becomes coins, null is empty, anything else is toString. */
     public String resolve(Object value) {
         if (value == null) {
             return "";
         }
         if (value instanceof Msg msg) {
             return text(msg);
+        }
+        if (value instanceof Money money) {
+            return money.text();
         }
         if (value instanceof Msg.Join join) {
             return join.parts().stream().map(this::resolve).collect(Collectors.joining(join.separator()));

@@ -32,7 +32,7 @@ class UnderworldSection extends StatelessWidget {
               cardTitle(context, 'city.underworld.spies'.tr(), '${cv.mySpies} / ${r.spiesPerCity}', 'hireSpy'),
               gap(4),
               UnitText(
-                'city.underworld.spies_status'.tr(namedArgs: {'free': '$free', 'guards': '${cv.myGuards}', 'upkeep': '${r.spyUpkeep}'}),
+                'city.underworld.spies_status'.tr(namedArgs: {'free': '$free', 'guards': '${cv.myGuards}', 'upkeep': coinText(r.spyUpkeep)}),
                 style: TnText.body(c.inkMuted).copyWith(fontSize: 13),
               ),
               Text(
@@ -48,7 +48,7 @@ class UnderworldSection extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     TnButton(
-                      label: 'city.underworld.hire'.tr(namedArgs: {'pp': '${cat.pp('hireSpy')}', 'gold': '${r.spyCost}'}),
+                      label: 'city.underworld.hire'.tr(namedArgs: {'pp': '${cat.pp('hireSpy')}', 'gold': coinText(r.spyCost)}),
                       art: 'hireSpy',
                       busy: s.busy,
                       onPressed: s.spiesFull ? null : () => bloc.add(const CitySpyHired()),
@@ -196,7 +196,7 @@ class UnderworldSection extends StatelessWidget {
                             children: [
                               TextSpan(text: o.seller.name, style: TnText.bodyStrong(c.ink).copyWith(fontSize: 14)),
                               ...unitSpans(
-                                ' ${'city.underworld.offer_text'.tr(namedArgs: {'house': o.of_.name, 'price': '${o.price}', 'time': at(o.executeAt), 'left': durText(s.until(o.executeAt))})}',
+                                ' ${'city.underworld.offer_text'.tr(namedArgs: {'house': o.of_.name, 'price': coinText(o.price), 'time': at(o.executeAt), 'left': durText(s.until(o.executeAt))})}',
                                 TnText.body(c.ink).copyWith(fontSize: 14),
                               ),
                             ],
@@ -208,7 +208,7 @@ class UnderworldSection extends StatelessWidget {
                           runSpacing: 8,
                           children: [
                             TnButton(
-                              label: 'city.underworld.accept'.tr(namedArgs: {'price': '${o.price}'}),
+                              label: 'city.underworld.accept'.tr(namedArgs: {'price': coinText(o.price)}),
                               art: 'gold',
                               small: true,
                               kind: TnButtonKind.primary,
@@ -270,7 +270,7 @@ class UnderworldSection extends StatelessWidget {
               hint(
                 context,
                 'city.underworld.debunk_hint'.tr(
-                  namedArgs: {'pop': '${r.debunkRewardPop}', 'gold': '${r.debunkRewardGold}', 'legit': '${r.debunkRewardLegit}'},
+                  namedArgs: {'pop': '${r.debunkRewardPop}', 'gold': coinText(r.debunkRewardGold), 'legit': '${r.debunkRewardLegit}'},
                 ),
               ),
             ],

@@ -173,7 +173,7 @@ void main() {
         setUp: () {
           when(() => service.saleDefaults(any(), 'i1')).thenReturn(('npc1', '10'));
           when(() => service.validBuyer(any(), 'i1', 'npc2')).thenReturn(true);
-          when(() => service.salePrice(any(), '25')).thenReturn(25);
+          when(() => service.salePrice(any(), '25')).thenReturn(2500);
         },
         build: build,
         act: (b) async {
@@ -190,13 +190,13 @@ void main() {
         verify: (b) {
           expect(b.state.sale, isNull);
           verify(() => game.add(any(that: isA<GameIntelOffered>()
-              .having((e) => [e.intelId, e.buyerId, e.price], 'offerId', ['i1', 'npc2', 25])
-              .having((e) => e.success, 'message', Tr('city.sale.offered', {'house': s.houseName('npc2'), 'price': '25'}))))).called(1);
+              .having((e) => [e.intelId, e.buyerId, e.price], 'offerId', ['i1', 'npc2', 2500])
+              .having((e) => e.success, 'message', Tr('city.sale.offered', {'house': s.houseName('npc2'), 'price': '25 [gold]'}))))).called(1);
         });
 
     blocTest<CityBloc, CityState>('accepting and declining offered intel',
         build: () {
-          final o = OfferView(id: 'of1', seller: s.houses[0], of_: s.houses[1], price: 12, executeAt: s.clock.now);
+          final o = OfferView(id: 'of1', seller: s.houses[0], of_: s.houses[1], price: 1200, executeAt: s.clock.now);
           whenListen(game, games.stream, initialState: view(s.copyWith(offers: [o])));
           return build();
         },

@@ -7,8 +7,14 @@ import java.util.*;
 /**
  * The full state of a game (rulebook v0.2). No Spring or JPA: the service layer stores it as a JSON document
  * in the `games.state` column. Timestamps are epoch ms on the game clock. Holds ids only, no display text.
+ * Money is whole bronze (1 gold = 100 bronze). A state written by an older version is upgraded on load (StateUpgrade).
  */
 public final class EngineState {
+    /** Version of the state format. 1: money in whole bronze (before it: decimal gold, no version field). */
+    public static final int CURRENT_VERSION = 1;
+
+    /** Format version; a JSON without it is from before version 1 and gets upgraded by StateUpgrade. */
+    public int version = CURRENT_VERSION;
     /** Processed time: maturing sheets and settlements have run up to here. */
     public long clock;
     public int settlements;
@@ -46,7 +52,8 @@ public final class EngineState {
         public boolean npc;
         /** "estate:<id>", or null (NPC networks are unrestricted). */
         public String estate;
-        public double gold;
+        /** Money in bronze. */
+        public long gold;
         public int pp, legit;
         public int lastInfoSale = -99;
         /** NPC: next sealing time (epoch ms, 0 = not planned). */
@@ -64,7 +71,8 @@ public final class EngineState {
         public Map<String, Integer> council = new LinkedHashMap<>();
         public Map<String, Integer> spies = new LinkedHashMap<>();
         public Map<String, Integer> guards = new LinkedHashMap<>();
-        public Double lastTaxPool;
+        /** The council parties' share of the latest tax, in bronze. */
+        public Long lastTaxPool;
     }
 
     public static final class Good {
@@ -73,11 +81,11 @@ public final class EngineState {
         public Map<String, String> margins = new LinkedHashMap<>();
         /** Sales of the last settlement; the City's key is "_city". */
         public Map<String, Double> sold = new LinkedHashMap<>();
-        /** Average profit per point over the last 3 settlements (for market value). */
+        /** Profit per point (bronze, unrounded) in the last 3 settlements (for market value). */
         public List<Double> history = new ArrayList<>();
     }
 
-    /** An order. Only the fields of its type are set. gold: gold reserved at sealing. */
+    /** An order. Only the fields of its type are set. gold: bronze reserved at sealing. */
     public static final class Order {
         public String id, type, city, good, level, target, template, newsId, sheetId, orderId, from, to;
         public int pts, gold;
@@ -94,6 +102,7 @@ public final class EngineState {
         public String id, player;
         public List<Order> orders = new ArrayList<>();
         public long sealedAt, executeAt;
+        /** pp and gold (bronze) reserved at sealing. */
         public int pp, gold;
     }
 
@@ -123,6 +132,7 @@ public final class EngineState {
     /** Information market (7.5): escrow, the buyer pays on acceptance. */
     public static final class Offer {
         public String id, intelId, seller, buyer;
+        /** In bronze. */
         public int price;
     }
 }

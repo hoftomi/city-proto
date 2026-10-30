@@ -2,40 +2,52 @@ package com.hof.tronnelkul.game.engine;
 
 import java.util.Arrays;
 
-/** Rulebook v0.2 – tunable parameters (chapter 11). Every number comes from here. Labels: i18n catalog.*. */
+/**
+ * Rulebook v0.2 – tunable parameters (chapter 11). Every number comes from here. Labels: i18n catalog.*.
+ * Money is whole bronze everywhere (1 gold = 10 silver = 100 bronze, {@link Money}).
+ */
 public final class Rules {
     private Rules() {}
 
     public static final int PP_PER_SETTLEMENT = 10, PP_MAX = 20, START_PP = 10;
-    public static final int START_GOLD = 30, NPC_GOLD = 80;
+    /** Starting money in bronze. */
+    public static final long START_GOLD = 3000, NPC_GOLD = 8000;
     /** Maturation time in minutes (Citizen mode). */
     public static final int MATURATION_MIN = 120;
-    /** Base price in gold per unit. The rulebook suggests 1 G; per the prototype the economy is too tight at 1 G. */
-    public static final int BASE_PRICE = 3;
+    /** Base price in bronze per unit (3 gold). The rulebook suggests 1 G; per the prototype the economy is too tight at 1 G. */
+    public static final int BASE_PRICE = 300;
 
     public static final double POP_BASE = 10, POP_DRIFT = 2, POP_SOFT_CAP = 60, POP_HOME = 20;
 
-    public static final int CITY_SHARE_COST = 3, MAX_SHARES_PER_ORDER = 10, BUYOUT_PROTECTION = 3;
+    /** CITY_SHARE_COST: bronze per point. */
+    public static final int CITY_SHARE_COST = 300, MAX_SHARES_PER_ORDER = 10, BUYOUT_PROTECTION = 3;
     public static final double BUYOUT_PREMIUM = 1.5;
     /** Margin (Market) and popularity of the City's own share (5.1). */
     public static final double CITY_MARGIN = 0.3, CITY_POP = 20;
-    /** Market value before any settlement, and its lower bound (per point). */
-    public static final double MARKET_VALUE_DEFAULT_PROFIT = 0.3, MARKET_VALUE_MIN = 2;
+    /** Profit per point (bronze) before any settlement, and the lower bound of the market value (bronze per point). */
+    public static final double MARKET_VALUE_DEFAULT_PROFIT = 30;
+    public static final long MARKET_VALUE_MIN = 200;
 
-    public static final int PARTY_COST = 40, COUNCIL_SEATS = 9, ELECTION_EVERY = 6;
+    /** PARTY_COST in bronze. */
+    public static final int PARTY_COST = 4000, COUNCIL_SEATS = 9, ELECTION_EVERY = 6;
     public static final double ELECTION_THRESHOLD = 0.05, DEFAULT_TAX = 0.2;
 
-    public static final int FESTIVAL_GOLD = 15, FESTIVAL_COOLDOWN = 3;
+    /** FESTIVAL_GOLD, NEWS_GOLD, DEBUNK_REWARD_GOLD in bronze. */
+    public static final int FESTIVAL_GOLD = 1500, FESTIVAL_COOLDOWN = 3;
     public static final double FESTIVAL_POP = 6;
-    public static final int NEWS_GOLD = 5, NEWS_TRUTH_WINDOW = 3;
+    public static final int NEWS_GOLD = 500, NEWS_TRUTH_WINDOW = 3;
     public static final double DEBUNK_PENALTY = 10, DEBUNK_REWARD_POP = 3;
-    public static final int DEBUNK_REWARD_GOLD = 10, DEBUNK_REWARD_LEGIT = 3;
+    public static final int DEBUNK_REWARD_GOLD = 1000, DEBUNK_REWARD_LEGIT = 3;
 
-    public static final int SPY_COST = 20, SPY_UPKEEP = 2, SPIES_PER_CITY = 3;
+    /** SPY_COST and SPY_UPKEEP (per spy per settlement) in bronze. */
+    public static final int SPY_COST = 2000, SPY_UPKEEP = 200, SPIES_PER_CITY = 3;
     public static final double GUARD_CHANCE = 0.25, GUARD_MAX = 0.75, CAUGHT_POP = 3;
 
-    public static final int ROUTE_COST = 3, ROUTE_UPKEEP = 1;
-    public static final int INFO_PRICE = 10, INFO_LEGIT = 1, INFO_LEGIT_EVERY = 3;
+    /** ROUTE_COST, ROUTE_UPKEEP and the information market prices in bronze. */
+    public static final int ROUTE_COST = 300, ROUTE_UPKEEP = 100;
+    public static final int INFO_PRICE = 1000, INFO_LEGIT = 1, INFO_LEGIT_EVERY = 3;
+    /** Allowed price of an information offer: 1 to 500 gold. */
+    public static final int INFO_PRICE_MIN = 100, INFO_PRICE_MAX = 50_000;
 
     public static final int SEAT_LEGIT = 1, MAJORITY_SEATS = 5, MAJORITY_LEGIT = 3, TOP_SELLER_LEGIT = 2, MOST_POPULAR_LEGIT = 2;
     public static final int CORONATION_LEGIT = 10;
@@ -92,7 +104,7 @@ public final class Rules {
         }
     }
 
-    /** Actions and their base cost (chapter 10). A null gold is computed (shares, buyout, defence). */
+    /** Actions and their base cost (chapter 10), gold in bronze. A null gold is computed (shares, buyout, defence). */
     public enum Action {
         ROUTE("route", 1, ROUTE_COST, "common"),
         MARGIN("margin", 1, 0, "trade"),

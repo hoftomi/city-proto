@@ -31,7 +31,11 @@ public final class Engine {
         this.map = map; this.state = state; this.rng = new SplittableRandom(seed);
     }
 
+    /** Rounds a non-money value (popularity, sold units) to one decimal. Money is whole bronze: {@link #bronze(double)}. */
     static double r1(double value) { return Math.round(value * 10) / 10.0; }
+
+    /** A computed amount of money rounded to whole bronze. */
+    static long bronze(double value) { return Math.round(value); }
 
     /** A house's name (stored text), or a Msg for an unknown house. */
     public Object name(String player) {
@@ -114,11 +118,11 @@ public final class Engine {
 
     public static int cityShare(Good good) { return Math.max(0, 100 - good.shares.values().stream().mapToInt(Integer::intValue).sum()); }
 
-    /** Market value of a point: average profit per point over the last 3 settlements × 10 (5.4). */
-    public static double marketValue(Good good) {
+    /** Market value of a point in bronze: average profit per point over the last 3 settlements × 10 (5.4). */
+    public static long marketValue(Good good) {
         List<Double> recent = good.history.subList(Math.max(0, good.history.size() - 3), good.history.size());
         double avg = recent.isEmpty() ? Rules.MARKET_VALUE_DEFAULT_PROFIT : recent.stream().mapToDouble(Double::doubleValue).average().orElse(0);
-        return Math.max(Rules.MARKET_VALUE_MIN, r1(avg * 10));
+        return Math.max(Rules.MARKET_VALUE_MIN, bronze(avg * 10));
     }
 
     /** Seat-weighted average of the council parties' program rates; 20% without a council (6.2). */
@@ -189,11 +193,11 @@ public final class Engine {
         Good good = cs == null || order.good == null ? null : cs.goods.get(order.good);
         switch (action) {
             case BUY_SHARES -> gold = Rules.CITY_SHARE_COST * order.pts;
-            case BUYOUT -> gold = good == null ? 0 : Math.ceil(marketValue(good) * order.pts * Rules.BUYOUT_PREMIUM);
+            case BUYOUT -> gold = good == null ? 0 : marketValue(good) * order.pts * Rules.BUYOUT_PREMIUM;
             case DEFEND -> {
                 Order bo = buyoutAgainst(player, order.sheetId, order.orderId).orElse(null);
                 Good bg = bo == null ? null : cs.goods.get(bo.good);
-                gold = bg == null ? 0 : Math.ceil(marketValue(bg) * bo.pts);
+                gold = bg == null ? 0 : marketValue(bg) * bo.pts;
             }
             case FESTIVAL -> {
                 if (isCampaign()) {
@@ -202,7 +206,7 @@ public final class Engine {
             }
             default -> {}
         }
-        return new Cost(action.pp, (int) Math.round(gold));
+        return new Cost(action.pp, Math.toIntExact(bronze(gold)));
     }
 
     public Cost draftCost(String player) {
@@ -235,7 +239,7 @@ public final class Engine {
             case MOVE_SPY -> Msg.of("engine.order.moveSpy", "from", cn, "to", cityName(order.to));
             default -> Msg.of("engine.order.other", "action", action.label(), "city", cn);
         };
-        return depth >= 3 ? Msg.of("engine.order.with_cost", "order", txt, "gold", order.gold) : txt;
+        return depth >= 3 ? Msg.of("engine.order.with_cost", "order", txt, "gold", Money.of(order.gold)) : txt;
     }
 
     /** The scouted orders of an intel at its depth. */
@@ -437,7 +441,7 @@ public final class Engine {
             throw new EngineException(err("not_enough_pp", "need", drafted.pp() + add.pp(), "have", ps.pp));
         }
         if (drafted.gold() + add.gold() > ps.gold) {
-            throw new EngineException(err("not_enough_gold", "need", drafted.gold() + add.gold(), "have", (int) ps.gold));
+            throw new EngineException(err("not_enough_gold", "need", Money.of(drafted.gold() + add.gold()), "have", Money.of(ps.gold)));
         }
         state.draftOf(player).removeAll(replaced);
         order.id = state.nextId("o");
@@ -471,14 +475,14 @@ public final class Engine {
             throw new EngineException(err("not_enough_pp", "need", total.pp(), "have", ps.pp));
         }
         if (total.gold() > ps.gold) {
-            throw new EngineException(err("not_enough_gold", "need", total.gold(), "have", (int) ps.gold));
+            throw new EngineException(err("not_enough_gold", "need", Money.of(total.gold()), "have", Money.of(ps.gold)));
         }
         return pushSheet(player, new ArrayList<>(draft), now, now + maturationMin * 60_000L, total, draft::clear);
     }
 
     private Sheet pushSheet(String player, List<Order> orders, long sealedAt, long executeAt, Cost cost, Runnable after) {
         PlayerSt ps = state.players.get(player);
-        ps.pp -= cost.pp(); ps.gold = r1(ps.gold - cost.gold());
+        ps.pp -= cost.pp(); ps.gold -= cost.gold();
         Sheet sheet = new Sheet();
         sheet.id = state.nextId("L"); sheet.player = player; sheet.orders = orders; sheet.sealedAt = sealedAt; sheet.executeAt = executeAt;
         sheet.pp = cost.pp(); sheet.gold = cost.gold();
@@ -512,8 +516,8 @@ public final class Engine {
         if (it.offeredTo.contains(buyer)) {
             throw new EngineException(err("already_offered"));
         }
-        if (price < 1 || price > 500) {
-            throw new EngineException(err("price_range", "min", 1, "max", 500));
+        if (price < Rules.INFO_PRICE_MIN || price > Rules.INFO_PRICE_MAX) {
+            throw new EngineException(err("price_range", "min", Money.of(Rules.INFO_PRICE_MIN), "max", Money.of(Rules.INFO_PRICE_MAX)));
         }
         it.offeredTo.add(buyer);
         PlayerSt buyerState = state.players.get(buyer);
@@ -522,14 +526,14 @@ public final class Engine {
             if (price <= Rules.INFO_PRICE * 1.5 && buyerState.gold >= price) {
                 completeSale(it, seller, buyer, price);
             } else {
-                report(seller, "spy", null, title("intel_rejected", "house", name(buyer)), text("intel_rejected", "price", price), "warn", state.clock);
+                report(seller, "spy", null, title("intel_rejected", "house", name(buyer)), text("intel_rejected", "price", Money.of(price)), "warn", state.clock);
             }
             return;
         }
         Offer offer = new Offer();
         offer.id = state.nextId("f"); offer.intelId = it.id; offer.seller = seller; offer.buyer = buyer; offer.price = price;
         state.offers.add(offer);
-        report(buyer, "spy", null, title("intel_offer", "house", name(seller)), text("intel_offer", "of", name(it.of), "price", price), "info", state.clock);
+        report(buyer, "spy", null, title("intel_offer", "house", name(seller)), text("intel_offer", "of", name(it.of), "price", Money.of(price)), "info", state.clock);
     }
 
     public void acceptOffer(String buyer, String offerId) {
@@ -537,7 +541,7 @@ public final class Engine {
         Intel it = state.intel.stream().filter(intel -> intel.id.equals(offer.intelId)).findFirst().orElse(null);
         if (it == null || sheet(it.sheetId).isEmpty()) { state.offers.remove(offer); throw new EngineException(err("offer_expired")); }
         if (state.players.get(buyer).gold < offer.price) {
-            throw new EngineException(err("not_enough_gold_offer", "need", offer.price));
+            throw new EngineException(err("not_enough_gold_offer", "need", Money.of(offer.price)));
         }
         state.offers.remove(offer);
         completeSale(it, offer.seller, buyer, offer.price);
@@ -556,7 +560,7 @@ public final class Engine {
 
     private void completeSale(Intel it, String seller, String buyer, int price) {
         PlayerSt sp = state.players.get(seller), bp = state.players.get(buyer);
-        bp.gold = r1(bp.gold - price); sp.gold = r1(sp.gold + price);
+        bp.gold -= price; sp.gold += price;
         Intel copy = new Intel();
         copy.id = state.nextId("i"); copy.owner = buyer; copy.sheetId = it.sheetId; copy.of = it.of; copy.executeAt = it.executeAt;
         copy.orders = it.orders.stream().map(Order::copy).collect(Collectors.toCollection(ArrayList::new)); copy.depth = it.depth; copy.bought = true;
@@ -568,9 +572,9 @@ public final class Engine {
             sp.legit += Rules.INFO_LEGIT; sp.lastInfoSale = state.settlements; bonus = Msg.of("engine.report.intel_sold.bonus", "legit", Rules.INFO_LEGIT);
         }
         report(seller, "spy", null, title("intel_sold", "house", name(buyer)),
-            text("intel_sold", "buyer", name(buyer), "price", price, "of", name(it.of), "bonus", bonus), "ok", state.clock);
+            text("intel_sold", "buyer", name(buyer), "price", Money.of(price), "of", name(it.of), "bonus", bonus), "ok", state.clock);
         report(buyer, "spy", depthConfidence(it.depth), title("plans", "house", name(it.of), "time", Time.fmt(it.executeAt)),
-            text("intel_bought", "lines", Msg.join(" · ", intelLines(it)), "price", price, "seller", name(seller)), "info", state.clock);
+            text("intel_bought", "lines", Msg.join(" · ", intelLines(it)), "price", Money.of(price), "seller", name(seller)), "info", state.clock);
     }
 
     // ---------- Time (3.1–3.2) ----------
@@ -651,7 +655,7 @@ public final class Engine {
             }
             Msg invalid = validate(player, order);
             if (invalid != null) {
-                ps.gold = r1(ps.gold + order.gold); // gold is refunded, PP is not
+                ps.gold += order.gold; // gold is refunded, PP is not
                 report(player, "faction", null, title("order_failed", "action", Action.of(order.type).label()), text("order_failed", "reason", invalid), "warn", now);
                 continue;
             }
@@ -745,10 +749,10 @@ public final class Engine {
                     addPop(news.city, news.target, -news.effect);
                     addPop(news.city, news.author, -Rules.DEBUNK_PENALTY);
                     addPop(news.city, player, Rules.DEBUNK_REWARD_POP);
-                    ps.gold = r1(ps.gold + Rules.DEBUNK_REWARD_GOLD); ps.legit += Rules.DEBUNK_REWARD_LEGIT;
+                    ps.gold += Rules.DEBUNK_REWARD_GOLD; ps.legit += Rules.DEBUNK_REWARD_LEGIT;
                     publicReport("spy", title("debunk", "author", name(news.author)),
                         text("debunk", "news", newsText(news), "author", name(news.author), "penalty", fmt(Rules.DEBUNK_PENALTY), "house", name(player),
-                            "gold", Rules.DEBUNK_REWARD_GOLD, "legit", Rules.DEBUNK_REWARD_LEGIT), "ok");
+                            "gold", Money.of(Rules.DEBUNK_REWARD_GOLD), "legit", Rules.DEBUNK_REWARD_LEGIT), "ok");
                 }
             }
         }
@@ -772,7 +776,7 @@ public final class Engine {
             state.events.add(used);
         }
         if (done || sealed) {
-            state.players.get(player).gold = r1(state.players.get(player).gold + order.gold);
+            state.players.get(player).gold += order.gold;
             report(player, "faction", null, title("buyout_failed"), text("buyout_failed", "target", name(order.target)), "warn", now);
             report(order.target, "faction", null, title("buyout_defended"), text("buyout_defended", "house", name(player)), "ok", now);
             return;
@@ -783,16 +787,16 @@ public final class Engine {
         }
         good.shares.merge(player, order.pts, Integer::sum); good.margins.putIfAbsent(player, Margin.MARKET.id);
         PlayerSt tp = state.players.get(order.target);
-        tp.gold = r1(tp.gold + order.gold);
+        tp.gold += order.gold;
         state.protection.put(order.city + "|" + order.good + "|" + order.target, state.settlements + Rules.BUYOUT_PROTECTION);
         MarketEvent buyoutEvent = new MarketEvent();
         buyoutEvent.type = "buyout"; buyoutEvent.city = order.city; buyoutEvent.good = order.good; buyoutEvent.by = player; buyoutEvent.target = order.target;
         buyoutEvent.settlement = state.settlements;
         state.events.add(buyoutEvent);
         report(player, "faction", null, title("buyout_done", "target", name(order.target)),
-            text("buyout_done", "pts", order.pts, "good", goodLower(order.good), "gold", order.gold, "target", name(order.target), "turns", Rules.BUYOUT_PROTECTION), "ok", now);
+            text("buyout_done", "pts", order.pts, "good", goodLower(order.good), "gold", Money.of(order.gold), "target", name(order.target), "turns", Rules.BUYOUT_PROTECTION), "ok", now);
         report(order.target, "faction", null, title("bought_out", "house", name(player)),
-            text("bought_out", "pts", order.pts, "good", goodLower(order.good), "city", cityName(order.city), "gold", order.gold), "danger", now);
+            text("bought_out", "pts", order.pts, "good", goodLower(order.good), "city", cityName(order.city), "gold", Money.of(order.gold)), "danger", now);
     }
 
     private void spy(String player, Order order, CitySt cs) {
@@ -885,10 +889,10 @@ public final class Engine {
     }
 
     /**
-     * A player's expected gold from selling in a city at the next settlement, from the current state: the sales profit
+     * A player's expected income in bronze from selling in a city at the next settlement, from the current state: the sales profit
      * after the city's tax (5.3, 6.2). Null if the player holds no shares there.
      */
-    public Double expectedIncome(String city, String player) {
+    public Long expectedIncome(String city, String player) {
         CitySt cs = state.cities.get(city);
         if (cs == null || cs.goods.values().stream().noneMatch(good -> good.shares.getOrDefault(player, 0) > 0)) {
             return null;
@@ -902,11 +906,11 @@ public final class Engine {
             }
         }
         int totalSeats = cs.council.values().stream().mapToInt(Integer::intValue).sum();
-        return r1(profit * (totalSeats > 0 ? 1 - taxRate(city) : 1));
+        return bronze(profit * (totalSeats > 0 ? 1 - taxRate(city) : 1));
     }
 
     void settle() {
-        Map<String, double[]> inc = new LinkedHashMap<>(); // player → [gold, legit]
+        Map<String, double[]> inc = new LinkedHashMap<>(); // player → [bronze, legit]; the bronze is rounded once at the end
         state.players.keySet().forEach(player -> inc.put(player, new double[2]));
         for (var ce : state.cities.entrySet()) {
             String city = ce.getKey();
@@ -955,7 +959,7 @@ public final class Engine {
                     }
                 });
             }
-            cs.lastTaxPool = totalSeats > 0 ? r1(pool) : null;
+            cs.lastTaxPool = totalSeats > 0 ? bronze(pool) : null;
             // Effect of programs on popularity
             cs.parties.forEach((player, prog) -> addPop(city, player, Program.of(prog).pop));
             // Legitimacy: seats, majority, most popular
@@ -987,11 +991,12 @@ public final class Engine {
         state.settlements += 1;
         state.players.forEach((player, ps) -> {
             double[] income = inc.get(player);
-            ps.gold = Math.max(0, r1(ps.gold + income[0]));
+            long gain = bronze(income[0]);
+            ps.gold = Math.max(0, ps.gold + gain);
             ps.legit += (int) income[1];
             ps.pp = Math.min(Rules.PP_MAX, ps.pp + Rules.PP_PER_SETTLEMENT);
             report(player, "event", null, title("settlement", "time", Time.fmt(state.clock)),
-                text("settlement", "income", (income[0] >= 0 ? "+" : "") + fmt(r1(income[0])), "legit", (int) income[1], "pp", Rules.PP_PER_SETTLEMENT), "info", state.clock);
+                text("settlement", "income", Money.signed(gain), "legit", (int) income[1], "pp", Rules.PP_PER_SETTLEMENT), "info", state.clock);
         });
         state.events.removeIf(event -> state.settlements - event.settlement > 10);
         if (state.news.size() > 60) {
@@ -1079,7 +1084,7 @@ public final class Engine {
             }
             List<Order> orders = new ArrayList<>();
             int[] pp = { house.pp };
-            double[] gold = { house.gold };
+            long[] gold = { house.gold };
             java.util.function.Consumer<Order> push = order -> {
                 if (validate(house.id, order) != null) {
                     return;
@@ -1155,7 +1160,7 @@ public final class Engine {
                 case "politician" -> {
                     for (String city : cities) {
                         CitySt cs = state.cities.get(city);
-                        if (!cs.parties.containsKey(house.id) && gold[0] > 60) {
+                        if (!cs.parties.containsKey(house.id) && gold[0] > Rules.PARTY_COST * 3 / 2) {
                             push.accept(order("foundParty", city, draft -> {
                             }));
                         }

@@ -146,7 +146,7 @@ public class GameViewService {
 
         ClockView clock = new ClockView(Instant.ofEpochMilli(state.clock), Instant.ofEpochMilli(Time.nextSettlement(state.clock)), state.settlements,
             GameEntity.maxSettlements(), engine.nextElectionIn(), engine.isCampaign(), GameEntity.MATURATION_MINUTES);
-        Me meDto = new Me(me, ps.name, ps.background, ps.estate, ps.pp, Rules.PP_MAX, Math.round(ps.gold * 10) / 10.0, ps.legit);
+        Me meDto = new Me(me, ps.name, ps.background, ps.estate, ps.pp, Rules.PP_MAX, ps.gold, ps.legit);
         return new GameState(game.getId(), game.getName(), game.getMapId(), game.getStatus().apiId, clock, meDto, routes, buildable, cities, draft,
             new Cost(draftCost.pp(), draftCost.gold()), sheet, rivalSheets, threats, intel, offers, houses, catalog);
     }

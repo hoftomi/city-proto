@@ -40,7 +40,9 @@ void main() {
     expect(s.cities.first.cardEyebrow, 'Gabonavidék · 1 lépés');
     expect(s.cities[2].cardEyebrow, 'Kikötőváros · kulcsváros');
     expect(Cost(pp: 2, gold: 0).text, '2 [pp]');
-    expect(Cost(pp: 1, gold: 3).text, '1 [pp] · 3 [gold]');
+    expect(Cost(pp: 1, gold: 300).text, '1 [pp] · 3 [gold]');
+    expect(Cost(pp: 1, gold: 435).text, '1 [pp] · 4 [gold] 3 [silver] 5 [bronze]');
+    expect(Cost(pp: 0, gold: 35).text, '3 [silver] 5 [bronze]');
     expect(s.draft.first.meta, 'Szélmező · Városháza');
     expect(s.sheet!.orders.first.meta, 'Közös');
     expect(s.sheet!.orders.first.sheetLabel, 'Útvonal kiépítése: Szélmező → Feketerév');
@@ -69,7 +71,7 @@ void main() {
     expect(s.defendOnlyInDraft(t), isFalse);
     final d = s.copyWith(draft: [
       ...s.draft,
-      OrderView(id: 'd', type: 'defend', branch: 'trade', label: 'Védekezés', cityId: 'szelmezo', cityName: 'Szélmező', goodId: null, level: null, cost: Cost(pp: 1, gold: 62), warning: null),
+      OrderView(id: 'd', type: 'defend', branch: 'trade', label: 'Védekezés', cityId: 'szelmezo', cityName: 'Szélmező', goodId: null, level: null, cost: Cost(pp: 1, gold: 6200), warning: null),
     ]);
     expect(d.defendOnlyInDraft(t), isTrue);
   });

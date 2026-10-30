@@ -94,7 +94,9 @@ class NewsRow extends StatelessWidget {
 /// Expected gold from selling in this city at the next settlement (after tax), above the city view.
 class ExpectedIncomeCard extends StatelessWidget {
   const ExpectedIncomeCard(this.gold, {super.key});
-  final double gold;
+
+  /// In whole bronze.
+  final int gold;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,7 @@ class ExpectedIncomeCard extends StatelessWidget {
       child: Row(children: [
         Expanded(child: Text('city.market.expected_income'.tr(), style: TnText.body(c.inkMuted).copyWith(fontSize: 14))),
         const SizedBox(width: 8),
-        UnitText('${incomeText(gold)} [gold]', style: TnText.data(c.ink, size: 15, weight: FontWeight.w900)),
+        UnitText(coinText(gold, signed: true), style: TnText.data(c.ink, size: 15, weight: FontWeight.w900)),
       ]),
     );
   }

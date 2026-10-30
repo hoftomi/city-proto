@@ -44,7 +44,7 @@ class TownHallSection extends StatelessWidget {
               UnitText(
                 [
                   'city.town_hall.tax'.tr(namedArgs: {'percent': '${cv.taxPercent}'}),
-                  if (cv.lastTaxPool != null) 'city.town_hall.tax_pool'.tr(namedArgs: {'gold': numText(cv.lastTaxPool!)}),
+                  if (cv.lastTaxPool != null) 'city.town_hall.tax_pool'.tr(namedArgs: {'gold': coinText(cv.lastTaxPool!)}),
                 ].join(' · '),
                 style: TnText.body(c.inkMuted).copyWith(fontSize: 13),
               ),
@@ -88,7 +88,7 @@ class TownHallSection extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TnButton(
-                      label: 'city.town_hall.found_party'.tr(namedArgs: {'pp': '${cat.pp('foundParty')}', 'gold': '${r.partyCost}'}),
+                      label: 'city.town_hall.found_party'.tr(namedArgs: {'pp': '${cat.pp('foundParty')}', 'gold': coinText(r.partyCost)}),
                       art: 'foundParty',
                       kind: TnButtonKind.primary,
                       busy: s.busy,
@@ -111,7 +111,7 @@ class TownHallSection extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: TnButton(
                       label: 'city.town_hall.festival'.tr(
-                        namedArgs: {'pp': '${cat.pp('festival')}', 'gold': '${r.festivalGold * camp}', 'pop': '${r.festivalPop * camp}'},
+                        namedArgs: {'pp': '${cat.pp('festival')}', 'gold': coinText(r.festivalGold * camp), 'pop': '${r.festivalPop * camp}'},
                       ),
                       art: 'festival',
                       busy: s.busy,
@@ -156,7 +156,7 @@ class _NewsComposer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Eyebrow('city.town_hall.compose_title'.tr(namedArgs: {'pp': '${cat.pp('news')}', 'gold': '${s.rules.newsGold}'}), art: 'news'),
+          Eyebrow('city.town_hall.compose_title'.tr(namedArgs: {'pp': '${cat.pp('news')}', 'gold': coinText(s.rules.newsGold)}), art: 'news'),
           gap(8),
           TnSelect<String>(
             label: 'city.town_hall.claim'.tr(),

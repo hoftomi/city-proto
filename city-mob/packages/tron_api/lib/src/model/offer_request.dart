@@ -37,6 +37,7 @@ class OfferRequest {
 
 
 
+      /// In bronze (1 gold = 100 bronze), 100–50000; null: the default information price.
   @JsonKey(
     
     name: r'price',

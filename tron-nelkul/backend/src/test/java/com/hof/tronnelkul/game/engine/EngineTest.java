@@ -62,11 +62,11 @@ class EngineTest {
         salt.shares.put("a", 50); salt.margins.put("a", "expensive");
         salt.shares.put("b", 30); salt.margins.put("b", "cheap");
         cs.pop.put("a", 30.0); cs.pop.put("b", 50.0);
-        double expected = engine.expectedIncome("feketerev", "a");
+        long expected = engine.expectedIncome("feketerev", "a");
         assertNull(engine.expectedIncome("szelmezo", "a"), "no shares there");
         assertEquals(Map.of(), salt.sold, "the projection does not touch the state");
         engine.settle();
-        assertEquals(salt.sold.get("a") * Rules.BASE_PRICE * Rules.Margin.EXPENSIVE.rate, expected, 0.2);
+        assertEquals(salt.sold.get("a") * Rules.BASE_PRICE * Rules.Margin.EXPENSIVE.rate, expected, 20, "in bronze; sold is rounded to 0.1 unit");
     }
 
     @Test
@@ -75,9 +75,58 @@ class EngineTest {
         PlayerSt house = new PlayerSt(); house.id = "a"; house.name = "a"; house.npc = true; engine.state.players.put("a", house);
         CitySt cs = engine.state.cities.get("feketerev");
         cs.goods.get("salt").shares.put("a", 50);
-        double untaxed = engine.expectedIncome("feketerev", "a");
+        long untaxed = engine.expectedIncome("feketerev", "a");
         cs.council.put("a", 9);
-        assertEquals(untaxed * (1 - engine.taxRate("feketerev")), engine.expectedIncome("feketerev", "a"), 0.11);
+        assertEquals(untaxed * (1 - engine.taxRate("feketerev")), engine.expectedIncome("feketerev", "a"), 1);
+    }
+
+    @Test
+    void costsAreWholeBronze() {
+        Engine engine = game();
+        join(engine, "a", Background.MERCHANT, "grain");
+        join(engine, "b", Background.MERCHANT, "grain");
+        Good grain = engine.state.cities.get("szelmezo").goods.get("grain");
+        grain.history.addAll(java.util.List.of(33.3, 41.7, 29.9));
+        assertEquals(350, Engine.marketValue(grain), "average profit per point × 10, rounded to bronze");
+        Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 3;
+        assertEquals(1575, engine.cost("a", bo).gold(), "350 × 3 × 1.5");
+        Order buy = order("buyShares", "szelmezo"); buy.good = "grain"; buy.pts = 4;
+        assertEquals(4 * Rules.CITY_SHARE_COST, engine.cost("a", buy).gold());
+        grain.history.clear();
+        assertEquals(Math.round(Rules.MARKET_VALUE_DEFAULT_PROFIT * 10), Engine.marketValue(grain), "before any settlement: the default profit");
+        grain.history.add(5.0);
+        assertEquals(Rules.MARKET_VALUE_MIN, Engine.marketValue(grain), "never below the minimum");
+    }
+
+    @Test
+    void settlementPaysWholeBronzeAndReportsCoins() {
+        Engine engine = game();
+        join(engine, "a", Background.MERCHANT, "grain");
+        CitySt cs = engine.state.cities.get("szelmezo");
+        cs.parties.put("a", "medium"); cs.council.put("a", 9);
+        long before = engine.state.players.get("a").gold;
+        engine.settle();
+        long gain = engine.state.players.get("a").gold - before;
+        assertNotNull(cs.lastTaxPool);
+        assertTrue(cs.lastTaxPool > 0, "the merchant paid tax");
+        ReportOut settlement = engine.out.stream().filter(report -> "a".equals(report.playerId()) && report.text().key().equals("engine.report.settlement.text"))
+            .findFirst().orElseThrow();
+        String text = MESSAGES.text(settlement.text());
+        assertTrue(text.startsWith("Bevétel: " + Money.signed(gain).text() + " ("), text);
+        assertTrue(text.matches("Bevétel: [+\u2212]\\d+ \\[(gold|silver|bronze)].*"), text);
+        assertFalse(text.contains("arany"), text);
+    }
+
+    @Test
+    void moneyTextsUseCoins() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        engine.state.players.get("te").gold = 250;
+        Order spy = order("hireSpy", "szelmezo");
+        EngineException ex = assertThrows(EngineException.class, () -> engine.addDraft("te", spy));
+        assertEquals("Nincs elég pénzed: 20 [gold] kellene, 2 [gold] 5 [silver] van.", MESSAGES.text(ex.msg()));
+        Order route = order("route", null); route.from = "szelmezo"; route.to = "feketerev"; route.gold = 435;
+        assertEquals(MESSAGES.text(engine.orderLabel(route, 2)) + " (4 [gold] 3 [silver] 5 [bronze])", MESSAGES.text(engine.orderLabel(route, 3)));
     }
 
     @Test
@@ -99,14 +148,14 @@ class EngineTest {
         engine.advance(START + 121 * MIN, 120, 28);
         assertTrue(engine.hasRoute("te", "szelmezo", "feketerev"));
         assertEquals(10 - 1, engine.state.players.get("te").pp);
-        assertEquals(30 - 3, engine.state.players.get("te").gold, 0.001);
+        assertEquals(Rules.START_GOLD - Rules.ROUTE_COST, engine.state.players.get("te").gold);
     }
 
     @Test
     void onlyOneMaturingSheet() {
         Engine engine = game();
         join(engine, "te", null, null);
-        engine.state.players.get("te").gold = 100;
+        engine.state.players.get("te").gold = 10_000;
         engine.addDraft("te", order("hireSpy", "szelmezo"));
         engine.seal("te", START, 120);
         engine.addDraft("te", order("hireSpy", "szelmezo"));
@@ -119,20 +168,20 @@ class EngineTest {
         Engine engine = game();
         join(engine, "a", Background.MERCHANT, "grain");
         join(engine, "b", Background.MERCHANT, "grain");
-        engine.state.players.get("a").gold = 200;
+        engine.state.players.get("a").gold = 20_000;
         Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
         engine.addDraft("a", bo);
         Sheet attack = engine.seal("a", START, 120);
         // B seals an hour later: its sheet would run after the offer, but it defends while maturing
         Order defence = order("defend", "szelmezo"); defence.sheetId = attack.id; defence.orderId = attack.orders.get(0).id;
-        engine.state.players.get("b").gold = 200;
+        engine.state.players.get("b").gold = 20_000;
         engine.addDraft("b", defence);
         engine.seal("b", START + 60 * MIN, 120);
         engine.advance(START + 200 * MIN, 120, 28);
         Good good = engine.state.cities.get("szelmezo").goods.get("grain");
         assertEquals(20, good.shares.get("b"));
         assertEquals(20, good.shares.get("a"));
-        assertEquals(200, engine.state.players.get("a").gold, 0.001, "the price of the foiled offer is refunded");
+        assertEquals(20_000, engine.state.players.get("a").gold, "the price of the foiled offer is refunded");
     }
 
     @Test
@@ -140,7 +189,7 @@ class EngineTest {
         Engine engine = game();
         join(engine, "a", Background.MERCHANT, "grain");
         join(engine, "b", Background.MERCHANT, "grain");
-        engine.state.players.get("a").gold = 200;
+        engine.state.players.get("a").gold = 20_000;
         Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
         Order added = engine.addDraft("a", bo).orElseThrow();
         engine.seal("a", START, 120);
@@ -148,7 +197,7 @@ class EngineTest {
         Good good = engine.state.cities.get("szelmezo").goods.get("grain");
         assertEquals(25, good.shares.get("a"));
         assertEquals(15, good.shares.get("b"));
-        assertEquals(30 + added.gold, engine.state.players.get("b").gold, 0.001);
+        assertEquals(Rules.START_GOLD + added.gold, engine.state.players.get("b").gold);
         assertTrue(engine.isProtected("szelmezo", "grain", "b"));
         assertTrue(engine.newsTruth("szelmezo", "boughtOut", "a", null));
     }
@@ -238,7 +287,7 @@ class EngineTest {
         Engine engine = game();
         join(engine, "target", Background.MERCHANT, "grain");
         join(engine, "spy", Background.SHADOW, null);
-        engine.state.players.get("target").gold = 100;
+        engine.state.players.get("target").gold = 10_000;
         engine.addDraft("target", order("hireSpy", "delkapu"));
         Order margin = order("margin", "szelmezo"); margin.good = "grain"; margin.level = "expensive";
         engine.addDraft("target", margin);

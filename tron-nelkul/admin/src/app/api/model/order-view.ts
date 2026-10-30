@@ -11,7 +11,7 @@ import { Cost } from './cost';
 
 
 /**
- * branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [pop], [legit] (rendered as icons by the client).
+ * branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [silver], [bronze], [pop], [legit] (rendered as icons by the client); money is written as coins, e.g. 4 [gold] 3 [silver] 5 [bronze].
  */
 export interface OrderView { 
     id: string;

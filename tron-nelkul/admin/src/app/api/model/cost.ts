@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * gold: in bronze (1 gold = 100 bronze).
+ */
 export interface Cost { 
     pp: number;
     gold: number;

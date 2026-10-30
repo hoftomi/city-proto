@@ -61,8 +61,8 @@ class OrdersPage extends StatelessWidget {
               Wrap(alignment: WrapAlignment.spaceBetween, spacing: 12, runSpacing: 4, children: [
                 Text.rich(TextSpan(style: TnText.caption(c.inkMuted), children: [
                   TextSpan(text: '${'orders.reserved_gold'.tr()} '),
-                  TextSpan(text: '${s.draftCost.gold}', style: TnText.data(s.overGold ? c.danger : c.ink)),
-                  ...unitSpans(' ${'orders.gold_of'.tr(namedArgs: {'total': '${s.me.gold.floor()}'})}', TnText.caption(c.inkMuted)),
+                  ...unitSpans(coinText(s.draftCost.gold), TnText.data(s.overGold ? c.danger : c.ink)),
+                  ...unitSpans(' ${'orders.gold_of'.tr(namedArgs: {'total': coinText(s.me.gold)})}', TnText.caption(c.inkMuted)),
                 ])),
                 Text('orders.maturation'.tr(namedArgs: {'time': s.maturationText}), style: TnText.caption(c.inkMuted)),
               ]),
@@ -97,7 +97,7 @@ class _ThreatCard extends StatelessWidget {
         Eyebrow('orders.threat.eyebrow'.tr(namedArgs: {'at': at, 'left': left})),
         const SizedBox(height: 4),
         Text('orders.threat.title'.tr(namedArgs: {'name': t.by.name}), style: TnText.bodyStrong(c.ink)),
-        UnitText('orders.threat.body'.tr(namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'city': t.cityName, 'cost': '${t.defendCost}'}), style: TnText.body(c.inkMuted)),
+        UnitText('orders.threat.body'.tr(namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'city': t.cityName, 'cost': coinText(t.defendCost)}), style: TnText.body(c.inkMuted)),
         const SizedBox(height: 8),
         Row(children: [
           TnButton(

@@ -142,6 +142,7 @@ class AdminHouse {
 
 
 
+      /// Money in bronze (1 gold = 100 bronze).
   @JsonKey(
     
     name: r'gold',
@@ -150,7 +151,7 @@ class AdminHouse {
   )
 
 
-  final double? gold;
+  final int? gold;
 
 
 

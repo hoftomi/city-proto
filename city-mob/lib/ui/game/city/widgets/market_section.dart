@@ -43,7 +43,7 @@ class MarketSection extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TnButton(
-                      label: 'city.market.defend'.tr(namedArgs: {'pp': '${s.catalog.pp('defend')}', 'gold': '${t.defendCost}'}),
+                      label: 'city.market.defend'.tr(namedArgs: {'pp': '${s.catalog.pp('defend')}', 'gold': coinText(t.defendCost)}),
                       art: 'defend',
                       kind: TnButtonKind.danger,
                       busy: s.busy,
@@ -85,7 +85,7 @@ class _GoodCard extends StatelessWidget {
             children: [
               ArtTitle(g.name, art: g.id, artSize: 30),
               UnitText(
-                'city.market.good_stats'.tr(namedArgs: {'supply': '${g.supply}', 'demand': '${g.demand}', 'value': numText(g.marketValue)}),
+                'city.market.good_stats'.tr(namedArgs: {'supply': '${g.supply}', 'demand': '${g.demand}', 'value': coinText(g.marketValue)}),
                 style: TnText.data(c.inkMuted, size: 12),
               ),
             ],
@@ -140,7 +140,7 @@ class _GoodCard extends StatelessWidget {
                   ),
                 ),
                 TnButton(
-                  label: 'city.market.buy'.tr(namedArgs: {'pp': '${cat.pp('buyShares')}', 'gold': '${p.buyCost}'}),
+                  label: 'city.market.buy'.tr(namedArgs: {'pp': '${cat.pp('buyShares')}', 'gold': coinText(p.buyCost)}),
                   art: 'buyShares',
                   small: true,
                   busy: s.busy,
@@ -174,7 +174,7 @@ class _GoodCard extends StatelessWidget {
                     ),
                   ),
                   TnButton(
-                    label: 'city.market.buyout'.tr(namedArgs: {'pp': '${cat.pp('buyout')}', 'gold': '${p.boCost}'}),
+                    label: 'city.market.buyout'.tr(namedArgs: {'pp': '${cat.pp('buyout')}', 'gold': coinText(p.boCost)}),
                     art: 'buyout',
                     small: true,
                     kind: TnButtonKind.danger,

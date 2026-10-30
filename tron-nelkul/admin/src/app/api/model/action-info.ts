@@ -10,7 +10,7 @@
 
 
 /**
- * gold: null if computed (shares, buyout, defence).
+ * gold: base cost in bronze (1 gold = 100 bronze); null if computed (shares, buyout, defence).
  */
 export interface ActionInfo { 
     id: string;

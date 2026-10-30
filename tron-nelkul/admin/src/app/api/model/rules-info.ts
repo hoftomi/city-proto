@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Money rules (basePrice, cityShareCost, partyCost, festivalGold, newsGold, spyCost, spyUpkeep, debunkRewardGold, routeCost, routeUpkeep, infoPrice) are in bronze (1 gold = 100 bronze).
+ */
 export interface RulesInfo { 
     basePrice: number;
     cityShareCost: number;

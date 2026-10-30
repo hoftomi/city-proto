@@ -11,10 +11,19 @@ void main() {
     expect(num1(42.34), '42,3');
     expect(signed(-2), '−2');
     expect(signed(3), '+3');
-    expect(incomeText(12.5), '+12,5');
-    expect(incomeText(12.04), '+12');
-    expect(incomeText(0), '0');
-    expect(incomeText(-3), '−3');
+  });
+
+  test('coin text from whole bronze', () {
+    expect(coinText(435), '4 [gold] 3 [silver] 5 [bronze]');
+    expect(coinText(400), '4 [gold]');
+    expect(coinText(35), '3 [silver] 5 [bronze]');
+    expect(coinText(405), '4 [gold] 5 [bronze]');
+    expect(coinText(0), '0 [gold]');
+    expect(coinText(-30), '−3 [silver]');
+    expect(coinText(405, signed: true), '+4 [gold] 5 [bronze]');
+    expect(coinText(0, signed: true), '+0 [gold]');
+    expect(coinText(-435, signed: true), '−4 [gold] 3 [silver] 5 [bronze]');
+    expect(coinText(123456), '1234 [gold] 5 [silver] 6 [bronze]');
   });
 
   test('deterministic random matches the web prototype', () {

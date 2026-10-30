@@ -214,6 +214,8 @@
     "pp": "PP",
     "gold": "arany",
     "pop": "népszerűség",
-    "legit": "Legitimitás"
+    "legit": "Legitimitás",
+    "silver": "ezüst",
+    "bronze": "bronz"
   }
 }

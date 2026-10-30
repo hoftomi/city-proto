@@ -329,10 +329,21 @@ class TinyTag extends StatelessWidget {
 /// Resource in a dark wood capsule with bronze border and a light, bold number (tn-res).
 /// Kinds `gold`, `pp`, `legit`, `popularity`, `tax` get a game icon that sticks out to the left of the capsule.
 class ResourceChip extends StatelessWidget {
-  const ResourceChip({super.key, required this.kind, required this.value, this.delta, this.max});
+  const ResourceChip({super.key, required this.kind, required this.value, this.delta, this.max}) : text = null;
+
+  /// Money in whole [bronze], shown as a coin string ([coinText]) with inline coin icons.
+  ResourceChip.money({super.key, required int bronze})
+      : kind = 'gold',
+        value = bronze,
+        delta = null,
+        max = null,
+        text = coinText(bronze);
   final String kind;
   final int value;
   final int? delta, max;
+
+  /// Display text with unit markers instead of [value] (e.g. a coin string).
+  final String? text;
   static const _names = {'gold', 'legit', 'pp', 'popularity', 'tax'};
 
   @override
@@ -342,7 +353,7 @@ class ResourceChip extends StatelessWidget {
     return Tooltip(
       message: name,
       child: Semantics(
-        label: '$name: ${max == null ? value : '$value / $max'}${delta != null ? ', ${signed(delta!)}' : ''}',
+        label: '$name: ${text != null ? unitPlain(text!) : max == null ? value : '$value / $max'}${delta != null ? ', ${signed(delta!)}' : ''}',
         child: ExcludeSemantics(
           child: Padding(
             padding: const EdgeInsets.only(left: 9),
@@ -357,7 +368,10 @@ class ResourceChip extends StatelessWidget {
                   boxShadow: const [BoxShadow(color: Color(0x80000000), offset: Offset(0, 1))],
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Text(max == null ? '$value' : '$value/$max', style: TnText.data(const Color(0xFFFFF5DC), size: 15, weight: FontWeight.w900).copyWith(height: 20 / 15)),
+                  if (text != null)
+                    UnitText(text!, style: TnText.data(const Color(0xFFFFF5DC), size: 15, weight: FontWeight.w900).copyWith(height: 20 / 15))
+                  else
+                    Text(max == null ? '$value' : '$value/$max', style: TnText.data(const Color(0xFFFFF5DC), size: 15, weight: FontWeight.w900).copyWith(height: 20 / 15)),
                   if (delta != null) ...[
                     const SizedBox(width: 4),
                     Text(signed(delta!), style: TnText.data(delta! < 0 ? const Color(0xFFF2A996) : const Color(0xFFBDE08F), size: 12.5)),

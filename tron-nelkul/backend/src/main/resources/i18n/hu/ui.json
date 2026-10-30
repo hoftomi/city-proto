@@ -69,6 +69,8 @@
   "unit": {
     "pp": "parancspont",
     "gold": "arany",
+    "silver": "ezüst",
+    "bronze": "bronz",
     "pop": "népszerűség",
     "legit": "legitimitás"
   },

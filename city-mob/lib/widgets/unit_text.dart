@@ -4,11 +4,11 @@ import 'package:flutter/rendering.dart';
 
 import 'game_icon.dart';
 
-/// Unit markers in translated and server texts: `[pp]`, `[gold]`, `[pop]`, `[legit]`.
-final RegExp kUnitMarker = RegExp(r'\[(pp|gold|pop|legit)\]');
+/// Unit markers in translated and server texts: `[pp]`, `[gold]`, `[silver]`, `[bronze]`, `[pop]`, `[legit]`.
+final RegExp kUnitMarker = RegExp(r'\[(pp|gold|silver|bronze|pop|legit)\]');
 
 /// Game icon of each unit marker.
-const Map<String, String> kUnitIcons = {'pp': 'pp', 'gold': 'gold', 'pop': 'popularity', 'legit': 'legit'};
+const Map<String, String> kUnitIcons = {'pp': 'pp', 'gold': 'gold', 'silver': 'silver', 'bronze': 'bronze', 'pop': 'popularity', 'legit': 'legit'};
 
 /// Whether [text] contains at least one unit marker.
 bool hasUnits(String text) => kUnitMarker.hasMatch(text);

@@ -176,6 +176,7 @@ class CityView {
 
 
 
+      /// In bronze (1 gold = 100 bronze).
   @JsonKey(
     
     name: r'lastTaxPool',
@@ -184,7 +185,7 @@ class CityView {
   )
 
 
-  final double? lastTaxPool;
+  final int? lastTaxPool;
 
 
 
@@ -200,6 +201,7 @@ class CityView {
 
 
 
+      /// In bronze (1 gold = 100 bronze).
   @JsonKey(
     
     name: r'expectedIncome',
@@ -208,7 +210,7 @@ class CityView {
   )
 
 
-  final double? expectedIncome;
+  final int? expectedIncome;
 
 
 

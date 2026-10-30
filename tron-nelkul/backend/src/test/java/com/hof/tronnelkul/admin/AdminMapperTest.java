@@ -83,7 +83,7 @@ class AdminMapperTest {
         PlayerEntity player = new PlayerEntity("g1", user, "Bluecrow");
         player.setId(UUID.randomUUID()); player.setBackground(Background.MERCHANT); player.setLegit(14);
         EngineState.PlayerSt st = new EngineState.PlayerSt();
-        st.gold = 12.5; st.pp = 3; st.legit = 99;
+        st.gold = 1250; st.pp = 3; st.legit = 99;
         AdminHouse house = mapper.house(player, "Anna", st);
         assertEquals(player.getId().toString(), house.getPlayerId());
         assertEquals(user, house.getUserId());
@@ -93,7 +93,7 @@ class AdminMapperTest {
         assertFalse(house.getNpc());
         assertNull(house.getPersona());
         assertEquals(14, house.getLegit());
-        assertEquals(12.5, house.getGold());
+        assertEquals(1250L, house.getGold());
         assertEquals(3, house.getPp());
         assertNull(house.getPlace());
         assertEquals(player.getCreatedAt(), house.getJoinedAt());

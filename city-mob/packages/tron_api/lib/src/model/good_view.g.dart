@@ -17,7 +17,7 @@ abstract class _$GoodViewCWProxy {
 
   GoodView cityShares(int cityShares);
 
-  GoodView marketValue(double marketValue);
+  GoodView marketValue(int marketValue);
 
   GoodView myShares(int myShares);
 
@@ -37,7 +37,7 @@ abstract class _$GoodViewCWProxy {
     int supply,
     int demand,
     int cityShares,
-    double marketValue,
+    int marketValue,
     int myShares,
     String? myMargin,
     List<Seller> sellers,
@@ -66,7 +66,7 @@ class _$GoodViewCWProxyImpl implements _$GoodViewCWProxy {
   GoodView cityShares(int cityShares) => this(cityShares: cityShares);
 
   @override
-  GoodView marketValue(double marketValue) => this(marketValue: marketValue);
+  GoodView marketValue(int marketValue) => this(marketValue: marketValue);
 
   @override
   GoodView myShares(int myShares) => this(myShares: myShares);
@@ -119,7 +119,7 @@ class _$GoodViewCWProxyImpl implements _$GoodViewCWProxy {
       marketValue: marketValue == const $CopyWithPlaceholder()
           ? _value.marketValue
           // ignore: cast_nullable_to_non_nullable
-          : marketValue as double,
+          : marketValue as int,
       myShares: myShares == const $CopyWithPlaceholder()
           ? _value.myShares
           // ignore: cast_nullable_to_non_nullable
@@ -146,43 +146,40 @@ extension $GoodViewCopyWith on GoodView {
 // JsonSerializableGenerator
 // **************************************************************************
 
-GoodView _$GoodViewFromJson(Map<String, dynamic> json) => $checkedCreate(
-  'GoodView',
-  json,
-  ($checkedConvert) {
-    $checkKeys(
-      json,
-      requiredKeys: const [
-        'id',
-        'name',
-        'supply',
-        'demand',
-        'cityShares',
-        'marketValue',
-        'myShares',
-        'myMargin',
-        'sellers',
-      ],
-    );
-    final val = GoodView(
-      id: $checkedConvert('id', (v) => v as String),
-      name: $checkedConvert('name', (v) => v as String),
-      supply: $checkedConvert('supply', (v) => (v as num).toInt()),
-      demand: $checkedConvert('demand', (v) => (v as num).toInt()),
-      cityShares: $checkedConvert('cityShares', (v) => (v as num).toInt()),
-      marketValue: $checkedConvert('marketValue', (v) => (v as num).toDouble()),
-      myShares: $checkedConvert('myShares', (v) => (v as num).toInt()),
-      myMargin: $checkedConvert('myMargin', (v) => v as String?),
-      sellers: $checkedConvert(
-        'sellers',
-        (v) => (v as List<dynamic>)
-            .map((e) => Seller.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      ),
-    );
-    return val;
-  },
-);
+GoodView _$GoodViewFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('GoodView', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'id',
+          'name',
+          'supply',
+          'demand',
+          'cityShares',
+          'marketValue',
+          'myShares',
+          'myMargin',
+          'sellers',
+        ],
+      );
+      final val = GoodView(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        supply: $checkedConvert('supply', (v) => (v as num).toInt()),
+        demand: $checkedConvert('demand', (v) => (v as num).toInt()),
+        cityShares: $checkedConvert('cityShares', (v) => (v as num).toInt()),
+        marketValue: $checkedConvert('marketValue', (v) => (v as num).toInt()),
+        myShares: $checkedConvert('myShares', (v) => (v as num).toInt()),
+        myMargin: $checkedConvert('myMargin', (v) => v as String?),
+        sellers: $checkedConvert(
+          'sellers',
+          (v) => (v as List<dynamic>)
+              .map((e) => Seller.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$GoodViewToJson(GoodView instance) => <String, dynamic>{
   'id': instance.id,

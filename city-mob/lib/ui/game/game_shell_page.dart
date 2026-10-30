@@ -135,7 +135,7 @@ class _TopBar extends StatelessWidget {
             ]),
             const SizedBox(height: 8),
             Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              ResourceChip(kind: 'gold', value: me.gold.floor()),
+              ResourceChip.money(bronze: me.gold),
               ResourceChip(kind: 'pp', value: me.pp, max: me.ppMax),
               ResourceChip(kind: 'legit', value: me.legit),
               if (sheet != null) Text('shell.sheet_live_in'.tr(namedArgs: {'time': durText(v.until(sheet.executeAt))}), style: TnText.caption(const Color(0xFFD9C49A))),

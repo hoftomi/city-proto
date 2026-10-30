@@ -11,7 +11,7 @@ import { Background } from './background';
 
 
 /**
- * gold and pp: from the game state (null before the start and for archived games). place: archived games only.
+ * gold (in bronze, 1 gold = 100 bronze) and pp: from the game state (null before the start and for archived games). place: archived games only.
  */
 export interface AdminHouse { 
     playerId: string;
@@ -22,6 +22,9 @@ export interface AdminHouse {
     npc: boolean;
     persona: string | null;
     legit: number;
+    /**
+     * Money in bronze (1 gold = 100 bronze).
+     */
     gold: number | null;
     pp: number | null;
     place: number | null;

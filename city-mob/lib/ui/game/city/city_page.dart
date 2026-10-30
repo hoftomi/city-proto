@@ -135,7 +135,7 @@ class _Unreachable extends StatelessWidget {
           for (final b in s.routes) ...[
             gap(8),
             TnButton(
-              label: 'city.unreachable.route'.tr(namedArgs: {'from': b.fromName, 'pp': '${s.catalog.pp('route')}', 'gold': '${s.rules.routeCost}'}),
+              label: 'city.unreachable.route'.tr(namedArgs: {'from': b.fromName, 'pp': '${s.catalog.pp('route')}', 'gold': coinText(s.rules.routeCost)}),
               art: 'route',
               busy: s.busy,
               onPressed: () => bloc.add(CityRouteRequested(b.from)),

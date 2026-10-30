@@ -17,6 +17,9 @@ export interface OfferView {
     id: string;
     seller: HouseRef;
     of: HouseRef;
+    /**
+     * In bronze (1 gold = 100 bronze).
+     */
     price: number;
     executeAt: string;
 }

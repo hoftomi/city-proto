@@ -17,6 +17,9 @@ export interface Me {
     estate: string | null;
     pp: number;
     ppMax: number;
+    /**
+     * Money in bronze (1 gold = 100 bronze).
+     */
     gold: number;
     legit: number;
 }

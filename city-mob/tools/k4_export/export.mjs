@@ -129,7 +129,19 @@ if (want('icons')) for (const name of T.GameIcon.names) {
   fs.mkdirSync(path.join(OUT, 'icons'), { recursive: true });
   fs.writeFileSync(path.join(OUT, 'icons', iconId(name) + '.svg'), svg);
 }
-meta.icons = T.GameIcon.names.map(iconId);
+// The app's silver and bronze coins (1 gold = 10 silver = 100 bronze) are the gold coin in other metals
+const COIN_METALS = {
+  silver: { '#94681c': '#6b737d', '#d3a13c': '#b3bcc6', '#f1d27e': '#e8edf2' },
+  bronze: { '#94681c': '#6b3a1c', '#d3a13c': '#b0672f', '#f1d27e': '#e3a56c' },
+};
+if (want('icons')) {
+  const gold = fs.readFileSync(path.join(OUT, 'icons', 'gold.svg'), 'utf8');
+  for (const [metal, colours] of Object.entries(COIN_METALS)) {
+    const svg = Object.entries(colours).reduce((acc, [from, to]) => acc.replaceAll(from, to), gold);
+    fs.writeFileSync(path.join(OUT, 'icons', metal + '.svg'), svg);
+  }
+}
+meta.icons = [...T.GameIcon.names.map(iconId), ...Object.keys(COIN_METALS)];
 meta.branchOf = Object.fromEntries(Object.entries(T.GameIcon.branchOf).map(([k, v]) => [iconId(k), v == null ? v : BRANCH_ID[v] ?? v]));
 
 // 2. Login artwork

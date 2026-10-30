@@ -23,7 +23,7 @@ abstract class _$AdminHouseCWProxy {
 
   AdminHouse legit(int legit);
 
-  AdminHouse gold(double? gold);
+  AdminHouse gold(int? gold);
 
   AdminHouse pp(int? pp);
 
@@ -46,7 +46,7 @@ abstract class _$AdminHouseCWProxy {
     bool npc,
     String? persona,
     int legit,
-    double? gold,
+    int? gold,
     int? pp,
     int? place,
     DateTime joinedAt,
@@ -84,7 +84,7 @@ class _$AdminHouseCWProxyImpl implements _$AdminHouseCWProxy {
   AdminHouse legit(int legit) => this(legit: legit);
 
   @override
-  AdminHouse gold(double? gold) => this(gold: gold);
+  AdminHouse gold(int? gold) => this(gold: gold);
 
   @override
   AdminHouse pp(int? pp) => this(pp: pp);
@@ -152,7 +152,7 @@ class _$AdminHouseCWProxyImpl implements _$AdminHouseCWProxy {
       gold: gold == const $CopyWithPlaceholder()
           ? _value.gold
           // ignore: cast_nullable_to_non_nullable
-          : gold as double?,
+          : gold as int?,
       pp: pp == const $CopyWithPlaceholder()
           ? _value.pp
           // ignore: cast_nullable_to_non_nullable
@@ -212,7 +212,7 @@ AdminHouse _$AdminHouseFromJson(Map<String, dynamic> json) => $checkedCreate(
       npc: $checkedConvert('npc', (v) => v as bool),
       persona: $checkedConvert('persona', (v) => v as String?),
       legit: $checkedConvert('legit', (v) => (v as num).toInt()),
-      gold: $checkedConvert('gold', (v) => (v as num?)?.toDouble()),
+      gold: $checkedConvert('gold', (v) => (v as num?)?.toInt()),
       pp: $checkedConvert('pp', (v) => (v as num?)?.toInt()),
       place: $checkedConvert('place', (v) => (v as num?)?.toInt()),
       joinedAt: $checkedConvert('joinedAt', (v) => DateTime.parse(v as String)),

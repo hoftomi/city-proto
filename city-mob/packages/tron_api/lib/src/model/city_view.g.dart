@@ -25,11 +25,11 @@ abstract class _$CityViewCWProxy {
 
   CityView taxRate(double taxRate);
 
-  CityView lastTaxPool(double? lastTaxPool);
+  CityView lastTaxPool(int? lastTaxPool);
 
   CityView councilSeats(int councilSeats);
 
-  CityView expectedIncome(double? expectedIncome);
+  CityView expectedIncome(int? expectedIncome);
 
   CityView goods(List<GoodView> goods);
 
@@ -65,9 +65,9 @@ abstract class _$CityViewCWProxy {
     int? distance,
     double myPop,
     double taxRate,
-    double? lastTaxPool,
+    int? lastTaxPool,
     int councilSeats,
-    double? expectedIncome,
+    int? expectedIncome,
     List<GoodView> goods,
     List<PopRow> pop,
     List<PartyView> parties,
@@ -114,13 +114,13 @@ class _$CityViewCWProxyImpl implements _$CityViewCWProxy {
   CityView taxRate(double taxRate) => this(taxRate: taxRate);
 
   @override
-  CityView lastTaxPool(double? lastTaxPool) => this(lastTaxPool: lastTaxPool);
+  CityView lastTaxPool(int? lastTaxPool) => this(lastTaxPool: lastTaxPool);
 
   @override
   CityView councilSeats(int councilSeats) => this(councilSeats: councilSeats);
 
   @override
-  CityView expectedIncome(double? expectedIncome) =>
+  CityView expectedIncome(int? expectedIncome) =>
       this(expectedIncome: expectedIncome);
 
   @override
@@ -221,7 +221,7 @@ class _$CityViewCWProxyImpl implements _$CityViewCWProxy {
       lastTaxPool: lastTaxPool == const $CopyWithPlaceholder()
           ? _value.lastTaxPool
           // ignore: cast_nullable_to_non_nullable
-          : lastTaxPool as double?,
+          : lastTaxPool as int?,
       councilSeats: councilSeats == const $CopyWithPlaceholder()
           ? _value.councilSeats
           // ignore: cast_nullable_to_non_nullable
@@ -229,7 +229,7 @@ class _$CityViewCWProxyImpl implements _$CityViewCWProxy {
       expectedIncome: expectedIncome == const $CopyWithPlaceholder()
           ? _value.expectedIncome
           // ignore: cast_nullable_to_non_nullable
-          : expectedIncome as double?,
+          : expectedIncome as int?,
       goods: goods == const $CopyWithPlaceholder()
           ? _value.goods
           // ignore: cast_nullable_to_non_nullable
@@ -280,93 +280,95 @@ extension $CityViewCopyWith on CityView {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CityView _$CityViewFromJson(
-  Map<String, dynamic> json,
-) => $checkedCreate('CityView', json, ($checkedConvert) {
-  $checkKeys(
-    json,
-    requiredKeys: const [
-      'id',
-      'name',
-      'profile',
-      'key',
-      'coast',
-      'reach',
-      'distance',
-      'myPop',
-      'taxRate',
-      'lastTaxPool',
-      'councilSeats',
-      'expectedIncome',
-      'goods',
-      'pop',
-      'parties',
-      'myProgram',
-      'mySpies',
-      'myGuards',
-      'foreignSpies',
-      'present',
-      'news',
-    ],
-  );
-  final val = CityView(
-    id: $checkedConvert('id', (v) => v as String),
-    name: $checkedConvert('name', (v) => v as String),
-    profile: $checkedConvert('profile', (v) => v as String),
-    key: $checkedConvert('key', (v) => v as bool),
-    coast: $checkedConvert('coast', (v) => v as bool),
-    reach: $checkedConvert('reach', (v) => v as String),
-    distance: $checkedConvert('distance', (v) => (v as num?)?.toInt()),
-    myPop: $checkedConvert('myPop', (v) => (v as num).toDouble()),
-    taxRate: $checkedConvert('taxRate', (v) => (v as num).toDouble()),
-    lastTaxPool: $checkedConvert('lastTaxPool', (v) => (v as num?)?.toDouble()),
-    councilSeats: $checkedConvert('councilSeats', (v) => (v as num).toInt()),
-    expectedIncome: $checkedConvert(
-      'expectedIncome',
-      (v) => (v as num?)?.toDouble(),
-    ),
-    goods: $checkedConvert(
-      'goods',
-      (v) => (v as List<dynamic>)
-          .map((e) => GoodView.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    pop: $checkedConvert(
-      'pop',
-      (v) => (v as List<dynamic>)
-          .map((e) => PopRow.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    parties: $checkedConvert(
-      'parties',
-      (v) => (v as List<dynamic>)
-          .map((e) => PartyView.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    myProgram: $checkedConvert('myProgram', (v) => v as String?),
-    mySpies: $checkedConvert('mySpies', (v) => (v as num).toInt()),
-    myGuards: $checkedConvert('myGuards', (v) => (v as num).toInt()),
-    foreignSpies: $checkedConvert(
-      'foreignSpies',
-      (v) => (v as List<dynamic>)
-          .map((e) => HouseRef.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    present: $checkedConvert(
-      'present',
-      (v) => (v as List<dynamic>)
-          .map((e) => HouseRef.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    news: $checkedConvert(
-      'news',
-      (v) => (v as List<dynamic>)
-          .map((e) => NewsView.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-  );
-  return val;
-});
+CityView _$CityViewFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'CityView',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
+      json,
+      requiredKeys: const [
+        'id',
+        'name',
+        'profile',
+        'key',
+        'coast',
+        'reach',
+        'distance',
+        'myPop',
+        'taxRate',
+        'lastTaxPool',
+        'councilSeats',
+        'expectedIncome',
+        'goods',
+        'pop',
+        'parties',
+        'myProgram',
+        'mySpies',
+        'myGuards',
+        'foreignSpies',
+        'present',
+        'news',
+      ],
+    );
+    final val = CityView(
+      id: $checkedConvert('id', (v) => v as String),
+      name: $checkedConvert('name', (v) => v as String),
+      profile: $checkedConvert('profile', (v) => v as String),
+      key: $checkedConvert('key', (v) => v as bool),
+      coast: $checkedConvert('coast', (v) => v as bool),
+      reach: $checkedConvert('reach', (v) => v as String),
+      distance: $checkedConvert('distance', (v) => (v as num?)?.toInt()),
+      myPop: $checkedConvert('myPop', (v) => (v as num).toDouble()),
+      taxRate: $checkedConvert('taxRate', (v) => (v as num).toDouble()),
+      lastTaxPool: $checkedConvert('lastTaxPool', (v) => (v as num?)?.toInt()),
+      councilSeats: $checkedConvert('councilSeats', (v) => (v as num).toInt()),
+      expectedIncome: $checkedConvert(
+        'expectedIncome',
+        (v) => (v as num?)?.toInt(),
+      ),
+      goods: $checkedConvert(
+        'goods',
+        (v) => (v as List<dynamic>)
+            .map((e) => GoodView.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      pop: $checkedConvert(
+        'pop',
+        (v) => (v as List<dynamic>)
+            .map((e) => PopRow.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      parties: $checkedConvert(
+        'parties',
+        (v) => (v as List<dynamic>)
+            .map((e) => PartyView.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      myProgram: $checkedConvert('myProgram', (v) => v as String?),
+      mySpies: $checkedConvert('mySpies', (v) => (v as num).toInt()),
+      myGuards: $checkedConvert('myGuards', (v) => (v as num).toInt()),
+      foreignSpies: $checkedConvert(
+        'foreignSpies',
+        (v) => (v as List<dynamic>)
+            .map((e) => HouseRef.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      present: $checkedConvert(
+        'present',
+        (v) => (v as List<dynamic>)
+            .map((e) => HouseRef.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      news: $checkedConvert(
+        'news',
+        (v) => (v as List<dynamic>)
+            .map((e) => NewsView.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+    );
+    return val;
+  },
+);
 
 Map<String, dynamic> _$CityViewToJson(CityView instance) => <String, dynamic>{
   'id': instance.id,

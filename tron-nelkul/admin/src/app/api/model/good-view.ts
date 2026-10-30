@@ -11,7 +11,7 @@ import { Seller } from './seller';
 
 
 /**
- * marketValue: market value of a point in gold (average profit per point over the last 3 settlements × 10).
+ * marketValue: market value of a point in bronze, 1 gold = 100 bronze (average profit per point over the last 3 settlements × 10).
  */
 export interface GoodView { 
     id: string;

@@ -17,7 +17,7 @@
   "unreachable": {
     "title": "Nem vezet ide útvonalad",
     "body": "Akciót csak a hálózatodban lévő városban indíthatsz (4.3). Nézni lehet, cselekedni nem.",
-    "route": "Útvonal innen: {from} · {pp} [pp] · {gold} [gold]"
+    "route": "Útvonal innen: {from} · {pp} [pp] · {gold}"
   },
   "news": {
     "by": "Terjesztette: {name}",
@@ -31,11 +31,11 @@
     "threat_body": "{pts}% {good} · lefut: {time} ({left} múlva)",
     "defending": "Védekezés folyamatban",
     "defend_draft": "A védekező vétel még csak a vázlaton van: pecsételd le, mielőtt az ajánlat lefut.",
-    "defend": "Védekező vétel · {pp} [pp] · {gold} [gold]",
+    "defend": "Védekező vétel · {pp} [pp] · {gold}",
     "defend_hint": "A védekező vétel akkor hat, ha lepecsételed, mielőtt az ajánlat lefut (lefut: {time}).",
     "no_goods": "Ebben a városban nincs árucikk.",
     "expected_income": "Várható bevétel a következő elszámoláskor",
-    "good_stats": "kínálat {supply} · kereslet {demand} · érték {value} [gold] / 1%",
+    "good_stats": "kínálat {supply} · kereslet {demand} · érték {value} / 1%",
     "col_seller": "Eladó",
     "col_shares": "Részesedés",
     "no_sellers": "Még senki sem árulja.",
@@ -43,17 +43,17 @@
     "my_margin": "Haszonkulcsod · {pp} [pp]",
     "buy_label": "Vétel a Várostól ({free}% szabad)",
     "points": "{n}%",
-    "buy": "Vétel · {pp} [pp] · {gold} [gold]",
+    "buy": "Vétel · {pp} [pp] · {gold}",
     "buyout_label": "Kivásárlás",
     "points_label": "Részesedés",
-    "buyout": "Ajánlat · {pp} [pp] · {gold} [gold]"
+    "buyout": "Ajánlat · {pp} [pp] · {gold}"
   },
   "town_hall": {
     "council": "Városi tanács",
     "election": "Választás {when}",
     "campaign": "kampányidőszak",
     "tax": "Adókulcs: {percent}%",
-    "tax_pool": "legutóbb {gold} [gold] jutott a pártoknak",
+    "tax_pool": "legutóbb ennyi jutott a pártoknak: {gold}",
     "col_party": "Párt",
     "col_program": "Program",
     "col_votes": "Szavazat",
@@ -61,13 +61,13 @@
     "no_parties": "Még nincs párt a városban.",
     "your_party": "A pártod",
     "no_party_body": "Párt nélkül nem jutsz be a tanácsba, és nem kapsz adót. A szavazataid a népszerűségeddel egyenlők.",
-    "found_party": "Pártalapítás · {pp} [pp] · {gold} [gold]",
+    "found_party": "Pártalapítás · {pp} [pp] · {gold}",
     "program": "Program · {pp} [pp]",
-    "festival": "Fesztivál · {pp} [pp] · {gold} [gold] · +{pop} [pop]",
+    "festival": "Fesztivál · {pp} [pp] · {gold} · +{pop} [pop]",
     "festival_campaign_hint": "Kampányidőszak: a fesztivál ára és hatása dupla.",
     "festival_hint": "Ha ugyanitt 3 elszámoláson belül ismét fesztivált tartasz, csak feleannyi népszerűséget hoz.",
     "news_spreading": "A városban terjedő hírek",
-    "compose_title": "Hír terjesztése · {pp} [pp] · {gold} [gold]",
+    "compose_title": "Hír terjesztése · {pp} [pp] · {gold}",
     "claim": "Állítás",
     "target": "Kiről",
     "good": "Árucikk",
@@ -79,10 +79,10 @@
   },
   "underworld": {
     "spies": "Kémeid itt",
-    "spies_status": "{free} szabad ügynök, {guards} őr · fenntartás {upkeep} [gold] kémenként elszámolásonként",
+    "spies_status": "{free} szabad ügynök, {guards} őr · fenntartás kémenként elszámolásonként: {upkeep}",
     "foreign": "Pletykák szerint idegen kémek is vannak itt: {names}.",
     "foreign_none": "senkiről sem tudni",
-    "hire": "Kém felfogadása · {pp} [pp] · {gold} [gold]",
+    "hire": "Kém felfogadása · {pp} [pp] · {gold}",
     "guard": "Őr beállítása · {pp} [pp]",
     "move": "Kém áthelyezése · {pp} [pp]",
     "spy_hint": "Egy szabad kém az akciók típusát, kettő a célpontot is, három a költséget is kifürkészi. Minden őr {percent}% eséllyel buktatja le az ellened indított kémakciót.",
@@ -100,15 +100,15 @@
     "sell": "Eladás",
     "intel_hint": "Az információ romlandó: az érlelő parancs végrehajtásával értéktelenné válik. Eladásonként +1 Legitimitás (legfeljebb 3 elszámolásonként egyszer).",
     "offers": "Neked felkínált információ",
-    "offer_text": "eladná {house} terveit · {price} [gold] · lefut {time} ({left} múlva)",
-    "accept": "Elfogadás · {price} [gold]",
+    "offer_text": "eladná {house} terveit · {price} · lefut {time} ({left} múlva)",
+    "accept": "Elfogadás · {price}",
     "decline": "Elutasítás",
     "offers_hint": "Letét: elfogadáskor fizetsz, és azonnal megkapod a jelentést.",
     "check": "Hírek ellenőrzése",
     "no_checkable": "Nincs ellenőrizhető hír a városban.",
     "debunk": "Leleplezés · {pp} [pp]",
     "verify": "Ellenőrzés · {pp} [pp]",
-    "debunk_hint": "Hamis hír leleplezéséért: +{pop} [pop], +{gold} [gold], +{legit} Legitimitás."
+    "debunk_hint": "Hamis hír leleplezéséért: +{pop} [pop], +{gold}, +{legit} Legitimitás."
   },
   "dialog": {
     "move_spy_title": "Hová költözzön a kém?",
@@ -124,7 +124,7 @@
   "sale": {
     "failed": "Nem sikerült",
     "no_buyer": "Nincs kinek eladni.",
-    "offered": "Felkínálva: {house}, {price} [gold].",
+    "offered": "Felkínálva: {house}, {price}.",
     "accepted": "Megvetted: {house} tervei."
   }
 }

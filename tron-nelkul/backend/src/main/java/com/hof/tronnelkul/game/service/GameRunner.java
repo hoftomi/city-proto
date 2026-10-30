@@ -43,7 +43,8 @@ public class GameRunner {
         if (game.getState() == null) {
             throw ApiException.conflict("server.game_not_started");
         }
-        return json.readValue(game.getState(), EngineState.class);
+        // A state saved by an older version is upgraded (money to bronze…); it is written back at the next save
+        return StateUpgrade.read(json, game.getState());
     }
 
     public Engine engine(GameEntity game) {

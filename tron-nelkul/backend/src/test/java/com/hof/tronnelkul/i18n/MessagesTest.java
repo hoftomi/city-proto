@@ -1,5 +1,6 @@
 package com.hof.tronnelkul.i18n;
 
+import com.hof.tronnelkul.game.engine.Money;
 import com.hof.tronnelkul.game.engine.Msg;
 import com.hof.tronnelkul.game.engine.Rules;
 import com.hof.tronnelkul.game.world.CityDef;
@@ -42,6 +43,24 @@ class MessagesTest {
     @Test
     void unknownPlaceholderStays() {
         assertTrue(messages.text("engine.error.price_range", "min", 1).contains("{max}"));
+    }
+
+    @Test
+    void moneyArgsBecomeCoinStrings() {
+        assertEquals("Az ár 1 [gold] és 500 [gold] között lehet.", messages.text("engine.error.price_range", "min", Money.of(100), "max", Money.of(50_000)));
+        assertEquals("+4 [gold] 3 [silver] 5 [bronze]", messages.resolve(Money.signed(435)));
+    }
+
+    /** Money placeholders get a coin string with its own markers: no " [gold]" or "arany" right after a placeholder. */
+    @Test
+    void serverTextsDoNotAppendAUnitToMoney() throws IOException {
+        Pattern unitAfterPlaceholder = Pattern.compile("\\{\\w+}\\s*(\\[(gold|silver|bronze)]|arany)");
+        for (String namespace : List.of("engine", "server", "catalog", "world")) {
+            String text = Files.readString(Path.of("src/main/resources/i18n/hu/" + namespace + ".json"));
+            Matcher matcher = unitAfterPlaceholder.matcher(text);
+            boolean found = matcher.find();
+            assertFalse(found, namespace + ": " + (found ? matcher.group() : ""));
+        }
     }
 
     @Test

@@ -108,7 +108,7 @@ class GoodView {
   )
 
 
-  final double marketValue;
+  final int marketValue;
 
 
 

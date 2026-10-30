@@ -6,11 +6,15 @@ import 'package:go_router/go_router.dart';
 import '../../app/di/di.dart';
 import '../../app/router/routes.dart';
 import '../../theme/tokens.dart';
+import '../../util/format.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/game_widgets.dart';
 import '../../widgets/map_view.dart';
 import 'bloc/join_bloc.dart';
 import 'widgets/join_widgets.dart';
+
+/// Starting gold of a house in bronze (the server's Rules.START_GOLD: 30 gold).
+const int _startGold = 3000;
 
 /// Join in four steps: house, background, start slot, summary. On success, into the game if it is running,
 /// otherwise back to the details (with a `true` result, they refresh).
@@ -265,7 +269,7 @@ class _SummaryStep extends StatelessWidget {
             if (st.homeCityName.isNotEmpty) JoinKv('join.summary.home_city'.tr(), st.homeCityName),
           ],
           if (good != null) JoinKv('join.summary.good'.tr(), 'join.summary.good_value'.tr(namedArgs: {'good': good.name})),
-          JoinKv('join.summary.kit'.tr(), 'join.summary.kit_value'.tr()),
+          JoinKv('join.summary.kit'.tr(), 'join.summary.kit_value'.tr(namedArgs: {'gold': coinText(_startGold)})),
         ]),
       ),
       const SizedBox(height: 12),

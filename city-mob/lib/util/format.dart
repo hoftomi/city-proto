@@ -5,13 +5,21 @@ String num1(double v) => v.toStringAsFixed(1).replaceAll('.', ',');
 
 String signed(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '±0');
 
-/// Integer without decimals, otherwise with one decimal place.
-String numText(double v) => v == v.roundToDouble() ? v.round().toString() : num1(v);
-
-/// Expected gold with sign, at most one decimal: „+12,5”, „+12”, „0”, „−3”.
-String incomeText(double v) {
-  final r = (v * 10).round() / 10;
-  return r > 0 ? '+${numText(r)}' : (r < 0 ? '−${numText(-r)}' : '0');
+/// Money as a coin string with unit markers, from whole bronze (1 gold = 10 silver = 100 bronze).
+/// Only the non-zero denominations, biggest first: 435 → „4 [gold] 3 [silver] 5 [bronze]”,
+/// 400 → „4 [gold]”, 35 → „3 [silver] 5 [bronze]”, 0 → „0 [gold]”. Negative amounts get a leading „−”;
+/// with [signed], non-negative amounts get a leading „+” („+0 [gold]”).
+String coinText(int bronze, {bool signed = false}) {
+  final abs = bronze.abs();
+  final gold = abs ~/ 100, silver = abs % 100 ~/ 10, rest = abs % 10;
+  final parts = [
+    if (gold > 0) '$gold [gold]',
+    if (silver > 0) '$silver [silver]',
+    if (rest > 0) '$rest [bronze]',
+  ];
+  final body = parts.isEmpty ? '0 [gold]' : parts.join(' ');
+  if (bronze < 0) return '−$body';
+  return signed ? '+$body' : body;
 }
 
 /// Name of a power branch (OrderView.branch) and city district.

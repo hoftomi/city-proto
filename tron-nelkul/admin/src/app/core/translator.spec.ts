@@ -43,4 +43,15 @@ describe('Translator', () => {
     expect(translator.units('no markers [x]')).toBe('no markers [x]');
     expect(translator.units(null)).toBe('');
   });
+
+  it('spells out money in whole bronze as coins', () => {
+    translator.set({ unit: { gold: 'arany', silver: 'ezüst', bronze: 'bronz' } });
+    expect(translator.coins(435)).toBe('4 arany 3 ezüst 5 bronz');
+    expect(translator.coins(400)).toBe('4 arany');
+    expect(translator.coins(35)).toBe('3 ezüst 5 bronz');
+    expect(translator.coins(405)).toBe('4 arany 5 bronz');
+    expect(translator.coins(0)).toBe('0 arany');
+    expect(translator.coins(-30)).toBe('\u22123 ezüst');
+    expect(translator.coins(null)).toBe('–');
+  });
 });

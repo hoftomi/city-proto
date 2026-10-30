@@ -68,6 +68,7 @@ class OfferView {
 
 
 
+      /// In bronze (1 gold = 100 bronze).
   @JsonKey(
     
     name: r'price',

@@ -16,6 +16,7 @@ void main() {
   group('unitSpans', () {
     test('splits text runs and unit markers', () {
       expect(parts('Vétel · 1 [pp] · 15 [gold]'), ['Vétel · 1 ', 'pp', ' · 15 ', 'gold']);
+      expect(parts('4 [gold] 3 [silver] 5 [bronze]'), ['4 ', 'gold', ' 3 ', 'silver', ' 5 ', 'bronze']);
       expect(parts('[legit]'), ['legit']);
       expect(parts('+2 [pop]'), ['+2 ', 'popularity']);
       expect(parts('nincs egység'), ['nincs egység']);
@@ -40,6 +41,8 @@ void main() {
     expect(hasUnits('10 [pp]'), isTrue);
     expect(hasUnits('10 PP'), isFalse);
     expect(unitPlain('10 [pp] · 30 [gold] · +2 [pop] · +1 [legit]'), '10 parancspont · 30 arany · +2 népszerűség · +1 legitimitás');
+    expect(hasUnits('3 [silver]'), isTrue);
+    expect(unitPlain('4 [gold] 3 [silver] 5 [bronze]'), '4 arany 3 ezüst 5 bronz');
   });
 
   testWidgets('UnitText shows icons and reads the words to screen readers', (tester) async {

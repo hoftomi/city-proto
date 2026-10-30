@@ -19,7 +19,7 @@ abstract class _$MeCWProxy {
 
   Me ppMax(int ppMax);
 
-  Me gold(double gold);
+  Me gold(int gold);
 
   Me legit(int legit);
 
@@ -36,7 +36,7 @@ abstract class _$MeCWProxy {
     String? estate,
     int pp,
     int ppMax,
-    double gold,
+    int gold,
     int legit,
   });
 }
@@ -66,7 +66,7 @@ class _$MeCWProxyImpl implements _$MeCWProxy {
   Me ppMax(int ppMax) => this(ppMax: ppMax);
 
   @override
-  Me gold(double gold) => this(gold: gold);
+  Me gold(int gold) => this(gold: gold);
 
   @override
   Me legit(int legit) => this(legit: legit);
@@ -116,7 +116,7 @@ class _$MeCWProxyImpl implements _$MeCWProxy {
       gold: gold == const $CopyWithPlaceholder()
           ? _value.gold
           // ignore: cast_nullable_to_non_nullable
-          : gold as double,
+          : gold as int,
       legit: legit == const $CopyWithPlaceholder()
           ? _value.legit
           // ignore: cast_nullable_to_non_nullable
@@ -160,7 +160,7 @@ Me _$MeFromJson(Map<String, dynamic> json) =>
         estate: $checkedConvert('estate', (v) => v as String?),
         pp: $checkedConvert('pp', (v) => (v as num).toInt()),
         ppMax: $checkedConvert('ppMax', (v) => (v as num).toInt()),
-        gold: $checkedConvert('gold', (v) => (v as num).toDouble()),
+        gold: $checkedConvert('gold', (v) => (v as num).toInt()),
         legit: $checkedConvert('legit', (v) => (v as num).toInt()),
       );
       return val;

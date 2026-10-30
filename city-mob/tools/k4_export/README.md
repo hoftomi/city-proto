@@ -15,6 +15,7 @@ Requires Google Chrome (headless screenshots), `cwebp` and internet access (the 
 | Output | Source | Format |
 |---|---|---|
 | `icons/<name>.svg` | `GameIcon` | SVG, tokens baked in |
+| `icons/silver.svg`, `bronze.svg` | the `gold` icon recoloured (`COIN_METALS` in `export.mjs`; 1 gold = 10 silver = 100 bronze) | SVG |
 | `login.svg` | the prototype's login artwork | SVG |
 | `map/<map>.webp` | `MapCanvas` + `MapTerrain` + compass + cartouche, without cities and roads | 360 × 260, 8× |
 | `cities/<city>_on.webp`, `_off.webp` | `MapCity` with label, reachable and unreachable | 8× |

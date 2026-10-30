@@ -8,6 +8,7 @@ import '../../../../core/tr.dart';
 import '../../../../domain/model/city_extensions.dart';
 import '../../../../domain/model/extensions.dart';
 import '../../../../domain/service/city_service.dart';
+import '../../../../util/format.dart';
 import '../../../common/notice.dart';
 import '../../bloc/game_bloc.dart';
 
@@ -126,7 +127,7 @@ class CityBloc extends Bloc<CityEvent, CityState> {
     emit(state.copyWith(clearSale: true));
     if (s == null || f == null || !_service.validBuyer(s, f.intelId, f.buyer)) return;
     final price = _service.salePrice(s, f.price);
-    _game.add(GameIntelOffered(f.intelId, f.buyer, price, success: Tr('city.sale.offered', {'house': s.houseName(f.buyer), 'price': '$price'})));
+    _game.add(GameIntelOffered(f.intelId, f.buyer, price, success: Tr('city.sale.offered', {'house': s.houseName(f.buyer), 'price': coinText(price)})));
   }
 
   @override

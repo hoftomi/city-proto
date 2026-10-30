@@ -37,7 +37,7 @@
     "verify_first": "Előbb ellenőrizd, hogy hamis-e.",
     "defend_on_draft": "Ez a védekező vétel már a vázlatodon van.",
     "not_enough_pp": "Nincs elég parancspont: {need} kellene, {have} van.",
-    "not_enough_gold": "Nincs elég arany: {need} kellene, {have} van.",
+    "not_enough_gold": "Nincs elég pénzed: {need} kellene, {have} van.",
     "no_such_draft_order": "Nincs ilyen parancs a vázlaton.",
     "empty_sheet": "Üres parancslapot nem lehet lepecsételni.",
     "sheet_maturing": "Már van érlelő parancslapod. A következőt a végrehajtás után pecsételheted le.",
@@ -46,10 +46,10 @@
     "pick_buyer": "Válassz vevőt.",
     "own_plans": "A saját terveit nem adhatod el neki.",
     "already_offered": "Ennek a háznak már felkínáltad.",
-    "price_range": "Az ár {min} és {max} arany között lehet.",
+    "price_range": "Az ár {min} és {max} között lehet.",
     "no_such_offer": "Nincs ilyen ajánlat.",
     "offer_expired": "A parancslap már lefutott, az ajánlat lejárt.",
-    "not_enough_gold_offer": "Nincs elég aranyad: {need} kellene."
+    "not_enough_gold_offer": "Nincs elég pénzed: {need} kellene."
   },
   "order": {
     "route": "{action}: {from} → {to}",
@@ -62,7 +62,7 @@
     "spy": "Kifürkészés: {target} parancslapja · {city}",
     "moveSpy": "Kém áthelyezése: {from} → {to}",
     "other": "{action} · {city}",
-    "with_cost": "{order} ({gold} [gold])"
+    "with_cost": "{order} ({gold})"
   },
   "report": {
     "buyout_threat": {
@@ -71,11 +71,11 @@
     },
     "intel_rejected": {
       "title": "{house} nem vette meg",
-      "text": "Túl drágának tartotta az ajánlatot ({price} [gold])."
+      "text": "Túl drágának tartotta az ajánlatot ({price})."
     },
     "intel_offer": {
       "title": "{house} információt kínál",
-      "text": "{of} érlelő parancslapjáról, {price} aranyért. Az Alvilágban fogadhatod el; letét: fizetéskor azonnal megkapod."
+      "text": "{of} érlelő parancslapjáról, ára: {price}. Az Alvilágban fogadhatod el; letét: fizetéskor azonnal megkapod."
     },
     "intel_declined": {
       "title": "{house} elutasította az ajánlatodat",
@@ -83,11 +83,11 @@
     },
     "intel_sold": {
       "title": "Információ eladva: {house}",
-      "text": "{buyer} {price} aranyat fizetett {of} terveiért. A letét lezárult.{bonus}",
+      "text": "{buyer} megvette {of} terveit, fizetett: {price}. A letét lezárult.{bonus}",
       "bonus": " +{legit} Legitimitás."
     },
     "intel_bought": {
-      "text": "{lines} ({price} aranyért vetted {seller} házától)"
+      "text": "{lines} ({seller} házától vetted, ár: {price})"
     },
     "plans": {
       "title": "{house} tervei (lejár: {time})",
@@ -99,7 +99,7 @@
     },
     "order_failed": {
       "title": "Elmaradt: {action}",
-      "text": "{reason} Az aranyat visszakaptad."
+      "text": "{reason} A pénzt visszakaptad."
     },
     "route": {
       "title": "Új útvonal: {city}",
@@ -153,7 +153,7 @@
     },
     "debunk": {
       "title": "Leleplezve: {author} hazudott",
-      "text": "{news} A hír hamis volt. {author} −{penalty} népszerűség, {house} jutalma +{gold} arany és +{legit} Legitimitás."
+      "text": "{news} A hír hamis volt. {author} −{penalty} népszerűség, {house} jutalma: {gold} és +{legit} Legitimitás."
     },
     "buyout_failed": {
       "title": "Kivásárlás meghiúsult",
@@ -165,11 +165,11 @@
     },
     "buyout_done": {
       "title": "Kivásároltad: {target}",
-      "text": "{pts}% {good} {gold} aranyért. {target} {turns} elszámolásig védett."
+      "text": "{pts}% {good}, ár: {gold}. {target} {turns} elszámolásig védett."
     },
     "bought_out": {
       "title": "{house} kivásárolt",
-      "text": "{pts}%-ot veszítettél a(z) {good} árucikkből ({city}), {gold} aranyat kaptál érte."
+      "text": "{pts}%-ot veszítettél a(z) {good} árucikkből ({city}), kaptál érte: {gold}."
     },
     "spy_nothing": {
       "title": "Nincs mit kifürkészni",
@@ -189,7 +189,7 @@
     },
     "settlement": {
       "title": "Elszámolás · {time}",
-      "text": "Bevétel: {income} arany (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} [pp]."
+      "text": "Bevétel: {income} (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} [pp]."
     },
     "election": {
       "title": "Választás: {city}",

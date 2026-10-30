@@ -78,17 +78,20 @@ class CityService {
     };
   }
 
-  /// Initial values of the sell dialog: the first possible buyer and the rule-based price;
+  /// Initial values of the sell dialog: the first possible buyer and the rule-based price (whole gold);
   /// null if there's no one to sell to (or the plan is no longer sellable).
   (String buyer, String price)? saleDefaults(GameState s, String intelId) {
     final it = s.intel.where((i) => i.id == intelId).firstOrNull;
     if (it == null || !it.live || it.bought) return null;
     final buyers = s.intelBuyers(it);
-    return buyers.isEmpty ? null : (buyers.first.playerId, '${s.rules.infoPrice}');
+    return buyers.isEmpty ? null : (buyers.first.playerId, '${s.rules.infoPrice ~/ 100}');
   }
 
-  /// The entered price; the rule-based price for empty or invalid text.
-  int salePrice(GameState s, String text) => int.tryParse(text.trim()) ?? s.rules.infoPrice;
+  /// The entered price in bronze: the user types whole gold (sent ×100); the rule-based price for empty or invalid text.
+  int salePrice(GameState s, String text) {
+    final gold = int.tryParse(text.trim());
+    return gold == null ? s.rules.infoPrice : gold * 100;
+  }
 
   /// Whether the given house is a valid buyer for this plan.
   bool validBuyer(GameState s, String intelId, String buyer) {

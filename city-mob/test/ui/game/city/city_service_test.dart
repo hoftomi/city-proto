@@ -75,7 +75,7 @@ void main() {
     test('buy from the City: points are clamped to the allowed range, cost per point', () {
       final p = GoodPlan.of(good('wine'), s.rules, buyPts: 50);
       expect(p.buyPts, 10);
-      expect(p.buyCost, 30);
+      expect(p.buyCost, 3000);
       expect(service.buyShares(cv, p), OrderRequest(type: 'buyShares', city: 'szelmezo', good: 'wine', pts: 10));
     });
 
@@ -207,8 +207,10 @@ void main() {
       expect(s2.intelBuyers(it).map((h) => h.playerId), ['npc1', 'npc2', 'npc3']);
       expect(service.saleDefaults(s2, 'i1'), ('npc1', '10'));
       expect(service.saleDefaults(s2.copyWith(intel: [it.copyWith(live: false)]), 'i1'), isNull);
-      expect(service.salePrice(s2, '25'), 25);
-      expect(service.salePrice(s2, ''), 10);
+      // Entered in whole gold, sent in bronze
+      expect(service.salePrice(s2, '25'), 2500);
+      expect(service.salePrice(s2, ''), 1000);
+      expect(service.salePrice(s2, 'x'), 1000);
       expect(service.validBuyer(s2, 'i1', 'npc0'), isFalse);
       expect(service.validBuyer(s2, 'i1', 'npc2'), isTrue);
     });

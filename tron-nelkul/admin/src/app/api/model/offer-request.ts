@@ -11,6 +11,9 @@
 
 export interface OfferRequest { 
     buyerId: string;
+    /**
+     * In bronze (1 gold = 100 bronze), 100–50000; null: the default information price.
+     */
     price?: number | null;
 }
 

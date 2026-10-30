@@ -110,6 +110,7 @@ class Me {
 
 
 
+      /// Money in bronze (1 gold = 100 bronze).
   @JsonKey(
     
     name: r'gold',
@@ -118,7 +119,7 @@ class Me {
   )
 
 
-  final double gold;
+  final int gold;
 
 
 
