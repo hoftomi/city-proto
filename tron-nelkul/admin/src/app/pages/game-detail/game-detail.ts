@@ -18,6 +18,7 @@ import { DurationPipe, HDatePipe, HNumberPipe } from '../../core/format';
 import { CONFIDENCE_KEYS, REPORT_KIND_KEYS, canStart, isRunning } from '../../core/labels';
 import { Notifier } from '../../core/notifier';
 import { TPipe } from '../../core/t.pipe';
+import { UnitsPipe } from '../../core/units.pipe';
 import { key } from '../../core/translator';
 import { StatusChip } from '../../shared/status-chip';
 import { GameActions } from '../games/game-actions';
@@ -38,7 +39,7 @@ const ADVANCE_STEPS = [
   imports: [
     RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatFormFieldModule,
     MatIconModule, MatMenuModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
-    TPipe, HDatePipe, HNumberPipe, DurationPipe, StatusChip,
+    TPipe, UnitsPipe, HDatePipe, HNumberPipe, DurationPipe, StatusChip,
   ],
   template: `
     <a mat-button routerLink="/games" class="back">
@@ -249,8 +250,8 @@ const ADVANCE_STEPS = [
             <ng-container matColumnDef="text">
               <th mat-header-cell *matHeaderCellDef>{{ 'detail.col.text' | t }}</th>
               <td mat-cell *matCellDef="let r" [class]="'tone-' + r.tone">
-                <div class="strong">{{ r.title }}</div>
-                <div class="report-body">{{ r.body }}</div>
+                <div class="strong">{{ r.title | units }}</div>
+                <div class="report-body">{{ r.body | units }}</div>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="reportColumns"></tr>

@@ -36,4 +36,11 @@ describe('Translator', () => {
     await done;
     expect(translator.t('nav.games')).toBe('nav.games');
   });
+
+  it('spells out the unit markers of server texts', () => {
+    translator.set({ unit: { pp: 'PP', gold: 'arany', pop: 'népszerűség', legit: 'Legitimitás' } });
+    expect(translator.units('+3 [pp], 12 [gold], -2 [pop], +1 [legit]')).toBe('+3 PP, 12 arany, -2 népszerűség, +1 Legitimitás');
+    expect(translator.units('no markers [x]')).toBe('no markers [x]');
+    expect(translator.units(null)).toBe('');
+  });
 });

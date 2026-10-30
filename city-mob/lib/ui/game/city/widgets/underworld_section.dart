@@ -31,7 +31,7 @@ class UnderworldSection extends StatelessWidget {
             children: [
               cardTitle(context, 'city.underworld.spies'.tr(), '${cv.mySpies} / ${r.spiesPerCity}', 'hireSpy'),
               gap(4),
-              Text(
+              UnitText(
                 'city.underworld.spies_status'.tr(namedArgs: {'free': '$free', 'guards': '${cv.myGuards}', 'upkeep': '${r.spyUpkeep}'}),
                 style: TnText.body(c.inkMuted).copyWith(fontSize: 13),
               ),
@@ -145,7 +145,7 @@ class UnderworldSection extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Text(
+                        UnitText(
                           it.lines.isEmpty ? 'city.underworld.no_details'.tr() : it.lines.join(' · '),
                           style: TnText.body(c.inkMuted).copyWith(fontSize: 13),
                         ),
@@ -195,8 +195,9 @@ class UnderworldSection extends StatelessWidget {
                             style: TnText.body(c.ink).copyWith(fontSize: 14),
                             children: [
                               TextSpan(text: o.seller.name, style: TnText.bodyStrong(c.ink).copyWith(fontSize: 14)),
-                              TextSpan(
-                                text: ' ${'city.underworld.offer_text'.tr(namedArgs: {'house': o.of_.name, 'price': '${o.price}', 'time': at(o.executeAt), 'left': durText(s.until(o.executeAt))})}',
+                              ...unitSpans(
+                                ' ${'city.underworld.offer_text'.tr(namedArgs: {'house': o.of_.name, 'price': '${o.price}', 'time': at(o.executeAt), 'left': durText(s.until(o.executeAt))})}',
+                                TnText.body(c.ink).copyWith(fontSize: 14),
                               ),
                             ],
                           ),

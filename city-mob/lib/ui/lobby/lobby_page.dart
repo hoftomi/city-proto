@@ -86,7 +86,7 @@ class _LobbyView extends StatelessWidget {
                   if (s.tab == LobbyTab.finished && s.groups.finished == null)
                     const Center(child: CircularProgressIndicator())
                   else if (s.games.isEmpty)
-                    Text(s.emptyText.text, style: TnText.body(c.inkMuted)),
+                    UnitText(s.emptyText.text, style: TnText.body(c.inkMuted)),
                   for (final g in s.games) ...[_GameCard(g: g, onTap: () => _open(context, g)), const SizedBox(height: 12)],
                 ]),
               );
@@ -154,7 +154,7 @@ class _GameCard extends StatelessWidget {
             ]),
             if (g.finished) ...[
               const SizedBox(height: 12),
-              Text(g.resultText.text, style: TnText.caption(c.inkMuted)),
+              UnitText(g.resultText.text, style: TnText.caption(c.inkMuted)),
             ],
             if (g.myHouse != null) ...[
               const SizedBox(height: 8),

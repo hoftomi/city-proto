@@ -202,10 +202,6 @@ public final class Engine {
             }
             default -> {}
         }
-        // Below 20 popularity the gold cost of city actions is +50% (4.5)
-        if (cs != null && gold > 0 && popOf(order.city, player) < Rules.LOW_POP) {
-            gold = Math.ceil(gold * Rules.LOW_POP_MULTIPLIER);
-        }
         return new Cost(action.pp, (int) Math.round(gold));
     }
 
@@ -406,10 +402,24 @@ public final class Engine {
 
     // ---------- Player operations ----------
 
-    public Order addDraft(String player, Order order) {
+    /**
+     * Adds an order to the player's draft (unsealed sheet). A margin order replaces the draft margin order of the same
+     * city and good (at most one pending level change per good); asking for the level already in effect only drops that
+     * pending order. Returns the added order, or empty when nothing was added (the pending change was cancelled).
+     */
+    public Optional<Order> addDraft(String player, Order order) {
         Msg invalid = validate(player, order);
         if (invalid != null) {
             throw new EngineException(invalid);
+        }
+        List<Order> replaced = List.of();
+        if (Action.of(order.type) == Action.MARGIN) {
+            replaced = state.draftOf(player).stream().filter(queued -> isSameMarginChange(queued, order)).toList();
+            String current = state.cities.get(order.city).goods.get(order.good).margins.getOrDefault(player, Margin.MARKET.id);
+            if (current.equals(order.level)) {
+                state.draftOf(player).removeAll(replaced);
+                return Optional.empty();
+            }
         }
         if (order.type.equals("defend")) {
             Order bo = buyoutAgainst(player, order.sheetId, order.orderId).orElseThrow();
@@ -419,6 +429,9 @@ public final class Engine {
             }
         }
         Cost drafted = draftCost(player), add = cost(player, order);
+        for (Order queued : replaced) {
+            drafted = drafted.plus(new Cost(-Action.of(queued.type).pp, -queued.gold));
+        }
         PlayerSt ps = state.players.get(player);
         if (drafted.pp() + add.pp() > ps.pp) {
             throw new EngineException(err("not_enough_pp", "need", drafted.pp() + add.pp(), "have", ps.pp));
@@ -426,10 +439,15 @@ public final class Engine {
         if (drafted.gold() + add.gold() > ps.gold) {
             throw new EngineException(err("not_enough_gold", "need", drafted.gold() + add.gold(), "have", (int) ps.gold));
         }
+        state.draftOf(player).removeAll(replaced);
         order.id = state.nextId("o");
         order.gold = add.gold();
         state.draftOf(player).add(order);
-        return order;
+        return Optional.of(order);
+    }
+
+    private static boolean isSameMarginChange(Order queued, Order order) {
+        return Action.of(queued.type) == Action.MARGIN && Objects.equals(queued.city, order.city) && Objects.equals(queued.good, order.good);
     }
 
     public void removeDraft(String player, String orderId) {
@@ -838,6 +856,55 @@ public final class Engine {
         Seller(String player, double cap, double margin, double pop) { this.player = player; this.cap = cap; this.margin = margin; this.pop = pop; }
     }
 
+    /** The demand of a good split among its sellers (5.3), the City included; the state is not changed. */
+    private List<Seller> sell(String city, Good good) {
+        List<Seller> sellers = new ArrayList<>();
+        good.shares.forEach((player, pts) -> {
+            if (pts > 0) {
+                sellers.add(new Seller(player, good.supply * pts / 100.0, Margin.of(good.margins.get(player)).rate, popOf(city, player)));
+            }
+        });
+        int cityPts = cityShare(good);
+        if (cityPts > 0) {
+            sellers.add(new Seller(CITY, good.supply * cityPts / 100.0, Rules.CITY_MARGIN, Rules.CITY_POP));
+        }
+        sellers.forEach(seller -> seller.weight = seller.cap * (1 + seller.pop / 100) / (1 + seller.margin));
+        double rem = good.demand;
+        List<Seller> active = new ArrayList<>(sellers.stream().filter(seller -> seller.cap > 0).toList());
+        for (int round = 0; round < 10 && rem > 1e-6 && !active.isEmpty(); round++) {
+            double totalWeight = active.stream().mapToDouble(seller -> seller.weight).sum(), left = 0;
+            for (Seller seller : active) {
+                double want = rem * seller.weight / totalWeight, give = Math.min(want, seller.cap - seller.sold);
+                seller.sold += give;
+                left += want - give;
+            }
+            rem = left;
+            active.removeIf(seller -> seller.cap - seller.sold <= 1e-6);
+        }
+        return sellers;
+    }
+
+    /**
+     * A player's expected gold from selling in a city at the next settlement, from the current state: the sales profit
+     * after the city's tax (5.3, 6.2). Null if the player holds no shares there.
+     */
+    public Double expectedIncome(String city, String player) {
+        CitySt cs = state.cities.get(city);
+        if (cs == null || cs.goods.values().stream().noneMatch(good -> good.shares.getOrDefault(player, 0) > 0)) {
+            return null;
+        }
+        double profit = 0;
+        for (Good good : cs.goods.values()) {
+            for (Seller seller : sell(city, good)) {
+                if (seller.player.equals(player)) {
+                    profit += seller.sold * Rules.BASE_PRICE * seller.margin;
+                }
+            }
+        }
+        int totalSeats = cs.council.values().stream().mapToInt(Integer::intValue).sum();
+        return r1(profit * (totalSeats > 0 ? 1 - taxRate(city) : 1));
+    }
+
     void settle() {
         Map<String, double[]> inc = new LinkedHashMap<>(); // player → [gold, legit]
         state.players.keySet().forEach(player -> inc.put(player, new double[2]));
@@ -847,29 +914,7 @@ public final class Engine {
             Map<String, Double> profits = new LinkedHashMap<>();
             // 5.3 Demand and sales
             for (Good good : cs.goods.values()) {
-                List<Seller> sellers = new ArrayList<>();
-                good.shares.forEach((player, pts) -> {
-                    if (pts > 0) {
-                        sellers.add(new Seller(player, good.supply * pts / 100.0, Margin.of(good.margins.get(player)).rate, popOf(city, player)));
-                    }
-                });
-                int cityPts = cityShare(good);
-                if (cityPts > 0) {
-                    sellers.add(new Seller(CITY, good.supply * cityPts / 100.0, Rules.CITY_MARGIN, Rules.CITY_POP));
-                }
-                sellers.forEach(seller -> seller.weight = seller.cap * (1 + seller.pop / 100) / (1 + seller.margin));
-                double rem = good.demand;
-                List<Seller> active = new ArrayList<>(sellers.stream().filter(seller -> seller.cap > 0).toList());
-                for (int round = 0; round < 10 && rem > 1e-6 && !active.isEmpty(); round++) {
-                    double totalWeight = active.stream().mapToDouble(seller -> seller.weight).sum(), left = 0;
-                    for (Seller seller : active) {
-                        double want = rem * seller.weight / totalWeight, give = Math.min(want, seller.cap - seller.sold);
-                        seller.sold += give;
-                        left += want - give;
-                    }
-                    rem = left;
-                    active.removeIf(seller -> seller.cap - seller.sold <= 1e-6);
-                }
+                List<Seller> sellers = sell(city, good);
                 good.sold.clear();
                 double totalProfit = 0; int totalPts = 0;
                 for (Seller seller : sellers) {

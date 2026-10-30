@@ -12,7 +12,6 @@ A prototípus a szabálykönyv v0.2 magját hűen megvalósítja. A legfontosabb
 - az alapár 3 A a szabálykönyv 1 A-je helyett;
 - az NPC-k útvonal nélkül minden városban cselekedhetnek;
 - hiányzik a kém áthelyezése;
-- hiányzik az alacsony népszerűség +50%-os költségfelára;
 - az információs piac automatikus, nincs megnevezett vevő;
 - nincs szezonvég és Koronázási Tanács.
 
@@ -44,7 +43,6 @@ Az idő- és pontrendszer egyezik a szabálykönyvvel. Az eltérések az induló
 | Elszámolás | 8:00 és 20:00, rögzített sorrend (3.2) | 8:00 és 20:00; a népszerűségi hatás árucikkenként azonnal számolódik, a Legitimitás már a friss értékből | kicsi |
 | Népszerűség kezdőértéke és visszahúzása | 10, 2 ponttal az alap felé | ugyanígy | egyezik |
 | Csökkenő hozam | 60 fölött minden pozitív hatás fele | ugyanígy | egyezik |
-| 20 N alatti +50% aranyköltség (4.5) | igen | **nincs megvalósítva** | közepes |
 | Útvonal-fenntartás | 1 A útvonalanként | csak a játékos fizeti, az NPC-knek nincs útvonaluk | közepes |
 
 ## Városok, kerületek és ágak

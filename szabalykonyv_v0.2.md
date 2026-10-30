@@ -129,8 +129,8 @@ Az Útzár az alapjátékból kikerült. A Katonaság modul hozza vissza (9. fej
 - **Csökkenő hozam:** 60 fölött minden népszerűséget adó hatás fele annyit ér.
 - **Hatásai:**
   - a vásárlók súlya (5.3);
-  - a párt szavazatai (6.3);
-  - a városi akciók ára: 20 alatt minden aranyköltség +50%.
+  - a párt szavazatai (6.3).
+- Az alacsony népszerűség nem drágítja az akciókat: a lemaradót nem büntetjük tovább.
 
 ---
 

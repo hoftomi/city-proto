@@ -45,8 +45,6 @@ abstract class _$RulesInfoCWProxy {
 
   RulesInfo infoPrice(int infoPrice);
 
-  RulesInfo lowPopThreshold(int lowPopThreshold);
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RulesInfo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -73,7 +71,6 @@ abstract class _$RulesInfoCWProxy {
     int routeUpkeep,
     int councilSeats,
     int infoPrice,
-    int lowPopThreshold,
   });
 }
 
@@ -148,10 +145,6 @@ class _$RulesInfoCWProxyImpl implements _$RulesInfoCWProxy {
   RulesInfo infoPrice(int infoPrice) => this(infoPrice: infoPrice);
 
   @override
-  RulesInfo lowPopThreshold(int lowPopThreshold) =>
-      this(lowPopThreshold: lowPopThreshold);
-
-  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RulesInfo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -178,7 +171,6 @@ class _$RulesInfoCWProxyImpl implements _$RulesInfoCWProxy {
     Object? routeUpkeep = const $CopyWithPlaceholder(),
     Object? councilSeats = const $CopyWithPlaceholder(),
     Object? infoPrice = const $CopyWithPlaceholder(),
-    Object? lowPopThreshold = const $CopyWithPlaceholder(),
   }) {
     return RulesInfo(
       basePrice: basePrice == const $CopyWithPlaceholder()
@@ -257,10 +249,6 @@ class _$RulesInfoCWProxyImpl implements _$RulesInfoCWProxy {
           ? _value.infoPrice
           // ignore: cast_nullable_to_non_nullable
           : infoPrice as int,
-      lowPopThreshold: lowPopThreshold == const $CopyWithPlaceholder()
-          ? _value.lowPopThreshold
-          // ignore: cast_nullable_to_non_nullable
-          : lowPopThreshold as int,
     );
   }
 }
@@ -300,7 +288,6 @@ RulesInfo _$RulesInfoFromJson(
       'routeUpkeep',
       'councilSeats',
       'infoPrice',
-      'lowPopThreshold',
     ],
   );
   final val = RulesInfo(
@@ -341,10 +328,6 @@ RulesInfo _$RulesInfoFromJson(
     routeUpkeep: $checkedConvert('routeUpkeep', (v) => (v as num).toInt()),
     councilSeats: $checkedConvert('councilSeats', (v) => (v as num).toInt()),
     infoPrice: $checkedConvert('infoPrice', (v) => (v as num).toInt()),
-    lowPopThreshold: $checkedConvert(
-      'lowPopThreshold',
-      (v) => (v as num).toInt(),
-    ),
   );
   return val;
 });
@@ -369,5 +352,4 @@ Map<String, dynamic> _$RulesInfoToJson(RulesInfo instance) => <String, dynamic>{
   'routeUpkeep': instance.routeUpkeep,
   'councilSeats': instance.councilSeats,
   'infoPrice': instance.infoPrice,
-  'lowPopThreshold': instance.lowPopThreshold,
 };

@@ -29,7 +29,7 @@ class MessagesTest {
         String city = messages.text("world.city.szelmezo.name");
         Msg msg = Msg.of("engine.report.buyout_threat.text", "pts", 5, "good", GoodDef.label("grain").lower(), "city", CityDef.label("szelmezo"), "time", "09. 01. 20:00");
         String text = messages.text(msg);
-        assertTrue(text.startsWith("5 ") && text.contains(good.toLowerCase(Locale.ROOT)) && text.contains(city) && text.contains("09. 01. 20:00") && !text.contains("{"), text);
+        assertTrue(text.startsWith("5%-ot ") && text.contains(good.toLowerCase(Locale.ROOT)) && text.contains(city) && text.contains("09. 01. 20:00") && !text.contains("{"), text);
         assertEquals("a, " + city, messages.resolve(Msg.join(", ", List.of("a", CityDef.label("szelmezo")))));
     }
 

@@ -94,12 +94,14 @@ class CityState extends Equatable {
   List<Buildable> get routes => game!.routesTo(cityId!);
   List<Threat> get threats => game!.threatsIn(cityId!);
   bool defendOnlyInDraft(Threat t) => game!.defendOnlyInDraft(t);
-  bool get lowPop => can && city!.lowPop(rules);
 
   GoodPlan goodPlan(GoodView g) {
     final f = goods[g.id] ?? const GoodForm();
     return GoodPlan.of(g, rules, buyPts: f.buyPts, boPts: f.boPts, target: f.target);
   }
+
+  /// Margin level waiting on the draft for the good (blue in the picker), if any.
+  String? pendingMargin(GoodView g) => game!.pendingMargin(cityId!, g.id);
 
   NewsPlan get newsPlan => NewsPlan.of(catalog, city!, template: news.template, target: news.target, good: news.good);
 

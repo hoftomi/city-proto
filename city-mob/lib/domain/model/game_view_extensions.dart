@@ -106,7 +106,7 @@ extension OrderViewX on OrderView {
 }
 
 extension CostX on Cost {
-  /// „2 PP · 30 A”.
+  /// „2 [pp] · 30 [gold]” (unit markers, rendered as icons by UnitText).
   String get text => [if (pp > 0) 'orders.cost_pp'.tr(namedArgs: {'pp': '$pp'}), if (gold > 0) 'orders.cost_gold'.tr(namedArgs: {'gold': '$gold'})].join(' · ');
 }
 

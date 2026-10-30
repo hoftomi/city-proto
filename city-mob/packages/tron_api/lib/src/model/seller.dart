@@ -27,12 +27,6 @@ class Seller {
 
     required  this.shares,
 
-    required  this.margin,
-
-    required  this.sold,
-
-    required  this.cheapest,
-
     required  this.protectedNow,
   });
 
@@ -74,42 +68,6 @@ class Seller {
 
   @JsonKey(
     
-    name: r'margin',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final String margin;
-
-
-
-  @JsonKey(
-    
-    name: r'sold',
-    required: true,
-    includeIfNull: true,
-  )
-
-
-  final double? sold;
-
-
-
-  @JsonKey(
-    
-    name: r'cheapest',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final bool cheapest;
-
-
-
-  @JsonKey(
-    
     name: r'protectedNow',
     required: true,
     includeIfNull: false,
@@ -127,9 +85,6 @@ class Seller {
       other.house == house &&
       other.city == city &&
       other.shares == shares &&
-      other.margin == margin &&
-      other.sold == sold &&
-      other.cheapest == cheapest &&
       other.protectedNow == protectedNow;
 
     @override
@@ -137,9 +92,6 @@ class Seller {
         (house == null ? 0 : house.hashCode) +
         city.hashCode +
         shares.hashCode +
-        margin.hashCode +
-        (sold == null ? 0 : sold.hashCode) +
-        cheapest.hashCode +
         protectedNow.hashCode;
 
   factory Seller.fromJson(Map<String, dynamic> json) => _$SellerFromJson(json);

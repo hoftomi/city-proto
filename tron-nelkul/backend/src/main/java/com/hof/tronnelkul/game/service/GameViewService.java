@@ -49,7 +49,7 @@ public class GameViewService {
         new RulesInfo(Rules.BASE_PRICE, Rules.CITY_SHARE_COST, Rules.MAX_SHARES_PER_ORDER, (int) Math.round(Rules.BUYOUT_PREMIUM * 100),
             Rules.PARTY_COST, Rules.FESTIVAL_GOLD, (int) Rules.FESTIVAL_POP, Rules.NEWS_GOLD, Rules.SPY_COST, Rules.SPY_UPKEEP,
             Rules.SPIES_PER_CITY, (int) Math.round(Rules.GUARD_CHANCE * 100), (int) Rules.DEBUNK_REWARD_POP, Rules.DEBUNK_REWARD_GOLD,
-            Rules.DEBUNK_REWARD_LEGIT, Rules.ROUTE_COST, Rules.ROUTE_UPKEEP, Rules.COUNCIL_SEATS, Rules.INFO_PRICE, (int) Rules.LOW_POP));
+            Rules.DEBUNK_REWARD_LEGIT, Rules.ROUTE_COST, Rules.ROUTE_UPKEEP, Rules.COUNCIL_SEATS, Rules.INFO_PRICE));
     }
 
     /** Runs the events due by now first. A finished game is already in the archive, hence 404. */
@@ -158,18 +158,13 @@ public class GameViewService {
         List<GoodView> goods = new ArrayList<>();
         for (var goodEntry : cs.goods.entrySet()) {
             Good good = goodEntry.getValue();
-            double cheapest = good.shares.entrySet().stream().filter(entry -> entry.getValue() > 0)
-                .mapToDouble(entry -> Margin.of(good.margins.get(entry.getKey())).rate).min().orElse(Double.NaN);
-            long sellersCount = good.shares.values().stream().filter(pts -> pts > 0).count();
+            // Only who holds how much: the other houses' margins and sales stay secret.
             List<Seller> sellers = new ArrayList<>();
-            good.shares.entrySet().stream().filter(entry -> entry.getValue() > 0).sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(entry -> {
-                String margin = good.margins.getOrDefault(entry.getKey(), Margin.MARKET.id);
-                sellers.add(new Seller(ref.apply(entry.getKey()), false, entry.getValue(), margin, good.sold.get(entry.getKey()),
-                    sellersCount > 1 && Margin.of(margin).rate == cheapest, engine.isProtected(city, goodEntry.getKey(), entry.getKey())));
-            });
+            good.shares.entrySet().stream().filter(entry -> entry.getValue() > 0).sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(entry ->
+                sellers.add(new Seller(ref.apply(entry.getKey()), false, entry.getValue(), engine.isProtected(city, goodEntry.getKey(), entry.getKey()))));
             int cityPts = Engine.cityShare(good);
             if (cityPts > 0) {
-                sellers.add(new Seller(null, true, cityPts, Margin.MARKET.id, good.sold.get(Engine.CITY), false, false));
+                sellers.add(new Seller(null, true, cityPts, false));
             }
             goods.add(new GoodView(goodEntry.getKey(), messages.text(GoodDef.label(goodEntry.getKey())), good.supply, good.demand, cityPts, Engine.marketValue(good), good.shares.getOrDefault(me, 0),
                 good.shares.containsKey(me) ? good.margins.getOrDefault(me, Margin.MARKET.id) : null, sellers));
@@ -195,7 +190,7 @@ public class GameViewService {
                 story.debunked, ps.verified.get(story.id), story.author.equals(me))).toList();
         Integer dist = net.get(city);
         return new CityView(city, messages.text(cd.label()), messages.text(cd.desc()), cd.key(), cd.coast(), dist != null ? "reachable" : "unreachable", dist,
-            engine.popOf(city, me), Math.round(engine.taxRate(city) * 1000) / 1000.0, cs.lastTaxPool, Rules.COUNCIL_SEATS, goods, pop, parties,
+            engine.popOf(city, me), Math.round(engine.taxRate(city) * 1000) / 1000.0, cs.lastTaxPool, Rules.COUNCIL_SEATS, engine.expectedIncome(city, me), goods, pop, parties,
             cs.parties.get(me), cs.spies.getOrDefault(me, 0), cs.guards.getOrDefault(me, 0), foreignSpies, present, news);
     }
 
@@ -210,6 +205,7 @@ public class GameViewService {
             }
         }
         return new OrderView(order.id, order.type, action.branch, messages.text(engine.orderLabel(order, 2)), order.city, order.city == null ? null : messages.resolve(engine.cityName(order.city)),
+            action == Action.MARGIN ? order.good : null, action == Action.MARGIN ? order.level : null,
             new Cost(action.pp, order.gold), warning == null ? null : messages.text(warning));
     }
 

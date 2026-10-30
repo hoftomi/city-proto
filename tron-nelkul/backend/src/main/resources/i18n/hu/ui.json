@@ -14,11 +14,7 @@
     "title": "Parancspont",
     "semantics": "Parancspont: {free} szabad, {pending} lefoglalva, legfeljebb {max}",
     "daily": "+{daily} a következő elszámoláskor",
-    "pending_daily": "{pending} PP lefoglalva a parancslapon · +{daily} a következő elszámoláskor"
-  },
-  "shares": {
-    "city": "Város",
-    "semantics": "{good} részesedések: {parts}"
+    "pending_daily": "{pending} [pp] lefoglalva a parancslapon · +{daily} a következő elszámoláskor"
   },
   "council": {
     "none": "A tanácsot még nem választották meg.",
@@ -43,8 +39,8 @@
   "order_sheet": {
     "title": "Parancslap",
     "seal": "Parancsok lepecsételése",
-    "total": "{total} / {available} PP",
-    "total_over": "{total} / {available} PP · túllépés",
+    "total": "{total} / {available} [pp]",
+    "total_over": "{total} / {available} [pp] · túllépés",
     "sealed": "Lepecsételve",
     "hidden": "Rejtett",
     "remove": "{label} törlése"
@@ -69,5 +65,14 @@
   "city_view": {
     "semantics": "{name} látképe. Kijelölve: {district}.",
     "none": "nincs"
+  },
+  "unit": {
+    "pp": "parancspont",
+    "gold": "arany",
+    "pop": "népszerűség",
+    "legit": "legitimitás"
+  },
+  "option": {
+    "pending": "módosítás a parancslapon"
   }
 }

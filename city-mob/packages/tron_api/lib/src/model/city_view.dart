@@ -47,6 +47,8 @@ class CityView {
 
     required  this.councilSeats,
 
+    required  this.expectedIncome,
+
     required  this.goods,
 
     required  this.pop,
@@ -200,6 +202,18 @@ class CityView {
 
   @JsonKey(
     
+    name: r'expectedIncome',
+    required: true,
+    includeIfNull: true,
+  )
+
+
+  final double? expectedIncome;
+
+
+
+  @JsonKey(
+    
     name: r'goods',
     required: true,
     includeIfNull: false,
@@ -321,6 +335,7 @@ class CityView {
       other.taxRate == taxRate &&
       other.lastTaxPool == lastTaxPool &&
       other.councilSeats == councilSeats &&
+      other.expectedIncome == expectedIncome &&
       other.goods == goods &&
       other.pop == pop &&
       other.parties == parties &&
@@ -344,6 +359,7 @@ class CityView {
         taxRate.hashCode +
         (lastTaxPool == null ? 0 : lastTaxPool.hashCode) +
         councilSeats.hashCode +
+        (expectedIncome == null ? 0 : expectedIncome.hashCode) +
         goods.hashCode +
         pop.hashCode +
         parties.hashCode +

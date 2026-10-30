@@ -8,12 +8,12 @@ import '../../../app/router/routes.dart';
 import '../../../domain/model/city_extensions.dart';
 import '../../../domain/model/extensions.dart';
 import '../../../domain/service/city_service.dart';
-import '../../../theme/tokens.dart';
 import '../../../util/format.dart';
 import '../../../widgets/buttons.dart';
 import '../../../widgets/city_view.dart';
 import '../../../widgets/game_widgets.dart';
 import '../bloc/game_bloc.dart';
+import '../bloc/shown_city_cubit.dart';
 import '../widgets/game_tab_scroll.dart';
 import 'bloc/city_bloc.dart';
 import 'widgets/city_common.dart';
@@ -22,9 +22,10 @@ import 'widgets/market_section.dart';
 import 'widgets/town_hall_section.dart';
 import 'widgets/underworld_section.dart';
 
-/// The city view: header, skyline, and the three districts (Marketplace, Town Hall, Underworld).
-/// The city ([cityId]) and the district ([district]) are URL query parameters; district switching and "← Map"
-/// navigation. The CityBloc is new per city (the key is the city); the district comes from the parameter on every build.
+/// The city view: skyline and the three districts (Marketplace, Town Hall, Underworld). The city's header (eyebrow,
+/// name, chips) is in the shell's top bar: the page reports the resolved city to the [ShownCityCubit].
+/// The city ([cityId]) and the district ([district]) are URL query parameters; district switching. The CityBloc is
+/// new per city (the key is the city); the district comes from the parameter on every build.
 class CityPage extends StatelessWidget {
   const CityPage({super.key, this.cityId, this.district});
   final String? cityId, district;
@@ -45,6 +46,10 @@ class _CityView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<CityBloc, CityState>(
+          listenWhen: (a, b) => a.cityId != b.cityId,
+          listener: (context, s) => context.read<ShownCityCubit>().show(s.cityId),
+        ),
         BlocListener<CityBloc, CityState>(
           listenWhen: (a, b) => b.notice != null && a.notice != b.notice,
           listener: (context, s) => showToast(context, s.notice!.title.text, body: s.notice!.body?.text, tone: s.notice!.tone),
@@ -79,33 +84,15 @@ class _CityBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.tn, cv = s.city!;
+    final cv = s.city!;
     void openDistrict(String d) => context.go(Routes.city(s.gameId!, cityId: s.cityId, district: d));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TnButton(label: 'city.back_to_map'.tr(), kind: TnButtonKind.quiet, small: true, onPressed: () => context.go(Routes.map(s.gameId!))),
-        ),
-        const SizedBox(height: 6),
-        Eyebrow(
-          [
-            cv.profile,
-            if (cv.key) 'city.key_city'.tr(),
-            if (s.can && cv.distance != null) 'city.distance'.tr(namedArgs: {'n': '${cv.distance}'}),
-            if (!s.can) 'city.unreachable_tag'.tr(),
-          ].join(' · '),
-        ),
-        const SizedBox(height: 4),
-        Text(cv.name, style: TnText.display(c.ink)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [for (final x in s.stats) StatChip(label: x.label.text, value: x.value.text, suffix: x.suffix?.text, tone: x.tone, art: x.art)],
-        ),
-        const SizedBox(height: 16),
+        if (cv.expectedIncome != null) ...[
+          ExpectedIncomeCard(cv.expectedIncome!, key: const ValueKey('city/expected-income')),
+          const SizedBox(height: 12),
+        ],
         CityViewWidget(
           name: cv.name,
           coast: cv.coast,

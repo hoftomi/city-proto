@@ -57,8 +57,6 @@ class RulesInfo {
     required  this.councilSeats,
 
     required  this.infoPrice,
-
-    required  this.lowPopThreshold,
   });
 
   @JsonKey(
@@ -289,18 +287,6 @@ class RulesInfo {
 
 
 
-  @JsonKey(
-    
-    name: r'lowPopThreshold',
-    required: true,
-    includeIfNull: false,
-  )
-
-
-  final int lowPopThreshold;
-
-
-
 
 
     @override
@@ -323,8 +309,7 @@ class RulesInfo {
       other.routeCost == routeCost &&
       other.routeUpkeep == routeUpkeep &&
       other.councilSeats == councilSeats &&
-      other.infoPrice == infoPrice &&
-      other.lowPopThreshold == lowPopThreshold;
+      other.infoPrice == infoPrice;
 
     @override
     int get hashCode =>
@@ -346,8 +331,7 @@ class RulesInfo {
         routeCost.hashCode +
         routeUpkeep.hashCode +
         councilSeats.hashCode +
-        infoPrice.hashCode +
-        lowPopThreshold.hashCode;
+        infoPrice.hashCode;
 
   factory RulesInfo.fromJson(Map<String, dynamic> json) => _$RulesInfoFromJson(json);
 

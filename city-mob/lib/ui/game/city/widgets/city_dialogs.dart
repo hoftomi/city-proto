@@ -92,10 +92,10 @@ class _IntelSaleDialogState extends State<IntelSaleDialog> {
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   onChanged: (v) => bloc.add(CityIntelPriceChanged(v)),
                   style: TnText.bodyStrong(c.ink).copyWith(fontSize: 16, fontWeight: FontWeight.w700),
-                  decoration: InputDecoration(labelText: 'city.dialog.price'.tr(), suffixText: 'city.dialog.gold_suffix'.tr()),
+                  decoration: InputDecoration(labelText: 'city.dialog.price'.tr(), suffix: UnitText('city.dialog.gold_suffix'.tr())),
                 ),
                 const SizedBox(height: 8),
-                Text('city.dialog.sale_hint'.tr(), style: TnText.caption(c.inkMuted)),
+                UnitText('city.dialog.sale_hint'.tr(), style: TnText.caption(c.inkMuted)),
               ],
             ),
             actions: [

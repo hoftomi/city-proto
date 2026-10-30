@@ -8,6 +8,12 @@ String signed(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '±0');
 /// Integer without decimals, otherwise with one decimal place.
 String numText(double v) => v == v.roundToDouble() ? v.round().toString() : num1(v);
 
+/// Expected gold with sign, at most one decimal: „+12,5”, „+12”, „0”, „−3”.
+String incomeText(double v) {
+  final r = (v * 10).round() / 10;
+  return r > 0 ? '+${numText(r)}' : (r < 0 ? '−${numText(-r)}' : '0');
+}
+
 /// Name of a power branch (OrderView.branch) and city district.
 String branchName(String b) => const {'trade', 'politics', 'espionage', 'common'}.contains(b) ? 'format.branch.$b'.tr() : b;
 

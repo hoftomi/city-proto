@@ -209,5 +209,11 @@
     "revoke_confirm": "Elveszed {name} admin jogát?",
     "granted": "{name} mostantól admin.",
     "revoked": "{name} már nem admin."
+  },
+  "unit": {
+    "pp": "PP",
+    "gold": "arany",
+    "pop": "népszerűség",
+    "legit": "Legitimitás"
   }
 }

@@ -19,6 +19,10 @@ abstract class _$OrderViewCWProxy {
 
   OrderView cityName(String? cityName);
 
+  OrderView goodId(String? goodId);
+
+  OrderView level(String? level);
+
   OrderView cost(Cost cost);
 
   OrderView warning(String? warning);
@@ -36,6 +40,8 @@ abstract class _$OrderViewCWProxy {
     String label,
     String? cityId,
     String? cityName,
+    String? goodId,
+    String? level,
     Cost cost,
     String? warning,
   });
@@ -66,6 +72,12 @@ class _$OrderViewCWProxyImpl implements _$OrderViewCWProxy {
   OrderView cityName(String? cityName) => this(cityName: cityName);
 
   @override
+  OrderView goodId(String? goodId) => this(goodId: goodId);
+
+  @override
+  OrderView level(String? level) => this(level: level);
+
+  @override
   OrderView cost(Cost cost) => this(cost: cost);
 
   @override
@@ -85,6 +97,8 @@ class _$OrderViewCWProxyImpl implements _$OrderViewCWProxy {
     Object? label = const $CopyWithPlaceholder(),
     Object? cityId = const $CopyWithPlaceholder(),
     Object? cityName = const $CopyWithPlaceholder(),
+    Object? goodId = const $CopyWithPlaceholder(),
+    Object? level = const $CopyWithPlaceholder(),
     Object? cost = const $CopyWithPlaceholder(),
     Object? warning = const $CopyWithPlaceholder(),
   }) {
@@ -113,6 +127,14 @@ class _$OrderViewCWProxyImpl implements _$OrderViewCWProxy {
           ? _value.cityName
           // ignore: cast_nullable_to_non_nullable
           : cityName as String?,
+      goodId: goodId == const $CopyWithPlaceholder()
+          ? _value.goodId
+          // ignore: cast_nullable_to_non_nullable
+          : goodId as String?,
+      level: level == const $CopyWithPlaceholder()
+          ? _value.level
+          // ignore: cast_nullable_to_non_nullable
+          : level as String?,
       cost: cost == const $CopyWithPlaceholder()
           ? _value.cost
           // ignore: cast_nullable_to_non_nullable
@@ -146,6 +168,8 @@ OrderView _$OrderViewFromJson(Map<String, dynamic> json) =>
           'label',
           'cityId',
           'cityName',
+          'goodId',
+          'level',
           'cost',
           'warning',
         ],
@@ -157,6 +181,8 @@ OrderView _$OrderViewFromJson(Map<String, dynamic> json) =>
         label: $checkedConvert('label', (v) => v as String),
         cityId: $checkedConvert('cityId', (v) => v as String?),
         cityName: $checkedConvert('cityName', (v) => v as String?),
+        goodId: $checkedConvert('goodId', (v) => v as String?),
+        level: $checkedConvert('level', (v) => v as String?),
         cost: $checkedConvert(
           'cost',
           (v) => Cost.fromJson(v as Map<String, dynamic>),
@@ -173,6 +199,8 @@ Map<String, dynamic> _$OrderViewToJson(OrderView instance) => <String, dynamic>{
   'label': instance.label,
   'cityId': instance.cityId,
   'cityName': instance.cityName,
+  'goodId': instance.goodId,
+  'level': instance.level,
   'cost': instance.cost.toJson(),
   'warning': instance.warning,
 };

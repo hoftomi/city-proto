@@ -14,8 +14,6 @@ public final class Rules {
     public static final int BASE_PRICE = 3;
 
     public static final double POP_BASE = 10, POP_DRIFT = 2, POP_SOFT_CAP = 60, POP_HOME = 20;
-    /** Below 20 popularity the gold cost of city actions is +50% (4.5). */
-    public static final double LOW_POP = 20, LOW_POP_MULTIPLIER = 1.5;
 
     public static final int CITY_SHARE_COST = 3, MAX_SHARES_PER_ORDER = 10, BUYOUT_PROTECTION = 3;
     public static final double BUYOUT_PREMIUM = 1.5;

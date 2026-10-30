@@ -120,7 +120,7 @@ class _MiniGood extends StatelessWidget {
         g.myShares > 0
             ? Text.rich(TextSpan(style: TnText.body(c.ink).copyWith(fontSize: 13, height: 18 / 13), children: [
                 TextSpan(text: '${'map.your_shares'.tr()} '),
-                TextSpan(text: '${g.myShares}', style: TnText.data(c.ink, weight: FontWeight.w900)),
+                TextSpan(text: '${g.myShares}%', style: TnText.data(c.ink, weight: FontWeight.w900)),
                 TextSpan(text: ' · $marginLabel'),
               ]))
             : Text('map.no_shares'.tr(namedArgs: {'city': '${g.cityShares}'}), style: TnText.body(c.inkMuted).copyWith(fontSize: 13, height: 18 / 13)),

@@ -33,6 +33,10 @@ class OrderView {
 
     required  this.cityName,
 
+    required  this.goodId,
+
+    required  this.level,
+
     required  this.cost,
 
     required  this.warning,
@@ -112,6 +116,30 @@ class OrderView {
 
   @JsonKey(
     
+    name: r'goodId',
+    required: true,
+    includeIfNull: true,
+  )
+
+
+  final String? goodId;
+
+
+
+  @JsonKey(
+    
+    name: r'level',
+    required: true,
+    includeIfNull: true,
+  )
+
+
+  final String? level;
+
+
+
+  @JsonKey(
+    
     name: r'cost',
     required: true,
     includeIfNull: false,
@@ -144,6 +172,8 @@ class OrderView {
       other.label == label &&
       other.cityId == cityId &&
       other.cityName == cityName &&
+      other.goodId == goodId &&
+      other.level == level &&
       other.cost == cost &&
       other.warning == warning;
 
@@ -155,6 +185,8 @@ class OrderView {
         label.hashCode +
         (cityId == null ? 0 : cityId.hashCode) +
         (cityName == null ? 0 : cityName.hashCode) +
+        (goodId == null ? 0 : goodId.hashCode) +
+        (level == null ? 0 : level.hashCode) +
         cost.hashCode +
         (warning == null ? 0 : warning.hashCode);
 

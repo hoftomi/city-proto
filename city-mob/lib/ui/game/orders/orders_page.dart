@@ -62,7 +62,7 @@ class OrdersPage extends StatelessWidget {
                 Text.rich(TextSpan(style: TnText.caption(c.inkMuted), children: [
                   TextSpan(text: '${'orders.reserved_gold'.tr()} '),
                   TextSpan(text: '${s.draftCost.gold}', style: TnText.data(s.overGold ? c.danger : c.ink)),
-                  TextSpan(text: ' ${'orders.gold_of'.tr(namedArgs: {'total': '${s.me.gold.floor()}'})}'),
+                  ...unitSpans(' ${'orders.gold_of'.tr(namedArgs: {'total': '${s.me.gold.floor()}'})}', TnText.caption(c.inkMuted)),
                 ])),
                 Text('orders.maturation'.tr(namedArgs: {'time': s.maturationText}), style: TnText.caption(c.inkMuted)),
               ]),
@@ -72,7 +72,7 @@ class OrdersPage extends StatelessWidget {
               ],
             ],
             const SizedBox(height: 12),
-            Text('orders.seal_hint'.tr(), style: TnText.caption(c.inkMuted)),
+            UnitText('orders.seal_hint'.tr(), style: TnText.caption(c.inkMuted)),
           ]);
         },
       ),
@@ -97,7 +97,7 @@ class _ThreatCard extends StatelessWidget {
         Eyebrow('orders.threat.eyebrow'.tr(namedArgs: {'at': at, 'left': left})),
         const SizedBox(height: 4),
         Text('orders.threat.title'.tr(namedArgs: {'name': t.by.name}), style: TnText.bodyStrong(c.ink)),
-        Text('orders.threat.body'.tr(namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'city': t.cityName, 'cost': '${t.defendCost}'}), style: TnText.body(c.inkMuted)),
+        UnitText('orders.threat.body'.tr(namedArgs: {'pts': '${t.pts}', 'good': t.goodName, 'city': t.cityName, 'cost': '${t.defendCost}'}), style: TnText.body(c.inkMuted)),
         const SizedBox(height: 8),
         Row(children: [
           TnButton(
@@ -151,7 +151,7 @@ class _SheetCard extends StatelessWidget {
             child: Row(children: [
               GameIcon.tile(o.type, size: 16),
               const SizedBox(width: 8),
-              Expanded(child: Text(o.sheetLabel, style: TnText.body(c.ink).copyWith(fontSize: 14))),
+              Expanded(child: UnitText(o.sheetLabel, style: TnText.body(c.ink).copyWith(fontSize: 14))),
             ]),
           ),
         const SizedBox(height: 8),

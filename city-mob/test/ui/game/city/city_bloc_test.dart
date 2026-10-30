@@ -218,7 +218,6 @@ void main() {
     final st = b.state;
     expect(st.dominants['trade']?.name, 'Ezüstpart-ház');
     expect(st.threats.single.orderId, 'o100');
-    expect(st.lowPop, isTrue);
     expect(st.freeSpies, 2);
     expect(st.checkable.length, s.city('szelmezo').checkable.length);
     expect(st.newsCheck(st.checkable.first), NewsCheck.verify);

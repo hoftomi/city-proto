@@ -11,6 +11,10 @@ void main() {
     expect(num1(42.34), '42,3');
     expect(signed(-2), '−2');
     expect(signed(3), '+3');
+    expect(incomeText(12.5), '+12,5');
+    expect(incomeText(12.04), '+12');
+    expect(incomeText(0), '0');
+    expect(incomeText(-3), '−3');
   });
 
   test('deterministic random matches the web prototype', () {

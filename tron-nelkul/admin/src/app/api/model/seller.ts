@@ -11,15 +11,12 @@ import { HouseRef } from './house-ref';
 
 
 /**
- * A seller of a good. In the City\'s row house = null and city = true.
+ * A seller of a good: who and how many shares (percent). Other houses\' margins and sales are not shared. In the City\'s row house = null and city = true. protectedNow: can\'t be bought out right now.
  */
 export interface Seller { 
     house: HouseRef | null;
     city: boolean;
     shares: number;
-    margin: string;
-    sold: number | null;
-    cheapest: boolean;
     protectedNow: boolean;
 }
 

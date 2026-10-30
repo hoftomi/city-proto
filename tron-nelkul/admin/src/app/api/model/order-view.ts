@@ -11,7 +11,7 @@ import { Cost } from './cost';
 
 
 /**
- * branch: common | trade | politics | espionage. warning: why the order would not run now, or that the news is currently false.
+ * branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [pop], [legit] (rendered as icons by the client).
  */
 export interface OrderView { 
     id: string;
@@ -20,6 +20,8 @@ export interface OrderView {
     label: string;
     cityId: string | null;
     cityName: string | null;
+    goodId: string | null;
+    level: string | null;
     cost: Cost;
     warning: string | null;
 }

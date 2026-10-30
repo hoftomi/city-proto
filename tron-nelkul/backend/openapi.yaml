@@ -1106,7 +1106,7 @@ components:
             $ref: '#/components/schemas/GoodDef'
     CityView:
       type: object
-      description: 'reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses'' spies (names only). myProgram: null if you have no party here.'
+      description: 'reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses'' spies (names only). myProgram: null if you have no party here. expectedIncome: your expected gold from selling in this city at the next settlement (after tax, from the current state); null if you hold no shares here.'
       required:
       - id
       - name
@@ -1119,6 +1119,7 @@ components:
       - taxRate
       - lastTaxPool
       - councilSeats
+      - expectedIncome
       - goods
       - pop
       - parties
@@ -1158,6 +1159,10 @@ components:
         councilSeats:
           type: integer
           format: int32
+        expectedIncome:
+          type: number
+          format: double
+          nullable: true
         goods:
           type: array
           items:
@@ -1814,7 +1819,7 @@ components:
           nullable: true
     OrderView:
       type: object
-      description: 'branch: common | trade | politics | espionage. warning: why the order would not run now, or that the news is currently false.'
+      description: 'branch: common | trade | politics | espionage. goodId and level: the good and the new level of a margin order (null for other types). warning: why the order would not run now, or that the news is currently false. Texts may contain the unit markers [pp], [gold], [pop], [legit] (rendered as icons by the client).'
       required:
       - id
       - type
@@ -1822,6 +1827,8 @@ components:
       - label
       - cityId
       - cityName
+      - goodId
+      - level
       - cost
       - warning
       properties:
@@ -1837,6 +1844,12 @@ components:
           type: string
           nullable: true
         cityName:
+          type: string
+          nullable: true
+        goodId:
+          type: string
+          nullable: true
+        level:
           type: string
           nullable: true
         cost:
@@ -2006,7 +2019,6 @@ components:
       - routeUpkeep
       - councilSeats
       - infoPrice
-      - lowPopThreshold
       properties:
         basePrice:
           type: integer
@@ -2065,19 +2077,13 @@ components:
         infoPrice:
           type: integer
           format: int32
-        lowPopThreshold:
-          type: integer
-          format: int32
     Seller:
       type: object
-      description: A seller of a good. In the City's row house = null and city = true.
+      description: "A seller of a good: who and how many shares (percent). Other houses' margins and sales are not shared. In the City's row house = null and city = true. protectedNow: can't be bought out right now."
       required:
       - house
       - city
       - shares
-      - margin
-      - sold
-      - cheapest
       - protectedNow
       properties:
         house:
@@ -2089,14 +2095,6 @@ components:
         shares:
           type: integer
           format: int32
-        margin:
-          type: string
-        sold:
-          type: number
-          format: double
-          nullable: true
-        cheapest:
-          type: boolean
         protectedNow:
           type: boolean
     StartSlot:

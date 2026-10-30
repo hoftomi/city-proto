@@ -15,7 +15,7 @@ import { PopRow } from './pop-row';
 
 
 /**
- * reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses\' spies (names only). myProgram: null if you have no party here.
+ * reach: reachable | unreachable. present: other houses present in the city (possible news targets). foreignSpies: rumour of other houses\' spies (names only). myProgram: null if you have no party here. expectedIncome: your expected gold from selling in this city at the next settlement (after tax, from the current state); null if you hold no shares here.
  */
 export interface CityView { 
     id: string;
@@ -29,6 +29,7 @@ export interface CityView {
     taxRate: number;
     lastTaxPool: number | null;
     councilSeats: number;
+    expectedIncome: number | null;
     goods: Array<GoodView>;
     pop: Array<PopRow>;
     parties: Array<PartyView>;

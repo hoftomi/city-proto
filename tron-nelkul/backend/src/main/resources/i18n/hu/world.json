@@ -136,7 +136,7 @@
   "background": {
     "merchant": {
       "name": "Kereskedőház",
-      "perk1": "20 részesedés a kezdőváros egyik árucikkéből",
+      "perk1": "20% részesedés a kezdőváros egyik árucikkéből",
       "perk2": "Azonnal van eladható árud"
     },
     "noble": {

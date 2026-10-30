@@ -41,7 +41,7 @@ class TownHallSection extends StatelessWidget {
               gap(8),
               SeatsBar(parties: cv.parties, total: cv.councilSeats),
               gap(8),
-              Text(
+              UnitText(
                 [
                   'city.town_hall.tax'.tr(namedArgs: {'percent': '${cv.taxPercent}'}),
                   if (cv.lastTaxPool != null) 'city.town_hall.tax_pool'.tr(namedArgs: {'gold': numText(cv.lastTaxPool!)}),

@@ -92,7 +92,7 @@ class JoinChoice extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(title, style: TnText.title(c.ink).copyWith(fontSize: 16, height: 22 / 16)),
                 const SizedBox(height: 2),
-                for (final l in lines) Text(l, style: TnText.body(c.ink).copyWith(fontSize: 14, height: 20 / 14)),
+                for (final l in lines) UnitText(l, style: TnText.body(c.ink).copyWith(fontSize: 14, height: 20 / 14)),
               ]),
             ),
             SizedBox(width: 22, child: selected ? TnIcon('check', size: 18, color: c.btnGreenLo) : null),
@@ -116,7 +116,7 @@ class JoinKv extends StatelessWidget {
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         SizedBox(width: 112, child: Text(k.toUpperCase(), style: TnText.eyebrow(c.inkMuted).copyWith(height: 20 / 11.5))),
         const SizedBox(width: 12),
-        Expanded(child: Text(v, style: TnText.body(c.ink))),
+        Expanded(child: UnitText(v, style: TnText.body(c.ink))),
       ]),
     );
   }

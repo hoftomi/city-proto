@@ -11,9 +11,11 @@ import '../util/format.dart';
 import 'buttons.dart';
 import 'game_icon.dart';
 import 'tn_icon.dart';
+import 'unit_text.dart';
 
 export 'game_icon.dart';
 export 'surfaces.dart';
+export 'unit_text.dart';
 
 // ---------------------------------------------------------------------------
 // Frames
@@ -240,43 +242,63 @@ class TnChip extends StatelessWidget {
       decoration: BoxDecoration(color: bg ?? c.field, borderRadius: BorderRadius.circular(5), border: Border.all(color: border ?? c.lineStrong)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (icon != null) ...[GameIcon(icon!, size: 14, fallbackColor: color), const SizedBox(width: 4)],
-        Text(label, style: TnText.data(color, size: 13).copyWith(height: 20 / 13)),
+        UnitText(label, style: TnText.data(color, size: 13).copyWith(height: 20 / 13)),
       ]),
     );
   }
 }
 
-/// Small labeled value chip (pop-chip), e.g. "Your popularity 23", with optional game icon.
+/// Small labeled value chip (pop-chip) for the dark wood header, e.g. "Your popularity 23", with optional game icon:
+/// light text in a dark capsule (like ResourceChip); the warn tone is bronze.
 class StatChip extends StatelessWidget {
-  const StatChip({super.key, required this.label, required this.value, this.suffix, this.tone, this.art});
+  const StatChip({super.key, required this.label, required this.value, this.suffix, this.tone, this.art, this.info, this.compact = false});
   final String label, value;
   final String? suffix, tone, art;
+
+  /// Explanation shown on tap (with the full label) when [compact].
+  final String? info;
+
+  /// Icon and value only; the label, suffix and [info] come up in a tooltip on tap.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final (fg, bg, bd) = switch (tone) {
-      'warn' => (c.warn, c.warnSoft, c.warn),
-      'ok' => (c.ok, c.okSoft, c.ok),
-      _ => (c.ink, c.field, c.lineStrong),
+    final (fg, bd) = switch (tone) {
+      'warn' => (c.frameHi, c.frame),
+      'ok' => (const Color(0xFFB9D7E6), c.frameLo),
+      _ => (const Color(0xFFF6E9C8), c.frameLo),
     };
-    final st = TnText.data(fg, size: 13).copyWith(height: 20 / 13);
-    return Container(
-      padding: EdgeInsets.fromLTRB(art == null ? 9 : 5, 1, 9, 1),
+    final st = TnText.data(fg, size: 12.5).copyWith(height: 18 / 12.5);
+    final chip = Container(
+      padding: EdgeInsets.fromLTRB(art == null ? 8 : 4, 1, 8, 1),
       decoration: BoxDecoration(
-        color: bg,
-        border: Border.all(color: bd),
         borderRadius: BorderRadius.circular(5),
-        boxShadow: const [BoxShadow(color: Color(0x1F000000), offset: Offset(0, 1))],
+        border: Border.all(color: bd),
+        gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2B1C11), Color(0xFF3F2918)]),
+        boxShadow: const [BoxShadow(color: Color(0x80000000), offset: Offset(0, 1))],
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (art != null) ...[GameIcon(art!, size: 16), const SizedBox(width: 5)],
         Text.rich(TextSpan(style: st, children: [
-          TextSpan(text: '$label '),
+          if (!compact) TextSpan(text: '$label '),
           TextSpan(text: value, style: st.copyWith(fontWeight: FontWeight.w900)),
-          if (suffix != null) TextSpan(text: ' $suffix'),
+          if (suffix != null && !compact) TextSpan(text: ' $suffix'),
         ])),
       ]),
+    );
+    if (!compact) return chip;
+    final full = [label, value, if (suffix != null) suffix].join(' ');
+    return Tooltip(
+      message: info == null ? full : '$full\n$info',
+      triggerMode: TooltipTriggerMode.tap,
+      showDuration: const Duration(seconds: 6),
+      preferBelow: true,
+      textStyle: TnText.body(const Color(0xFFF6E9C8)).copyWith(fontSize: 13, height: 18 / 13),
+      decoration: BoxDecoration(color: const Color(0xF22B1C11), borderRadius: BorderRadius.circular(6), border: Border.all(color: c.frameLo)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Semantics(button: true, label: full, excludeSemantics: true, child: chip),
     );
   }
 }
@@ -388,7 +410,7 @@ class CommandPoints extends StatelessWidget {
               return SizedBox(width: w, height: d, child: CustomPaint(painter: _PipsPainter(c, max, available - pend, available, d)));
             }),
             const SizedBox(height: 8),
-            Text(pend > 0 ? 'ui.command_points.pending_daily'.tr(namedArgs: {'pending': '$pend', 'daily': '$daily'}) : 'ui.command_points.daily'.tr(namedArgs: {'daily': '$daily'}), style: TnText.caption(c.inkMuted)),
+            UnitText(pend > 0 ? 'ui.command_points.pending_daily'.tr(namedArgs: {'pending': '$pend', 'daily': '$daily'}) : 'ui.command_points.daily'.tr(namedArgs: {'daily': '$daily'}), style: TnText.caption(c.inkMuted)),
           ]),
         ),
       ),
@@ -460,73 +482,6 @@ class _PipsPainter extends CustomPainter {
 // ---------------------------------------------------------------------------
 // Shares bar and council
 // ---------------------------------------------------------------------------
-
-/// A good's 100 share points: owners' segments in the one neutral house tone (the own one with a parchment
-/// outline), the City's part hatched (influence bar style: dark wood trough, painted segments with top highlight).
-/// The legend names the owners in bar order; the own house is bold.
-class ShareBar extends StatelessWidget {
-  const ShareBar({super.key, required this.good, this.legend = false});
-  final GoodView good;
-  final bool legend;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.tn;
-    final owners = good.sellers.where((s) => s.house != null && s.shares > 0).toList()..sort((a, b) => b.shares.compareTo(a.shares));
-    final used = owners.fold<int>(0, (a, s) => a + s.shares);
-    final cityPart = (100 - used).clamp(0, 100);
-    Widget seg(Color col, {bool self = false}) => Container(
-          decoration: BoxDecoration(color: col, border: self ? Border.all(color: const Color(0xFFFFF8E6), width: 1.5) : null),
-          child: Column(children: [
-            Container(height: 2, color: Color(self ? 0x55FFFFFF : 0x40FFFFFF)),
-            const Spacer(),
-            Container(height: 2, color: const Color(0x2E000000)),
-          ]),
-        );
-    final parts = <(int, Widget)>[
-      for (final s in owners) (s.shares, seg(c.houseShare, self: s.house!.self)),
-      if (cityPart > 0) (cityPart, CustomPaint(painter: _HatchPainter(c.shareNeutral, const Color(0xFFC9B083)))),
-    ];
-    final cityName = 'ui.shares.city'.tr();
-    final a11y = [for (final s in owners) '${s.house!.name} ${s.shares}', '$cityName $cityPart'].join(', ');
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Semantics(
-        label: 'ui.shares.semantics'.tr(namedArgs: {'good': good.name, 'parts': a11y}),
-        child: Container(
-          height: 20,
-          decoration: BoxDecoration(
-            color: c.woodLo,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: c.woodLo, width: 1.5),
-            boxShadow: [BoxShadow(color: c.frameLo, spreadRadius: 1)],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(2.5),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              for (var i = 0; i < parts.length; i++) ...[
-                if (i > 0) const SizedBox(width: 1.5),
-                Expanded(flex: parts[i].$1.clamp(1, 100), child: parts[i].$2),
-              ],
-            ]),
-          ),
-        ),
-      ),
-      if (legend) ...[
-        const SizedBox(height: 6),
-        Wrap(spacing: 12, runSpacing: 4, children: [
-          for (final s in owners) _key(c, s.house!.name, '${s.shares}', bold: s.house!.self),
-          if (cityPart > 0) _key(c, cityName, '$cityPart'),
-        ]),
-      ],
-    ]);
-  }
-
-  Widget _key(TnColors c, String name, String value, {bool bold = false}) => Row(mainAxisSize: MainAxisSize.min, children: [
-        Text(name, style: (bold ? TnText.bodyStrong(c.ink) : TnText.body(c.ink)).copyWith(fontSize: 13)),
-        const SizedBox(width: 4),
-        Text(value, style: TnText.data(c.inkMuted, size: 12)),
-      ]);
-}
 
 /// City council seats (9 by default) as wax seal discs in the one neutral house tone; the own seats carry a
 /// bronze ring, empty seats are dashed. The caption names the parties.
@@ -609,24 +564,6 @@ class _SeatPainter extends CustomPainter {
   bool shouldRepaint(_SeatPainter o) => o.fill != fill || o.self != self;
 }
 
-class _HatchPainter extends CustomPainter {
-  _HatchPainter(this.bg, this.line);
-  final Color bg, line;
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = bg);
-    final p = Paint()
-      ..color = line
-      ..strokeWidth = 1.5;
-    for (double x = -size.height; x < size.width; x += 5.5) {
-      canvas.drawLine(Offset(x, size.height), Offset(x + size.height, 0), p);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_HatchPainter o) => o.bg != bg || o.line != line;
-}
-
 /// Progress trough (sheet-progress, game-seats-bar): painted bronze or green fill.
 class TnMeter extends StatelessWidget {
   const TnMeter({super.key, required this.value, this.green = false, this.height = 10});
@@ -668,30 +605,41 @@ class OptionItem {
   final String id, big, label, sub;
 }
 
-/// Toggle button row for switching levels (margin, tax program, margin-row). The current level
-/// is green and not selectable.
+/// Toggle button row for switching levels (margin, tax program, margin-row).
+///
+/// * [selected]: the level in effect, green.
+/// * [pending]: a level waiting on the unsealed order sheet, blue. Tapping it does nothing; while it
+///   exists, the green level is tappable too (picking it again cancels the pending change).
+///   Without [pending] the green level is not tappable.
 class OptionRow extends StatelessWidget {
-  const OptionRow({super.key, required this.items, required this.selected, this.onPick});
+  const OptionRow({super.key, required this.items, required this.selected, this.pending, this.onPick});
   final List<OptionItem> items;
-  final String? selected;
+  final String? selected, pending;
   final ValueChanged<String>? onPick;
+
+  /// Whether tapping [id] does something (see the class doc).
+  static bool canPick(String id, {required String? selected, required String? pending}) =>
+      id != pending && (id != selected || (pending != null && pending != selected));
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
+    final blue = pending == selected ? null : pending;
     return Wrap(spacing: 6, runSpacing: 6, children: [
       for (final it in items)
         TnMiniButton(
           on: it.id == selected,
-          semanticLabel: '${it.label} ${it.big}, ${it.sub}',
-          onTap: onPick == null || it.id == selected ? null : () => onPick!(it.id),
+          pending: it.id == blue,
+          semanticLabel: unitPlain('${it.label} ${it.big}, ${it.sub}${it.id == blue ? ', ${'ui.option.pending'.tr()}' : ''}'),
+          onTap: onPick == null || !canPick(it.id, selected: selected, pending: blue) ? null : () => onPick!(it.id),
           child: Builder(builder: (ctx) {
             final st = DefaultTextStyle.of(ctx).style;
-            final on = it.id == selected;
+            final lit = it.id == selected || it.id == blue;
+            final subStyle = st.copyWith(fontSize: 12, color: lit ? const Color(0xFFF2EEDD) : c.inkMuted, shadows: lit ? st.shadows : null);
             return Text.rich(TextSpan(children: [
               TextSpan(text: it.big, style: st.copyWith(fontWeight: FontWeight.w900)),
               TextSpan(text: ' ${it.label} '),
-              TextSpan(text: it.sub, style: st.copyWith(fontSize: 12, color: on ? const Color(0xFFF2EEDD) : c.inkMuted, shadows: on ? st.shadows : null)),
+              ...unitSpans(it.sub, subStyle),
             ]));
           }),
         ),
@@ -706,7 +654,7 @@ class FieldLabel extends StatelessWidget {
   final String? art;
   @override
   Widget build(BuildContext context) {
-    final t = Text(text.toUpperCase(), style: TnText.label(context.tn.inkMuted));
+    final t = UnitText(text, upper: true, style: TnText.label(context.tn.inkMuted));
     if (art == null) return t;
     return Row(mainAxisSize: MainAxisSize.min, children: [GameIcon(art!, size: 16), const SizedBox(width: 6), Flexible(child: t)]);
   }
@@ -749,38 +697,68 @@ class TnSelect<T> extends StatelessWidget {
             borderRadius: BorderRadius.circular(TnRadius.sm),
             icon: Padding(padding: const EdgeInsets.only(left: 6), child: TnIcon('chevron', size: 16, color: c.inkMuted)),
             style: TnText.bodyStrong(c.ink).copyWith(fontSize: 16, fontWeight: FontWeight.w700),
-            items: [for (final e in items) DropdownMenuItem(value: e.$1, child: Text(e.$2, overflow: TextOverflow.ellipsis))],
+            items: [for (final e in items) DropdownMenuItem(value: e.$1, child: UnitText(e.$2, overflow: TextOverflow.ellipsis))],
             onChanged: disabled ? null : (x) => x == null ? null : onChanged!(x),
           ),
         ),
       ),
-      if (hint != null) ...[const SizedBox(height: 4), Text(hint!, style: TnText.caption(c.inkMuted))],
+      if (hint != null) ...[const SizedBox(height: 4), UnitText(hint!, style: TnText.caption(c.inkMuted))],
     ]);
   }
 }
 
 /// A column in the [MiniTable].
 class Col {
-  const Col(this.label, {this.flex = 1, this.right = false});
+  const Col(this.label, {this.flex = 1, this.right = false, this.fit = false});
   final String label;
   final int flex;
   final bool right;
+
+  /// The column is exactly as wide as its header text (the header never clips); [flex] is ignored
+  /// and the flexible columns share the rest.
+  final bool fit;
 }
 
 /// Data table (tn-table, ledger): dark wood header with bronze Cinzel text, striped rows,
 /// own row highlighted in steel blue; numeric columns right-aligned.
 class MiniTable extends StatelessWidget {
-  const MiniTable({super.key, required this.cols, required this.rows, this.selfRows = const {}, this.empty});
+  const MiniTable({super.key, required this.cols, required this.rows, this.selfRows = const {}, this.empty, this.compactHeader = false, this.gap = 0});
   final List<Col> cols;
   final List<List<Widget>> rows;
   final Set<int> selfRows;
   final String? empty;
 
+  /// Smaller header text and tighter side padding, so full header words fit on a phone.
+  final bool compactHeader;
+
+  /// Horizontal space between columns.
+  final double gap;
+
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    Widget cell(Col col, Widget w) => Expanded(flex: col.flex, child: Align(alignment: col.right ? Alignment.centerRight : Alignment.centerLeft, child: w));
-    final head = TnText.title(c.frameHi).copyWith(fontSize: 12.5, height: 18 / 12.5, letterSpacing: 0.5);
+    final headSize = compactHeader ? 10.0 : 12.5;
+    final padX = compactHeader ? 8.0 : 12.0;
+    final head = TnText.title(c.frameHi).copyWith(fontSize: headSize, height: 18 / headSize, letterSpacing: compactHeader ? 0 : 0.5);
+    final headRight = compactHeader ? head : TnText.data(c.frameHi, size: 12.5).copyWith(height: 18 / 12.5);
+    final scaler = MediaQuery.textScalerOf(context);
+    final widths = [
+      for (final col in cols)
+        if (!col.fit)
+          null
+        else
+          (TextPainter(text: TextSpan(text: unitPlain(col.label), style: col.right ? headRight : head), textDirection: Directionality.of(context), textScaler: scaler, maxLines: 1)
+                ..layout())
+              .width
+              .ceilToDouble(),
+    ];
+    Widget cell(int i, Widget w) {
+      final col = cols[i];
+      final inner = Align(alignment: col.right ? Alignment.centerRight : Alignment.centerLeft, child: w);
+      final padded = Padding(padding: EdgeInsets.only(left: i == 0 ? 0 : gap), child: inner);
+      return widths[i] == null ? Expanded(flex: col.flex, child: padded) : SizedBox(width: widths[i]! + (i == 0 ? 0 : gap), child: padded);
+    }
+
     return Container(
       decoration: BoxDecoration(border: Border.all(color: c.wood, width: 1.5), borderRadius: BorderRadius.circular(TnRadius.sm), color: c.paperRaised),
       child: ClipRRect(
@@ -789,24 +767,24 @@ class MiniTable extends StatelessWidget {
           foregroundDecoration: BoxDecoration(border: Border.all(color: c.frameHi), borderRadius: BorderRadius.circular(TnRadius.sm - 1.5)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: padX, vertical: 8),
               decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [c.wood, c.woodLo])),
               child: Row(children: [
-                for (final col in cols)
-                  cell(col, Text(col.label, maxLines: 1, overflow: TextOverflow.fade, softWrap: false, style: col.right ? TnText.data(c.frameHi, size: 12.5).copyWith(height: 18 / 12.5) : head)),
+                for (var i = 0; i < cols.length; i++)
+                  cell(i, UnitText(cols[i].label, maxLines: 1, overflow: TextOverflow.fade, softWrap: false, style: cols[i].right ? headRight : head)),
               ]),
             ),
-            if (rows.isEmpty && empty != null) Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), child: Text(empty!, style: TnText.body(c.inkMuted).copyWith(fontSize: 14))),
+            if (rows.isEmpty && empty != null) Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), child: UnitText(empty!, style: TnText.body(c.inkMuted).copyWith(fontSize: 14))),
             for (var r = 0; r < rows.length; r++)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: padX, vertical: 8),
                 decoration: BoxDecoration(
                   color: selfRows.contains(r) ? c.verdigrisSoft : (r.isOdd ? const Color(0xFFF1E6CC) : null),
                   border: r == rows.length - 1 ? null : Border(bottom: BorderSide(color: c.line)),
                 ),
                 child: DefaultTextStyle.merge(
                   style: TnText.body(c.ink).copyWith(fontSize: 14),
-                  child: Row(children: [for (var i = 0; i < cols.length; i++) cell(cols[i], i < rows[r].length ? rows[r][i] : const SizedBox.shrink())]),
+                  child: Row(children: [for (var i = 0; i < cols.length; i++) cell(i, i < rows[r].length ? rows[r][i] : const SizedBox.shrink())]),
                 ),
               ),
           ]),
@@ -818,14 +796,20 @@ class MiniTable extends StatelessWidget {
 
 /// A house with coat of arms and name (for table rows).
 class HouseName extends StatelessWidget {
-  const HouseName(this.house, {super.key, this.size = 14});
+  const HouseName(this.house, {super.key, this.size = 14, this.maxLines = 1});
   final HouseRef house;
   final double size;
+
+  /// Lines the name may wrap to (narrow columns).
+  final int maxLines;
   @override
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
         HouseCrest(size: size, npc: house.npc, name: house.name),
         const SizedBox(width: 6),
-        Flexible(child: Text(house.self ? 'ui.self'.tr(namedArgs: {'name': house.name}) : house.name, overflow: TextOverflow.ellipsis, style: TnText.body(context.tn.ink).copyWith(fontSize: 14))),
+        Flexible(
+          child: Text(house.self ? 'ui.self'.tr(namedArgs: {'name': house.name}) : house.name,
+              maxLines: maxLines, overflow: TextOverflow.ellipsis, style: TnText.body(context.tn.ink).copyWith(fontSize: maxLines > 1 ? 13 : 14, height: maxLines > 1 ? 17 / 13 : null)),
+        ),
       ]);
 }
 
@@ -897,9 +881,9 @@ class ReportCard extends StatelessWidget {
           ]),
         ),
         const SizedBox(height: 8),
-        Text(report.title, style: TnText.title(c.ink).copyWith(fontSize: 16.5, height: 22 / 16.5)),
+        UnitText(report.title, style: TnText.title(c.ink).copyWith(fontSize: 16.5, height: 22 / 16.5)),
         const SizedBox(height: 4),
-        Text(report.text, style: TnText.chronicle(c.ink)),
+        UnitText(report.text, style: TnText.chronicle(c.ink)),
       ]),
     );
   }
@@ -936,8 +920,8 @@ class Notice extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: TnText.title(fg).copyWith(fontSize: 15, height: 20 / 15)),
-              if (body != null) ...[const SizedBox(height: 2), Text(body!, style: TnText.body(c.ink).copyWith(fontSize: 14, height: 20 / 14))],
+              UnitText(title, style: TnText.title(fg).copyWith(fontSize: 15, height: 20 / 15)),
+              if (body != null) ...[const SizedBox(height: 2), UnitText(body!, style: TnText.body(c.ink).copyWith(fontSize: 14, height: 20 / 14))],
             ]),
           ),
         ]),
@@ -970,7 +954,7 @@ class Eyebrow extends StatelessWidget {
   final String? art;
   @override
   Widget build(BuildContext context) {
-    final t = Text(text.toUpperCase(), style: TnText.eyebrow(context.tn.inkMuted));
+    final t = UnitText(text, upper: true, style: TnText.eyebrow(context.tn.inkMuted));
     if (art == null) return t;
     return Row(mainAxisSize: MainAxisSize.min, children: [GameIcon(art!, size: 16), const SizedBox(width: 6), Flexible(child: t)]);
   }
@@ -985,7 +969,7 @@ class ArtTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
         if (art != null) ...[GameIcon(art!, size: artSize, shadow: true), const SizedBox(width: 8)],
-        Flexible(child: Text(text, style: TnText.title(context.tn.ink).copyWith(fontSize: size, height: 1.25))),
+        Flexible(child: UnitText(text, style: TnText.title(context.tn.ink).copyWith(fontSize: size, height: 1.25))),
       ]);
 }
 
@@ -1053,14 +1037,14 @@ class OrderSheet extends StatelessWidget {
               Expanded(
                   child: Text('ui.order_sheet.title'.tr(),
                       style: TnText.sheetTitle(c.frameHi).copyWith(fontSize: 17, height: 22 / 17, shadows: const [Shadow(color: Color(0x80000000), offset: Offset(0, 1))]))),
-              if (aside != null) Text(aside!, style: TnText.caption(c.onWood)),
+              if (aside != null) UnitText(aside!, style: TnText.caption(c.onWood)),
             ]),
           ),
           for (var i = 0; i < orders.length; i++) _row(context, c, i),
           Padding(
             padding: const EdgeInsets.fromLTRB(14.5, 12, 14.5, 12),
             child: Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 12, runSpacing: 12, children: [
-              Text((over ? 'ui.order_sheet.total_over' : 'ui.order_sheet.total').tr(namedArgs: {'total': '$total', 'available': '$available'}), style: TnText.data(over ? c.danger : c.ink, size: 14)),
+              UnitText((over ? 'ui.order_sheet.total_over' : 'ui.order_sheet.total').tr(namedArgs: {'total': '$total', 'available': '$available'}), style: TnText.data(over ? c.danger : c.ink, size: 14)),
               if (sealed)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -1090,7 +1074,7 @@ class OrderSheet extends StatelessWidget {
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-              Text(o.label, style: TnText.bodyStrong(c.ink)),
+              UnitText(o.label, style: TnText.bodyStrong(c.ink)),
               if (o.hidden)
                 Container(
                   margin: const EdgeInsets.only(left: 6),
@@ -1099,23 +1083,23 @@ class OrderSheet extends StatelessWidget {
                   child: Text('ui.order_sheet.hidden'.tr(), style: TnText.data(Colors.white, size: 11)),
                 ),
             ]),
-            if (o.meta != null && o.meta!.isNotEmpty) Text(o.meta!, style: TnText.caption(c.inkMuted)),
+            if (o.meta != null && o.meta!.isNotEmpty) UnitText(o.meta!, style: TnText.caption(c.inkMuted)),
             if (o.warning != null)
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(padding: const EdgeInsets.only(top: 2), child: TnIcon('warning', size: 14, color: c.warn)),
                   const SizedBox(width: 4),
-                  Expanded(child: Text(o.warning!, style: TnText.caption(c.warn).copyWith(fontWeight: FontWeight.w800))),
+                  Expanded(child: UnitText(o.warning!, style: TnText.caption(c.warn).copyWith(fontWeight: FontWeight.w800))),
                 ]),
               ),
           ]),
         ),
         const SizedBox(width: 8),
-        Text(o.cost, style: TnText.data(c.ink, size: 13.5)),
+        UnitText(o.cost, style: TnText.data(c.ink, size: 13.5)),
         if (onRemove != null && !sealed)
           IconButton(
-            tooltip: 'ui.order_sheet.remove'.tr(namedArgs: {'label': o.label}),
+            tooltip: 'ui.order_sheet.remove'.tr(namedArgs: {'label': unitPlain(o.label)}),
             onPressed: busy ? null : () => onRemove!(i),
             visualDensity: VisualDensity.compact,
             icon: TnIcon('close', size: 14, color: c.inkMuted),

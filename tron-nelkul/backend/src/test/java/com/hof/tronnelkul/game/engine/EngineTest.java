@@ -51,6 +51,36 @@ class EngineTest {
     }
 
     @Test
+    void expectedIncomeMatchesTheSettlementSales() {
+        // Same setup as the 5.3 example: A sells 35.1 units of salt at Expensive (50%), no council, so no tax
+        Engine engine = game();
+        for (String player : new String[] { "a", "b" }) {
+            PlayerSt house = new PlayerSt(); house.id = player; house.name = player; house.npc = true; engine.state.players.put(player, house);
+        }
+        CitySt cs = engine.state.cities.get("feketerev");
+        Good salt = cs.goods.get("salt");
+        salt.shares.put("a", 50); salt.margins.put("a", "expensive");
+        salt.shares.put("b", 30); salt.margins.put("b", "cheap");
+        cs.pop.put("a", 30.0); cs.pop.put("b", 50.0);
+        double expected = engine.expectedIncome("feketerev", "a");
+        assertNull(engine.expectedIncome("szelmezo", "a"), "no shares there");
+        assertEquals(Map.of(), salt.sold, "the projection does not touch the state");
+        engine.settle();
+        assertEquals(salt.sold.get("a") * Rules.BASE_PRICE * Rules.Margin.EXPENSIVE.rate, expected, 0.2);
+    }
+
+    @Test
+    void expectedIncomeIsAfterTheCityTax() {
+        Engine engine = game();
+        PlayerSt house = new PlayerSt(); house.id = "a"; house.name = "a"; house.npc = true; engine.state.players.put("a", house);
+        CitySt cs = engine.state.cities.get("feketerev");
+        cs.goods.get("salt").shares.put("a", 50);
+        double untaxed = engine.expectedIncome("feketerev", "a");
+        cs.council.put("a", 9);
+        assertEquals(untaxed * (1 - engine.taxRate("feketerev")), engine.expectedIncome("feketerev", "a"), 0.11);
+    }
+
+    @Test
     void dhondtWithThreshold() {
         assertEquals(Map.of("a", 6, "b", 2, "c", 1), Engine.dhondt(Map.of("a", 100.0, "b", 45.0, "c", 20.0), 9, 0.05));
         assertFalse(Engine.dhondt(Map.of("a", 100.0, "d", 4.0), 9, 0.05).containsKey("d"));
@@ -112,7 +142,7 @@ class EngineTest {
         join(engine, "b", Background.MERCHANT, "grain");
         engine.state.players.get("a").gold = 200;
         Order bo = order("buyout", "szelmezo"); bo.good = "grain"; bo.target = "b"; bo.pts = 5;
-        Order added = engine.addDraft("a", bo);
+        Order added = engine.addDraft("a", bo).orElseThrow();
         engine.seal("a", START, 120);
         engine.advance(START + 121 * MIN, 120, 28);
         Good good = engine.state.cities.get("szelmezo").goods.get("grain");
@@ -251,5 +281,79 @@ class EngineTest {
         Sheet sheet = engine.state.sheetOf("npc").orElseThrow();
         assertEquals(planAt, sheet.sealedAt);
         assertEquals(120 * MIN, sheet.executeAt - sheet.sealedAt);
+    }
+
+    static Order marginOrder(String good, String level) {
+        Order order = order("margin", "szelmezo"); order.good = good; order.level = level;
+        return order;
+    }
+
+    static java.util.List<Order> marginDrafts(Engine engine, String player) {
+        return engine.state.draftOf(player).stream().filter(order -> "margin".equals(order.type)).toList();
+    }
+
+    @Test
+    void marginOrderReplacesThePendingOneOfTheSameGood() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        engine.addDraft("te", marginOrder("grain", "cheap"));
+        Order second = engine.addDraft("te", marginOrder("grain", "expensive")).orElseThrow();
+        assertEquals(1, marginDrafts(engine, "te").size());
+        assertSame(second, marginDrafts(engine, "te").get(0));
+        assertEquals("expensive", second.level);
+        assertEquals(1, engine.draftCost("te").pp());
+    }
+
+    @Test
+    void choosingTheLevelInEffectCancelsThePendingChange() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        engine.addDraft("te", marginOrder("grain", "cheap"));
+        assertTrue(engine.addDraft("te", marginOrder("grain", "market")).isEmpty());
+        assertTrue(marginDrafts(engine, "te").isEmpty());
+        assertEquals(0, engine.draftCost("te").pp());
+        // Without a pending change it adds nothing either
+        assertTrue(engine.addDraft("te", marginOrder("grain", "market")).isEmpty());
+        assertTrue(engine.state.draftOf("te").isEmpty());
+    }
+
+    @Test
+    void marginOrdersOfOtherGoodsAreUnaffected() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        Good wine = engine.state.cities.get("szelmezo").goods.get("wine");
+        wine.shares.put("te", 5); wine.margins.put("te", "market");
+        Order wineOrder = engine.addDraft("te", marginOrder("wine", "usury")).orElseThrow();
+        engine.addDraft("te", order("hireSpy", "szelmezo"));
+        engine.addDraft("te", marginOrder("grain", "cheap"));
+        engine.addDraft("te", marginOrder("grain", "veryCheap"));
+        engine.addDraft("te", marginOrder("grain", "market"));
+        assertEquals(java.util.List.of(wineOrder), marginDrafts(engine, "te"));
+        assertEquals(2, engine.state.draftOf("te").size());
+    }
+
+    @Test
+    void sealedMarginOrdersAreUnaffected() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        Order sealed = engine.addDraft("te", marginOrder("grain", "cheap")).orElseThrow();
+        engine.seal("te", START, 120);
+        Order pending = engine.addDraft("te", marginOrder("grain", "expensive")).orElseThrow();
+        assertEquals(java.util.List.of(sealed), engine.state.sheetOf("te").orElseThrow().orders);
+        assertEquals(java.util.List.of(pending), engine.state.draftOf("te"));
+        assertTrue(engine.addDraft("te", marginOrder("grain", "market")).isEmpty());
+        assertEquals(java.util.List.of(sealed), engine.state.sheetOf("te").orElseThrow().orders);
+        assertTrue(engine.state.draftOf("te").isEmpty());
+    }
+
+    @Test
+    void replacedMarginOrderIsNotCountedTwiceInThePpCheck() {
+        Engine engine = game();
+        join(engine, "te", Background.MERCHANT, "grain");
+        engine.state.players.get("te").pp = 1;
+        engine.addDraft("te", marginOrder("grain", "cheap"));
+        assertDoesNotThrow(() -> engine.addDraft("te", marginOrder("grain", "expensive")));
+        assertEquals(1, engine.draftCost("te").pp());
+        assertThrows(EngineException.class, () -> engine.addDraft("te", order("hireSpy", "szelmezo")), "a second order is beyond the PP");
     }
 }

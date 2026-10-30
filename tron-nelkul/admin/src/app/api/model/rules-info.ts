@@ -29,6 +29,5 @@ export interface RulesInfo {
     routeUpkeep: number;
     councilSeats: number;
     infoPrice: number;
-    lowPopThreshold: number;
 }
 

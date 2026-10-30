@@ -32,9 +32,9 @@
     "neighbors": "Szomszédos: {names}",
     "home_city": "Kezdőváros: {name}",
     "good_label": "Induló árucikk",
-    "good_intro": "A Kereskedőház 20 részesedést kap {city} egyik árucikkéből. Melyikből?",
-    "good_intro_default": "A Kereskedőház 20 részesedést kap a kezdőváros egyik árucikkéből. Melyikből?",
-    "good_line": "20 részesedés · azonnal van eladható árud"
+    "good_intro": "A Kereskedőház 20%-os részesedést kap {city} egyik árucikkéből. Melyikből?",
+    "good_intro_default": "A Kereskedőház 20%-os részesedést kap a kezdőváros egyik árucikkéből. Melyikből?",
+    "good_line": "20% részesedés · azonnal van eladható árud"
   },
   "summary": {
     "title": "Minden készen áll",
@@ -44,9 +44,9 @@
     "slot_value": "{name} ({neighbors})",
     "home_city": "Kezdőváros",
     "good": "Induló árucikk",
-    "good_value": "20 részesedés · {good}",
+    "good_value": "20% részesedés · {good}",
     "kit": "Induló készlet",
-    "kit_value": "10 PP · 30 arany · 20 népszerűség a kezdővárosban · 2 útvonal",
-    "note": "A kezdésig bármikor visszavonhatod a jelentkezést. A ház neve és tinktúrája a kezdés után már nem változtatható."
+    "kit_value": "10 [pp] · 30 [gold] · 20 [pop] a kezdővárosban · 2 útvonal",
+    "note": "A kezdésig bármikor visszavonhatod a jelentkezést. A ház neve a kezdés után már nem változtatható."
   }
 }

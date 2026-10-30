@@ -19,7 +19,7 @@ Tr electionText(int n) => n <= 1 ? const Tr('city.election_next') : Tr('city.ele
 String popDelta(int v) => v > 0 ? '+$v' : (v < 0 ? '−${-v}' : '0');
 
 /// A chip in the city header (StatChip).
-typedef CityStat = ({Tr label, Tr value, Tr? suffix, String? tone, String art});
+typedef CityStat = ({Tr label, Tr value, Tr? suffix, String? tone, String art, Tr info});
 
 /// What the spy network can do with a news item: nothing, verify it, or (if proven false) debunk it.
 enum NewsCheck { none, verify, debunk }
@@ -35,24 +35,17 @@ extension CityGameX on GameState {
 
   /// Header chips: popularity, tax, election, campaign period.
   List<CityStat> cityStats(CityView cv) => [
-        (label: const Tr('city.stat.popularity'), value: Tr.raw('${cv.myPop.round()}'), suffix: null, tone: cv.lowPop(rules) ? 'warn' : null, art: 'popularity'),
-        (label: const Tr('city.stat.tax'), value: Tr.raw('${cv.taxPercent}%'), suffix: null, tone: null, art: 'tax'),
-        clock.nextElectionIn <= 1
-            ? (
-                label: const Tr('city.stat.election'),
-                value: const Tr('city.stat.election_next'),
-                suffix: const Tr('city.stat.election_next_suffix'),
-                tone: null,
-                art: 'foundParty',
-              )
-            : (
-                label: const Tr('city.stat.election'),
-                value: Tr.raw('${clock.nextElectionIn}'),
-                suffix: const Tr('city.stat.election_in_suffix'),
-                tone: null,
-                art: 'foundParty',
-              ),
-        if (clock.campaign) (label: const Tr('city.stat.campaign'), value: const Tr.raw('×2'), suffix: const Tr('city.stat.campaign_suffix'), tone: 'warn', art: 'festival'),
+        (label: const Tr('city.stat.popularity'), value: Tr.raw('${cv.myPop.round()}'), suffix: null, tone: null, art: 'popularity', info: const Tr('city.stat.popularity_info')),
+        (label: const Tr('city.stat.tax'), value: Tr.raw('${cv.taxPercent}%'), suffix: null, tone: null, art: 'tax', info: const Tr('city.stat.tax_info')),
+        (
+          label: const Tr('city.stat.election'),
+          value: Tr.raw('${clock.nextElectionIn}'),
+          suffix: const Tr('city.stat.election_in_suffix'),
+          tone: null,
+          art: 'foundParty',
+          info: const Tr('city.stat.election_info'),
+        ),
+        if (clock.campaign) (label: const Tr('city.stat.campaign'), value: const Tr.raw('×2'), suffix: const Tr('city.stat.campaign_suffix'), tone: 'warn', art: 'festival', info: const Tr('city.stat.campaign_info')),
       ];
 
   /// The house flying a district's banner: Marketplace – most shares, Town Hall – most council seats,
@@ -81,6 +74,11 @@ extension CityGameX on GameState {
   /// OrderView doesn't reference the offer, so we filter by city.
   bool defendOnlyInDraft(Threat t) => draft.any((o) => o.type == 'defend' && o.cityId == t.cityId) && !(sheet?.orders.any((o) => o.type == 'defend' && o.cityId == t.cityId) ?? false);
 
+  /// Level of the margin change waiting on the unsealed draft for a good in a city, if any.
+  /// The server keeps at most one such order per city and good.
+  String? pendingMargin(String cityId, String goodId) =>
+      draft.where((o) => o.type == 'margin' && o.cityId == cityId && o.goodId == goodId).lastOrNull?.level;
+
   /// Where a spy can move from here (7.1): the other cities of your network.
   List<CityView> spyDestinations(String fromCity) => cities.where((x) => x.reachable && x.id != fromCity).toList();
 
@@ -91,8 +89,6 @@ extension CityGameX on GameState {
 extension CityViewCityX on CityView {
   /// Free (not guarding) spies.
   int get freeSpies => (mySpies - myGuards).clamp(0, 99);
-
-  bool lowPop(RulesInfo r) => myPop < r.lowPopThreshold;
 
   /// Whether the city is full of spies (with respect to your own spies).
   bool spiesFull(RulesInfo r) => mySpies >= r.spiesPerCity;

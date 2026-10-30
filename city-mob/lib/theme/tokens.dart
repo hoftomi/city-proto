@@ -79,7 +79,6 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color okSoft = const Color(0xFFD7E5E8);
 
   // Shares
-  final Color shareNeutral = const Color(0xFFE3D3AD);
   final Color shareUnknown = const Color(0xFF7D6F5F);
 
   // Map (used by the map and city painters)
@@ -102,7 +101,6 @@ class TnColors extends ThemeExtension<TnColors> {
   final Color house = const Color(0xFF5E5246);
 
   /// Owners' segments in a share bar: a lighter step of the house tone, so the dark gaps between owners show.
-  final Color houseShare = const Color(0xFF9A8973);
 
   /// Power branches: icon tile border and the selected leather tab's top strip.
   final Map<String, (Color, Color)> branches = const {

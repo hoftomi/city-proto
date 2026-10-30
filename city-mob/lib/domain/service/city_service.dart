@@ -23,9 +23,14 @@ class CityService {
     return OrderRequest(type: 'defend', city: cv.id, sheetId: t.sheetId, orderId: t.orderId);
   }
 
+  /// Margin change of a good. At most one waits on the draft per good (the server replaces it):
+  /// picking the pending level does nothing, picking the level in effect while a change is pending sends
+  /// it again (the server then drops the pending order), and without a pending change it does nothing.
   OrderRequest? margin(GameState s, CityView cv, String goodId, String level) {
     final g = cv.goods.where((g) => g.id == goodId).firstOrNull;
     if (!cv.reachable || g == null || g.myShares < 1 || s.catalog.margin(level) == null) return null;
+    final pending = s.pendingMargin(cv.id, goodId);
+    if (level == pending || (level == g.myMargin && pending == null)) return null;
     return OrderRequest(type: 'margin', city: cv.id, good: goodId, level: level);
   }
 

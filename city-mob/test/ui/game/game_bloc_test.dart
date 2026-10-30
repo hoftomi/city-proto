@@ -58,7 +58,7 @@ void main() {
         final after = state.copyWith(draft: [
           ...state.draft,
           OrderView(id: 'new', type: 'festival', branch: 'politics', label: 'Fesztivál · Szélmező', cityId: 'szelmezo', cityName: 'Szélmező',
-              cost: Cost(pp: 2, gold: 15), warning: null),
+              goodId: null, level: null, cost: Cost(pp: 2, gold: 15), warning: null),
         ]);
         when(() => games.addOrder('g', any())).thenAnswer((_) async => Right(after));
         return GameBloc(service);

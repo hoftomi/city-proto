@@ -109,7 +109,7 @@ class _GameDetailView extends StatelessWidget {
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(width: 112, child: Text(k.toUpperCase(), style: TnText.eyebrow(c.inkMuted).copyWith(height: 20 / 11.5))),
           const SizedBox(width: 12),
-          Expanded(child: Text(v, style: TnText.body(c.ink))),
+          Expanded(child: UnitText(v, style: TnText.body(c.ink))),
         ]),
       );
 }

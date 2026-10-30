@@ -12,10 +12,10 @@
     "unknown_good": "Ismeretlen árucikk.",
     "needs_shares": "Ehhez részesedés kell ebből az árucikkből.",
     "unknown_margin": "Ismeretlen fokozat.",
-    "shares_per_order": "Egy parancsban 1–{max} pont vehető.",
-    "city_shares_left": "A Várostól már csak {pts} pont vehető.",
+    "shares_per_order": "Egy parancsban 1–{max}% vehető.",
+    "city_shares_left": "A Várostól már csak {pts}% vehető.",
     "pick_rival": "Válassz rivális kereskedőt.",
-    "buyout_per_order": "Egy ajánlatban 1–{max} pont vásárolható ki.",
+    "buyout_per_order": "Egy ajánlatban 1–{max}% vásárolható ki.",
     "target_lacks_shares": "A célpontnak nincs ennyi részesedése.",
     "target_protected": "Ezt a kereskedőt nemrég kivásárolták, most védett.",
     "buyout_already_ran": "Ez a kivásárlási ajánlat már lefutott.",
@@ -54,24 +54,24 @@
   "order": {
     "route": "{action}: {from} → {to}",
     "margin": "{good} ára: {level} · {city}",
-    "buyShares": "{pts} részesedés ({good}) a Várostól · {city}",
-    "buyout": "Kivásárlás: {pts} pont {target} részéből ({good}) · {city}",
+    "buyShares": "{pts}% részesedés ({good}) a Várostól · {city}",
+    "buyout": "Kivásárlás: {pts}% {target} részéből ({good}) · {city}",
     "defend": "Védekező vétel ({good}) · {city}",
     "program": "Program: {program} · {city}",
     "news": "Hír: {news} · {city}",
     "spy": "Kifürkészés: {target} parancslapja · {city}",
     "moveSpy": "Kém áthelyezése: {from} → {to}",
     "other": "{action} · {city}",
-    "with_cost": "{order} ({gold} A)"
+    "with_cost": "{order} ({gold} [gold])"
   },
   "report": {
     "buyout_threat": {
       "title": "{house} ki akar vásárolni",
-      "text": "{pts} pontot akar a(z) {good} részesedésedből ({city}). Az ajánlat {time}-kor fut le. Védekező vétellel kiválthatod a Vásártéren."
+      "text": "{pts}%-ot akar a(z) {good} részesedésedből ({city}). Az ajánlat {time}-kor fut le. Védekező vétellel kiválthatod a Vásártéren."
     },
     "intel_rejected": {
       "title": "{house} nem vette meg",
-      "text": "Túl drágának tartotta az ajánlatot ({price} A)."
+      "text": "Túl drágának tartotta az ajánlatot ({price} [gold])."
     },
     "intel_offer": {
       "title": "{house} információt kínál",
@@ -110,7 +110,7 @@
       "text": "{city} üzleteiben az új árak kikerültek a pultra."
     },
     "buyShares": {
-      "title": "+{pts} részesedés: {good}",
+      "title": "+{pts}% részesedés: {good}",
       "text": "A városi tanács jóváhagyta az adásvételt. {city} {good}kínálatának {share}%-a a tiéd."
     },
     "defend": {
@@ -165,11 +165,11 @@
     },
     "buyout_done": {
       "title": "Kivásároltad: {target}",
-      "text": "{pts} pont {good} {gold} aranyért. {target} {turns} elszámolásig védett."
+      "text": "{pts}% {good} {gold} aranyért. {target} {turns} elszámolásig védett."
     },
     "bought_out": {
       "title": "{house} kivásárolt",
-      "text": "{pts} pontot veszítettél a(z) {good} árucikkből ({city}), {gold} aranyat kaptál érte."
+      "text": "{pts}%-ot veszítettél a(z) {good} árucikkből ({city}), {gold} aranyat kaptál érte."
     },
     "spy_nothing": {
       "title": "Nincs mit kifürkészni",
@@ -189,7 +189,7 @@
     },
     "settlement": {
       "title": "Elszámolás · {time}",
-      "text": "Bevétel: {income} arany (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} PP."
+      "text": "Bevétel: {income} arany (haszon, adó, fenntartás), +{legit} Legitimitás, +{pp} [pp]."
     },
     "election": {
       "title": "Választás: {city}",
@@ -203,7 +203,7 @@
     },
     "coronation": {
       "title": "Koronázási Tanács",
-      "text": "A városi tanácsok szavazatai (+{legit} L): {votes}.",
+      "text": "A városi tanácsok szavazatai (+{legit} [legit]): {votes}.",
       "text_none": "Egyik városi tanácsban sem volt egyértelmű többség."
     }
   }

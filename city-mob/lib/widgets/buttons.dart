@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/tokens.dart';
 import 'game_icon.dart';
 import 'tn_icon.dart';
+import 'unit_text.dart';
 
 enum TnButtonKind { normal, primary, seal, quiet, danger }
 
@@ -155,7 +156,7 @@ class _TnButtonState extends State<TnButton> {
       mainAxisAlignment: w.alignStart ? MainAxisAlignment.start : MainAxisAlignment.center,
       children: [
         if (lead != null) ...[lead, SizedBox(width: w.alignStart ? 12 : 8)],
-        Flexible(child: Text(w.label, overflow: TextOverflow.ellipsis, style: style)),
+        Flexible(child: UnitText(w.label, overflow: TextOverflow.ellipsis, style: style)),
       ],
     );
     final minH = w.minHeight ?? (seal ? 50.0 : (w.small ? 34.0 : 44.0));
@@ -178,7 +179,7 @@ class _TnButtonState extends State<TnButton> {
     return Semantics(
       button: true,
       enabled: !disabled,
-      label: w.label,
+      label: unitPlain(w.label),
       excludeSemantics: true,
       child: MouseRegion(
         cursor: disabled ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
@@ -196,18 +197,20 @@ class _TnButtonState extends State<TnButton> {
 }
 
 /// Small parchment toggle button (margin-btn, clock-btns): level picker, filter, admin clock.
-/// The selected ([on]) variant is forest green with a light label.
+/// The selected ([on]) variant is forest green, the [pending] one (a change waiting on the order sheet)
+/// steel blue, both with a light label.
 class TnMiniButton extends StatelessWidget {
-  const TnMiniButton({super.key, required this.child, this.on = false, this.onTap, this.semanticLabel});
+  const TnMiniButton({super.key, required this.child, this.on = false, this.pending = false, this.onTap, this.semanticLabel});
   final Widget child;
-  final bool on;
+  final bool on, pending;
   final VoidCallback? onTap;
   final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
     final c = context.tn;
-    final fg = on ? c.onBtn : c.ink;
+    final lit = on || pending;
+    final fg = lit ? c.onBtn : c.ink;
     return Semantics(
       button: true,
       selected: on,
@@ -216,11 +219,15 @@ class TnMiniButton extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Bevel(
-          paint: on ? (c.btnGreenHi, c.btnGreen, c.btnGreenLo) : (c.btnCreamHi, c.btnCream, c.btnCreamLo),
+          paint: on
+              ? (c.btnGreenHi, c.btnGreen, c.btnGreenLo)
+              : pending
+                  ? (c.btnBlueHi, c.btnBlue, c.btnBlueLo)
+                  : (c.btnCreamHi, c.btnCream, c.btnCreamLo),
           radius: 6,
           rim: 2,
           borderWidth: 1,
-          border: on ? c.outline : c.lineStrong,
+          border: lit ? c.outline : c.lineStrong,
           dropShadow: false,
           highlight: const Color(0x00FFFFFF),
           innerRing: const Color(0x00FFFFFF),
@@ -232,7 +239,7 @@ class TnMiniButton extends StatelessWidget {
                 style: TnText.button(fg).copyWith(
                   fontSize: 13,
                   height: 18 / 13,
-                  shadows: on ? const [Shadow(color: Color(0x99000000), offset: Offset(0, 1), blurRadius: 1)] : null,
+                  shadows: lit ? const [Shadow(color: Color(0x99000000), offset: Offset(0, 1), blurRadius: 1)] : null,
                 ),
                 child: Center(widthFactor: 1, child: child),
               ),

@@ -49,4 +49,17 @@ export class Translator {
     }
     return typeof node === 'string' ? interpolate(node, params) : k;
   }
+
+  /** Server texts carry unit markers ([pp], [gold], [pop], [legit]; the mobile shows icons): spelled out here. */
+  units(text: string | null | undefined): string {
+    return (text ?? '').replace(UNIT_MARKER, (_, unit: string) => this.t(UNIT_KEYS[unit]));
+  }
 }
+
+const UNIT_MARKER = /\[(pp|gold|pop|legit)\]/g;
+const UNIT_KEYS: Record<string, string> = {
+  pp: key('unit.pp'),
+  gold: key('unit.gold'),
+  pop: key('unit.pop'),
+  legit: key('unit.legit'),
+};

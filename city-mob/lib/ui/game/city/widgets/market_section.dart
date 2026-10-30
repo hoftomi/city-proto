@@ -18,7 +18,7 @@ class MarketSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.tn, r = s.rules, cv = s.city!;
+    final c = context.tn, cv = s.city!;
     final bloc = context.read<CityBloc>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -57,17 +57,8 @@ class MarketSection extends StatelessWidget {
           ),
           gap(),
         ],
-        if (s.lowPop) ...[
-          Notice(
-            tone: 'warn',
-            title: 'city.market.low_pop_title'.tr(),
-            body: 'city.market.low_pop_body'.tr(namedArgs: {'threshold': '${r.lowPopThreshold}'}),
-          ),
-          gap(),
-        ],
         if (cv.goods.isEmpty) Text('city.market.no_goods'.tr(), style: TnText.body(c.inkMuted)),
         for (final g in cv.goods) ...[_GoodCard(key: ValueKey('${cv.id}/${g.id}'), s: s, p: s.goodPlan(g)), gap()],
-        hint(context, 'city.market.profit_hint'.tr(namedArgs: {'base': '${r.basePrice}'})),
       ],
     );
   }
@@ -80,7 +71,7 @@ class _GoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.tn, r = s.rules, cat = s.catalog, g = p.good;
+    final c = context.tn, cat = s.catalog, g = p.good;
     final bloc = context.read<CityBloc>();
     return TnCard(
       child: Column(
@@ -93,38 +84,27 @@ class _GoodCard extends StatelessWidget {
             runSpacing: 4,
             children: [
               ArtTitle(g.name, art: g.id, artSize: 30),
-              Text(
+              UnitText(
                 'city.market.good_stats'.tr(namedArgs: {'supply': '${g.supply}', 'demand': '${g.demand}', 'value': numText(g.marketValue)}),
                 style: TnText.data(c.inkMuted, size: 12),
               ),
             ],
           ),
           gap(8),
-          ShareBar(good: g),
-          gap(8),
           MiniTable(
+            compactHeader: true,
+            gap: 6,
             cols: [
-              Col('city.market.col_seller'.tr(), flex: 5),
-              Col('city.market.col_shares'.tr(), flex: 2, right: true),
-              Col('city.market.col_margin'.tr(), flex: 5),
-              Col('city.market.col_sold'.tr(), flex: 3, right: true),
+              Col('city.market.col_seller'.tr()),
+              Col('city.market.col_shares'.tr(), right: true, fit: true),
             ],
             selfRows: p.selfRows,
             empty: 'city.market.no_sellers'.tr(),
             rows: [
               for (final x in p.sellers)
                 [
-                  x.house == null ? Text('city.market.city_seller'.tr(), style: TnText.body(c.inkMuted).copyWith(fontSize: 14)) : HouseName(x.house!),
-                  Text('${x.shares}', style: TnText.data(c.ink)),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(cat.marginLabel(x.margin), style: TnText.body(c.ink).copyWith(fontSize: 14)),
-                      if (x.cheapest) TinyTag('city.market.cheapest'.tr()),
-                      if (x.protectedNow) TinyTag('city.market.protected'.tr(), tone: 'muted'),
-                    ],
-                  ),
-                  Text(x.sold == null ? '–' : numText(x.sold!), style: TnText.data(c.ink)),
+                  x.house == null ? Text('city.market.city_seller'.tr(), style: TnText.body(c.inkMuted).copyWith(fontSize: 14)) : HouseName(x.house!, maxLines: 2),
+                  Text('${x.shares}%', style: TnText.data(c.ink)),
                 ],
             ],
           ),
@@ -137,6 +117,7 @@ class _GoodCard extends StatelessWidget {
                 for (final m in cat.margins) OptionItem(m.id, '${m.percent}%', m.label, 'city.pop_delta'.tr(namedArgs: {'delta': popDelta(m.pop)})),
               ],
               selected: g.myMargin,
+              pending: s.pendingMargin(g),
               onPick: s.busy ? null : (id) => bloc.add(CityMarginPicked(g.id, id)),
             ),
           ],
@@ -179,16 +160,16 @@ class _GoodCard extends StatelessWidget {
                     child: TnSelect<String>(
                       label: 'city.market.buyout_label'.tr(),
                       value: p.targetId,
-                      items: [for (final x in p.rivals) (x.house!.playerId, '${x.house!.name} (${x.shares})')],
+                      items: [for (final x in p.rivals) (x.house!.playerId, '${x.house!.name} (${x.shares}%)')],
                       onChanged: (v) => bloc.add(CityBuyoutTargetChanged(g.id, v)),
                     ),
                   ),
                   SizedBox(
-                    width: 90,
+                    width: 120,
                     child: TnSelect<int>(
                       label: 'city.market.points_label'.tr(),
                       value: p.boPts,
-                      items: [for (final i in p.boOptions) (i, '$i')],
+                      items: [for (final i in p.boOptions) (i, 'city.market.points'.tr(namedArgs: {'n': '$i'}))],
                       onChanged: (v) => bloc.add(CityBuyoutPointsChanged(g.id, v)),
                     ),
                   ),
@@ -202,8 +183,6 @@ class _GoodCard extends StatelessWidget {
                   ),
                 ],
               ),
-              gap(4),
-              hint(context, 'city.market.buyout_hint'.tr(namedArgs: {'percent': '${r.buyoutPremiumPercent}'})),
             ],
           ],
         ],

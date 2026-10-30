@@ -7,6 +7,7 @@ import 'package:tron_nelkul/core/tr.dart';
 import 'package:tron_nelkul/domain/model/city_extensions.dart';
 import 'package:tron_nelkul/domain/model/extensions.dart';
 import 'package:tron_nelkul/domain/service/city_service.dart';
+import 'package:tron_nelkul/widgets/game_widgets.dart';
 
 GameState fixtureState() => GameState.fromJson(jsonDecode(File('test/fixtures/game_state.json').readAsStringSync()) as Map<String, dynamic>);
 
@@ -36,11 +37,19 @@ void main() {
       expect(s.districtDominants(s.city('delkapu'))['espionage'], isNull);
     });
 
-    test('chips: low popularity warns, election in N settlements', () {
+    test('chips: popularity without warning, election in N settlements, each with an explanation', () {
       final st = s.cityStats(cv);
       expect(st.length, 3);
-      expect(st[0].tone, 'warn');
-      expect(st[2], (label: const Tr('city.stat.election'), value: const Tr.raw('6'), suffix: const Tr('city.stat.election_in_suffix'), tone: null, art: 'foundParty'));
+      expect(st[0].tone, isNull);
+      expect(st[2], (
+        label: const Tr('city.stat.election'),
+        value: const Tr.raw('6'),
+        suffix: const Tr('city.stat.election_in_suffix'),
+        tone: null,
+        art: 'foundParty',
+        info: const Tr('city.stat.election_info'),
+      ));
+      expect(st.map((x) => x.info.key), ['city.stat.popularity_info', 'city.stat.tax_info', 'city.stat.election_info']);
       expect(st[0].label, const Tr('city.stat.popularity'));
     });
 
@@ -99,6 +108,39 @@ void main() {
       final level = s.catalog.margins.first.id;
       expect(service.margin(s, cv, 'grain', level), OrderRequest(type: 'margin', city: 'szelmezo', good: 'grain', level: level));
       expect(service.margin(s, cv, 'wine', level), isNull);
+    });
+
+    group('one pending margin change per good', () {
+      OrderView marginOrder(String good, String level, {String city = 'szelmezo'}) => OrderView(
+          id: 'm-$good-$level', type: 'margin', branch: 'trade', label: 'Fokozatváltás', cityId: city, cityName: 'Szélmező',
+          goodId: good, level: level, cost: Cost(pp: 1, gold: 0), warning: null);
+      final withPending = s.copyWith(draft: [...s.draft, marginOrder('grain', 'cheap')]);
+      final pendingCv = withPending.city('szelmezo');
+
+      test('the pending level comes from the draft margin order of the same city and good', () {
+        expect(s.pendingMargin('szelmezo', 'grain'), isNull);
+        expect(withPending.pendingMargin('szelmezo', 'grain'), 'cheap');
+        expect(withPending.pendingMargin('szelmezo', 'wine'), isNull);
+        expect(withPending.pendingMargin('delkapu', 'grain'), isNull);
+      });
+
+      test('without a pending change: the level in effect does nothing, another level is ordered', () {
+        expect(good('grain').myMargin, 'market');
+        expect(service.margin(s, cv, 'grain', 'market'), isNull);
+        expect(service.margin(s, cv, 'grain', 'usury'), OrderRequest(type: 'margin', city: 'szelmezo', good: 'grain', level: 'usury'));
+      });
+
+      test('with a pending change: the pending level does nothing, the level in effect cancels, another replaces', () {
+        expect(service.margin(withPending, pendingCv, 'grain', 'cheap'), isNull);
+        expect(service.margin(withPending, pendingCv, 'grain', 'market'), OrderRequest(type: 'margin', city: 'szelmezo', good: 'grain', level: 'market'));
+        expect(service.margin(withPending, pendingCv, 'grain', 'usury'), OrderRequest(type: 'margin', city: 'szelmezo', good: 'grain', level: 'usury'));
+      });
+
+      test('picker: which buttons react', () {
+        bool can(String id, String? pending) => OptionRow.canPick(id, selected: 'market', pending: pending);
+        expect([can('market', null), can('cheap', null)], [false, true]);
+        expect([can('market', 'cheap'), can('cheap', 'cheap'), can('usury', 'cheap')], [true, false, true]);
+      });
     });
   });
 

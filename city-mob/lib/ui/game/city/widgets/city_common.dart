@@ -10,7 +10,7 @@ import '../../../../widgets/game_widgets.dart';
 
 Widget gap([double h = 12]) => SizedBox(height: h);
 
-Widget hint(BuildContext context, String t) => Text(t, style: TnText.caption(context.tn.inkMuted));
+Widget hint(BuildContext context, String t) => UnitText(t, style: TnText.caption(context.tn.inkMuted));
 
 /// Time as "hh:mm", in local time.
 String at(DateTime t) => hhmm(t);
@@ -79,7 +79,7 @@ class NewsRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(n.text, style: TnText.chronicle(n.debunked ? c.inkMuted : c.ink).copyWith(decoration: n.debunked ? TextDecoration.lineThrough : null)),
+                UnitText(n.text, style: TnText.chronicle(n.debunked ? c.inkMuted : c.ink).copyWith(decoration: n.debunked ? TextDecoration.lineThrough : null)),
                 Text(meta, style: TnText.caption(n.debunked || n.verified == false ? c.danger : c.inkMuted)),
               ],
             ),
@@ -87,6 +87,25 @@ class NewsRow extends StatelessWidget {
           if (action != null) ...[const SizedBox(width: 8), action!],
         ],
       ),
+    );
+  }
+}
+
+/// Expected gold from selling in this city at the next settlement (after tax), above the city view.
+class ExpectedIncomeCard extends StatelessWidget {
+  const ExpectedIncomeCard(this.gold, {super.key});
+  final double gold;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.tn;
+    return TnCard(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(children: [
+        Expanded(child: Text('city.market.expected_income'.tr(), style: TnText.body(c.inkMuted).copyWith(fontSize: 14))),
+        const SizedBox(width: 8),
+        UnitText('${incomeText(gold)} [gold]', style: TnText.data(c.ink, size: 15, weight: FontWeight.w900)),
+      ]),
     );
   }
 }

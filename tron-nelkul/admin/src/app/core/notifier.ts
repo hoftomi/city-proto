@@ -24,7 +24,7 @@ export class Notifier {
   describe(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
       const body = err.error as ProblemDetail | string | null;
-      if (body && typeof body === 'object' && body.detail) return body.detail;
+      if (body && typeof body === 'object' && body.detail) return this.translator.units(body.detail);
       if (err.status === 0) return this.translator.t('error.network');
       return this.translator.t('error.http', { status: err.status });
     }
